@@ -1,6 +1,6 @@
 # SOP-002: Risk Management Procedure
 
-## 1. Purpose12313213
+## 1. Purpose1231321312313
 
 This procedure defines the risk management process for medical device development in accordance with ISO 14971 and EU MDR Annex I.
 
