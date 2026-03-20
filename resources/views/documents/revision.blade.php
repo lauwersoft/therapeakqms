@@ -121,6 +121,8 @@
                                             continue;
                                         }
 
+                                        if (strlen($line) === 0) continue;
+
                                         $lineContent = substr($line, 1);
                                         if ($inFrontmatter) {
                                             if (trim($lineContent) === '---' || trim($line) === '---') {
