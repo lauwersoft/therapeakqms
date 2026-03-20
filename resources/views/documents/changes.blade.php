@@ -1,7 +1,7 @@
 <x-app-layout>
     @push('styles')
         <style>
-            .diff-line { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.8rem; white-space: pre-wrap; word-break: break-all; }
+            .diff-line { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.8rem; line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
         </style>
     @endpush
 
@@ -94,12 +94,11 @@
                                 <div class="overflow-x-auto">
                                     @php
                                         $diffLines = explode("\n", $diffs[$path]);
-                                        $lineNum = 0;
-                                        $sections = [];
-                                        $currentSection = null;
+                                        $oldLineNum = 0;
+                                        $newLineNum = 0;
+                                        $changes = [];
 
                                         foreach ($diffLines as $line) {
-                                            // Skip git metadata headers
                                             if (str_starts_with($line, 'diff ') || str_starts_with($line, 'index ') ||
                                                 str_starts_with($line, '---') || str_starts_with($line, '+++')) {
                                                 continue;
@@ -107,56 +106,33 @@
 
                                             if (str_starts_with($line, '@@')) {
                                                 preg_match('/@@ -(\d+),?\d* \+(\d+)/', $line, $m);
-                                                $lineNum = (int)($m[2] ?? 0);
-
-                                                // Extract a friendly label like "around line 5"
-                                                $currentSection = 'Around line ' . $lineNum;
-                                                $sections[$currentSection] = $sections[$currentSection] ?? [];
+                                                $oldLineNum = (int)($m[1] ?? 0);
+                                                $newLineNum = (int)($m[2] ?? 0);
                                                 continue;
                                             }
 
-                                            if ($currentSection === null) continue;
-
                                             if (str_starts_with($line, '-')) {
-                                                $text = substr($line, 1);
-                                                $sections[$currentSection][] = ['type' => 'removed', 'text' => $text, 'line' => null];
+                                                $changes[] = ['type' => 'removed', 'text' => substr($line, 1), 'line' => $oldLineNum];
+                                                $oldLineNum++;
                                             } elseif (str_starts_with($line, '+')) {
-                                                $text = substr($line, 1);
-                                                $sections[$currentSection][] = ['type' => 'added', 'text' => $text, 'line' => $lineNum];
-                                                $lineNum++;
+                                                $changes[] = ['type' => 'added', 'text' => substr($line, 1), 'line' => $newLineNum];
+                                                $newLineNum++;
                                             } else {
-                                                $text = str_starts_with($line, ' ') ? substr($line, 1) : $line;
-                                                $sections[$currentSection][] = ['type' => 'context', 'text' => $text, 'line' => $lineNum];
-                                                $lineNum++;
+                                                $oldLineNum++;
+                                                $newLineNum++;
                                             }
                                         }
                                     @endphp
 
-                                    @foreach($sections as $sectionLabel => $lines)
-                                        <div class="border-b border-gray-100 last:border-b-0">
-                                            <div class="px-4 py-2 bg-gray-50 text-xs text-gray-500 font-medium">
-                                                {{ $sectionLabel }}
-                                            </div>
-                                            <table class="w-full">
-                                                @foreach($lines as $dl)
-                                                    <tr class="{{ $dl['type'] === 'removed' ? 'bg-red-50' : ($dl['type'] === 'added' ? 'bg-green-50' : '') }}">
-                                                        <td class="diff-line text-right px-3 py-0.5 text-gray-300 select-none w-10 align-top border-r border-gray-100">{{ $dl['line'] ?: '' }}</td>
-                                                        @if($dl['type'] === 'removed')
-                                                            <td class="diff-line px-4 py-0.5 text-red-700">
-                                                                <span class="bg-red-200/50 rounded px-0.5">{{ $dl['text'] ?: ' ' }}</span>
-                                                            </td>
-                                                        @elseif($dl['type'] === 'added')
-                                                            <td class="diff-line px-4 py-0.5 text-green-700">
-                                                                <span class="bg-green-200/50 rounded px-0.5">{{ $dl['text'] ?: ' ' }}</span>
-                                                            </td>
-                                                        @else
-                                                            <td class="diff-line px-4 py-0.5 text-gray-600">{{ $dl['text'] ?: ' ' }}</td>
-                                                        @endif
-                                                    </tr>
-                                                @endforeach
-                                            </table>
-                                        </div>
-                                    @endforeach
+                                    <table class="w-full">
+                                        @foreach($changes as $dl)
+                                            <tr class="{{ $dl['type'] === 'removed' ? 'bg-red-50' : 'bg-green-50' }}">
+                                                <td class="diff-line text-right pr-2 pl-3 py-0 text-gray-400 select-none w-8 align-top">{{ $dl['line'] }}</td>
+                                                <td class="diff-line py-0 px-1 w-4 text-center select-none {{ $dl['type'] === 'removed' ? 'text-red-400' : 'text-green-400' }}">{{ $dl['type'] === 'removed' ? '−' : '+' }}</td>
+                                                <td class="diff-line py-0 pr-3 {{ $dl['type'] === 'removed' ? 'text-red-700' : 'text-green-700' }}">{{ $dl['text'] ?: ' ' }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </table>
                                 </div>
                             @elseif(isset($diffs[$path]) && in_array($status, ['new', 'added']))
                                 <div class="overflow-x-auto">
