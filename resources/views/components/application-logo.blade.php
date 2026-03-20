@@ -12,7 +12,7 @@
         </g>
     </svg>
     <div class="ml-2 flex items-baseline gap-1.5">
-        <span class="text-xl font-bold" style="color: #008080">thera</span><span class="text-xl font-bold" style="color: #3e9a96">peak</span>
+        <span><span class="text-xl font-bold" style="color: #008080">thera</span><span class="text-xl font-bold" style="color: #3e9a96">peak</span></span>
         <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">QMS</span>
     </div>
 </div>
