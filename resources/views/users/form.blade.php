@@ -19,7 +19,7 @@
             @endif
 
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <form method="POST" action="{{ $user ? route('users.update', $user) : route('users.store') }}">
+                <form method="POST" action="{{ $user ? route('users.update', $user) : route('users.store') }}" autocomplete="off">
                     @csrf
                     @if($user)
                         @method('PUT')
@@ -29,6 +29,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
                             <input type="text" name="name" value="{{ old('name', $user?->name) }}" required autofocus
+                                   autocomplete="off"
                                    class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
                                    placeholder="Full name">
                         </div>
@@ -36,6 +37,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
                             <input type="email" name="email" value="{{ old('email', $user?->email) }}" required
+                                   autocomplete="new-email"
                                    class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
                                    placeholder="email@example.com">
                         </div>
@@ -44,7 +46,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
                             <select name="role" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
                                 @foreach($roles as $role)
-                                    <option value="{{ $role }}" {{ old('role', $user?->role) === $role ? 'selected' : '' }}>
+                                    <option value="{{ $role }}" {{ old('role', $user?->role ?? 'editor') === $role ? 'selected' : '' }}>
                                         {{ ucfirst($role) }}
                                         @if($role === 'admin')
                                             — Full access, can publish changes and manage users
@@ -68,8 +70,9 @@
                                 @endif
                             </label>
                             <input type="password" name="password"
+                                   autocomplete="new-password"
                                    class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
-                                   placeholder="{{ $user ? '••••••••' : 'Min 8 characters' }}"
+                                   placeholder="{{ $user ? '••••••••' : 'Min 8 characters (or leave empty for random)' }}"
                                    minlength="8">
                         </div>
 

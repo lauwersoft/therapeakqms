@@ -15,9 +15,23 @@
     <div class="py-8">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             @if(session('success'))
-                <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-700 mb-6">
-                    {{ session('success') }}
-                </div>
+                @if(str_contains(session('success'), 'Generated password:'))
+                    @php
+                        $parts = explode('Generated password: ', session('success'));
+                    @endphp
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                        <p class="text-sm text-green-700">{{ $parts[0] }}</p>
+                        <div class="mt-2 flex items-center gap-3 bg-white rounded-md border border-green-200 px-3 py-2">
+                            <span class="text-xs text-gray-500">Generated password:</span>
+                            <code class="text-sm font-mono font-bold text-gray-800 select-all">{{ $parts[1] }}</code>
+                            <span class="text-xs text-red-500 ml-auto">Save this — it won't be shown again</span>
+                        </div>
+                    </div>
+                @else
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-700 mb-6">
+                        {{ session('success') }}
+                    </div>
+                @endif
             @endif
 
             @if($errors->any())
