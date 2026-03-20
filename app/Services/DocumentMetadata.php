@@ -111,6 +111,9 @@ class DocumentMetadata
      */
     public static function build(array $meta, string $body): string
     {
+        // Safety: strip any accidental frontmatter from body
+        $body = self::stripFrontmatter($body);
+
         // Fixed field order for consistent output (clean git diffs)
         $ordered = [];
         $fieldOrder = ['id', 'title', 'type', 'version', 'status', 'effective_date', 'author', 'iso_refs', 'mdr_refs'];
@@ -146,6 +149,39 @@ class DocumentMetadata
         $body = trim($body);
 
         return "---\n{$yaml}---\n\n{$body}\n";
+    }
+
+    /**
+     * Strip any frontmatter from a string (in case body accidentally contains it).
+     */
+    public static function stripFrontmatter(string $content): string
+    {
+        $trimmed = ltrim($content);
+        if (! str_starts_with($trimmed, '---')) {
+            return trim($content);
+        }
+
+        $lines = preg_split('/\r?\n/', $trimmed);
+        $foundOpen = false;
+        $closingLine = null;
+
+        for ($i = 0; $i < count($lines); $i++) {
+            if ($i === 0 && trim($lines[$i]) === '---') {
+                $foundOpen = true;
+                continue;
+            }
+
+            if ($foundOpen && trim($lines[$i]) === '---') {
+                $closingLine = $i;
+                break;
+            }
+        }
+
+        if ($foundOpen && $closingLine !== null) {
+            return trim(implode("\n", array_slice($lines, $closingLine + 1)));
+        }
+
+        return trim($content);
     }
 
     /**

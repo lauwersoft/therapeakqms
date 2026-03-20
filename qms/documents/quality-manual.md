@@ -1,10 +1,10 @@
 ---
-id: QM-001
-title: Quality Manual
-type: QM
+id: "QM-001"
+title: "Quality Manual"
+type: "QM"
 version: "0.1"
-status: draft
-author: Sarp Derinsu
+status: "draft"
+author: "Sarp Derinsu"
 iso_refs:
   - "4.2.2"
 ---

@@ -1,10 +1,10 @@
 ---
-id: SOP-001
-title: Document Control Procedure
-type: SOP
+id: "SOP-001"
+title: "Document Control Procedure"
+type: "SOP"
 version: "0.1"
-status: draft
-author: Sarp Derinsu
+status: "draft"
+author: "Sarp Derinsu"
 iso_refs:
   - "4.2.4"
   - "4.2.5"
