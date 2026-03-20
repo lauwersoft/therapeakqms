@@ -14,6 +14,14 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
+    Route::get('/documents/edit', [DocumentController::class, 'edit'])->name('documents.edit');
+    Route::put('/documents', [DocumentController::class, 'update'])->name('documents.update');
+    Route::get('/documents/create', [DocumentController::class, 'create'])->name('documents.create');
+    Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store');
+    Route::post('/documents/move', [DocumentController::class, 'move'])->name('documents.move');
+    Route::post('/documents/rename', [DocumentController::class, 'rename'])->name('documents.rename');
+    Route::delete('/documents', [DocumentController::class, 'destroy'])->name('documents.destroy');
+    Route::post('/documents/directory', [DocumentController::class, 'createDirectory'])->name('documents.directory.store');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
