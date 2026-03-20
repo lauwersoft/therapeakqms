@@ -2,8 +2,8 @@
      x-init="initSortable($el, '{{ $directory ?? '' }}')">
     @foreach ($items as $item)
         @if ($item['type'] === 'directory')
-            <div class="mb-1">
-                <div x-data="{ open: true }">
+            <div class="mb-1" x-show="!sidebarSearch || $el.querySelector('.sortable-item:not([style*=\'display: none\'])')">
+                <div x-data="{ open: true }" :class="{ 'open': sidebarSearch }" x-effect="if (sidebarSearch) open = true">
                     <div class="group flex items-center">
                         <button @click="open = !open"
                                 @if($canEdit)
@@ -60,8 +60,13 @@
                 </div>
             </div>
         @else
-            @php $fileStatus = isset($changedFiles[$item['path']]) ? $changedFiles[$item['path']]['status'] : null; @endphp
-            <div class="sortable-item" data-path="{{ $item['path'] }}">
+            @php
+                $fileStatus = isset($changedFiles[$item['path']]) ? $changedFiles[$item['path']]['status'] : null;
+                $searchStr = strtolower(($item['doc_id'] ?? '') . ' ' . $item['name']);
+            @endphp
+            <div class="sortable-item" data-path="{{ $item['path'] }}"
+                 x-show="!sidebarSearch || '{{ addslashes($searchStr) }}'.includes(sidebarSearch.toLowerCase())"
+            >
                 <div class="group flex items-center">
                     <a href="{{ route('documents.index', ['path' => str_replace('.md', '', $item['path'])]) }}"
                        @if($canEdit)

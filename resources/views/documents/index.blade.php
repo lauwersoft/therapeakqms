@@ -239,6 +239,16 @@
                     </button>
                 </div>
             </div>
+            {{-- Sidebar search --}}
+            <div class="px-3 pt-3 pb-1">
+                <div class="relative">
+                    <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input type="text" x-model="sidebarSearch" placeholder="Search..."
+                           class="w-full pl-8 pr-3 py-1.5 text-xs border-gray-200 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-gray-50">
+                </div>
+            </div>
             <nav class="p-3 flex-1 flex flex-col">
                 <div>
                     @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $canEdit, 'changedFiles' => $changedFiles])
@@ -387,6 +397,7 @@
                 return {
                     sidebarOpen: false,
                     canEdit: @json($canEdit),
+                    sidebarSearch: '',
 
                     // Context menus
                     fileMenu: { show: false, x: 0, y: 0 },

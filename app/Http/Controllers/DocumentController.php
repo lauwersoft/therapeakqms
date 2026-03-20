@@ -449,6 +449,47 @@ class DocumentController extends Controller
         return redirect()->route('documents.edit', ['path' => str_replace('.md', '', $relativePath)]);
     }
 
+    public function browse(Request $request)
+    {
+        $docIndex = DocumentMetadata::index($this->basePath);
+
+        // Build flat list of all documents with full metadata
+        $documents = [];
+        foreach ($docIndex as $path => $meta) {
+            $dir = dirname($path);
+            $documents[] = [
+                'path' => $path,
+                'url_path' => str_replace('.md', '', $path),
+                'directory' => ($dir !== '.' && $dir !== '') ? ucwords(str_replace(['-', '_', '/'], [' ', ' ', ' / '], $dir)) : 'Root',
+                'raw_directory' => ($dir !== '.' && $dir !== '') ? $dir : '',
+                'doc_id' => $meta['id'] ?? null,
+                'title' => $meta['title'] ?? $this->formatName(str_replace('.md', '', basename($path))),
+                'type' => $meta['type'] ?? null,
+                'type_label' => isset($meta['type']) ? (DocumentMetadata::TYPES[$meta['type']] ?? $meta['type']) : null,
+                'status' => $meta['status'] ?? 'draft',
+                'status_label' => DocumentMetadata::STATUSES[$meta['status'] ?? 'draft'] ?? 'Draft',
+                'version' => $meta['version'] ?? null,
+                'author' => $meta['author'] ?? null,
+            ];
+        }
+
+        // Sort by directory then doc_id
+        usort($documents, function ($a, $b) {
+            $dirCmp = strcasecmp($a['raw_directory'], $b['raw_directory']);
+            if ($dirCmp !== 0) return $dirCmp;
+            return strnatcmp($a['doc_id'] ?? '', $b['doc_id'] ?? '');
+        });
+
+        // Get unique directories
+        $directories = collect($documents)->pluck('directory')->unique()->values()->toArray();
+
+        return view('documents.browse', [
+            'documents' => $documents,
+            'directories' => $directories,
+            'totalDocs' => count($documents),
+        ]);
+    }
+
     public function revision(Request $request, string $hash)
     {
         $commit = $this->git->getCommitDetail($hash);

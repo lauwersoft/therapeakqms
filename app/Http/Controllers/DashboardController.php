@@ -28,12 +28,25 @@ class DashboardController extends Controller
         $approvedCount = count(array_filter($docIndex, fn ($m) => ($m['status'] ?? '') === 'approved'));
         $inReviewCount = count(array_filter($docIndex, fn ($m) => ($m['status'] ?? '') === 'in_review'));
 
+        // Doc list for search
+        $docList = [];
+        foreach ($docIndex as $path => $meta) {
+            $docList[] = [
+                'path' => str_replace('.md', '', $path),
+                'doc_id' => $meta['id'] ?? null,
+                'title' => $meta['title'] ?? ucwords(str_replace(['-', '_'], ' ', str_replace('.md', '', basename($path)))),
+                'type' => $meta['type'] ?? null,
+                'status' => $meta['status'] ?? 'draft',
+            ];
+        }
+
         return view('dashboard', [
             'recentCommits' => $recentCommits,
             'totalDocs' => $totalDocs,
             'draftCount' => $draftCount,
             'approvedCount' => $approvedCount,
             'inReviewCount' => $inReviewCount,
+            'docList' => $docList,
         ]);
     }
 }
