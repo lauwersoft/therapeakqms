@@ -215,7 +215,7 @@
 
         {{-- Sidebar --}}
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-               class="fixed inset-y-0 left-0 top-16 w-72 bg-white border-r border-gray-200 overflow-y-auto z-30
+               class="fixed inset-y-0 left-0 top-16 w-80 bg-white border-r border-gray-200 overflow-y-auto z-30
                       transform transition-transform duration-200 ease-in-out
                       lg:relative lg:top-0 lg:translate-x-0 lg:shrink-0 flex flex-col">
             <div class="p-4 border-b border-gray-200 flex items-center justify-between">
@@ -273,7 +273,7 @@
             </div>
 
             @if(session('success'))
-                <div class="max-w-4xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
+                <div class="max-w-5xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
                     <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-700">
                         {{ session('success') }}
                     </div>
@@ -281,7 +281,7 @@
             @endif
 
             @if($errors->any())
-                <div class="max-w-4xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
+                <div class="max-w-5xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
                     <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
                         @foreach($errors->all() as $error)
                             <p>{{ $error }}</p>
@@ -290,7 +290,7 @@
                 </div>
             @endif
 
-            <div class="max-w-4xl mx-auto py-6 px-4 sm:py-8 sm:px-6 lg:px-8">
+            <div class="max-w-5xl mx-auto py-6 px-4 sm:py-8 sm:px-6 lg:px-8">
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                     @if($meta['id'])
                         <div class="px-5 sm:px-8 pt-4 sm:pt-5 pb-0">
