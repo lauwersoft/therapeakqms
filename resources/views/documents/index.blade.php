@@ -220,14 +220,12 @@
                     </button>
                 </div>
             </div>
-            <nav class="p-3 flex-1 flex flex-col"
+            <nav class="p-3 flex-1"
                  @if($canEdit)
-                     @contextmenu.prevent="openBgMenu($event)"
+                     @contextmenu.prevent="if ($event.target === $el || $event.target.closest('[data-sidebar-bg]')) openBgMenu($event)"
                  @endif>
-                <div @if($canEdit) @contextmenu.stop @endif>
-                    @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $canEdit, 'changedFiles' => $changedFiles])
-                </div>
-                <div class="flex-1 min-h-[100px]"></div>
+                @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $canEdit, 'changedFiles' => $changedFiles])
+                <div data-sidebar-bg class="min-h-[150px]"></div>
             </nav>
             @if($canEdit && $pendingCount > 0)
                 <div class="p-3 border-t border-gray-200">
