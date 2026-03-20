@@ -16,6 +16,9 @@
                             Back
                         </a>
                         <span class="text-sm text-gray-400">{{ str_replace('/', ' / ', $currentPath) }}</span>
+                        @if($meta['id'])
+                            <span class="text-sm font-mono font-semibold text-gray-700">{{ $meta['id'] }}</span>
+                        @endif
                     </div>
                 </div>
 
@@ -27,11 +30,66 @@
                     </div>
                 @endif
 
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-6">
-                    <form method="POST" action="{{ route('documents.update') }}">
-                        @csrf
-                        @method('PUT')
-                        <input type="hidden" name="path" value="{{ $currentPath }}">
+                <form method="POST" action="{{ route('documents.update') }}">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="path" value="{{ $currentPath }}">
+
+                    {{-- Metadata panel --}}
+                    @if($meta['id'])
+                        <div x-data="{ showMeta: false }" class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3 text-sm">
+                                    <span class="font-mono font-semibold text-gray-800">{{ $meta['id'] }}</span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
+                                        {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-600' : '' }}
+                                        {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
+                                        {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
+                                        {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">
+                                        {{ $statuses[$meta['status']] ?? ucfirst($meta['status']) }}
+                                    </span>
+                                    <span class="text-gray-400">v{{ $meta['version'] }}</span>
+                                    @if($meta['author'])
+                                        <span class="text-gray-400">{{ $meta['author'] }}</span>
+                                    @endif
+                                </div>
+                                <button type="button" @click="showMeta = !showMeta" class="text-xs text-blue-600 hover:text-blue-800">
+                                    <span x-text="showMeta ? 'Hide properties' : 'Edit properties'"></span>
+                                </button>
+                            </div>
+
+                            <div x-show="showMeta" x-cloak class="mt-4 pt-4 border-t border-gray-100">
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                                        <select name="meta_status" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                            @foreach($statuses as $key => $label)
+                                                <option value="{{ $key }}" {{ $meta['status'] === $key ? 'selected' : '' }}>{{ $label }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Version</label>
+                                        <input type="text" name="meta_version" value="{{ $meta['version'] }}"
+                                               class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Effective date</label>
+                                        <input type="date" name="meta_effective_date" value="{{ $meta['effective_date'] }}"
+                                               class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Author</label>
+                                        <input type="text" name="meta_author" value="{{ $meta['author'] }}"
+                                               class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- Editor --}}
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-6">
                         <textarea id="editor" name="content">{{ $content }}</textarea>
                         <div class="flex justify-end gap-2 mt-4">
                             <a href="{{ route('documents.index', ['path' => $currentPath]) }}"
@@ -39,8 +97,8 @@
                             <button type="submit"
                                     class="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Save Document</button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </main>
     </div>

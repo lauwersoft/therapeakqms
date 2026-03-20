@@ -75,13 +75,15 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
                             </svg>
                         @endif
-                        <svg class="w-4 h-4 mr-2 shrink-0 {{ $currentPath === $item['path'] ? 'text-blue-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 mr-2 shrink-0 self-start mt-0.5 {{ $currentPath === $item['path'] ? 'text-blue-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
-                        @if($item['doc_id'] ?? null)
-                            <span class="text-xs {{ $currentPath === $item['path'] ? 'text-blue-400' : 'text-gray-400' }} mr-1 shrink-0 font-mono">{{ $item['doc_id'] }}</span>
-                        @endif
-                        <span class="truncate">{{ $item['name'] }}</span>
+                        <span class="min-w-0 flex-1">
+                            <span class="truncate block leading-tight">{{ $item['name'] }}</span>
+                            @if($item['doc_id'] ?? null)
+                                <span class="text-[10px] {{ $currentPath === $item['path'] ? 'text-blue-400' : 'text-gray-400' }} font-mono block leading-tight">{{ $item['doc_id'] }}@if($item['doc_status'] ?? null) · {{ ucfirst($item['doc_status'] === 'in_review' ? 'In Review' : $item['doc_status']) }}@endif</span>
+                            @endif
+                        </span>
                         @if($fileStatus)
                             <span class="ml-auto shrink-0 w-2 h-2 rounded-full
                                 {{ in_array($fileStatus, ['new', 'added']) ? 'bg-green-500' : '' }}

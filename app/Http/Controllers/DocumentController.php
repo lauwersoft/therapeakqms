@@ -76,11 +76,15 @@ class DocumentController extends Controller
             abort(404);
         }
 
-        $content = File::get($filePath);
+        $raw = File::get($filePath);
+        $parsed = DocumentMetadata::parse($raw);
 
         return view('documents.edit', [
-            'content' => $content,
+            'content' => $parsed['body'],
+            'meta' => $parsed['meta'],
             'currentPath' => $path,
+            'documentTypes' => DocumentMetadata::TYPES,
+            'statuses' => DocumentMetadata::STATUSES,
         ]);
     }
 
@@ -91,6 +95,10 @@ class DocumentController extends Controller
         $request->validate([
             'path' => 'required|string',
             'content' => 'required|string',
+            'meta_status' => 'nullable|string|in:' . implode(',', array_keys(DocumentMetadata::STATUSES)),
+            'meta_version' => 'nullable|string|max:20',
+            'meta_effective_date' => 'nullable|date',
+            'meta_author' => 'nullable|string|max:255',
         ]);
 
         $path = $request->input('path');
@@ -99,7 +107,30 @@ class DocumentController extends Controller
             abort(404);
         }
 
-        File::put($filePath, $request->input('content'));
+        // Read existing frontmatter
+        $raw = File::get($filePath);
+        $parsed = DocumentMetadata::parse($raw);
+        $meta = $parsed['meta'];
+
+        // Update metadata fields if provided
+        if ($request->filled('meta_status')) {
+            $meta['status'] = $request->input('meta_status');
+        }
+        if ($request->filled('meta_version')) {
+            $meta['version'] = $request->input('meta_version');
+        }
+        if ($request->filled('meta_effective_date')) {
+            $meta['effective_date'] = $request->input('meta_effective_date');
+        }
+        if ($request->has('meta_author')) {
+            $meta['author'] = $request->input('meta_author');
+        }
+
+        // Build the full file with frontmatter + new content
+        $body = $request->input('content');
+        $fileContent = $meta['id'] ? DocumentMetadata::build($meta, $body) : $body;
+
+        File::put($filePath, $fileContent);
         $this->logChange($request->user(), 'edit', $path);
 
         return redirect()->route('documents.index', ['path' => $path])
