@@ -89,12 +89,12 @@
                         </div>
 
                         {{-- Diff content --}}
-                        <div x-show="open" x-cloak>
+                        <div x-show="open">
                             @if($status === 'deleted')
                                 <div class="px-4 py-6 text-center text-sm text-gray-500">
                                     This file has been deleted.
                                 </div>
-                            @elseif(isset($diffs[$path]) && $status === 'modified')
+                            @elseif(isset($diffs[$path]) && !empty(trim($diffs[$path])) && $status === 'modified')
                                 <div class="overflow-x-auto">
                                     <table class="w-full">
                                         @php

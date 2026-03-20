@@ -176,8 +176,16 @@ class GitService
     public function getFileDiff(string $path): string
     {
         $result = Process::path($this->base)
-            ->run(['git', 'diff', 'HEAD', '--', 'qms/documents/' . $path]);
+            ->run(['git', 'diff', 'HEAD', '--no-color', '--', 'qms/documents/' . $path]);
 
-        return $result->output();
+        // git diff returns exit code 1 when there are differences, which Process treats as failed
+        // So we check output regardless of exit code
+        $output = $result->output();
+
+        if (empty($output)) {
+            $output = $result->errorOutput();
+        }
+
+        return $output;
     }
 }
