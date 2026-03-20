@@ -46,14 +46,36 @@ class DocumentMetadata
         $meta = [];
         $body = $content;
 
-        // Only parse if content starts with --- (allowing leading whitespace/newlines)
+        // Only parse if content starts with ---
         $trimmed = ltrim($content);
         if (str_starts_with($trimmed, '---')) {
-            // Match: opening ---, YAML block, closing ---, rest is body
-            // Use \A on trimmed content to anchor at start
-            if (preg_match('/\A---[ \t]*\r?\n(.+?)\r?\n---[ \t]*\r?\n(.*)\z/s', $trimmed, $matches)) {
-                $yamlBlock = $matches[1];
-                $body = $matches[2];
+            // Find the closing --- (must be on its own line)
+            // Split on the first two --- line boundaries
+            $lines = preg_split('/\r?\n/', $trimmed);
+
+            $yamlLines = [];
+            $foundOpen = false;
+            $closingLine = null;
+
+            for ($i = 0; $i < count($lines); $i++) {
+                if ($i === 0 && trim($lines[$i]) === '---') {
+                    $foundOpen = true;
+                    continue;
+                }
+
+                if ($foundOpen && trim($lines[$i]) === '---') {
+                    $closingLine = $i;
+                    break;
+                }
+
+                if ($foundOpen) {
+                    $yamlLines[] = $lines[$i];
+                }
+            }
+
+            if ($foundOpen && $closingLine !== null && ! empty($yamlLines)) {
+                $yamlBlock = implode("\n", $yamlLines);
+                $body = implode("\n", array_slice($lines, $closingLine + 1));
 
                 try {
                     $parsed = Yaml::parse($yamlBlock);
@@ -61,7 +83,6 @@ class DocumentMetadata
                         $meta = $parsed;
                     }
                 } catch (\Exception $e) {
-                    // Malformed YAML — treat entire content as body, no metadata
                     $meta = [];
                     $body = $content;
                 }
