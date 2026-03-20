@@ -107,8 +107,21 @@ class DocumentMetadata
             }
         }
 
-        $yaml = Yaml::dump($ordered, 2, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
+        // Build YAML manually for clean, consistent output with double quotes
+        $lines = [];
+        foreach ($ordered as $key => $value) {
+            if (is_array($value)) {
+                $lines[] = "{$key}:";
+                foreach ($value as $item) {
+                    $lines[] = "  - \"{$item}\"";
+                }
+            } else {
+                $escaped = str_replace('"', '\\"', (string) $value);
+                $lines[] = "{$key}: \"{$escaped}\"";
+            }
+        }
 
+        $yaml = implode("\n", $lines) . "\n";
         $body = trim($body);
 
         return "---\n{$yaml}---\n\n{$body}\n";
