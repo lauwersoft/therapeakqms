@@ -42,10 +42,14 @@
                                     {{-- Affected documents preview --}}
                                     <div class="flex flex-wrap items-center gap-1.5 mt-2">
                                         @foreach($commit['files'] as $file)
+                                            @php
+                                                $dir = dirname($file['path']);
+                                                $dirLabel = ($dir !== '.' && $dir !== '') ? str_replace('/', ' / ', $dir) . ' / ' : '';
+                                            @endphp
                                             <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full
                                                 {{ $file['status'] === 'added' ? 'bg-green-50 text-green-700' : '' }}
                                                 {{ $file['status'] === 'modified' ? 'bg-blue-50 text-blue-700' : '' }}
-                                                {{ $file['status'] === 'deleted' ? 'bg-red-50 text-red-600' : '' }}">
+                                                {{ $file['status'] === 'deleted' ? 'bg-red-50 text-red-600 line-through decoration-red-300' : '' }}">
                                                 @if($file['doc_id'])
                                                     <span class="font-mono font-medium">{{ $file['doc_id'] }}</span>
                                                 @else
@@ -95,38 +99,44 @@
                             @if(count($commit['files']) > 0)
                                 <div class="px-5 py-3">
                                     <div class="text-xs font-medium text-gray-400 mb-2">Affected documents</div>
-                                    <div class="space-y-2">
+                                    <div class="space-y-1.5">
                                         @foreach($commit['files'] as $file)
+                                            @php
+                                                $dir = dirname($file['path']);
+                                                $dirLabel = ($dir !== '.' && $dir !== '') ? ucwords(str_replace(['-', '_', '/'], [' ', ' ', ' / '], $dir)) : null;
+                                            @endphp
                                             <div class="flex items-center gap-3">
                                                 @if($file['status'] === 'added')
-                                                    <span class="w-16 text-xs font-medium text-green-600">Created</span>
+                                                    <span class="w-16 text-xs font-medium text-green-600 shrink-0">Created</span>
                                                 @elseif($file['status'] === 'modified')
-                                                    <span class="w-16 text-xs font-medium text-blue-600">Updated</span>
+                                                    <span class="w-16 text-xs font-medium text-blue-600 shrink-0">Updated</span>
                                                 @elseif($file['status'] === 'deleted')
-                                                    <span class="w-16 text-xs font-medium text-red-600">Removed</span>
+                                                    <span class="w-16 text-xs font-medium text-red-600 shrink-0">Removed</span>
                                                 @else
-                                                    <span class="w-16 text-xs font-medium text-gray-500">Changed</span>
+                                                    <span class="w-16 text-xs font-medium text-gray-500 shrink-0">Changed</span>
                                                 @endif
 
-                                                @if($file['status'] !== 'deleted' && $file['doc_id'])
-                                                    <a href="{{ route('documents.index', ['path' => str_replace('.md', '', $file['path'])]) }}"
-                                                       class="text-sm text-gray-700 hover:text-blue-600 hover:underline">
-                                                        <span class="font-mono text-xs text-gray-400 mr-1">{{ $file['doc_id'] }}</span>
-                                                        {{ $file['doc_title'] }}
-                                                    </a>
-                                                @elseif($file['status'] !== 'deleted')
-                                                    <a href="{{ route('documents.index', ['path' => str_replace('.md', '', $file['path'])]) }}"
-                                                       class="text-sm text-gray-700 hover:text-blue-600 hover:underline">
-                                                        {{ $file['doc_title'] }}
-                                                    </a>
-                                                @else
-                                                    <span class="text-sm text-gray-400 line-through">
-                                                        @if($file['doc_id'])
-                                                            <span class="font-mono text-xs mr-1">{{ $file['doc_id'] }}</span>
-                                                        @endif
-                                                        {{ $file['doc_title'] }}
-                                                    </span>
-                                                @endif
+                                                <div class="min-w-0">
+                                                    @if($file['status'] !== 'deleted')
+                                                        <a href="{{ route('documents.index', ['path' => str_replace('.md', '', $file['path'])]) }}"
+                                                           class="text-sm text-gray-700 hover:text-blue-600 hover:underline">
+                                                            @if($file['doc_id'])
+                                                                <span class="font-mono text-xs text-gray-400 mr-1">{{ $file['doc_id'] }}</span>
+                                                            @endif
+                                                            {{ $file['doc_title'] }}
+                                                        </a>
+                                                    @else
+                                                        <span class="text-sm text-gray-400 line-through decoration-1">
+                                                            @if($file['doc_id'])
+                                                                <span class="font-mono text-xs mr-1">{{ $file['doc_id'] }}</span>
+                                                            @endif
+                                                            {{ $file['doc_title'] }}
+                                                        </span>
+                                                    @endif
+                                                    @if($dirLabel)
+                                                        <span class="text-[11px] text-gray-400 ml-1.5">in {{ $dirLabel }}</span>
+                                                    @endif
+                                                </div>
                                             </div>
                                         @endforeach
                                     </div>
