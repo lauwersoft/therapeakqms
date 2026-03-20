@@ -260,6 +260,11 @@ class DocumentController extends Controller
         $this->authorizeEditor($request->user());
 
         $changedFiles = $this->git->getChangedFiles();
+
+        // Reconcile: remove log entries for files that aren't actually changed
+        $changedPaths = array_keys($changedFiles);
+        DocumentChange::whereNotIn('path', $changedPaths)->delete();
+
         $changeLog = DocumentChange::with('user')->oldest()->get();
 
         // Get diffs for each changed file
