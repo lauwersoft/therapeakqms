@@ -1,4 +1,14 @@
 <x-app-layout>
+    @push('styles')
+        <style>
+            .diff-line { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.8rem; white-space: pre-wrap; word-break: break-all; }
+            .diff-add { background-color: #dcfce7; color: #166534; }
+            .diff-remove { background-color: #fee2e2; color: #991b1b; }
+            .diff-header { background-color: #f0f9ff; color: #1e40af; }
+            .diff-range { background-color: #faf5ff; color: #6b21a8; }
+        </style>
+    @endpush
+
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Unpublished Changes</h2>
@@ -7,7 +17,7 @@
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             @if(session('success'))
                 <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-700 mb-6">
                     {{ session('success') }}
@@ -30,38 +40,132 @@
                     <p class="text-gray-500">All changes are published. Everything is up to date.</p>
                 </div>
             @else
-                {{-- Changed files list --}}
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-                    <div class="p-4 border-b border-gray-200">
-                        <h3 class="font-semibold text-gray-800">{{ count($changedFiles) }} changed {{ Str::plural('file', count($changedFiles)) }}</h3>
-                    </div>
-                    <div class="divide-y divide-gray-100">
-                        @foreach($changedFiles as $path => $status)
-                            <div class="flex items-center justify-between px-4 py-3">
-                                <div class="flex items-center gap-3 min-w-0">
-                                    <span class="shrink-0 text-xs font-medium px-2 py-0.5 rounded-full
-                                        {{ $status === 'new' ? 'bg-green-100 text-green-700' : '' }}
-                                        {{ $status === 'modified' ? 'bg-yellow-100 text-yellow-700' : '' }}
-                                        {{ $status === 'deleted' ? 'bg-red-100 text-red-700' : '' }}
-                                        {{ $status === 'added' ? 'bg-green-100 text-green-700' : '' }}">
-                                        {{ ucfirst($status) }}
-                                    </span>
-                                    <span class="text-sm text-gray-700 truncate">{{ $path }}</span>
-                                </div>
-                                <form method="POST" action="{{ route('documents.discard') }}" class="shrink-0 ml-2">
-                                    @csrf
-                                    <input type="hidden" name="path" value="{{ $path }}">
-                                    <button type="submit" class="text-xs text-gray-500 hover:text-red-600 px-2 py-1 rounded hover:bg-gray-100"
-                                            onclick="return confirm('Discard changes to {{ $path }}?')">
-                                        Discard
-                                    </button>
-                                </form>
-                            </div>
-                        @endforeach
-                    </div>
+                {{-- Summary bar --}}
+                <div class="flex items-center gap-4 mb-6 text-sm">
+                    <span class="text-gray-600">
+                        <span class="font-semibold text-gray-900">{{ count($changedFiles) }}</span> changed {{ Str::plural('file', count($changedFiles)) }}
+                    </span>
+                    @php
+                        $added = count(array_filter($changedFiles, fn($s) => in_array($s, ['new', 'added'])));
+                        $modified = count(array_filter($changedFiles, fn($s) => $s === 'modified'));
+                        $deleted = count(array_filter($changedFiles, fn($s) => $s === 'deleted'));
+                    @endphp
+                    @if($added)
+                        <span class="text-green-700">+{{ $added }} added</span>
+                    @endif
+                    @if($modified)
+                        <span class="text-amber-700">~{{ $modified }} modified</span>
+                    @endif
+                    @if($deleted)
+                        <span class="text-red-700">-{{ $deleted }} deleted</span>
+                    @endif
                 </div>
 
-                {{-- Change log (who did what) --}}
+                {{-- File diffs --}}
+                @foreach($changedFiles as $path => $status)
+                    <div x-data="{ open: true }" class="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 overflow-hidden">
+                        {{-- File header --}}
+                        <div class="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200 cursor-pointer" @click="open = !open">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <svg class="w-4 h-4 text-gray-400 transition-transform shrink-0" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                                <span class="shrink-0 text-xs font-medium px-2 py-0.5 rounded-full
+                                    {{ in_array($status, ['new', 'added']) ? 'bg-green-100 text-green-700' : '' }}
+                                    {{ $status === 'modified' ? 'bg-amber-100 text-amber-700' : '' }}
+                                    {{ $status === 'deleted' ? 'bg-red-100 text-red-700' : '' }}">
+                                    {{ ucfirst($status) }}
+                                </span>
+                                <span class="text-sm font-mono text-gray-700 truncate">{{ $path }}</span>
+                            </div>
+                            <form method="POST" action="{{ route('documents.discard') }}" class="shrink-0 ml-2" @click.stop>
+                                @csrf
+                                <input type="hidden" name="path" value="{{ $path }}">
+                                <button type="submit" class="text-xs text-gray-500 hover:text-red-600 px-2 py-1 rounded hover:bg-gray-100"
+                                        onclick="return confirm('Discard changes to {{ $path }}?')">
+                                    Discard
+                                </button>
+                            </form>
+                        </div>
+
+                        {{-- Diff content --}}
+                        <div x-show="open" x-cloak>
+                            @if($status === 'deleted')
+                                <div class="px-4 py-6 text-center text-sm text-gray-500">
+                                    This file has been deleted.
+                                </div>
+                            @elseif(isset($diffs[$path]) && $status === 'modified')
+                                <div class="overflow-x-auto">
+                                    <table class="w-full">
+                                        @php
+                                            $diffLines = explode("\n", $diffs[$path]);
+                                            $oldLine = 0;
+                                            $newLine = 0;
+                                        @endphp
+                                        @foreach($diffLines as $line)
+                                            @if(str_starts_with($line, '@@'))
+                                                @php
+                                                    preg_match('/@@ -(\d+)/', $line, $m);
+                                                    $oldLine = (int)($m[1] ?? 0);
+                                                    $newLine = $oldLine;
+                                                @endphp
+                                                <tr>
+                                                    <td colspan="3" class="diff-line diff-range px-4 py-1">{{ $line }}</td>
+                                                </tr>
+                                            @elseif(str_starts_with($line, '---') || str_starts_with($line, '+++'))
+                                                <tr>
+                                                    <td colspan="3" class="diff-line diff-header px-4 py-0.5">{{ $line }}</td>
+                                                </tr>
+                                            @elseif(str_starts_with($line, 'diff ') || str_starts_with($line, 'index '))
+                                                <tr>
+                                                    <td colspan="3" class="diff-line diff-header px-4 py-0.5 text-gray-500">{{ $line }}</td>
+                                                </tr>
+                                            @elseif(str_starts_with($line, '-'))
+                                                <tr>
+                                                    <td class="diff-line diff-remove text-right px-2 py-0 text-gray-400 select-none w-10 align-top">{{ $oldLine }}</td>
+                                                    <td class="diff-line diff-remove text-right px-2 py-0 text-gray-400 select-none w-10 align-top"></td>
+                                                    <td class="diff-line diff-remove px-4 py-0">{{ $line }}</td>
+                                                </tr>
+                                                @php $oldLine++; @endphp
+                                            @elseif(str_starts_with($line, '+'))
+                                                <tr>
+                                                    <td class="diff-line diff-add text-right px-2 py-0 text-gray-400 select-none w-10 align-top"></td>
+                                                    <td class="diff-line diff-add text-right px-2 py-0 text-gray-400 select-none w-10 align-top">{{ $newLine }}</td>
+                                                    <td class="diff-line diff-add px-4 py-0">{{ $line }}</td>
+                                                </tr>
+                                                @php $newLine++; @endphp
+                                            @elseif(trim($line) !== '' || ($oldLine > 0))
+                                                <tr>
+                                                    <td class="diff-line text-right px-2 py-0 text-gray-300 select-none w-10 align-top">{{ $oldLine ?: '' }}</td>
+                                                    <td class="diff-line text-right px-2 py-0 text-gray-300 select-none w-10 align-top">{{ $newLine ?: '' }}</td>
+                                                    <td class="diff-line px-4 py-0 text-gray-600">{{ $line ?: ' ' }}</td>
+                                                </tr>
+                                                @php $oldLine++; $newLine++; @endphp
+                                            @endif
+                                        @endforeach
+                                    </table>
+                                </div>
+                            @elseif(isset($diffs[$path]) && in_array($status, ['new', 'added']))
+                                <div class="overflow-x-auto">
+                                    <table class="w-full">
+                                        @foreach(explode("\n", $diffs[$path]) as $i => $line)
+                                            <tr>
+                                                <td class="diff-line diff-add text-right px-2 py-0 text-gray-400 select-none w-10 align-top">{{ $i + 1 }}</td>
+                                                <td class="diff-line diff-add px-4 py-0">+{{ $line }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </table>
+                                </div>
+                            @else
+                                <div class="px-4 py-6 text-center text-sm text-gray-500">
+                                    No diff available.
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+
+                {{-- Activity log --}}
                 @if($changeLog->isNotEmpty())
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
                         <div class="p-4 border-b border-gray-200">
@@ -70,10 +174,30 @@
                         <div class="divide-y divide-gray-100">
                             @foreach($changeLog as $change)
                                 <div class="px-4 py-3 flex items-center gap-3 text-sm">
-                                    <span class="font-medium text-gray-900">{{ $change->user->name }}</span>
-                                    <span class="text-gray-500">{{ $change->action }}</span>
-                                    <span class="text-gray-700">{{ $change->path }}</span>
-                                    <span class="text-gray-400 ml-auto shrink-0">{{ $change->created_at->diffForHumans() }}</span>
+                                    <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-medium text-gray-600 shrink-0">
+                                        {{ strtoupper(substr($change->user->name, 0, 1)) }}
+                                    </div>
+                                    <div class="min-w-0">
+                                        <span class="font-medium text-gray-900">{{ $change->user->name }}</span>
+                                        <span class="text-gray-500">
+                                            {{ match($change->action) {
+                                                'edit' => 'edited',
+                                                'create' => 'created',
+                                                'delete' => 'deleted',
+                                                'move' => 'moved',
+                                                'rename' => 'renamed',
+                                                default => $change->action,
+                                            } }}
+                                        </span>
+                                        <span class="font-mono text-gray-700 text-xs">{{ $change->path }}</span>
+                                        @if($change->action === 'move' && isset($change->details['old_path']))
+                                            <span class="text-gray-400 text-xs">from {{ $change->details['old_path'] }}</span>
+                                        @endif
+                                        @if($change->action === 'rename' && isset($change->details['old_path']))
+                                            <span class="text-gray-400 text-xs">was {{ basename($change->details['old_path']) }}</span>
+                                        @endif
+                                    </div>
+                                    <span class="text-gray-400 ml-auto shrink-0 text-xs">{{ $change->created_at->diffForHumans() }}</span>
                                 </div>
                             @endforeach
                         </div>
@@ -89,17 +213,20 @@
                             <input type="text" name="message" placeholder="e.g. Updated risk management procedures"
                                    class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500 mb-4" required>
                             <div class="flex items-center justify-between">
-                                <form method="POST" action="{{ route('documents.discard-all') }}" class="inline">
-                                    @csrf
-                                    <button type="submit" class="text-sm text-red-600 hover:text-red-700 px-3 py-1.5 rounded hover:bg-red-50"
-                                            onclick="return confirm('Discard ALL unpublished changes? This cannot be undone.')">
+                                <div>
+                                    <button type="button"
+                                            onclick="if(confirm('Discard ALL unpublished changes? This cannot be undone.')) { document.getElementById('discard-all-form').submit(); }"
+                                            class="text-sm text-red-600 hover:text-red-700 px-3 py-1.5 rounded hover:bg-red-50">
                                         Discard all changes
                                     </button>
-                                </form>
+                                </div>
                                 <button type="submit" class="px-5 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
                                     Publish {{ count($changedFiles) }} {{ Str::plural('change', count($changedFiles)) }}
                                 </button>
                             </div>
+                        </form>
+                        <form id="discard-all-form" method="POST" action="{{ route('documents.discard-all') }}" class="hidden">
+                            @csrf
                         </form>
                     @else
                         <p class="text-sm text-gray-600">Only admins can publish changes. Ask an admin to review and publish.</p>

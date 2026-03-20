@@ -262,9 +262,23 @@ class DocumentController extends Controller
         $changedFiles = $this->git->getChangedFiles();
         $changeLog = DocumentChange::with('user')->oldest()->get();
 
+        // Get diffs for each changed file
+        $diffs = [];
+        foreach ($changedFiles as $path => $status) {
+            if ($status === 'modified') {
+                $diffs[$path] = $this->git->getFileDiff($path);
+            } elseif (in_array($status, ['new', 'added'])) {
+                $fullPath = $this->basePath . '/' . $path;
+                if (File::exists($fullPath)) {
+                    $diffs[$path] = File::get($fullPath);
+                }
+            }
+        }
+
         return view('documents.changes', [
             'changedFiles' => $changedFiles,
             'changeLog' => $changeLog,
+            'diffs' => $diffs,
             'canPublish' => $request->user()->role === User::ROLE_ADMIN,
         ]);
     }
