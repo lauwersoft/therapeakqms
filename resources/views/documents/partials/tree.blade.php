@@ -10,7 +10,7 @@
                                     @contextmenu="openDirMenu($event, '{{ $item['path'] }}', '{{ addslashes($item['name']) }}')"
                                 @endif
                                 class="flex items-center flex-1 min-w-0 px-2 py-1.5 text-sm font-medium text-gray-700 rounded hover:bg-gray-100">
-                            <svg class="w-4 h-4 mr-2 text-gray-400 transition-transform shrink-0" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 mr-2 text-gray-400 shrink-0 rotate-90" :class="open ? 'rotate-90' : 'rotate-0'" x-init="$nextTick(() => $el.classList.add('transition-transform'))" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                             <svg class="w-4 h-4 mr-2 text-yellow-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
