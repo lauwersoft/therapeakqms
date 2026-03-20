@@ -64,10 +64,14 @@ class DocumentController extends Controller
         $changeLogCount = DocumentChange::count();
         $pendingCount = max(count($changedFiles), $changeLogCount);
 
+        // Get last edit info
+        $lastEdit = $this->git->getLastCommitInfo($path);
+
         return view('documents.index', [
             'tree' => $tree,
             'content' => $html,
             'meta' => $meta,
+            'lastEdit' => $lastEdit,
             'currentPath' => $path,
             'canEdit' => $canEdit,
             'directories' => $canEdit ? $this->getDirectories() : [],

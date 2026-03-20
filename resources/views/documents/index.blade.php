@@ -293,35 +293,49 @@
             <div class="max-w-4xl mx-auto py-6 px-4 sm:py-8 sm:px-6 lg:px-8">
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                     @if($meta['id'])
-                        <div class="px-5 sm:px-8 pt-5 sm:pt-6 pb-0">
-                            <div class="flex items-start justify-between gap-4 pb-4 border-b border-gray-100">
-                                <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
-                                    <span class="font-mono font-semibold text-gray-800 text-sm">{{ $meta['id'] }}</span>
-                                    @if($meta['type'] && isset(\App\Services\DocumentMetadata::TYPES[$meta['type']]))
-                                        <span class="text-gray-400">{{ \App\Services\DocumentMetadata::TYPES[$meta['type']] }}</span>
-                                    @endif
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full font-medium
-                                        {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-600' : '' }}
-                                        {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
-                                        {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
-                                        {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">
-                                        {{ \App\Services\DocumentMetadata::STATUSES[$meta['status']] ?? ucfirst($meta['status']) }}
-                                    </span>
-                                    @if($meta['version'])
-                                        <span class="text-gray-400">v{{ $meta['version'] }}</span>
-                                    @endif
-                                    @if($meta['author'])
-                                        <span class="text-gray-400">{{ $meta['author'] }}</span>
-                                    @endif
-                                    @if($meta['effective_date'])
-                                        <span class="text-gray-400">Effective: {{ $meta['effective_date'] }}</span>
-                                    @endif
-                                    @if(!empty($meta['iso_refs']))
-                                        <span class="text-blue-500" title="ISO 13485 references">ISO {{ implode(', ', $meta['iso_refs']) }}</span>
-                                    @endif
-                                    @if(!empty($meta['mdr_refs']))
-                                        <span class="text-blue-500" title="EU MDR references">MDR {{ implode(', ', $meta['mdr_refs']) }}</span>
-                                    @endif
+                        <div class="px-5 sm:px-8 pt-4 sm:pt-5 pb-0">
+                            <div class="flex items-start justify-between gap-4 pb-3 border-b border-gray-100">
+                                <div class="text-xs space-y-1.5">
+                                    {{-- Row 1: ID, type, status, version --}}
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-mono font-semibold text-gray-700">{{ $meta['id'] }}</span>
+                                        @if($meta['type'] && isset(\App\Services\DocumentMetadata::TYPES[$meta['type']]))
+                                            <span class="text-gray-400">·</span>
+                                            <span class="text-gray-400">{{ \App\Services\DocumentMetadata::TYPES[$meta['type']] }}</span>
+                                        @endif
+                                        <span class="text-gray-400">·</span>
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium
+                                            {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
+                                            {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
+                                            {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
+                                            {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">
+                                            {{ \App\Services\DocumentMetadata::STATUSES[$meta['status']] ?? ucfirst($meta['status']) }}
+                                        </span>
+                                        @if($meta['version'])
+                                            <span class="text-gray-400">v{{ $meta['version'] }}</span>
+                                        @endif
+                                        @if($meta['effective_date'])
+                                            <span class="text-gray-400">· Effective {{ $meta['effective_date'] }}</span>
+                                        @endif
+                                    </div>
+                                    {{-- Row 2: References + last edit (single line) --}}
+                                    <div class="flex items-center gap-2 text-gray-400">
+                                        @if($meta['author'])
+                                            <span>{{ $meta['author'] }}</span>
+                                        @endif
+                                        @if(!empty($meta['iso_refs']))
+                                            <span>·</span>
+                                            <span class="text-blue-400">ISO {{ implode(', ', $meta['iso_refs']) }}</span>
+                                        @endif
+                                        @if(!empty($meta['mdr_refs']))
+                                            <span>·</span>
+                                            <span class="text-blue-400">MDR {{ implode(', ', $meta['mdr_refs']) }}</span>
+                                        @endif
+                                        @if($lastEdit)
+                                            <span>·</span>
+                                            <span>Last edited by {{ $lastEdit['name'] }} {{ $lastEdit['date']->diffForHumans() }}</span>
+                                        @endif
+                                    </div>
                                 </div>
                                 @if($canEdit)
                                     <a href="{{ route('documents.edit', ['path' => str_replace('.md', '', $currentPath)]) }}"
@@ -335,8 +349,13 @@
                             </div>
                         </div>
                     @elseif($canEdit)
-                        <div class="px-5 sm:px-8 pt-5 sm:pt-6 pb-0">
-                            <div class="flex justify-end pb-4 border-b border-gray-100">
+                        <div class="px-5 sm:px-8 pt-4 sm:pt-5 pb-0">
+                            <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+                                @if($lastEdit)
+                                    <span class="text-xs text-gray-400">Last edited by {{ $lastEdit['name'] }} {{ $lastEdit['date']->diffForHumans() }}</span>
+                                @else
+                                    <span></span>
+                                @endif
                                 <a href="{{ route('documents.edit', ['path' => str_replace('.md', '', $currentPath)]) }}"
                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-md text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

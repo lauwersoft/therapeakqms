@@ -201,6 +201,28 @@ class GitService
         return $files;
     }
 
+    /**
+     * Get last commit info (author + date) for a specific file.
+     */
+    public function getLastCommitInfo(string $path): ?array
+    {
+        $result = Process::path($this->base)
+            ->run(['git', 'log', '-1', '--format=%an|%ae|%aI', '--', 'qms/documents/' . $path]);
+
+        if ($result->successful() && trim($result->output())) {
+            $parts = explode('|', trim($result->output()));
+            if (count($parts) === 3) {
+                return [
+                    'name' => $parts[0],
+                    'email' => $parts[1],
+                    'date' => \Carbon\Carbon::parse($parts[2]),
+                ];
+            }
+        }
+
+        return null;
+    }
+
     public function getFileDiff(string $path): string
     {
         $result = Process::path($this->base)
