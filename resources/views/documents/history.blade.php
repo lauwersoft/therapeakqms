@@ -49,7 +49,7 @@
                                             <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full
                                                 {{ $file['status'] === 'added' ? 'bg-green-50 text-green-700' : '' }}
                                                 {{ $file['status'] === 'modified' ? 'bg-blue-50 text-blue-700' : '' }}
-                                                {{ $file['status'] === 'deleted' ? 'bg-red-50 text-red-600 line-through decoration-red-300' : '' }}">
+                                                {{ $file['status'] === 'deleted' ? 'bg-red-50 text-red-600' : '' }}">
                                                 @if($file['doc_id'])
                                                     <span class="font-mono font-medium">{{ $file['doc_id'] }}</span>
                                                 @else
@@ -123,18 +123,21 @@
                                                             @if($file['doc_id'])
                                                                 <span class="font-mono text-xs text-gray-400 mr-1">{{ $file['doc_id'] }}</span>
                                                             @endif
+                                                            @if($dirLabel)
+                                                                <span class="text-gray-400">{{ $dirLabel }} /</span>
+                                                            @endif
                                                             {{ $file['doc_title'] }}
                                                         </a>
                                                     @else
-                                                        <span class="text-sm text-gray-400 line-through decoration-1">
+                                                        <span class="text-sm text-gray-400" style="text-decoration: line-through; text-decoration-thickness: 1px; text-underline-offset: 0;">
                                                             @if($file['doc_id'])
                                                                 <span class="font-mono text-xs mr-1">{{ $file['doc_id'] }}</span>
                                                             @endif
+                                                            @if($dirLabel)
+                                                                {{ $dirLabel }} /
+                                                            @endif
                                                             {{ $file['doc_title'] }}
                                                         </span>
-                                                    @endif
-                                                    @if($dirLabel)
-                                                        <span class="text-[11px] text-gray-400 ml-1.5">in {{ $dirLabel }}</span>
                                                     @endif
                                                 </div>
                                             </div>
