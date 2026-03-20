@@ -15,8 +15,11 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.*')">
+                    <x-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.index') || request()->routeIs('documents.edit') || request()->routeIs('documents.create') || request()->routeIs('documents.changes')">
                         {{ __('Documents') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('documents.history')" :active="request()->routeIs('documents.history')">
+                        {{ __('History') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -73,8 +76,11 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.*')">
+            <x-responsive-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.index') || request()->routeIs('documents.edit') || request()->routeIs('documents.create') || request()->routeIs('documents.changes')">
                 {{ __('Documents') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('documents.history')" :active="request()->routeIs('documents.history')">
+                {{ __('History') }}
             </x-responsive-nav-link>
         </div>
 

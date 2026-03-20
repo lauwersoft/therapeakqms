@@ -206,49 +206,73 @@ class GitService
      */
     public function getHistory(int $limit = 50, int $offset = 0): array
     {
+        // Fetch more than needed to account for filtered commits
+        $fetchLimit = $limit + $offset + 50;
         $result = Process::path($this->base)
-            ->run(['git', 'log', '--format=%H|%an|%ae|%aI|%s', '--skip=' . $offset, '-' . $limit, '--', 'qms/documents/']);
+            ->run(['git', 'log', '--no-merges', '--format=%H|%an|%ae|%aI|%s', '-' . $fetchLimit, '--', 'qms/documents/']);
 
         $commits = [];
+        $skipped = 0;
+
         if ($result->successful() && trim($result->output())) {
             foreach (explode("\n", trim($result->output())) as $line) {
                 $parts = explode('|', $line, 5);
-                if (count($parts) === 5) {
-                    $hash = $parts[0];
+                if (count($parts) !== 5) continue;
 
-                    // Get changed files for this commit
-                    $filesResult = Process::path($this->base)
-                        ->run(['git', 'diff-tree', '--no-commit-id', '--name-status', '-r', $hash, '--', 'qms/documents/']);
+                $hash = $parts[0];
+                $message = $parts[4];
 
-                    $files = [];
-                    if ($filesResult->successful() && trim($filesResult->output())) {
-                        foreach (explode("\n", trim($filesResult->output())) as $fileLine) {
-                            $fileParts = preg_split('/\s+/', $fileLine, 2);
-                            if (count($fileParts) === 2) {
-                                $status = match ($fileParts[0]) {
-                                    'A' => 'added',
-                                    'M' => 'modified',
-                                    'D' => 'deleted',
-                                    default => $fileParts[0],
-                                };
-                                $files[] = [
-                                    'status' => $status,
-                                    'path' => str_replace('qms/documents/', '', $fileParts[1]),
-                                ];
-                            }
+                // Skip noise commits
+                if ($this->isNoiseCommit($message)) continue;
+
+                // Get changed files for this commit
+                $filesResult = Process::path($this->base)
+                    ->run(['git', 'diff-tree', '--no-commit-id', '--name-status', '-r', $hash, '--', 'qms/documents/']);
+
+                $files = [];
+                if ($filesResult->successful() && trim($filesResult->output())) {
+                    foreach (explode("\n", trim($filesResult->output())) as $fileLine) {
+                        $fileParts = preg_split('/\s+/', $fileLine, 2);
+                        if (count($fileParts) === 2) {
+                            $filePath = str_replace('qms/documents/', '', $fileParts[1]);
+
+                            // Skip .gitkeep files
+                            if (str_ends_with($filePath, '.gitkeep')) continue;
+
+                            $status = match ($fileParts[0]) {
+                                'A' => 'added',
+                                'M' => 'modified',
+                                'D' => 'deleted',
+                                default => $fileParts[0],
+                            };
+                            $files[] = [
+                                'status' => $status,
+                                'path' => $filePath,
+                            ];
                         }
                     }
-
-                    $commits[] = [
-                        'hash' => $hash,
-                        'short_hash' => substr($hash, 0, 7),
-                        'author' => $parts[1],
-                        'email' => $parts[2],
-                        'date' => \Carbon\Carbon::parse($parts[3]),
-                        'message' => $parts[4],
-                        'files' => $files,
-                    ];
                 }
+
+                // Skip commits that only touched .gitkeep files
+                if (empty($files)) continue;
+
+                // Handle pagination
+                if ($skipped < $offset) {
+                    $skipped++;
+                    continue;
+                }
+
+                $commits[] = [
+                    'hash' => $hash,
+                    'short_hash' => substr($hash, 0, 7),
+                    'author' => $parts[1],
+                    'email' => $parts[2],
+                    'date' => \Carbon\Carbon::parse($parts[3]),
+                    'message' => $message,
+                    'files' => $files,
+                ];
+
+                if (count($commits) >= $limit) break;
             }
         }
 
@@ -256,14 +280,48 @@ class GitService
     }
 
     /**
-     * Get total number of commits for qms/documents.
+     * Check if a commit message is noise (WIP, merge, etc.)
+     */
+    private function isNoiseCommit(string $message): bool
+    {
+        $noisePatterns = [
+            '/^WIP$/i',
+            '/^wip\b/i',
+            '/^Merge branch/i',
+            '/^Merge remote/i',
+            '/^Initial (commit|Laravel)/i',
+            '/^Update package-lock/i',
+        ];
+
+        foreach ($noisePatterns as $pattern) {
+            if (preg_match($pattern, $message)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get total number of meaningful commits for qms/documents.
      */
     public function getHistoryCount(): int
     {
         $result = Process::path($this->base)
-            ->run(['git', 'rev-list', '--count', 'HEAD', '--', 'qms/documents/']);
+            ->run(['git', 'log', '--no-merges', '--oneline', '--', 'qms/documents/']);
 
-        return $result->successful() ? (int) trim($result->output()) : 0;
+        if (! $result->successful() || ! trim($result->output())) return 0;
+
+        $count = 0;
+        foreach (explode("\n", trim($result->output())) as $line) {
+            $parts = explode(' ', $line, 2);
+            $message = $parts[1] ?? '';
+            if (! $this->isNoiseCommit($message)) {
+                $count++;
+            }
+        }
+
+        return $count;
     }
 
     /**
