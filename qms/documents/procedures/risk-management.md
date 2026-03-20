@@ -1,11 +1,22 @@
-# SOP-002: Risk Management Procedure
+---
+id: SOP-002
+title: Risk Management Procedure
+type: SOP
+version: "0.1"
+status: draft
+author: Sarp Derinsu
+iso_refs:
+  - "7.1"
+mdr_refs:
+  - "Annex I, Section 3"
+  - "Annex I, Section 4"
+---
 
-## 1. Purpose1231321312313
+# Risk Management Procedure
+
+## 1. Purpose
 
 This procedure defines the risk management process for medical device development in accordance with ISO 14971 and EU MDR Annex I.
-
-**ISO 13485 Reference:** Clause 7.1
-**EU MDR Reference:** Annex I, Section 3
 
 ## 2. Scope
 

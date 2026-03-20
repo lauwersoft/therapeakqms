@@ -1,10 +1,21 @@
+---
+id: QM-001
+title: Quality Manual
+type: QM
+version: "0.1"
+status: draft
+author: Sarp Derinsu
+iso_refs:
+  - "4.2.2"
+---
+
 # Quality Manual
 
 ## 1. Purpose
 
 This Quality Manual describes the Quality Management System (QMS) of [Company Name] in accordance with ISO 13485:2016 and EU MDR 2017/745.
 
-## 2. Scope26551512313
+## 2. Scope
 
 This QMS applies to the design, development, and maintenance of AI-based therapy software classified as a Class IIa medical device under EU MDR.
 

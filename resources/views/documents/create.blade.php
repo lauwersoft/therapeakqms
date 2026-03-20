@@ -28,10 +28,18 @@
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-6">
                     <form method="POST" action="{{ route('documents.store') }}">
                         @csrf
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Document type</label>
+                                <select name="doc_type" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                    @foreach($documentTypes as $key => $label)
+                                        <option value="{{ $key }}" {{ old('doc_type', 'SOP') === $key ? 'selected' : '' }}>{{ $key }} — {{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Document name</label>
-                                <input type="text" name="filename" value="{{ old('filename') }}" placeholder="e.g. Corrective Action Procedure"
+                                <input type="text" name="filename" value="{{ old('filename') }}" placeholder="e.g. CAPA Procedure"
                                        class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500" autofocus required>
                             </div>
                             <div>
@@ -43,6 +51,7 @@
                                 </select>
                             </div>
                         </div>
+                        <p class="text-xs text-gray-400 mb-4">Document ID will be assigned automatically based on the type.</p>
 
                         <textarea id="editor" name="content">{{ old('content', '') }}</textarea>
 

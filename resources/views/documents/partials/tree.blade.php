@@ -78,6 +78,9 @@
                         <svg class="w-4 h-4 mr-2 shrink-0 {{ $currentPath === $item['path'] ? 'text-blue-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
+                        @if($item['doc_id'] ?? null)
+                            <span class="text-xs {{ $currentPath === $item['path'] ? 'text-blue-400' : 'text-gray-400' }} mr-1 shrink-0 font-mono">{{ $item['doc_id'] }}</span>
+                        @endif
                         <span class="truncate">{{ $item['name'] }}</span>
                         @if($fileStatus)
                             <span class="ml-auto shrink-0 w-2 h-2 rounded-full

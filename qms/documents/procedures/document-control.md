@@ -1,10 +1,20 @@
-# SOP-001: Document Control Procedure
+---
+id: SOP-001
+title: Document Control Procedure
+type: SOP
+version: "0.1"
+status: draft
+author: Sarp Derinsu
+iso_refs:
+  - "4.2.4"
+  - "4.2.5"
+---
 
-## 1. Purpose 5
+# Document Control Procedure
+
+## 1. Purpose
 
 This procedure defines the controls for creating, reviewing, approving, and managing QMS documents.
-
-**ISO 13485 Reference:** Clause 4.2.4
 
 ## 2. Scope
 

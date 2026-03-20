@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DocumentChange;
 use App\Models\User;
+use App\Services\DocumentMetadata;
 use App\Services\GitService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -25,7 +26,8 @@ class DocumentController extends Controller
 
     public function index(Request $request)
     {
-        $tree = $this->buildTree($this->basePath);
+        $docIndex = DocumentMetadata::index($this->basePath);
+        $tree = $this->buildTree($this->basePath, '', $docIndex);
         $path = $request->query('path', 'quality-manual.md');
 
         $filePath = $this->resolvePath($path);
@@ -33,7 +35,9 @@ class DocumentController extends Controller
             abort(404);
         }
 
-        $markdown = File::get($filePath);
+        $raw = File::get($filePath);
+        $parsed = DocumentMetadata::parse($raw);
+        $meta = $parsed['meta'];
 
         $environment = new Environment([
             'html_input' => 'strip',
@@ -43,7 +47,7 @@ class DocumentController extends Controller
         $environment->addExtension(new TableExtension());
 
         $converter = new MarkdownConverter($environment);
-        $html = $converter->convert($markdown)->getContent();
+        $html = $converter->convert($parsed['body'])->getContent();
 
         $canEdit = in_array($request->user()->role, [User::ROLE_ADMIN, User::ROLE_EDITOR]);
         $changedFiles = $this->git->getChangedFiles();
@@ -53,6 +57,7 @@ class DocumentController extends Controller
         return view('documents.index', [
             'tree' => $tree,
             'content' => $html,
+            'meta' => $meta,
             'currentPath' => $path,
             'canEdit' => $canEdit,
             'directories' => $canEdit ? $this->getDirectories() : [],
@@ -110,6 +115,7 @@ class DocumentController extends Controller
         return view('documents.create', [
             'directory' => $directory,
             'directories' => $this->getDirectories(),
+            'documentTypes' => DocumentMetadata::TYPES,
         ]);
     }
 
@@ -120,6 +126,7 @@ class DocumentController extends Controller
         $request->validate([
             'filename' => 'required|string|max:255',
             'directory' => 'nullable|string',
+            'doc_type' => 'required|string|in:' . implode(',', array_keys(DocumentMetadata::TYPES)),
             'content' => 'nullable|string',
         ]);
 
@@ -137,7 +144,22 @@ class DocumentController extends Controller
             mkdir($dir, 0755, true);
         }
 
-        $content = $request->input('content', "# " . $request->input('filename') . "\n");
+        $docType = $request->input('doc_type');
+        $docId = DocumentMetadata::nextId($docType, $this->basePath);
+        $title = $request->input('filename');
+
+        $meta = [
+            'id' => $docId,
+            'title' => $title,
+            'type' => $docType,
+            'version' => '0.1',
+            'status' => 'draft',
+            'author' => $request->user()->name,
+        ];
+
+        $body = $request->input('content', "# {$title}\n");
+        $content = DocumentMetadata::build($meta, $body);
+
         File::put($fullPath, $content);
         $this->logChange($request->user(), 'create', $relativePath);
 
@@ -332,6 +354,7 @@ class DocumentController extends Controller
         $request->validate([
             'filename' => 'required|string|max:255',
             'directory' => 'nullable|string',
+            'doc_type' => 'required|string|in:' . implode(',', array_keys(DocumentMetadata::TYPES)),
         ]);
 
         $filename = Str::slug($request->input('filename')) . '.md';
@@ -348,8 +371,21 @@ class DocumentController extends Controller
             mkdir($dir, 0755, true);
         }
 
+        $docType = $request->input('doc_type');
+        $docId = DocumentMetadata::nextId($docType, $this->basePath);
         $title = $request->input('filename');
-        File::put($fullPath, "# {$title}\n");
+
+        $meta = [
+            'id' => $docId,
+            'title' => $title,
+            'type' => $docType,
+            'version' => '0.1',
+            'status' => 'draft',
+            'author' => $request->user()->name,
+        ];
+
+        $content = DocumentMetadata::build($meta, "# {$title}\n");
+        File::put($fullPath, $content);
         $this->logChange($request->user(), 'create', $relativePath);
 
         return redirect()->route('documents.edit', ['path' => $relativePath]);
@@ -511,7 +547,7 @@ class DocumentController extends Controller
         return $fullPath;
     }
 
-    private function buildTree(string $directory, string $prefix = ''): array
+    private function buildTree(string $directory, string $prefix = '', array $docIndex = []): array
     {
         $items = [];
 
@@ -532,16 +568,32 @@ class DocumentController extends Controller
                     'type' => 'directory',
                     'name' => $this->formatName($name),
                     'path' => $relativePath,
-                    'children' => $this->buildTree($entry, $relativePath),
+                    'children' => $this->buildTree($entry, $relativePath, $docIndex),
                 ];
             } elseif (str_ends_with($name, '.md')) {
+                $meta = $docIndex[$relativePath] ?? null;
                 $items[] = [
                     'type' => 'file',
-                    'name' => $this->formatName(str_replace('.md', '', $name)),
+                    'name' => $meta['title'] ?? $this->formatName(str_replace('.md', '', $name)),
+                    'doc_id' => $meta['id'] ?? null,
+                    'doc_status' => $meta['status'] ?? null,
                     'path' => $relativePath,
                 ];
             }
         }
+
+        // Sort files: by doc_id if present, then by name
+        usort($items, function ($a, $b) {
+            if ($a['type'] !== $b['type']) {
+                return $a['type'] === 'directory' ? -1 : 1;
+            }
+            $aId = $a['doc_id'] ?? '';
+            $bId = $b['doc_id'] ?? '';
+            if ($aId && $bId) {
+                return strnatcmp($aId, $bId);
+            }
+            return strcasecmp($a['name'], $b['name']);
+        });
 
         return $items;
     }

@@ -163,15 +163,23 @@
         {{-- Modal: Quick create file --}}
         <div x-show="modal.quickCreate" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="modal.quickCreate = false">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-sm mx-4 p-5" @click.stop>
-                <h3 class="text-base font-semibold mb-3">New file</h3>
+                <h3 class="text-base font-semibold mb-3">New document</h3>
                 <form method="POST" action="{{ route('documents.quick-create') }}">
                     @csrf
                     <input type="hidden" name="directory" :value="ctx.targetDir">
-                    <input type="text" name="filename" placeholder="Document name" x-ref="quickCreateInput" @keydown.escape="modal.quickCreate = false"
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Document type</label>
+                    <select name="doc_type" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500 mb-3">
+                        @foreach(\App\Services\DocumentMetadata::TYPES as $key => $label)
+                            <option value="{{ $key }}" {{ $key === 'SOP' ? 'selected' : '' }}>{{ $key }} — {{ $label }}</option>
+                        @endforeach
+                    </select>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Document name</label>
+                    <input type="text" name="filename" placeholder="e.g. CAPA Procedure" x-ref="quickCreateInput" @keydown.escape="modal.quickCreate = false"
                            class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
                     <p class="text-xs text-gray-400 mt-1" x-show="ctx.targetDir">
                         In: <span x-text="'/' + ctx.targetDir"></span>
                     </p>
+                    <p class="text-xs text-gray-400 mt-1">ID will be assigned automatically.</p>
                     <div class="flex justify-end gap-2 mt-3">
                         <button type="button" @click="modal.quickCreate = false" class="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md">Cancel</button>
                         <button type="submit" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Create & Edit</button>
@@ -293,7 +301,39 @@
                             Edit
                         </a>
                     @endif
-                    <div class="p-5 sm:p-8">
+                    @if($meta['id'])
+                        <div class="px-5 sm:px-8 pt-5 sm:pt-6 pb-0">
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs pb-4 border-b border-gray-100">
+                                <span class="font-mono font-semibold text-gray-800 text-sm">{{ $meta['id'] }}</span>
+                                @if($meta['type'] && isset(\App\Services\DocumentMetadata::TYPES[$meta['type']]))
+                                    <span class="text-gray-400">{{ \App\Services\DocumentMetadata::TYPES[$meta['type']] }}</span>
+                                @endif
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full font-medium
+                                    {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-600' : '' }}
+                                    {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
+                                    {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
+                                    {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">
+                                    {{ \App\Services\DocumentMetadata::STATUSES[$meta['status']] ?? ucfirst($meta['status']) }}
+                                </span>
+                                @if($meta['version'])
+                                    <span class="text-gray-400">v{{ $meta['version'] }}</span>
+                                @endif
+                                @if($meta['author'])
+                                    <span class="text-gray-400">{{ $meta['author'] }}</span>
+                                @endif
+                                @if($meta['effective_date'])
+                                    <span class="text-gray-400">Effective: {{ $meta['effective_date'] }}</span>
+                                @endif
+                                @if(!empty($meta['iso_refs']))
+                                    <span class="text-blue-500" title="ISO 13485 references">ISO {{ implode(', ', $meta['iso_refs']) }}</span>
+                                @endif
+                                @if(!empty($meta['mdr_refs']))
+                                    <span class="text-blue-500" title="EU MDR references">MDR {{ implode(', ', $meta['mdr_refs']) }}</span>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+                    <div class="p-5 sm:p-8 {{ $meta['id'] ? 'pt-4' : '' }}">
                         <div class="prose prose-gray prose-sm sm:prose-base max-w-none
                                     prose-headings:text-gray-900 prose-h1:text-2xl sm:prose-h1:text-3xl prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-3 prose-h1:mb-6
                                     prose-h2:text-xl sm:prose-h2:text-2xl prose-h2:mt-8
