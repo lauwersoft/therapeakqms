@@ -2,10 +2,6 @@
     @push('styles')
         <style>
             .diff-line { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.8rem; white-space: pre-wrap; word-break: break-all; }
-            .diff-add { background-color: #dcfce7; color: #166534; }
-            .diff-remove { background-color: #fee2e2; color: #991b1b; }
-            .diff-header { background-color: #f0f9ff; color: #1e40af; }
-            .diff-range { background-color: #faf5ff; color: #6b21a8; }
         </style>
     @endpush
 
@@ -96,62 +92,80 @@
                                 </div>
                             @elseif(isset($diffs[$path]) && !empty(trim($diffs[$path])) && $status === 'modified')
                                 <div class="overflow-x-auto">
-                                    <table class="w-full">
-                                        @php
-                                            $diffLines = explode("\n", $diffs[$path]);
-                                            $oldLine = 0;
-                                            $newLine = 0;
-                                        @endphp
-                                        @foreach($diffLines as $line)
-                                            @if(str_starts_with($line, '@@'))
-                                                @php
-                                                    preg_match('/@@ -(\d+)/', $line, $m);
-                                                    $oldLine = (int)($m[1] ?? 0);
-                                                    $newLine = $oldLine;
-                                                @endphp
-                                                <tr>
-                                                    <td colspan="3" class="diff-line diff-range px-4 py-1">{{ $line }}</td>
-                                                </tr>
-                                            @elseif(str_starts_with($line, '---') || str_starts_with($line, '+++'))
-                                                <tr>
-                                                    <td colspan="3" class="diff-line diff-header px-4 py-0.5">{{ $line }}</td>
-                                                </tr>
-                                            @elseif(str_starts_with($line, 'diff ') || str_starts_with($line, 'index '))
-                                                <tr>
-                                                    <td colspan="3" class="diff-line diff-header px-4 py-0.5 text-gray-500">{{ $line }}</td>
-                                                </tr>
-                                            @elseif(str_starts_with($line, '-'))
-                                                <tr>
-                                                    <td class="diff-line diff-remove text-right px-2 py-0 text-gray-400 select-none w-10 align-top">{{ $oldLine }}</td>
-                                                    <td class="diff-line diff-remove text-right px-2 py-0 text-gray-400 select-none w-10 align-top"></td>
-                                                    <td class="diff-line diff-remove px-4 py-0">{{ $line }}</td>
-                                                </tr>
-                                                @php $oldLine++; @endphp
-                                            @elseif(str_starts_with($line, '+'))
-                                                <tr>
-                                                    <td class="diff-line diff-add text-right px-2 py-0 text-gray-400 select-none w-10 align-top"></td>
-                                                    <td class="diff-line diff-add text-right px-2 py-0 text-gray-400 select-none w-10 align-top">{{ $newLine }}</td>
-                                                    <td class="diff-line diff-add px-4 py-0">{{ $line }}</td>
-                                                </tr>
-                                                @php $newLine++; @endphp
-                                            @elseif(trim($line) !== '' || ($oldLine > 0))
-                                                <tr>
-                                                    <td class="diff-line text-right px-2 py-0 text-gray-300 select-none w-10 align-top">{{ $oldLine ?: '' }}</td>
-                                                    <td class="diff-line text-right px-2 py-0 text-gray-300 select-none w-10 align-top">{{ $newLine ?: '' }}</td>
-                                                    <td class="diff-line px-4 py-0 text-gray-600">{{ $line ?: ' ' }}</td>
-                                                </tr>
-                                                @php $oldLine++; $newLine++; @endphp
-                                            @endif
-                                        @endforeach
-                                    </table>
+                                    @php
+                                        $diffLines = explode("\n", $diffs[$path]);
+                                        $lineNum = 0;
+                                        $sections = [];
+                                        $currentSection = null;
+
+                                        foreach ($diffLines as $line) {
+                                            // Skip git metadata headers
+                                            if (str_starts_with($line, 'diff ') || str_starts_with($line, 'index ') ||
+                                                str_starts_with($line, '---') || str_starts_with($line, '+++')) {
+                                                continue;
+                                            }
+
+                                            if (str_starts_with($line, '@@')) {
+                                                preg_match('/@@ -(\d+),?\d* \+(\d+)/', $line, $m);
+                                                $lineNum = (int)($m[2] ?? 0);
+
+                                                // Extract a friendly label like "around line 5"
+                                                $currentSection = 'Around line ' . $lineNum;
+                                                $sections[$currentSection] = $sections[$currentSection] ?? [];
+                                                continue;
+                                            }
+
+                                            if ($currentSection === null) continue;
+
+                                            if (str_starts_with($line, '-')) {
+                                                $text = substr($line, 1);
+                                                $sections[$currentSection][] = ['type' => 'removed', 'text' => $text, 'line' => null];
+                                            } elseif (str_starts_with($line, '+')) {
+                                                $text = substr($line, 1);
+                                                $sections[$currentSection][] = ['type' => 'added', 'text' => $text, 'line' => $lineNum];
+                                                $lineNum++;
+                                            } else {
+                                                $text = str_starts_with($line, ' ') ? substr($line, 1) : $line;
+                                                $sections[$currentSection][] = ['type' => 'context', 'text' => $text, 'line' => $lineNum];
+                                                $lineNum++;
+                                            }
+                                        }
+                                    @endphp
+
+                                    @foreach($sections as $sectionLabel => $lines)
+                                        <div class="border-b border-gray-100 last:border-b-0">
+                                            <div class="px-4 py-2 bg-gray-50 text-xs text-gray-500 font-medium">
+                                                {{ $sectionLabel }}
+                                            </div>
+                                            <table class="w-full">
+                                                @foreach($lines as $dl)
+                                                    <tr class="{{ $dl['type'] === 'removed' ? 'bg-red-50' : ($dl['type'] === 'added' ? 'bg-green-50' : '') }}">
+                                                        <td class="diff-line text-right px-3 py-0.5 text-gray-300 select-none w-10 align-top border-r border-gray-100">{{ $dl['line'] ?: '' }}</td>
+                                                        @if($dl['type'] === 'removed')
+                                                            <td class="diff-line px-4 py-0.5 text-red-700">
+                                                                <span class="bg-red-200/50 rounded px-0.5">{{ $dl['text'] ?: ' ' }}</span>
+                                                            </td>
+                                                        @elseif($dl['type'] === 'added')
+                                                            <td class="diff-line px-4 py-0.5 text-green-700">
+                                                                <span class="bg-green-200/50 rounded px-0.5">{{ $dl['text'] ?: ' ' }}</span>
+                                                            </td>
+                                                        @else
+                                                            <td class="diff-line px-4 py-0.5 text-gray-600">{{ $dl['text'] ?: ' ' }}</td>
+                                                        @endif
+                                                    </tr>
+                                                @endforeach
+                                            </table>
+                                        </div>
+                                    @endforeach
                                 </div>
                             @elseif(isset($diffs[$path]) && in_array($status, ['new', 'added']))
                                 <div class="overflow-x-auto">
+                                    <div class="px-4 py-2 bg-gray-50 text-xs text-gray-500 font-medium">New file</div>
                                     <table class="w-full">
                                         @foreach(explode("\n", $diffs[$path]) as $i => $line)
-                                            <tr>
-                                                <td class="diff-line diff-add text-right px-2 py-0 text-gray-400 select-none w-10 align-top">{{ $i + 1 }}</td>
-                                                <td class="diff-line diff-add px-4 py-0">+{{ $line }}</td>
+                                            <tr class="bg-green-50">
+                                                <td class="diff-line text-right px-3 py-0.5 text-gray-300 select-none w-10 align-top border-r border-gray-100">{{ $i + 1 }}</td>
+                                                <td class="diff-line px-4 py-0.5 text-green-700">{{ $line ?: ' ' }}</td>
                                             </tr>
                                         @endforeach
                                     </table>
