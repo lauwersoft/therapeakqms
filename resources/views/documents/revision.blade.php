@@ -133,13 +133,12 @@
                                     $oldLineNum = 0;
                                     $newLineNum = 0;
                                     $rows = [];
-                                    $inFrontmatter = false;
 
                                     foreach ($diffLines as $line) {
                                         if (str_starts_with($line, 'diff ') || str_starts_with($line, 'index ') ||
                                             str_starts_with($line, '---') || str_starts_with($line, '+++') ||
                                             str_starts_with($line, 'new file mode') || str_starts_with($line, 'deleted file mode') ||
-                                            str_starts_with($line, '\\ No newline')) {
+                                            str_starts_with($line, '\\ No newline') || strlen($line) === 0) {
                                             continue;
                                         }
 
@@ -147,27 +146,9 @@
                                             preg_match('/@@ -(\d+),?\d* \+(\d+)/', $line, $m);
                                             $oldLineNum = (int)($m[1] ?? 0);
                                             $newLineNum = (int)($m[2] ?? 0);
-                                            $inFrontmatter = ($oldLineNum <= 1 || $newLineNum <= 1);
                                             if (!empty($rows)) {
                                                 $rows[] = ['type' => 'separator'];
                                             }
-                                            continue;
-                                        }
-
-                                        if (strlen($line) === 0) continue;
-
-                                        $lineContent = substr($line, 1);
-                                        if ($inFrontmatter) {
-                                            if (trim($lineContent) === '---' || trim($line) === '---') {
-                                                if ($line[0] === ' ') $inFrontmatter = false;
-                                                if ($line[0] === '-') $oldLineNum++;
-                                                elseif ($line[0] === '+') $newLineNum++;
-                                                else { $oldLineNum++; $newLineNum++; }
-                                                continue;
-                                            }
-                                            if ($line[0] === '-') $oldLineNum++;
-                                            elseif ($line[0] === '+') $newLineNum++;
-                                            else { $oldLineNum++; $newLineNum++; }
                                             continue;
                                         }
 
