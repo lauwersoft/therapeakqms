@@ -303,6 +303,74 @@ class GitService
     }
 
     /**
+     * Get a single commit's details including per-file diffs.
+     */
+    public function getCommitDetail(string $hash): ?array
+    {
+        // Get commit info
+        $result = Process::path($this->base)
+            ->run(['git', 'log', '-1', '--format=%H|%an|%ae|%aI|%B', $hash]);
+
+        if (! $result->successful() || ! trim($result->output())) {
+            return null;
+        }
+
+        $parts = explode('|', trim($result->output()), 5);
+        if (count($parts) !== 5) return null;
+
+        // Get changed files
+        $filesResult = Process::path($this->base)
+            ->run(['git', 'diff-tree', '--no-commit-id', '--name-status', '-r', $hash, '--', 'qms/documents/']);
+
+        $files = [];
+        if ($filesResult->successful() && trim($filesResult->output())) {
+            foreach (explode("\n", trim($filesResult->output())) as $fileLine) {
+                $fileParts = preg_split('/\s+/', $fileLine, 2);
+                if (count($fileParts) !== 2) continue;
+
+                $filePath = str_replace('qms/documents/', '', $fileParts[1]);
+                if (str_ends_with($filePath, '.gitkeep')) continue;
+
+                $status = match ($fileParts[0]) {
+                    'A' => 'added',
+                    'M' => 'modified',
+                    'D' => 'deleted',
+                    default => $fileParts[0],
+                };
+
+                // Get diff for this file in this commit
+                $diffResult = Process::path($this->base)
+                    ->run(['git', 'diff', '--no-color', $hash . '~1', $hash, '--', 'qms/documents/' . $filePath]);
+
+                $diff = $diffResult->output();
+
+                // For new files, use git show
+                if (empty($diff) && $status === 'added') {
+                    $showResult = Process::path($this->base)
+                        ->run(['git', 'show', $hash . ':qms/documents/' . $filePath]);
+                    $diff = $showResult->successful() ? $showResult->output() : '';
+                }
+
+                $files[] = [
+                    'status' => $status,
+                    'path' => $filePath,
+                    'diff' => $diff,
+                ];
+            }
+        }
+
+        return [
+            'hash' => $parts[0],
+            'short_hash' => substr($parts[0], 0, 7),
+            'author' => $parts[1],
+            'email' => $parts[2],
+            'date' => \Carbon\Carbon::parse($parts[3]),
+            'message' => trim($parts[4]),
+            'files' => $files,
+        ];
+    }
+
+    /**
      * Get total number of meaningful commits for qms/documents.
      */
     public function getHistoryCount(): int

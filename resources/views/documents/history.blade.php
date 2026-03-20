@@ -144,8 +144,10 @@
                             @endif
 
                             {{-- Revision reference --}}
-                            <div class="px-5 py-2 bg-gray-50 border-t border-gray-100">
+                            <div class="px-5 py-2 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
                                 <span class="text-[11px] text-gray-400">Revision {{ $commit['short_hash'] }}</span>
+                                <a href="{{ route('documents.revision', $commit['hash']) }}"
+                                   class="text-[11px] text-blue-500 hover:text-blue-700">View changes</a>
                             </div>
                         </div>
                     </div>

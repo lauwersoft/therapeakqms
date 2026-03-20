@@ -449,6 +449,25 @@ class DocumentController extends Controller
         return redirect()->route('documents.edit', ['path' => str_replace('.md', '', $relativePath)]);
     }
 
+    public function revision(Request $request, string $hash)
+    {
+        $commit = $this->git->getCommitDetail($hash);
+        if (! $commit) {
+            abort(404);
+        }
+
+        $docIndex = DocumentMetadata::index($this->basePath);
+        foreach ($commit['files'] as &$file) {
+            $meta = $docIndex[$file['path']] ?? null;
+            $file['doc_id'] = $meta['id'] ?? null;
+            $file['doc_title'] = $meta['title'] ?? $this->formatName(str_replace('.md', '', basename($file['path'])));
+        }
+
+        return view('documents.revision', [
+            'commit' => $commit,
+        ]);
+    }
+
     public function history(Request $request)
     {
         $page = max(1, (int) $request->query('page', 1));
