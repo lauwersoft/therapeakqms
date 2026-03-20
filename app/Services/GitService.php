@@ -338,30 +338,29 @@ class GitService
                     default => $fileParts[0],
                 };
 
-                // Get diff for this file in this commit
-                $diffResult = Process::path($this->base)
-                    ->run(['git', 'diff', '--no-color', $hash . '~1', $hash, '--', 'qms/documents/' . $filePath]);
+                $diff = '';
 
-                $diff = $diffResult->output();
-
-                // For new files, get the body content (strip frontmatter)
-                if (empty($diff) && $status === 'added') {
+                if ($status === 'added') {
+                    // New file: get clean body content
                     $showResult = Process::path($this->base)
                         ->run(['git', 'show', $hash . ':qms/documents/' . $filePath]);
                     if ($showResult->successful()) {
                         $parsed = \App\Services\DocumentMetadata::parse($showResult->output());
                         $diff = $parsed['body'];
                     }
-                }
-
-                // For deleted files, get the old body content
-                if (empty($diff) && $status === 'deleted') {
+                } elseif ($status === 'deleted') {
+                    // Deleted file: get old body content
                     $showResult = Process::path($this->base)
                         ->run(['git', 'show', $hash . '~1:qms/documents/' . $filePath]);
                     if ($showResult->successful()) {
                         $parsed = \App\Services\DocumentMetadata::parse($showResult->output());
                         $diff = $parsed['body'];
                     }
+                } else {
+                    // Modified: get standard diff
+                    $diffResult = Process::path($this->base)
+                        ->run(['git', 'diff', '--no-color', $hash . '~1', $hash, '--', 'qms/documents/' . $filePath]);
+                    $diff = $diffResult->output();
                 }
 
                 // Get old and new metadata for modified files
