@@ -4,7 +4,7 @@
 
 This Quality Manual describes the Quality Management System (QMS) of [Company Name] in accordance with ISO 13485:2016 and EU MDR 2017/745.
 
-## 2. Scope265515
+## 2. Scope26551512313
 
 This QMS applies to the design, development, and maintenance of AI-based therapy software classified as a Class IIa medical device under EU MDR.
 
