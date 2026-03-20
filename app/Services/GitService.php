@@ -351,10 +351,26 @@ class GitService
                     $diff = $showResult->successful() ? $showResult->output() : '';
                 }
 
+                // Get old and new metadata for modified files
+                $metaChanges = [];
+                if ($status === 'modified') {
+                    $oldContent = Process::path($this->base)
+                        ->run(['git', 'show', $hash . '~1:qms/documents/' . $filePath]);
+                    $newContent = Process::path($this->base)
+                        ->run(['git', 'show', $hash . ':qms/documents/' . $filePath]);
+
+                    if ($oldContent->successful() && $newContent->successful()) {
+                        $oldMeta = \App\Services\DocumentMetadata::parse($oldContent->output())['meta'];
+                        $newMeta = \App\Services\DocumentMetadata::parse($newContent->output())['meta'];
+                        $metaChanges = \App\Services\DocumentMetadata::diffMeta($oldMeta, $newMeta);
+                    }
+                }
+
                 $files[] = [
                     'status' => $status,
                     'path' => $filePath,
                     'diff' => $diff,
+                    'metaChanges' => $metaChanges,
                 ];
             }
         }

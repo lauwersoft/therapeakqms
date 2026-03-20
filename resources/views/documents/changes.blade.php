@@ -178,7 +178,9 @@
 
                                         foreach ($diffLines as $line) {
                                             if (str_starts_with($line, 'diff ') || str_starts_with($line, 'index ') ||
-                                                str_starts_with($line, '---') || str_starts_with($line, '+++')) {
+                                                str_starts_with($line, '---') || str_starts_with($line, '+++') ||
+                                                str_starts_with($line, 'new file mode') || str_starts_with($line, 'deleted file mode') ||
+                                                str_starts_with($line, '\\ No newline') || strlen($line) === 0) {
                                                 continue;
                                             }
 

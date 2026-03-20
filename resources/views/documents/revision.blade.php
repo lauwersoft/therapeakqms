@@ -77,6 +77,23 @@
                     </div>
 
                     <div x-show="open" x-cloak>
+                        {{-- Property changes --}}
+                        @if(!empty($file['metaChanges']))
+                            <div class="px-4 py-3 bg-purple-50 border-b border-purple-100">
+                                <div class="text-xs font-medium text-purple-600 mb-2">Property changes</div>
+                                @foreach($file['metaChanges'] as $pc)
+                                    <div class="flex items-center gap-2 text-sm mb-1 last:mb-0">
+                                        <span class="text-purple-700 font-medium">{{ $pc['field'] }}:</span>
+                                        @if($pc['old'])
+                                            <span class="line-through text-red-500">{{ $pc['old'] }}</span>
+                                            <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                        @endif
+                                        <span class="text-green-600 font-medium">{{ $pc['new'] ?? '(empty)' }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+
                         @if($file['status'] === 'deleted' && empty($file['diff']))
                             <div class="px-4 py-4 text-center text-sm text-gray-500">File was removed in this revision.</div>
 
@@ -106,7 +123,9 @@
 
                                     foreach ($diffLines as $line) {
                                         if (str_starts_with($line, 'diff ') || str_starts_with($line, 'index ') ||
-                                            str_starts_with($line, '---') || str_starts_with($line, '+++')) {
+                                            str_starts_with($line, '---') || str_starts_with($line, '+++') ||
+                                            str_starts_with($line, 'new file mode') || str_starts_with($line, 'deleted file mode') ||
+                                            str_starts_with($line, '\\ No newline')) {
                                             continue;
                                         }
 
@@ -188,6 +207,13 @@
                                     }
                                 @endphp
 
+                                @if(empty($rows) || collect($rows)->every(fn($r) => $r['type'] === 'separator'))
+                                    @if(!empty($file['metaChanges']))
+                                        <div class="px-4 py-3 text-center text-sm text-gray-400">No content changes — only properties were updated.</div>
+                                    @else
+                                        <div class="px-4 py-3 text-center text-sm text-gray-400">No visible changes.</div>
+                                    @endif
+                                @else
                                 <table class="w-full">
                                     @foreach($rows as $idx => $dl)
                                         @if($dl['type'] === 'separator')
@@ -213,9 +239,14 @@
                                         @endif
                                     @endforeach
                                 </table>
+                                @endif
                             </div>
                         @else
-                            <div class="px-4 py-4 text-center text-sm text-gray-500">No changes to display.</div>
+                            @if(!empty($file['metaChanges']))
+                                <div class="px-4 py-3 text-center text-sm text-gray-400">No content changes — only properties were updated.</div>
+                            @else
+                                <div class="px-4 py-4 text-center text-sm text-gray-500">No changes to display.</div>
+                            @endif
                         @endif
                     </div>
                 </div>
