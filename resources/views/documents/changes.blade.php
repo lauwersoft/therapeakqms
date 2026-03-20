@@ -37,28 +37,33 @@
                 </div>
             @else
                 {{-- Summary bar --}}
-                <div class="flex items-center gap-4 mb-6 text-sm">
+                @php
+                    $counts = ['new' => 0, 'added' => 0, 'modified' => 0, 'deleted' => 0, 'move' => 0, 'rename' => 0];
+                    foreach ($changedFiles as $info) { $counts[$info['status']] = ($counts[$info['status']] ?? 0) + 1; }
+                    $addedCount = $counts['new'] + $counts['added'];
+                    $movedCount = $counts['move'] + $counts['rename'];
+                @endphp
+                <div class="flex items-center gap-4 mb-6 text-sm flex-wrap">
                     <span class="text-gray-600">
-                        <span class="font-semibold text-gray-900">{{ count($changedFiles) }}</span> changed {{ Str::plural('file', count($changedFiles)) }}
+                        <span class="font-semibold text-gray-900">{{ count($changedFiles) }}</span> {{ Str::plural('change', count($changedFiles)) }}
                     </span>
-                    @php
-                        $added = count(array_filter($changedFiles, fn($s) => in_array($s, ['new', 'added'])));
-                        $modified = count(array_filter($changedFiles, fn($s) => $s === 'modified'));
-                        $deleted = count(array_filter($changedFiles, fn($s) => $s === 'deleted'));
-                    @endphp
-                    @if($added)
-                        <span class="text-green-700">+{{ $added }} added</span>
+                    @if($addedCount)
+                        <span class="text-green-700">+{{ $addedCount }} added</span>
                     @endif
-                    @if($modified)
-                        <span class="text-amber-700">~{{ $modified }} modified</span>
+                    @if($counts['modified'])
+                        <span class="text-amber-700">~{{ $counts['modified'] }} modified</span>
                     @endif
-                    @if($deleted)
-                        <span class="text-red-700">-{{ $deleted }} deleted</span>
+                    @if($counts['deleted'])
+                        <span class="text-red-700">-{{ $counts['deleted'] }} deleted</span>
+                    @endif
+                    @if($movedCount)
+                        <span class="text-blue-700">{{ $movedCount }} moved/renamed</span>
                     @endif
                 </div>
 
                 {{-- File diffs --}}
-                @foreach($changedFiles as $path => $status)
+                @foreach($changedFiles as $path => $info)
+                    @php $status = $info['status']; @endphp
                     <div x-data="{ open: true }" class="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 overflow-hidden">
                         {{-- File header --}}
                         <div class="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200 cursor-pointer" @click="open = !open">
@@ -69,8 +74,9 @@
                                 <span class="shrink-0 text-xs font-medium px-2 py-0.5 rounded-full
                                     {{ in_array($status, ['new', 'added']) ? 'bg-green-100 text-green-700' : '' }}
                                     {{ $status === 'modified' ? 'bg-amber-100 text-amber-700' : '' }}
-                                    {{ $status === 'deleted' ? 'bg-red-100 text-red-700' : '' }}">
-                                    {{ ucfirst($status) }}
+                                    {{ $status === 'deleted' ? 'bg-red-100 text-red-700' : '' }}
+                                    {{ in_array($status, ['move', 'rename']) ? 'bg-blue-100 text-blue-700' : '' }}">
+                                    {{ ucfirst($status === 'move' ? 'moved' : ($status === 'rename' ? 'renamed' : $status)) }}
                                 </span>
                                 <span class="text-sm font-mono text-gray-700 truncate">{{ $path }}</span>
                             </div>
@@ -84,13 +90,56 @@
                             </form>
                         </div>
 
+                        {{-- Move/rename info --}}
+                        @if(in_array($status, ['move', 'rename']) && isset($info['old_path']))
+                            <div class="px-4 py-2 bg-blue-50 border-b border-blue-100 text-sm">
+                                <span class="text-blue-600">{{ $status === 'rename' ? 'Renamed' : 'Moved' }} from</span>
+                                <span class="font-mono text-blue-800">{{ $info['old_path'] }}</span>
+                                <span class="text-blue-600">to</span>
+                                <span class="font-mono text-blue-800">{{ $path }}</span>
+                            </div>
+                        @endif
+
                         {{-- Diff content --}}
                         <div x-show="open">
-                            @if($status === 'deleted')
-                                <div class="px-4 py-6 text-center text-sm text-gray-500">
-                                    This file has been deleted.
+                            @if($status === 'deleted' && isset($diffs[$path]))
+                                {{-- Deleted file: show content that was removed --}}
+                                <div class="overflow-x-auto">
+                                    <div class="px-4 py-2 bg-red-50 text-xs text-red-600 font-medium border-b border-red-100">Entire file deleted</div>
+                                    <table class="w-full">
+                                        @foreach(explode("\n", $diffs[$path]) as $i => $line)
+                                            <tr class="bg-red-50/50">
+                                                <td class="diff-line text-right pr-2 pl-3 py-0 text-red-300 select-none w-12 align-top">{{ $i + 1 }}</td>
+                                                <td class="diff-line py-0 px-1 w-4 text-center select-none text-red-300">−</td>
+                                                <td class="diff-line py-0 pr-3 text-red-600/70">{{ $line ?: ' ' }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </table>
                                 </div>
-                            @elseif(isset($diffs[$path]) && !empty(trim($diffs[$path])) && $status === 'modified')
+                            @elseif($status === 'deleted')
+                                <div class="px-4 py-4 text-center text-sm text-red-500">This file has been deleted.</div>
+
+                            @elseif(in_array($status, ['new', 'added']) && isset($diffs[$path]))
+                                {{-- New file: show full content --}}
+                                <div class="overflow-x-auto">
+                                    <div class="px-4 py-2 bg-green-50 text-xs text-green-600 font-medium border-b border-green-100">New file</div>
+                                    <table class="w-full">
+                                        @foreach(explode("\n", $diffs[$path]) as $i => $line)
+                                            <tr class="bg-green-50/50">
+                                                <td class="diff-line text-right pr-2 pl-3 py-0 text-green-300 select-none w-12 align-top">{{ $i + 1 }}</td>
+                                                <td class="diff-line py-0 px-1 w-4 text-center select-none text-green-300">+</td>
+                                                <td class="diff-line py-0 pr-3 text-green-700">{{ $line ?: ' ' }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </table>
+                                </div>
+
+                            @elseif(in_array($status, ['move', 'rename']) && ($diffs[$path] ?? null) === null)
+                                {{-- Move/rename with no content changes --}}
+                                <div class="px-4 py-4 text-center text-sm text-gray-500">File {{ $status === 'rename' ? 'renamed' : 'moved' }}, no content changes.</div>
+
+                            @elseif(isset($diffs[$path]) && !empty(trim($diffs[$path])))
+                                {{-- Modified or move/rename with content changes: show diff --}}
                                 <div class="overflow-x-auto">
                                     @php
                                         $diffLines = explode("\n", $diffs[$path]);
@@ -128,16 +177,11 @@
                                             }
                                         }
 
-                                        // Word-level highlight: pair up consecutive removed+added lines
+                                        // Word-level highlight
                                         function highlightWordDiff($old, $new) {
                                             $oldWords = preg_split('/([ \t]+)/', $old, -1, PREG_SPLIT_DELIM_CAPTURE);
                                             $newWords = preg_split('/([ \t]+)/', $new, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-                                            $maxLen = max(count($oldWords), count($newWords));
-                                            $oldHtml = '';
-                                            $newHtml = '';
-
-                                            // Simple LCS-based approach: find common prefix and suffix
                                             $prefixLen = 0;
                                             $minLen = min(count($oldWords), count($newWords));
                                             while ($prefixLen < $minLen && $oldWords[$prefixLen] === $newWords[$prefixLen]) {
@@ -152,28 +196,20 @@
                                                 $newSuffixStart--;
                                             }
 
-                                            // Build highlighted HTML
+                                            $oldHtml = '';
+                                            $newHtml = '';
                                             foreach ($oldWords as $i => $w) {
                                                 $escaped = e($w);
-                                                if ($i >= $prefixLen && $i < $oldSuffixStart) {
-                                                    $oldHtml .= '<mark class="bg-red-200 rounded-sm">' . $escaped . '</mark>';
-                                                } else {
-                                                    $oldHtml .= $escaped;
-                                                }
+                                                $oldHtml .= ($i >= $prefixLen && $i < $oldSuffixStart) ? '<mark class="bg-red-200 rounded-sm">' . $escaped . '</mark>' : $escaped;
                                             }
                                             foreach ($newWords as $i => $w) {
                                                 $escaped = e($w);
-                                                if ($i >= $prefixLen && $i < $newSuffixStart) {
-                                                    $newHtml .= '<mark class="bg-green-200 rounded-sm">' . $escaped . '</mark>';
-                                                } else {
-                                                    $newHtml .= $escaped;
-                                                }
+                                                $newHtml .= ($i >= $prefixLen && $i < $newSuffixStart) ? '<mark class="bg-green-200 rounded-sm">' . $escaped . '</mark>' : $escaped;
                                             }
 
                                             return [$oldHtml, $newHtml];
                                         }
 
-                                        // Pair removed+added for word highlighting
                                         $highlighted = [];
                                         for ($i = 0; $i < count($rows); $i++) {
                                             if ($rows[$i]['type'] === 'removed' &&
@@ -184,6 +220,10 @@
                                             }
                                         }
                                     @endphp
+
+                                    @if(in_array($status, ['move', 'rename']))
+                                        <div class="px-4 py-2 bg-amber-50 text-xs text-amber-600 font-medium border-b border-amber-100">Content also changed</div>
+                                    @endif
 
                                     <table class="w-full">
                                         @foreach($rows as $idx => $dl)
@@ -215,22 +255,9 @@
                                         @endforeach
                                     </table>
                                 </div>
-                            @elseif(isset($diffs[$path]) && in_array($status, ['new', 'added']))
-                                <div class="overflow-x-auto">
-                                    <div class="px-4 py-2 bg-gray-50 text-xs text-gray-500 font-medium">New file</div>
-                                    <table class="w-full">
-                                        @foreach(explode("\n", $diffs[$path]) as $i => $line)
-                                            <tr class="bg-green-50">
-                                                <td class="diff-line text-right px-3 py-0.5 text-gray-300 select-none w-10 align-top border-r border-gray-100">{{ $i + 1 }}</td>
-                                                <td class="diff-line px-4 py-0.5 text-green-700">{{ $line ?: ' ' }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </table>
-                                </div>
+
                             @else
-                                <div class="px-4 py-6 text-center text-sm text-gray-500">
-                                    No diff available.
-                                </div>
+                                <div class="px-4 py-4 text-center text-sm text-gray-500">No diff available.</div>
                             @endif
                         </div>
                     </div>

@@ -269,13 +269,37 @@ class DocumentController extends Controller
 
         // Get diffs for each changed file
         $diffs = [];
-        foreach ($changedFiles as $path => $status) {
+        foreach ($changedFiles as $path => $info) {
+            $status = $info['status'];
+
             if ($status === 'modified') {
                 $diffs[$path] = $this->git->getFileDiff($path);
             } elseif (in_array($status, ['new', 'added'])) {
                 $fullPath = $this->basePath . '/' . $path;
                 if (File::exists($fullPath)) {
                     $diffs[$path] = File::get($fullPath);
+                }
+            } elseif ($status === 'deleted') {
+                // Show what was deleted
+                $original = $this->git->getOriginalContent($path);
+                if ($original) {
+                    $diffs[$path] = $original;
+                }
+            } elseif (in_array($status, ['move', 'rename'])) {
+                // For moves/renames, show diff between old and new content
+                $oldPath = $info['old_path'] ?? null;
+                if ($oldPath) {
+                    $oldContent = $this->git->getOriginalContent($oldPath);
+                    $fullPath = $this->basePath . '/' . $path;
+                    $newContent = File::exists($fullPath) ? File::get($fullPath) : '';
+
+                    if ($oldContent === $newContent) {
+                        // Just moved, no content changes
+                        $diffs[$path] = null;
+                    } else {
+                        // Moved and content changed
+                        $diffs[$path] = $this->git->getFileDiff($path);
+                    }
                 }
             }
         }

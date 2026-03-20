@@ -26,7 +26,7 @@
                 </div>
             </div>
         @else
-            @php $fileStatus = $changedFiles[$item['path']] ?? null; @endphp
+            @php $fileStatus = isset($changedFiles[$item['path']]) ? $changedFiles[$item['path']]['status'] : null; @endphp
             <div class="sortable-item" data-path="{{ $item['path'] }}">
                 <a href="{{ route('documents.index', ['path' => $item['path']]) }}"
                    @if($canEdit)

@@ -4,21 +4,23 @@ namespace App\Services;
 
 use App\Models\DocumentChange;
 use App\Models\User;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
 use RuntimeException;
 
 class GitService
 {
     private string $base;
+    private string $docsPath;
 
     public function __construct()
     {
         $this->base = base_path();
+        $this->docsPath = base_path('qms/documents');
     }
 
     public function publish(User $user, string $message): void
     {
-        // Pull latest to avoid conflicts
         $pull = Process::path($this->base)->run("git pull --no-rebase");
 
         if (! $pull->successful() && str_contains($pull->errorOutput(), 'CONFLICT')) {
@@ -26,18 +28,15 @@ class GitService
             throw new RuntimeException('A conflict was detected with remote changes. Please contact an administrator to resolve this before publishing.');
         }
 
-        // Stage all document changes
-        Process::path($this->base)->run("git add qms/documents/");
+        // Stage all document changes (including deletes)
+        Process::path($this->base)->run("git add -A qms/documents/");
 
-        // Check if there's anything to commit
         $status = Process::path($this->base)->run("git diff --cached --quiet");
         if ($status->successful()) {
-            // Nothing staged — clean up changes table anyway
             DocumentChange::truncate();
             return;
         }
 
-        // Build commit message with change details and authors
         $changes = DocumentChange::with('user')->oldest()->get();
         $authors = $changes->pluck('user')->unique('id');
 
@@ -56,7 +55,6 @@ class GitService
                 $body .= $detail . "\n";
             }
 
-            // Add co-authors
             foreach ($authors as $author) {
                 if ($author->id !== $user->id) {
                     $body .= "\nCo-Authored-By: {$author->name} <{$author->email}>";
@@ -77,67 +75,98 @@ class GitService
             throw new RuntimeException('Failed to push to remote: ' . $push->errorOutput());
         }
 
-        // Clear changes table after successful publish
         DocumentChange::truncate();
     }
 
     public function discard(string $path): void
     {
-        Process::path($this->base)
-            ->run(['git', 'checkout', '--', 'qms/documents/' . $path]);
+        $fullPath = $this->docsPath . '/' . $path;
 
-        // Remove change records for this path
+        // Check if this is a new (untracked) file — just delete it
+        $lsFiles = Process::path($this->base)
+            ->run(['git', 'ls-files', '--error-unmatch', 'qms/documents/' . $path]);
+
+        if (! $lsFiles->successful()) {
+            // Untracked file — delete it
+            if (File::exists($fullPath)) {
+                unlink($fullPath);
+            }
+        } else {
+            // Tracked file — restore from HEAD
+            Process::path($this->base)
+                ->run(['git', 'checkout', 'HEAD', '--', 'qms/documents/' . $path]);
+        }
+
         DocumentChange::where('path', $path)->delete();
     }
 
     public function discardAll(): void
     {
+        // Restore all tracked files
         Process::path($this->base)
-            ->run("git checkout -- qms/documents/");
+            ->run("git checkout HEAD -- qms/documents/");
 
-        // Restore any deleted files
-        $lsFiles = Process::path($this->base)
-            ->run("git diff --name-only --diff-filter=D HEAD -- qms/documents/");
-
-        if ($lsFiles->successful() && trim($lsFiles->output())) {
-            foreach (explode("\n", trim($lsFiles->output())) as $file) {
-                Process::path($this->base)->run(['git', 'checkout', 'HEAD', '--', $file]);
-            }
-        }
-
-        // Remove any untracked files in documents
+        // Remove untracked files
         Process::path($this->base)
             ->run("git clean -fd qms/documents/");
 
         DocumentChange::truncate();
     }
 
-    public function getUnpublishedDiff(): string
+    /**
+     * Get all changed files, enriched with activity log data for moves/renames.
+     */
+    public function getChangedFiles(): array
     {
-        // Staged + unstaged changes
-        $diff = Process::path($this->base)
-            ->run("git diff HEAD -- qms/documents/");
+        $gitChanges = $this->getRawGitChanges();
+        $logEntries = DocumentChange::oldest()->get();
 
-        // Also show untracked files
-        $untracked = Process::path($this->base)
-            ->run("git ls-files --others --exclude-standard qms/documents/");
-
-        $output = $diff->output();
-
-        if (trim($untracked->output())) {
-            foreach (explode("\n", trim($untracked->output())) as $file) {
-                $output .= "\n+++ New file: {$file}\n";
+        // Identify moves/renames from activity log
+        $moves = [];
+        foreach ($logEntries as $entry) {
+            if (in_array($entry->action, ['move', 'rename']) && isset($entry->details['old_path'])) {
+                $moves[$entry->details['old_path']] = [
+                    'new_path' => $entry->path,
+                    'action' => $entry->action,
+                ];
             }
         }
 
-        return $output;
+        // Merge: match deleted old_path + new new_path into a single move/rename entry
+        $result = [];
+        $handledNew = [];
+
+        foreach ($gitChanges as $path => $status) {
+            if ($status === 'deleted' && isset($moves[$path])) {
+                $move = $moves[$path];
+                $newPath = $move['new_path'];
+
+                // This delete is part of a move/rename
+                $result[$newPath] = [
+                    'status' => $move['action'], // 'move' or 'rename'
+                    'old_path' => $path,
+                ];
+                $handledNew[$newPath] = true;
+                continue;
+            }
+
+            if (isset($handledNew[$path])) {
+                continue; // Already handled as part of a move
+            }
+
+            $result[$path] = ['status' => $status];
+        }
+
+        return $result;
     }
 
-    public function getChangedFiles(): array
+    /**
+     * Get raw git changes (modified, deleted, new).
+     */
+    private function getRawGitChanges(): array
     {
         $files = [];
 
-        // Modified and deleted
         $result = Process::path($this->base)
             ->run("git diff --name-status HEAD -- qms/documents/");
 
@@ -157,7 +186,6 @@ class GitService
             }
         }
 
-        // Untracked (new files)
         $untracked = Process::path($this->base)
             ->run("git ls-files --others --exclude-standard qms/documents/");
 
@@ -178,14 +206,26 @@ class GitService
         $result = Process::path($this->base)
             ->run(['git', 'diff', 'HEAD', '--no-color', '--', 'qms/documents/' . $path]);
 
-        // git diff returns exit code 1 when there are differences, which Process treats as failed
-        // So we check output regardless of exit code
         $output = $result->output();
-
         if (empty($output)) {
             $output = $result->errorOutput();
         }
 
         return $output;
+    }
+
+    /**
+     * Get the content of a file as it was in the last published (committed) version.
+     */
+    public function getOriginalContent(string $path): ?string
+    {
+        $result = Process::path($this->base)
+            ->run(['git', 'show', 'HEAD:qms/documents/' . $path]);
+
+        if ($result->successful()) {
+            return $result->output();
+        }
+
+        return null;
     }
 }
