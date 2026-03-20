@@ -96,7 +96,7 @@
                                         $diffLines = explode("\n", $diffs[$path]);
                                         $oldLineNum = 0;
                                         $newLineNum = 0;
-                                        $changes = [];
+                                        $rows = [];
 
                                         foreach ($diffLines as $line) {
                                             if (str_starts_with($line, 'diff ') || str_starts_with($line, 'index ') ||
@@ -108,29 +108,110 @@
                                                 preg_match('/@@ -(\d+),?\d* \+(\d+)/', $line, $m);
                                                 $oldLineNum = (int)($m[1] ?? 0);
                                                 $newLineNum = (int)($m[2] ?? 0);
+                                                if (!empty($rows)) {
+                                                    $rows[] = ['type' => 'separator'];
+                                                }
                                                 continue;
                                             }
 
                                             if (str_starts_with($line, '-')) {
-                                                $changes[] = ['type' => 'removed', 'text' => substr($line, 1), 'line' => $oldLineNum];
+                                                $rows[] = ['type' => 'removed', 'text' => substr($line, 1), 'line' => $oldLineNum];
                                                 $oldLineNum++;
                                             } elseif (str_starts_with($line, '+')) {
-                                                $changes[] = ['type' => 'added', 'text' => substr($line, 1), 'line' => $newLineNum];
+                                                $rows[] = ['type' => 'added', 'text' => substr($line, 1), 'line' => $newLineNum];
                                                 $newLineNum++;
                                             } else {
+                                                $text = str_starts_with($line, ' ') ? substr($line, 1) : $line;
+                                                $rows[] = ['type' => 'context', 'text' => $text, 'line' => $newLineNum];
                                                 $oldLineNum++;
                                                 $newLineNum++;
+                                            }
+                                        }
+
+                                        // Word-level highlight: pair up consecutive removed+added lines
+                                        function highlightWordDiff($old, $new) {
+                                            $oldWords = preg_split('/([ \t]+)/', $old, -1, PREG_SPLIT_DELIM_CAPTURE);
+                                            $newWords = preg_split('/([ \t]+)/', $new, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+                                            $maxLen = max(count($oldWords), count($newWords));
+                                            $oldHtml = '';
+                                            $newHtml = '';
+
+                                            // Simple LCS-based approach: find common prefix and suffix
+                                            $prefixLen = 0;
+                                            $minLen = min(count($oldWords), count($newWords));
+                                            while ($prefixLen < $minLen && $oldWords[$prefixLen] === $newWords[$prefixLen]) {
+                                                $prefixLen++;
+                                            }
+
+                                            $oldSuffixStart = count($oldWords);
+                                            $newSuffixStart = count($newWords);
+                                            while ($oldSuffixStart > $prefixLen && $newSuffixStart > $prefixLen &&
+                                                   $oldWords[$oldSuffixStart - 1] === $newWords[$newSuffixStart - 1]) {
+                                                $oldSuffixStart--;
+                                                $newSuffixStart--;
+                                            }
+
+                                            // Build highlighted HTML
+                                            foreach ($oldWords as $i => $w) {
+                                                $escaped = e($w);
+                                                if ($i >= $prefixLen && $i < $oldSuffixStart) {
+                                                    $oldHtml .= '<mark class="bg-red-200 rounded-sm">' . $escaped . '</mark>';
+                                                } else {
+                                                    $oldHtml .= $escaped;
+                                                }
+                                            }
+                                            foreach ($newWords as $i => $w) {
+                                                $escaped = e($w);
+                                                if ($i >= $prefixLen && $i < $newSuffixStart) {
+                                                    $newHtml .= '<mark class="bg-green-200 rounded-sm">' . $escaped . '</mark>';
+                                                } else {
+                                                    $newHtml .= $escaped;
+                                                }
+                                            }
+
+                                            return [$oldHtml, $newHtml];
+                                        }
+
+                                        // Pair removed+added for word highlighting
+                                        $highlighted = [];
+                                        for ($i = 0; $i < count($rows); $i++) {
+                                            if ($rows[$i]['type'] === 'removed' &&
+                                                isset($rows[$i + 1]) && $rows[$i + 1]['type'] === 'added') {
+                                                [$oldHtml, $newHtml] = highlightWordDiff($rows[$i]['text'], $rows[$i + 1]['text']);
+                                                $highlighted[$i] = $oldHtml;
+                                                $highlighted[$i + 1] = $newHtml;
                                             }
                                         }
                                     @endphp
 
                                     <table class="w-full">
-                                        @foreach($changes as $dl)
-                                            <tr class="{{ $dl['type'] === 'removed' ? 'bg-red-50' : 'bg-green-50' }}">
-                                                <td class="diff-line text-right pr-2 pl-3 py-0 text-gray-400 select-none w-8 align-top">{{ $dl['line'] }}</td>
-                                                <td class="diff-line py-0 px-1 w-4 text-center select-none {{ $dl['type'] === 'removed' ? 'text-red-400' : 'text-green-400' }}">{{ $dl['type'] === 'removed' ? '−' : '+' }}</td>
-                                                <td class="diff-line py-0 pr-3 {{ $dl['type'] === 'removed' ? 'text-red-700' : 'text-green-700' }}">{{ $dl['text'] ?: ' ' }}</td>
-                                            </tr>
+                                        @foreach($rows as $idx => $dl)
+                                            @if($dl['type'] === 'separator')
+                                                <tr>
+                                                    <td colspan="3" class="py-1 px-3">
+                                                        <div class="border-t border-gray-200 border-dashed"></div>
+                                                    </td>
+                                                </tr>
+                                            @elseif($dl['type'] === 'context')
+                                                <tr>
+                                                    <td class="diff-line text-right pr-2 pl-3 py-0 text-gray-300 select-none w-8 align-top">{{ $dl['line'] }}</td>
+                                                    <td class="diff-line py-0 px-1 w-4"></td>
+                                                    <td class="diff-line py-0 pr-3 text-gray-500">{{ $dl['text'] ?: ' ' }}</td>
+                                                </tr>
+                                            @elseif($dl['type'] === 'removed')
+                                                <tr class="bg-red-50">
+                                                    <td class="diff-line text-right pr-2 pl-3 py-0 text-red-300 select-none w-8 align-top">{{ $dl['line'] }}</td>
+                                                    <td class="diff-line py-0 px-1 w-4 text-center select-none text-red-400">−</td>
+                                                    <td class="diff-line py-0 pr-3 text-red-700">{!! $highlighted[$idx] ?? e($dl['text'] ?: ' ') !!}</td>
+                                                </tr>
+                                            @elseif($dl['type'] === 'added')
+                                                <tr class="bg-green-50">
+                                                    <td class="diff-line text-right pr-2 pl-3 py-0 text-green-300 select-none w-8 align-top">{{ $dl['line'] }}</td>
+                                                    <td class="diff-line py-0 px-1 w-4 text-center select-none text-green-400">+</td>
+                                                    <td class="diff-line py-0 pr-3 text-green-700">{!! $highlighted[$idx] ?? e($dl['text'] ?: ' ') !!}</td>
+                                                </tr>
+                                            @endif
                                         @endforeach
                                     </table>
                                 </div>
