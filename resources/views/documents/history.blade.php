@@ -131,12 +131,12 @@
                                                     @else
                                                         <span class="text-sm text-gray-400">
                                                             @if($file['doc_id'])
-                                                                <span class="font-mono text-xs mr-1 line-through">{{ $file['doc_id'] }}</span>
+                                                                <span class="text-xs mr-1">{{ $file['doc_id'] }}</span>
                                                             @endif
                                                             @if($dirLabel)
-                                                                <span class="line-through">{{ $dirLabel }} /</span>
+                                                                {{ $dirLabel }} /
                                                             @endif
-                                                            <span class="line-through">{{ $file['doc_title'] }}</span>
+                                                            {{ $file['doc_title'] }}
                                                         </span>
                                                     @endif
                                                 </div>
