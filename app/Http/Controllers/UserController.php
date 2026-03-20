@@ -9,18 +9,16 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function __construct()
+    private function authorizeAdmin(Request $request): void
     {
-        $this->middleware(function ($request, $next) {
-            if ($request->user()->role !== User::ROLE_ADMIN) {
-                abort(403);
-            }
-            return $next($request);
-        });
+        if ($request->user()->role !== User::ROLE_ADMIN) {
+            abort(403);
+        }
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        $this->authorizeAdmin($request);
         $users = User::orderBy('name')->get();
 
         return view('users.index', [
@@ -28,8 +26,9 @@ class UserController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $this->authorizeAdmin($request);
         return view('users.form', [
             'user' => null,
             'roles' => User::ROLES,
@@ -38,6 +37,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorizeAdmin($request);
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
@@ -72,8 +72,9 @@ class UserController extends Controller
             ->with('success', $message);
     }
 
-    public function edit(User $user)
+    public function edit(Request $request, User $user)
     {
+        $this->authorizeAdmin($request);
         return view('users.form', [
             'user' => $user,
             'roles' => User::ROLES,
@@ -82,6 +83,7 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        $this->authorizeAdmin($request);
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
@@ -105,8 +107,9 @@ class UserController extends Controller
             ->with('success', "User {$user->name} updated.");
     }
 
-    public function destroy(User $user, Request $request)
+    public function destroy(Request $request, User $user)
     {
+        $this->authorizeAdmin($request);
         if ($user->id === $request->user()->id) {
             return back()->withErrors(['delete' => 'You cannot delete your own account.']);
         }
