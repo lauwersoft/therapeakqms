@@ -1,6 +1,6 @@
 # SOP-001: Document Control Procedure
 
-## 1. Purpose 23
+## 1. Purpose 235
 
 This procedure defines the controls for creating, reviewing, approving, and managing QMS documents.
 
