@@ -185,25 +185,24 @@
             @endif
 
             <div class="max-w-4xl mx-auto py-6 px-4 sm:py-8 sm:px-6 lg:px-8">
-                @if($canEdit)
-                    <div class="flex items-center gap-2 mb-4">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 relative">
+                    @if($canEdit)
                         <a href="{{ route('documents.edit', ['path' => $currentPath]) }}"
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                           class="absolute top-4 right-4 sm:top-5 sm:right-5 inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-md text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition-colors z-10">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
                             Edit
                         </a>
-                    </div>
-                @endif
-
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-8">
-                    <div class="prose prose-gray prose-sm sm:prose-base max-w-none
-                                prose-headings:text-gray-900 prose-h1:text-2xl sm:prose-h1:text-3xl prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-3 prose-h1:mb-6
-                                prose-h2:text-xl sm:prose-h2:text-2xl prose-h2:mt-8
-                                prose-table:text-sm prose-th:bg-gray-50 prose-th:px-3 prose-th:py-2 prose-td:px-3 prose-td:py-2
-                                prose-a:text-blue-600">
-                        {!! $content !!}
+                    @endif
+                    <div class="p-5 sm:p-8">
+                        <div class="prose prose-gray prose-sm sm:prose-base max-w-none
+                                    prose-headings:text-gray-900 prose-h1:text-2xl sm:prose-h1:text-3xl prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-3 prose-h1:mb-6
+                                    prose-h2:text-xl sm:prose-h2:text-2xl prose-h2:mt-8
+                                    prose-table:text-sm prose-th:bg-gray-50 prose-th:px-3 prose-th:py-2 prose-td:px-3 prose-td:py-2
+                                    prose-a:text-blue-600">
+                            {!! $content !!}
+                        </div>
                     </div>
                 </div>
             </div>
