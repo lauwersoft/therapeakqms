@@ -2,7 +2,7 @@
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
     @endpush
-    <div class="flex h-[calc(100vh-64px)] overflow-hidden">
+    <div class="flex h-full overflow-hidden">
         <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0">
             <div class="max-w-5xl mx-auto py-6 px-4 sm:py-8 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-3 mb-4">

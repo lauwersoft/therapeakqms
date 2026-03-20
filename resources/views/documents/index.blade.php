@@ -6,7 +6,7 @@
         </style>
     @endpush
 
-    <div x-data="documentManager()" @click="closeMenus()" class="flex h-[calc(100vh-64px)] relative overflow-hidden">
+    <div x-data="documentManager()" @click="closeMenus()" class="flex h-full relative overflow-hidden">
 
         {{-- Context Menu: File --}}
         <div x-show="fileMenu.show" x-cloak

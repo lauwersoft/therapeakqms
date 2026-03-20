@@ -54,7 +54,7 @@
         </style>
     @endpush
 
-    <div x-data="documentEditor()" class="flex h-[calc(100vh-64px)] overflow-hidden">
+    <div x-data="documentEditor()" class="flex h-full overflow-hidden">
         {{-- Document link modal --}}
         <div x-show="linkModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="linkModal = false">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-5" @click.stop>
