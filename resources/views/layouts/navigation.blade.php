@@ -18,7 +18,10 @@
                     <x-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.index') || request()->routeIs('documents.edit') || request()->routeIs('documents.create') || request()->routeIs('documents.changes')">
                         {{ __('Documents') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('documents.history')" :active="request()->routeIs('documents.history')">
+                    <x-nav-link :href="route('documents.browse')" :active="request()->routeIs('documents.browse')">
+                        {{ __('Browse') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('documents.history')" :active="request()->routeIs('documents.history') || request()->routeIs('documents.revision')">
                         {{ __('History') }}
                     </x-nav-link>
                     @if(Auth::user()->isAdmin())
@@ -84,7 +87,10 @@
             <x-responsive-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.index') || request()->routeIs('documents.edit') || request()->routeIs('documents.create') || request()->routeIs('documents.changes')">
                 {{ __('Documents') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('documents.history')" :active="request()->routeIs('documents.history')">
+            <x-responsive-nav-link :href="route('documents.browse')" :active="request()->routeIs('documents.browse')">
+                {{ __('Browse') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('documents.history')" :active="request()->routeIs('documents.history') || request()->routeIs('documents.revision')">
                 {{ __('History') }}
             </x-responsive-nav-link>
             @if(Auth::user()->isAdmin())

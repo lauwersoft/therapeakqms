@@ -483,9 +483,11 @@ class DocumentController extends Controller
         // Get unique directories
         $directories = collect($documents)->pluck('directory')->unique()->values()->toArray();
 
+        $grouped = collect($documents)->groupBy('raw_directory');
+
         return view('documents.browse', [
             'documents' => $documents,
-            'directories' => $directories,
+            'grouped' => $grouped,
             'totalDocs' => count($documents),
         ]);
     }
