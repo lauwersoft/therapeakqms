@@ -303,7 +303,7 @@
                     @endif
                     @if($meta['id'])
                         <div class="px-5 sm:px-8 pt-5 sm:pt-6 pb-0">
-                            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs pb-4 border-b border-gray-100">
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs pb-4 border-b border-gray-100 pr-20">
                                 <span class="font-mono font-semibold text-gray-800 text-sm">{{ $meta['id'] }}</span>
                                 @if($meta['type'] && isset(\App\Services\DocumentMetadata::TYPES[$meta['type']]))
                                     <span class="text-gray-400">{{ \App\Services\DocumentMetadata::TYPES[$meta['type']] }}</span>
