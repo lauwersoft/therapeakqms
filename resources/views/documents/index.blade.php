@@ -248,8 +248,8 @@
                     <div class="flex-1 min-h-[150px]" @contextmenu.prevent="openBgMenu($event)"></div>
                 @endif
             </nav>
-            @if($canEdit && $pendingCount > 0)
-                <div class="p-3 border-t border-gray-200">
+            <div class="p-3 border-t border-gray-200 space-y-2">
+                @if($canEdit && $pendingCount > 0)
                     <a href="{{ route('documents.changes') }}"
                        class="flex items-center justify-between w-full px-3 py-2 text-sm bg-amber-50 text-amber-800 rounded-md hover:bg-amber-100 border border-amber-200">
                         <span class="font-medium">{{ $pendingCount }} unpublished {{ Str::plural('change', $pendingCount) }}</span>
@@ -257,8 +257,15 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
                     </a>
-                </div>
-            @endif
+                @endif
+                <a href="{{ route('documents.history') }}"
+                   class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-500 rounded-md hover:bg-gray-100 hover:text-gray-700">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    History
+                </a>
+            </div>
         </aside>
 
         {{-- Main Content --}}

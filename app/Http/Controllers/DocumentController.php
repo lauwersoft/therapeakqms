@@ -449,6 +449,24 @@ class DocumentController extends Controller
         return redirect()->route('documents.edit', ['path' => str_replace('.md', '', $relativePath)]);
     }
 
+    public function history(Request $request)
+    {
+        $page = max(1, (int) $request->query('page', 1));
+        $perPage = 20;
+        $offset = ($page - 1) * $perPage;
+
+        $commits = $this->git->getHistory($perPage, $offset);
+        $totalCommits = $this->git->getHistoryCount();
+        $totalPages = max(1, ceil($totalCommits / $perPage));
+
+        return view('documents.history', [
+            'commits' => $commits,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'totalCommits' => $totalCommits,
+        ]);
+    }
+
     public function changes(Request $request)
     {
         $this->authorizeEditor($request->user());

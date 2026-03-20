@@ -202,6 +202,71 @@ class GitService
     }
 
     /**
+     * Get commit history for qms/documents.
+     */
+    public function getHistory(int $limit = 50, int $offset = 0): array
+    {
+        $result = Process::path($this->base)
+            ->run(['git', 'log', '--format=%H|%an|%ae|%aI|%s', '--skip=' . $offset, '-' . $limit, '--', 'qms/documents/']);
+
+        $commits = [];
+        if ($result->successful() && trim($result->output())) {
+            foreach (explode("\n", trim($result->output())) as $line) {
+                $parts = explode('|', $line, 5);
+                if (count($parts) === 5) {
+                    $hash = $parts[0];
+
+                    // Get changed files for this commit
+                    $filesResult = Process::path($this->base)
+                        ->run(['git', 'diff-tree', '--no-commit-id', '--name-status', '-r', $hash, '--', 'qms/documents/']);
+
+                    $files = [];
+                    if ($filesResult->successful() && trim($filesResult->output())) {
+                        foreach (explode("\n", trim($filesResult->output())) as $fileLine) {
+                            $fileParts = preg_split('/\s+/', $fileLine, 2);
+                            if (count($fileParts) === 2) {
+                                $status = match ($fileParts[0]) {
+                                    'A' => 'added',
+                                    'M' => 'modified',
+                                    'D' => 'deleted',
+                                    default => $fileParts[0],
+                                };
+                                $files[] = [
+                                    'status' => $status,
+                                    'path' => str_replace('qms/documents/', '', $fileParts[1]),
+                                ];
+                            }
+                        }
+                    }
+
+                    $commits[] = [
+                        'hash' => $hash,
+                        'short_hash' => substr($hash, 0, 7),
+                        'author' => $parts[1],
+                        'email' => $parts[2],
+                        'date' => \Carbon\Carbon::parse($parts[3]),
+                        'message' => $parts[4],
+                        'files' => $files,
+                    ];
+                }
+            }
+        }
+
+        return $commits;
+    }
+
+    /**
+     * Get total number of commits for qms/documents.
+     */
+    public function getHistoryCount(): int
+    {
+        $result = Process::path($this->base)
+            ->run(['git', 'rev-list', '--count', 'HEAD', '--', 'qms/documents/']);
+
+        return $result->successful() ? (int) trim($result->output()) : 0;
+    }
+
+    /**
      * Get last commit info (author + date) for a specific file.
      */
     public function getLastCommitInfo(string $path): ?array
