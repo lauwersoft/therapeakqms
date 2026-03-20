@@ -92,12 +92,22 @@ class DocumentController extends Controller
         $raw = File::get($filePath);
         $parsed = DocumentMetadata::parse($raw);
 
+        $docIndex = DocumentMetadata::index($this->basePath);
+        $docList = collect($docIndex)
+            ->filter(fn ($m) => ! empty($m['id']))
+            ->map(fn ($m, $p) => ['id' => $m['id'], 'title' => $m['title'] ?? '', 'type' => $m['type'] ?? ''])
+            ->values()
+            ->sortBy('id')
+            ->values()
+            ->toArray();
+
         return view('documents.edit', [
             'content' => $parsed['body'],
             'meta' => $parsed['meta'],
             'currentPath' => $path,
             'documentTypes' => DocumentMetadata::TYPES,
             'statuses' => DocumentMetadata::STATUSES,
+            'docList' => $docList,
         ]);
     }
 
