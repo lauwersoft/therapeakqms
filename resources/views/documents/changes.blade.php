@@ -63,7 +63,10 @@
 
                 {{-- File diffs --}}
                 @foreach($changedFiles as $path => $info)
-                    @php $status = $info['status']; @endphp
+                    @php
+                        $status = $info['status'];
+                        $isDir = ($info['type'] ?? null) === 'directory';
+                    @endphp
                     <div x-data="{ open: true }" class="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 overflow-hidden">
                         {{-- File header --}}
                         <div class="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200 cursor-pointer" @click="open = !open">
@@ -75,9 +78,13 @@
                                     {{ in_array($status, ['new', 'added']) ? 'bg-green-100 text-green-700' : '' }}
                                     {{ $status === 'modified' ? 'bg-amber-100 text-amber-700' : '' }}
                                     {{ $status === 'deleted' ? 'bg-red-100 text-red-700' : '' }}
-                                    {{ in_array($status, ['move', 'rename']) ? 'bg-blue-100 text-blue-700' : '' }}">
-                                    {{ ucfirst($status === 'move' ? 'moved' : ($status === 'rename' ? 'renamed' : $status)) }}
+                                    {{ in_array($status, ['move', 'rename']) ? 'bg-blue-100 text-blue-700' : '' }}
+                                    {{ $status === 'create' && $isDir ? 'bg-green-100 text-green-700' : '' }}">
+                                    {{ $isDir ? 'Directory ' : '' }}{{ ucfirst($status === 'move' ? 'moved' : ($status === 'rename' ? 'renamed' : ($status === 'create' ? 'created' : $status))) }}
                                 </span>
+                                @if($isDir)
+                                    <svg class="w-4 h-4 text-yellow-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
+                                @endif
                                 <span class="text-sm font-mono text-gray-700 truncate">{{ $path }}</span>
                             </div>
                             <form method="POST" action="{{ route('documents.discard') }}" class="shrink-0 ml-2" @click.stop>
@@ -102,7 +109,11 @@
 
                         {{-- Diff content --}}
                         <div x-show="open">
-                            @if($status === 'deleted' && isset($diffs[$path]))
+                            @if($isDir)
+                                <div class="px-4 py-4 text-center text-sm text-gray-500">
+                                    {{ $status === 'create' ? 'New directory created.' : ($status === 'delete' ? 'Directory deleted.' : ($status === 'rename' ? 'Directory renamed from ' . ($info['old_path'] ?? '?') . '.' : 'Directory changed.')) }}
+                                </div>
+                            @elseif($status === 'deleted' && isset($diffs[$path]))
                                 {{-- Deleted file: show content that was removed --}}
                                 <div class="overflow-x-auto">
                                     <div class="px-4 py-2 bg-red-50 text-xs text-red-600 font-medium border-b border-red-100">Entire file deleted</div>

@@ -47,7 +47,8 @@ class DocumentController extends Controller
 
         $canEdit = in_array($request->user()->role, [User::ROLE_ADMIN, User::ROLE_EDITOR]);
         $changedFiles = $this->git->getChangedFiles();
-        $pendingCount = count($changedFiles);
+        $changeLogCount = DocumentChange::count();
+        $pendingCount = max(count($changedFiles), $changeLogCount);
 
         return view('documents.index', [
             'tree' => $tree,
@@ -150,7 +151,7 @@ class DocumentController extends Controller
 
         $request->validate([
             'path' => 'required|string',
-            'destination' => 'present|string',
+            'destination' => 'nullable|string',
         ]);
 
         $oldPath = $request->input('path');
@@ -361,8 +362,28 @@ class DocumentController extends Controller
         $changedFiles = $this->git->getChangedFiles();
 
         // Reconcile: remove log entries for files that aren't actually changed
+        // Keep directory entries (they don't show in git status since .gitkeep is filtered)
         $changedPaths = array_keys($changedFiles);
-        DocumentChange::whereNotIn('path', $changedPaths)->delete();
+        DocumentChange::whereNotIn('path', $changedPaths)
+            ->where(function ($q) {
+                $q->whereNull('details')
+                  ->orWhereJsonDoesntContain('details->type', 'directory');
+            })
+            ->delete();
+
+        // Add directory changes from log that aren't in git
+        $dirChanges = DocumentChange::whereJsonContains('details->type', 'directory')->get();
+        foreach ($dirChanges as $dc) {
+            if (! isset($changedFiles[$dc->path])) {
+                $changedFiles[$dc->path] = [
+                    'status' => $dc->action,
+                    'type' => 'directory',
+                ];
+                if ($dc->action === 'rename' && isset($dc->details['old_path'])) {
+                    $changedFiles[$dc->path]['old_path'] = $dc->details['old_path'];
+                }
+            }
+        }
 
         $changeLog = DocumentChange::with('user')->oldest()->get();
 
