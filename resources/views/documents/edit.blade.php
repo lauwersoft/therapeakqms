@@ -2,8 +2,6 @@
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
         <style>
-            body, .min-h-screen { overflow: hidden; height: 100vh; }
-
             /* Editor sizing — must override EasyMDE defaults */
             .EasyMDEContainer .CodeMirror {
                 font-size: 12.5px !important;

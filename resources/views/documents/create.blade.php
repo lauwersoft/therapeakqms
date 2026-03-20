@@ -1,6 +1,5 @@
 <x-app-layout>
     @push('styles')
-        <style>body, .min-h-screen { overflow: hidden; height: 100vh; }</style>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
     @endpush
     <div class="flex h-[calc(100vh-64px)] overflow-hidden">

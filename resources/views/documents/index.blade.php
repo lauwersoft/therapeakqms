@@ -1,7 +1,6 @@
 <x-app-layout>
     @push('styles')
         <style>
-            body, .min-h-screen { overflow: hidden; height: 100vh; }
             .sortable-ghost { opacity: 0.4; }
             .sortable-drag { opacity: 0.9; }
         </style>
