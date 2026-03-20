@@ -348,9 +348,11 @@
                         </div>
                     @endif
                     <div class="p-5 sm:p-8 {{ $meta['id'] ? 'pt-4' : '' }}">
-                        <div class="prose prose-gray prose-sm sm:prose-base max-w-none
-                                    prose-headings:text-gray-900 prose-h1:text-2xl sm:prose-h1:text-3xl prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-3 prose-h1:mb-6
-                                    prose-h2:text-xl sm:prose-h2:text-2xl prose-h2:mt-8
+                        <div class="prose prose-sm sm:prose-base max-w-none
+                                    text-gray-600 prose-headings:text-gray-700
+                                    prose-h1:text-xl sm:prose-h1:text-2xl prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-3 prose-h1:mb-6
+                                    prose-h2:text-lg sm:prose-h2:text-xl prose-h2:mt-8
+                                    prose-strong:text-gray-700
                                     prose-table:text-sm prose-th:bg-gray-50 prose-th:px-3 prose-th:py-2 prose-td:px-3 prose-td:py-2
                                     prose-a:text-blue-600">
                             {!! $content !!}
