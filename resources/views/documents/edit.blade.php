@@ -65,18 +65,19 @@
                        placeholder="Search by ID or name..."
                        class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500 mb-2">
                 <div class="doc-link-dropdown border border-gray-200 rounded-md">
-                    <template x-for="doc in filteredDocs" :key="doc.id">
+                    <template x-for="doc in getFilteredDocs()" :key="doc.id">
                         <button @click="insertDocLink(doc.id)" type="button"
                                 class="doc-link-item flex items-center gap-3 w-full px-3 py-2 text-left text-sm">
-                            <span class="font-mono text-xs text-gray-500 shrink-0" x-text="doc.id"></span>
-                            <span class="truncate" x-text="doc.title || doc.id"></span>
-                            <span class="text-xs text-gray-400 shrink-0 ml-auto" x-text="doc.type"></span>
+                            <span class="font-mono text-xs text-blue-600 shrink-0" x-text="doc.id"></span>
+                            <span class="truncate text-gray-800" x-text="doc.title || doc.id"></span>
+                            <span class="text-xs text-gray-400 shrink-0 ml-auto bg-gray-100 px-1.5 py-0.5 rounded" x-text="doc.type"></span>
                         </button>
                     </template>
-                    <div x-show="filteredDocs.length === 0" class="px-3 py-4 text-sm text-gray-400 text-center">
+                    <div x-show="getFilteredDocs().length === 0" class="px-3 py-4 text-sm text-gray-400 text-center">
                         No documents found
                     </div>
                 </div>
+                <p class="text-xs text-gray-400 mt-2" x-show="docs.length > 0" x-text="getFilteredDocs().length + ' of ' + docs.length + ' documents'"></p>
                 <div class="flex justify-between items-center mt-3">
                     <p class="text-xs text-gray-400">Inserts <code class="bg-gray-100 px-1 rounded">[[DOC-ID]]</code> at cursor</p>
                     <button type="button" @click="linkModal = false" class="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md">Cancel</button>
@@ -193,8 +194,8 @@
                     docs: @json($docList),
                     editor: null,
 
-                    get filteredDocs() {
-                        if (!this.linkSearch) return this.docs;
+                    getFilteredDocs() {
+                        if (!this.linkSearch || this.linkSearch.trim() === '') return this.docs;
                         const q = this.linkSearch.toLowerCase();
                         return this.docs.filter(d =>
                             d.id.toLowerCase().includes(q) ||
