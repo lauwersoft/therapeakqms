@@ -1,5 +1,8 @@
 <x-app-layout>
-    <div x-data="{ sidebarOpen: false }" class="flex h-[calc(100vh-64px)] relative">
+    @push('styles')
+        <style>body, .min-h-screen { overflow: hidden; height: 100vh; }</style>
+    @endpush
+    <div x-data="{ sidebarOpen: false }" class="flex h-[calc(100vh-64px)] relative overflow-hidden">
         {{-- Mobile overlay --}}
         <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-out duration-200" x-transition:leave="transition-opacity ease-in duration-150"
              @click="sidebarOpen = false"
