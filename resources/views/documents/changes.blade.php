@@ -195,19 +195,19 @@
                                                 </tr>
                                             @elseif($dl['type'] === 'context')
                                                 <tr>
-                                                    <td class="diff-line text-right pr-2 pl-3 py-0 text-gray-300 select-none w-8 align-top">{{ $dl['line'] }}</td>
+                                                    <td class="diff-line text-right pr-2 pl-3 py-0 text-gray-300 select-none w-12 align-top">{{ $dl['line'] }}</td>
                                                     <td class="diff-line py-0 px-1 w-4"></td>
                                                     <td class="diff-line py-0 pr-3 text-gray-500">{{ $dl['text'] ?: ' ' }}</td>
                                                 </tr>
                                             @elseif($dl['type'] === 'removed')
                                                 <tr class="bg-red-50">
-                                                    <td class="diff-line text-right pr-2 pl-3 py-0 text-red-300 select-none w-8 align-top">{{ $dl['line'] }}</td>
+                                                    <td class="diff-line text-right pr-2 pl-3 py-0 text-red-300 select-none w-12 align-top">{{ $dl['line'] }}</td>
                                                     <td class="diff-line py-0 px-1 w-4 text-center select-none text-red-400">−</td>
                                                     <td class="diff-line py-0 pr-3 text-red-700">{!! $highlighted[$idx] ?? e($dl['text'] ?: ' ') !!}</td>
                                                 </tr>
                                             @elseif($dl['type'] === 'added')
                                                 <tr class="bg-green-50">
-                                                    <td class="diff-line text-right pr-2 pl-3 py-0 text-green-300 select-none w-8 align-top">{{ $dl['line'] }}</td>
+                                                    <td class="diff-line text-right pr-2 pl-3 py-0 text-green-300 select-none w-12 align-top">{{ $dl['line'] }}</td>
                                                     <td class="diff-line py-0 px-1 w-4 text-center select-none text-green-400">+</td>
                                                     <td class="diff-line py-0 pr-3 text-green-700">{!! $highlighted[$idx] ?? e($dl['text'] ?: ' ') !!}</td>
                                                 </tr>
