@@ -342,7 +342,7 @@
                                         @endif
                                         @if($lastEdit)
                                             <span>·</span>
-                                            <span>Last edited by {{ $lastEdit['name'] }} {{ $lastEdit['date']->diffForHumans() }}</span>
+                                            <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="hover:text-blue-500">Last edited by {{ $lastEdit['name'] }} {{ $lastEdit['date']->diffForHumans() }}</a>
                                         @endif
                                     </div>
                                 </div>
@@ -361,7 +361,7 @@
                         <div class="px-5 sm:px-8 pt-4 sm:pt-5 pb-0">
                             <div class="flex items-center justify-between pb-3 border-b border-gray-100">
                                 @if($lastEdit)
-                                    <span class="text-xs text-gray-400">Last edited by {{ $lastEdit['name'] }} {{ $lastEdit['date']->diffForHumans() }}</span>
+                                    <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="text-xs text-gray-400 hover:text-blue-500">Last edited by {{ $lastEdit['name'] }} {{ $lastEdit['date']->diffForHumans() }}</a>
                                 @else
                                     <span></span>
                                 @endif

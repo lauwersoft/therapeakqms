@@ -5,7 +5,6 @@
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">Change History</h2>
                 <span class="text-sm text-gray-400">{{ $totalCommits }} {{ Str::plural('revision', $totalCommits) }}</span>
             </div>
-            <a href="{{ route('documents.index') }}" class="text-sm text-gray-500 hover:text-gray-900">Back to Documents</a>
         </div>
     </x-slot>
 
