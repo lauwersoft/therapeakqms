@@ -220,11 +220,14 @@
                     </button>
                 </div>
             </div>
-            <nav class="p-3 flex-1"
+            <nav class="p-3 flex-1 flex flex-col"
                  @if($canEdit)
-                     @contextmenu.self.prevent="openBgMenu($event)"
+                     @contextmenu.prevent="openBgMenu($event)"
                  @endif>
-                @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $canEdit, 'changedFiles' => $changedFiles])
+                <div @if($canEdit) @contextmenu.stop @endif>
+                    @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $canEdit, 'changedFiles' => $changedFiles])
+                </div>
+                <div class="flex-1 min-h-[100px]"></div>
             </nav>
             @if($canEdit && $pendingCount > 0)
                 <div class="p-3 border-t border-gray-200">
