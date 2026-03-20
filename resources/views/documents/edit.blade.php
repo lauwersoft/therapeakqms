@@ -5,16 +5,17 @@
 
             /* Editor sizing */
             .EasyMDEContainer .CodeMirror {
-                font-size: 13px;
-                line-height: 1.6;
+                font-size: 12.5px;
+                line-height: 1.55;
                 font-family: Ubuntu, sans-serif;
                 border-color: #e5e7eb;
             }
             .EasyMDEContainer .CodeMirror-focused { border-color: #3b82f6; }
-            .EasyMDEContainer .cm-header-1 { font-size: 1.4em; font-weight: 700; }
-            .EasyMDEContainer .cm-header-2 { font-size: 1.2em; font-weight: 600; }
-            .EasyMDEContainer .cm-header-3 { font-size: 1.05em; font-weight: 600; }
+            .EasyMDEContainer .cm-header-1 { font-size: 1.15em; font-weight: 700; color: #111827; }
+            .EasyMDEContainer .cm-header-2 { font-size: 1.08em; font-weight: 600; color: #1f2937; }
+            .EasyMDEContainer .cm-header-3 { font-size: 1em; font-weight: 600; color: #374151; }
             .EasyMDEContainer .cm-strong { font-weight: 700; }
+            .EasyMDEContainer .cm-comment { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9em; background: #f3f4f6; border-radius: 3px; padding: 0 3px; }
 
             /* Preview styling */
             .EasyMDEContainer .editor-preview,
@@ -25,9 +26,9 @@
                 padding: 1.5rem;
                 background: #fff;
             }
-            .EasyMDEContainer .editor-preview h1, .EasyMDEContainer .editor-preview-side h1 { font-size: 1.6em; font-weight: 700; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.4rem; margin: 0 0 1rem; }
-            .EasyMDEContainer .editor-preview h2, .EasyMDEContainer .editor-preview-side h2 { font-size: 1.3em; font-weight: 600; margin: 1.5rem 0 0.5rem; }
-            .EasyMDEContainer .editor-preview h3, .EasyMDEContainer .editor-preview-side h3 { font-size: 1.1em; font-weight: 600; margin: 1.2rem 0 0.4rem; }
+            .EasyMDEContainer .editor-preview h1, .EasyMDEContainer .editor-preview-side h1 { font-size: 1.35em; font-weight: 700; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.4rem; margin: 0 0 0.8rem; }
+            .EasyMDEContainer .editor-preview h2, .EasyMDEContainer .editor-preview-side h2 { font-size: 1.15em; font-weight: 600; margin: 1.2rem 0 0.4rem; }
+            .EasyMDEContainer .editor-preview h3, .EasyMDEContainer .editor-preview-side h3 { font-size: 1.05em; font-weight: 600; margin: 1rem 0 0.3rem; }
             .EasyMDEContainer .editor-preview table, .EasyMDEContainer .editor-preview-side table { border-collapse: collapse; width: 100%; margin: 0.75rem 0; font-size: 0.9em; }
             .EasyMDEContainer .editor-preview th, .EasyMDEContainer .editor-preview-side th { background: #f9fafb; padding: 0.4rem 0.6rem; border: 1px solid #e5e7eb; text-align: left; font-weight: 600; }
             .EasyMDEContainer .editor-preview td, .EasyMDEContainer .editor-preview-side td { padding: 0.4rem 0.6rem; border: 1px solid #e5e7eb; }
@@ -35,6 +36,9 @@
             .EasyMDEContainer .editor-preview ol, .EasyMDEContainer .editor-preview-side ol { list-style: decimal; padding-left: 1.5rem; }
             .EasyMDEContainer .editor-preview a, .EasyMDEContainer .editor-preview-side a { color: #2563eb; text-decoration: underline; }
             .EasyMDEContainer .editor-preview blockquote, .EasyMDEContainer .editor-preview-side blockquote { border-left: 3px solid #d1d5db; padding-left: 1rem; color: #6b7280; margin: 0.75rem 0; }
+            .EasyMDEContainer .editor-preview code, .EasyMDEContainer .editor-preview-side code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9em; background: #f3f4f6; padding: 0.15rem 0.35rem; border-radius: 3px; }
+            .EasyMDEContainer .editor-preview pre, .EasyMDEContainer .editor-preview-side pre { background: #1f2937; color: #e5e7eb; padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 0.75rem 0; }
+            .EasyMDEContainer .editor-preview pre code, .EasyMDEContainer .editor-preview-side pre code { background: none; padding: 0; color: inherit; }
 
             /* Toolbar */
             .EasyMDEContainer .editor-toolbar { border-color: #e5e7eb; background: #fafafa; padding: 4px 8px; }
@@ -44,9 +48,10 @@
             .EasyMDEContainer .editor-toolbar i.separator { border-color: #e5e7eb; }
 
             /* Document link modal */
-            .doc-link-dropdown { max-height: 250px; overflow-y: auto; }
+            .doc-link-dropdown { max-height: 300px; overflow-y: auto; }
             .doc-link-item:hover { background: #f3f4f6; }
             .doc-link-item.selected { background: #dbeafe; }
+            .doc-link-item + .doc-link-item { border-top: 1px solid #f3f4f6; }
         </style>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
     @endpush
@@ -303,6 +308,12 @@
                                     action: EasyMDE.toggleBlockquote,
                                     className: 'fa fa-quote-left',
                                     title: 'Quote',
+                                },
+                                {
+                                    name: 'code',
+                                    action: EasyMDE.toggleCodeBlock,
+                                    className: 'fa fa-code',
+                                    title: 'Code block',
                                 },
                                 {
                                     name: 'horizontal-rule',
