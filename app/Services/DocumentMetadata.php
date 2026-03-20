@@ -25,63 +25,107 @@ class DocumentMetadata
         'obsolete' => 'Obsolete',
     ];
 
+    const DEFAULTS = [
+        'id' => null,
+        'title' => null,
+        'type' => null,
+        'version' => '0.1',
+        'status' => 'draft',
+        'effective_date' => null,
+        'author' => null,
+        'iso_refs' => [],
+        'mdr_refs' => [],
+    ];
+
     /**
      * Parse frontmatter and content from a markdown file.
+     * Robust: handles missing frontmatter, malformed YAML, and --- in body.
      */
     public static function parse(string $content): array
     {
         $meta = [];
         $body = $content;
 
-        if (str_starts_with(trim($content), '---')) {
-            $parts = preg_split('/^---\s*$/m', $content, 3);
+        // Only parse if content starts with --- (allowing leading whitespace/newlines)
+        $trimmed = ltrim($content);
+        if (str_starts_with($trimmed, '---')) {
+            // Match: opening ---, YAML block, closing ---, rest is body
+            // Use \A on trimmed content to anchor at start
+            if (preg_match('/\A---[ \t]*\r?\n(.+?)\r?\n---[ \t]*\r?\n(.*)\z/s', $trimmed, $matches)) {
+                $yamlBlock = $matches[1];
+                $body = $matches[2];
 
-            if (count($parts) >= 3) {
                 try {
-                    $meta = Yaml::parse(trim($parts[1])) ?? [];
+                    $parsed = Yaml::parse($yamlBlock);
+                    if (is_array($parsed)) {
+                        $meta = $parsed;
+                    }
                 } catch (\Exception $e) {
+                    // Malformed YAML — treat entire content as body, no metadata
                     $meta = [];
+                    $body = $content;
                 }
-                $body = trim($parts[2]);
             }
         }
 
-        // Defaults
-        $meta = array_merge([
-            'id' => null,
-            'title' => null,
-            'type' => null,
-            'version' => '0.1',
-            'status' => 'draft',
-            'effective_date' => null,
-            'author' => null,
-            'iso_refs' => [],
-            'mdr_refs' => [],
-        ], $meta);
+        // Merge with defaults — ensures all keys exist
+        $meta = array_merge(self::DEFAULTS, $meta);
+
+        // Validate known fields
+        $meta['status'] = array_key_exists($meta['status'], self::STATUSES) ? $meta['status'] : 'draft';
+        $meta['type'] = ($meta['type'] && array_key_exists($meta['type'], self::TYPES)) ? $meta['type'] : $meta['type'];
+        $meta['iso_refs'] = is_array($meta['iso_refs']) ? $meta['iso_refs'] : [];
+        $meta['mdr_refs'] = is_array($meta['mdr_refs']) ? $meta['mdr_refs'] : [];
+        $meta['version'] = (string) ($meta['version'] ?? '0.1');
+
+        // Ensure body is trimmed cleanly
+        $body = trim($body);
 
         return ['meta' => $meta, 'body' => $body];
     }
 
     /**
      * Build frontmatter + body back into a markdown string.
+     * Preserves field order for clean diffs.
      */
     public static function build(array $meta, string $body): string
     {
-        // Remove null/empty values
-        $clean = array_filter($meta, fn ($v) => $v !== null && $v !== '' && $v !== []);
+        // Fixed field order for consistent output (clean git diffs)
+        $ordered = [];
+        $fieldOrder = ['id', 'title', 'type', 'version', 'status', 'effective_date', 'author', 'iso_refs', 'mdr_refs'];
 
-        $yaml = Yaml::dump($clean, 2, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
+        foreach ($fieldOrder as $key) {
+            if (isset($meta[$key]) && $meta[$key] !== null && $meta[$key] !== '' && $meta[$key] !== []) {
+                $ordered[$key] = $meta[$key];
+            }
+        }
+
+        // Include any extra fields not in the standard order
+        foreach ($meta as $key => $value) {
+            if (! in_array($key, $fieldOrder) && $value !== null && $value !== '' && $value !== []) {
+                $ordered[$key] = $value;
+            }
+        }
+
+        $yaml = Yaml::dump($ordered, 2, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
+
+        $body = trim($body);
 
         return "---\n{$yaml}---\n\n{$body}\n";
     }
 
     /**
      * Generate the next document ID for a given type prefix.
+     * Scans all files to find the highest existing number.
      */
     public static function nextId(string $typePrefix, string $basePath): string
     {
         $highest = 0;
         $prefix = strtoupper($typePrefix);
+
+        if (! is_dir($basePath)) {
+            return $prefix . '-001';
+        }
 
         $files = File::allFiles($basePath);
         foreach ($files as $file) {
@@ -110,6 +154,10 @@ class DocumentMetadata
     {
         $index = [];
 
+        if (! is_dir($basePath)) {
+            return $index;
+        }
+
         $files = File::allFiles($basePath);
         foreach ($files as $file) {
             if (! str_ends_with($file->getFilename(), '.md')) {
@@ -124,5 +172,40 @@ class DocumentMetadata
         }
 
         return $index;
+    }
+
+    /**
+     * Compare two meta arrays and return human-readable changes.
+     */
+    public static function diffMeta(array $oldMeta, array $newMeta): array
+    {
+        $changes = [];
+        $labels = [
+            'status' => 'Status',
+            'version' => 'Version',
+            'effective_date' => 'Effective date',
+            'author' => 'Author',
+            'title' => 'Title',
+        ];
+
+        foreach ($labels as $key => $label) {
+            $old = $oldMeta[$key] ?? null;
+            $new = $newMeta[$key] ?? null;
+
+            if ($key === 'status') {
+                $old = self::STATUSES[$old] ?? $old;
+                $new = self::STATUSES[$new] ?? $new;
+            }
+
+            if ($old !== $new && ($old || $new)) {
+                $changes[] = [
+                    'field' => $label,
+                    'old' => $old,
+                    'new' => $new,
+                ];
+            }
+        }
+
+        return $changes;
     }
 }

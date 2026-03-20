@@ -456,11 +456,26 @@ class DocumentController extends Controller
 
         // Get diffs for each changed file
         $diffs = [];
+        $metaChanges = [];
         foreach ($changedFiles as $path => $info) {
             $status = $info['status'];
 
             if ($status === 'modified') {
+                // Get raw diff for body content
                 $diffs[$path] = $this->git->getFileDiff($path);
+
+                // Compare metadata between published and current version
+                $originalRaw = $this->git->getOriginalContent($path);
+                $currentRaw = File::exists($this->basePath . '/' . $path) ? File::get($this->basePath . '/' . $path) : '';
+
+                if ($originalRaw) {
+                    $oldMeta = DocumentMetadata::parse($originalRaw)['meta'];
+                    $newMeta = DocumentMetadata::parse($currentRaw)['meta'];
+                    $propChanges = DocumentMetadata::diffMeta($oldMeta, $newMeta);
+                    if (! empty($propChanges)) {
+                        $metaChanges[$path] = $propChanges;
+                    }
+                }
             } elseif (in_array($status, ['new', 'added'])) {
                 $fullPath = $this->basePath . '/' . $path;
                 if (File::exists($fullPath)) {
@@ -495,6 +510,7 @@ class DocumentController extends Controller
             'changedFiles' => $changedFiles,
             'changeLog' => $changeLog,
             'diffs' => $diffs,
+            'metaChanges' => $metaChanges,
             'canPublish' => $request->user()->role === User::ROLE_ADMIN,
         ]);
     }

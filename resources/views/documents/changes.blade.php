@@ -107,6 +107,23 @@
                             </div>
                         @endif
 
+                        {{-- Property changes --}}
+                        @if(isset($metaChanges[$path]) && !empty($metaChanges[$path]))
+                            <div class="px-4 py-3 bg-purple-50 border-b border-purple-100">
+                                <div class="text-xs font-medium text-purple-600 mb-2">Property changes</div>
+                                @foreach($metaChanges[$path] as $pc)
+                                    <div class="flex items-center gap-2 text-sm mb-1 last:mb-0">
+                                        <span class="text-purple-700 font-medium">{{ $pc['field'] }}:</span>
+                                        @if($pc['old'])
+                                            <span class="line-through text-red-500">{{ $pc['old'] }}</span>
+                                            <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                        @endif
+                                        <span class="text-green-600 font-medium">{{ $pc['new'] ?? '(empty)' }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+
                         {{-- Diff content --}}
                         <div x-show="open">
                             @if($isDir)
@@ -157,6 +174,7 @@
                                         $oldLineNum = 0;
                                         $newLineNum = 0;
                                         $rows = [];
+                                        $inFrontmatter = false;
 
                                         foreach ($diffLines as $line) {
                                             if (str_starts_with($line, 'diff ') || str_starts_with($line, 'index ') ||
@@ -168,9 +186,37 @@
                                                 preg_match('/@@ -(\d+),?\d* \+(\d+)/', $line, $m);
                                                 $oldLineNum = (int)($m[1] ?? 0);
                                                 $newLineNum = (int)($m[2] ?? 0);
+                                                // Detect if this hunk is in the frontmatter area (starts near line 1)
+                                                $inFrontmatter = ($oldLineNum <= 1 || $newLineNum <= 1);
                                                 if (!empty($rows)) {
                                                     $rows[] = ['type' => 'separator'];
                                                 }
+                                                continue;
+                                            }
+
+                                            // Skip frontmatter YAML lines (between --- markers at start of file)
+                                            $lineContent = substr($line, 1);
+                                            if ($inFrontmatter) {
+                                                // Check if we've passed the closing ---
+                                                if (trim($lineContent) === '---' || trim($line) === '---') {
+                                                    // Skip the closing --- and mark end of frontmatter
+                                                    if ($line[0] === ' ') {
+                                                        // Context line with --- means we're at the closing marker
+                                                        $inFrontmatter = false;
+                                                    }
+                                                    if ($line[0] === '-' || $line[0] === '+') {
+                                                        // Changed --- line, skip it
+                                                    }
+                                                    if ($line[0] === '-') $oldLineNum++;
+                                                    elseif ($line[0] === '+') $newLineNum++;
+                                                    else { $oldLineNum++; $newLineNum++; }
+                                                    continue;
+                                                }
+
+                                                // Skip all frontmatter content lines
+                                                if ($line[0] === '-') $oldLineNum++;
+                                                elseif ($line[0] === '+') $newLineNum++;
+                                                else { $oldLineNum++; $newLineNum++; }
                                                 continue;
                                             }
 
