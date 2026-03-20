@@ -97,7 +97,21 @@
                         @if($file['status'] === 'deleted' && empty($file['diff']))
                             <div class="px-4 py-4 text-center text-sm text-gray-500">File was removed in this revision.</div>
 
-                        @elseif($file['status'] === 'added' && ! str_contains($file['diff'], '@@'))
+                        @elseif($file['status'] === 'deleted' && ! empty($file['diff']))
+                            {{-- Deleted file: show old content --}}
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    @foreach(explode("\n", $file['diff']) as $i => $line)
+                                        <tr class="bg-red-50/50">
+                                            <td class="diff-line text-right pr-2 pl-3 py-0 text-red-300 select-none w-12 align-top">{{ $i + 1 }}</td>
+                                            <td class="diff-line py-0 px-1 w-4 text-center select-none text-red-400">−</td>
+                                            <td class="diff-line py-0 pr-3 text-red-600/70">{{ $line ?: ' ' }}</td>
+                                        </tr>
+                                    @endforeach
+                                </table>
+                            </div>
+
+                        @elseif($file['status'] === 'added' && ! empty($file['diff']) && ! str_contains($file['diff'], '@@'))
                             {{-- New file: show full content --}}
                             <div class="overflow-x-auto">
                                 <table class="w-full">

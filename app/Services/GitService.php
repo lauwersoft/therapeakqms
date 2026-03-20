@@ -344,11 +344,24 @@ class GitService
 
                 $diff = $diffResult->output();
 
-                // For new files, use git show
+                // For new files, get the body content (strip frontmatter)
                 if (empty($diff) && $status === 'added') {
                     $showResult = Process::path($this->base)
                         ->run(['git', 'show', $hash . ':qms/documents/' . $filePath]);
-                    $diff = $showResult->successful() ? $showResult->output() : '';
+                    if ($showResult->successful()) {
+                        $parsed = \App\Services\DocumentMetadata::parse($showResult->output());
+                        $diff = $parsed['body'];
+                    }
+                }
+
+                // For deleted files, get the old body content
+                if (empty($diff) && $status === 'deleted') {
+                    $showResult = Process::path($this->base)
+                        ->run(['git', 'show', $hash . '~1:qms/documents/' . $filePath]);
+                    if ($showResult->successful()) {
+                        $parsed = \App\Services\DocumentMetadata::parse($showResult->output());
+                        $diff = $parsed['body'];
+                    }
                 }
 
                 // Get old and new metadata for modified files
