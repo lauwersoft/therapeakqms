@@ -278,4 +278,41 @@ class DocumentMetadata
 
         return $changes;
     }
+
+    /**
+     * Get the clean URL path for a document (without .md).
+     */
+    public static function urlPath(string $filePath): string
+    {
+        return str_replace('.md', '', $filePath);
+    }
+
+    /**
+     * Build an ID-to-path lookup map from the document index.
+     */
+    public static function idMap(array $docIndex): array
+    {
+        $map = [];
+        foreach ($docIndex as $path => $meta) {
+            if (! empty($meta['id'])) {
+                $map[$meta['id']] = $path;
+            }
+        }
+        return $map;
+    }
+
+    /**
+     * Resolve [[DOC-ID]] links in HTML content to actual URLs.
+     */
+    public static function resolveLinks(string $html, array $idMap): string
+    {
+        return preg_replace_callback('/\[\[([A-Z]+-\d{3})\]\]/', function ($matches) use ($idMap) {
+            $docId = $matches[1];
+            if (isset($idMap[$docId])) {
+                $url = '/qms/' . self::urlPath($idMap[$docId]);
+                return '<a href="' . e($url) . '" class="text-blue-600 hover:text-blue-800 font-medium">' . e($docId) . '</a>';
+            }
+            return '<span class="text-red-500" title="Document not found">' . e($docId) . ' (not found)</span>';
+        }, $html);
+    }
 }

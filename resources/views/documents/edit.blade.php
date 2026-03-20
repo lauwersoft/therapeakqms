@@ -1,6 +1,31 @@
 <x-app-layout>
     @push('styles')
-        <style>body, .min-h-screen { overflow: hidden; height: 100vh; }</style>
+        <style>
+            body, .min-h-screen { overflow: hidden; height: 100vh; }
+            .EasyMDEContainer .CodeMirror { font-size: 14px; line-height: 1.6; font-family: Ubuntu, sans-serif; }
+            .EasyMDEContainer .cm-header-1 { font-size: 1.5em; }
+            .EasyMDEContainer .cm-header-2 { font-size: 1.3em; }
+            .EasyMDEContainer .cm-header-3 { font-size: 1.1em; }
+            .EasyMDEContainer .editor-preview, .EasyMDEContainer .editor-preview-side {
+                font-family: Ubuntu, sans-serif;
+                font-size: 14px;
+                line-height: 1.7;
+                padding: 1.5rem;
+            }
+            .EasyMDEContainer .editor-preview h1, .EasyMDEContainer .editor-preview-side h1 { font-size: 1.8em; font-weight: 700; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem; margin-bottom: 1rem; }
+            .EasyMDEContainer .editor-preview h2, .EasyMDEContainer .editor-preview-side h2 { font-size: 1.4em; font-weight: 600; margin-top: 1.5rem; }
+            .EasyMDEContainer .editor-preview h3, .EasyMDEContainer .editor-preview-side h3 { font-size: 1.15em; font-weight: 600; margin-top: 1.2rem; }
+            .EasyMDEContainer .editor-preview table, .EasyMDEContainer .editor-preview-side table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+            .EasyMDEContainer .editor-preview th, .EasyMDEContainer .editor-preview-side th { background: #f9fafb; padding: 0.5rem 0.75rem; border: 1px solid #e5e7eb; text-align: left; font-weight: 600; }
+            .EasyMDEContainer .editor-preview td, .EasyMDEContainer .editor-preview-side td { padding: 0.5rem 0.75rem; border: 1px solid #e5e7eb; }
+            .EasyMDEContainer .editor-preview ul, .EasyMDEContainer .editor-preview-side ul { list-style: disc; padding-left: 1.5rem; }
+            .EasyMDEContainer .editor-preview ol, .EasyMDEContainer .editor-preview-side ol { list-style: decimal; padding-left: 1.5rem; }
+            .EasyMDEContainer .editor-preview a, .EasyMDEContainer .editor-preview-side a { color: #2563eb; text-decoration: underline; }
+            .EasyMDEContainer .editor-toolbar { border-color: #e5e7eb; }
+            .EasyMDEContainer .editor-toolbar button { color: #6b7280 !important; }
+            .EasyMDEContainer .editor-toolbar button:hover { background: #f3f4f6; }
+            .EasyMDEContainer .editor-toolbar button.active { background: #e5e7eb; }
+        </style>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
     @endpush
     <div class="flex h-[calc(100vh-64px)] overflow-hidden">
@@ -8,7 +33,7 @@
             <div class="max-w-5xl mx-auto py-6 px-4 sm:py-8 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-3">
-                        <a href="{{ route('documents.index', ['path' => $currentPath]) }}"
+                        <a href="{{ route('documents.index', ['path' => str_replace('.md', '', $currentPath)]) }}"
                            class="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -92,7 +117,7 @@
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-6">
                         <textarea id="editor" name="content">{{ $content }}</textarea>
                         <div class="flex justify-end gap-2 mt-4">
-                            <a href="{{ route('documents.index', ['path' => $currentPath]) }}"
+                            <a href="{{ route('documents.index', ['path' => str_replace('.md', '', $currentPath)]) }}"
                                class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md border border-gray-300">Cancel</a>
                             <button type="submit"
                                     class="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Save Document</button>

@@ -24,11 +24,17 @@ class DocumentController extends Controller
         $this->git = $git;
     }
 
-    public function index(Request $request)
+    public function index(Request $request, ?string $path = null)
     {
         $docIndex = DocumentMetadata::index($this->basePath);
         $tree = $this->buildTree($this->basePath, '', $docIndex);
-        $path = $request->query('path', 'quality-manual.md');
+
+        // Add .md extension if not present
+        if (! $path) {
+            $path = 'quality-manual.md';
+        } elseif (! str_ends_with($path, '.md')) {
+            $path .= '.md';
+        }
 
         $filePath = $this->resolvePath($path);
         if (! $filePath || ! str_ends_with($filePath, '.md')) {
@@ -49,6 +55,10 @@ class DocumentController extends Controller
         $converter = new MarkdownConverter($environment);
         $html = $converter->convert($parsed['body'])->getContent();
 
+        // Resolve [[DOC-ID]] links
+        $idMap = DocumentMetadata::idMap($docIndex);
+        $html = DocumentMetadata::resolveLinks($html, $idMap);
+
         $canEdit = in_array($request->user()->role, [User::ROLE_ADMIN, User::ROLE_EDITOR]);
         $changedFiles = $this->git->getChangedFiles();
         $changeLogCount = DocumentChange::count();
@@ -66,11 +76,14 @@ class DocumentController extends Controller
         ]);
     }
 
-    public function edit(Request $request)
+    public function edit(Request $request, string $path)
     {
         $this->authorizeEditor($request->user());
 
-        $path = $request->query('path');
+        if (! str_ends_with($path, '.md')) {
+            $path .= '.md';
+        }
+
         $filePath = $this->resolvePath($path);
         if (! $filePath) {
             abort(404);
@@ -133,7 +146,7 @@ class DocumentController extends Controller
         File::put($filePath, $fileContent);
         $this->logChange($request->user(), 'edit', $path);
 
-        return redirect()->route('documents.index', ['path' => $path])
+        return redirect()->route('documents.index', ['path' => str_replace('.md', '', $path)])
             ->with('success', 'Document saved. Remember to publish when ready.');
     }
 
@@ -194,7 +207,7 @@ class DocumentController extends Controller
         File::put($fullPath, $content);
         $this->logChange($request->user(), 'create', $relativePath);
 
-        return redirect()->route('documents.index', ['path' => $relativePath])
+        return redirect()->route('documents.index', ['path' => str_replace('.md', '', $relativePath)])
             ->with('success', 'Document created. Remember to publish when ready.');
     }
 
@@ -231,7 +244,7 @@ class DocumentController extends Controller
         rename($oldFull, $newFull);
         $this->logChange($request->user(), 'move', $newPath, ['old_path' => $oldPath]);
 
-        return redirect()->route('documents.index', ['path' => $newPath])
+        return redirect()->route('documents.index', ['path' => str_replace('.md', '', $newPath)])
             ->with('success', 'Document moved. Remember to publish when ready.');
     }
 
@@ -262,7 +275,7 @@ class DocumentController extends Controller
         rename($oldFull, $newFull);
         $this->logChange($request->user(), 'rename', $newPath, ['old_path' => $oldPath]);
 
-        return redirect()->route('documents.index', ['path' => $newPath])
+        return redirect()->route('documents.index', ['path' => str_replace('.md', '', $newPath)])
             ->with('success', 'Document renamed. Remember to publish when ready.');
     }
 
@@ -419,7 +432,7 @@ class DocumentController extends Controller
         File::put($fullPath, $content);
         $this->logChange($request->user(), 'create', $relativePath);
 
-        return redirect()->route('documents.edit', ['path' => $relativePath]);
+        return redirect()->route('documents.edit', ['path' => str_replace('.md', '', $relativePath)]);
     }
 
     public function changes(Request $request)

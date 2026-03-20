@@ -324,7 +324,7 @@
                                     @endif
                                 </div>
                                 @if($canEdit)
-                                    <a href="{{ route('documents.edit', ['path' => $currentPath]) }}"
+                                    <a href="{{ route('documents.edit', ['path' => str_replace('.md', '', $currentPath)]) }}"
                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-md text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition-colors shrink-0">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -337,7 +337,7 @@
                     @elseif($canEdit)
                         <div class="px-5 sm:px-8 pt-5 sm:pt-6 pb-0">
                             <div class="flex justify-end pb-4 border-b border-gray-100">
-                                <a href="{{ route('documents.edit', ['path' => $currentPath]) }}"
+                                <a href="{{ route('documents.edit', ['path' => str_replace('.md', '', $currentPath)]) }}"
                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-md text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -414,7 +414,7 @@
 
                     editFile() {
                         this.closeMenus();
-                        window.location = '{{ route("documents.edit") }}?path=' + encodeURIComponent(this.ctx.path);
+                        window.location = '/qms/edit/' + this.ctx.path.replace('.md', '');
                     },
 
                     showRename() {

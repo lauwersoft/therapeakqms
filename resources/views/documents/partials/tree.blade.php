@@ -63,10 +63,10 @@
             @php $fileStatus = isset($changedFiles[$item['path']]) ? $changedFiles[$item['path']]['status'] : null; @endphp
             <div class="sortable-item" data-path="{{ $item['path'] }}">
                 <div class="group flex items-center">
-                    <a href="{{ route('documents.index', ['path' => $item['path']]) }}"
+                    <a href="{{ route('documents.index', ['path' => str_replace('.md', '', $item['path'])]) }}"
                        @if($canEdit)
                            @contextmenu="openFileMenu($event, '{{ $item['path'] }}', '{{ addslashes($item['name']) }}')"
-                           @dblclick.prevent="window.location='{{ route('documents.edit', ['path' => $item['path']]) }}'"
+                           @dblclick.prevent="window.location='{{ route('documents.edit', ['path' => str_replace('.md', '', $item['path'])]) }}'"
                        @endif
                        class="flex items-center flex-1 min-w-0 px-2 py-1.5 text-sm rounded mb-0.5 cursor-pointer
                               {{ $currentPath === $item['path'] ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100' }}">
@@ -103,7 +103,7 @@
                             </button>
                             <div x-show="ddOpen" x-cloak @click.outside="ddOpen = false"
                                  class="absolute right-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                                <a href="{{ route('documents.edit', ['path' => $item['path']]) }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <a href="{{ route('documents.edit', ['path' => str_replace('.md', '', $item['path'])]) }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                     Edit
                                 </a>
