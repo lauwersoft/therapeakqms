@@ -36,6 +36,7 @@ class CreateUserCommand extends Command
             'password' => $password,
             'role' => $role,
             'approved' => $approved,
+            'email_verified_at' => now(),
         ]);
 
         $this->info("User created successfully!");
