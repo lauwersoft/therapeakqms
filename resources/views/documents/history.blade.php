@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">Change History</h2>
-                <p class="text-sm text-gray-500 mt-0.5">{{ $totalCommits }} {{ Str::plural('revision', $totalCommits) }} · ISO 13485:2016 Clause 4.2.4</p>
+                <p class="text-sm text-gray-500 mt-0.5">{{ $totalCommits }} {{ Str::plural('revision', $totalCommits) }}</p>
             </div>
             <a href="{{ route('documents.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Back to Documents</a>
         </div>
