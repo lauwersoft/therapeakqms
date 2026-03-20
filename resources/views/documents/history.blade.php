@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">Document History</h2>
-                <p class="text-sm text-gray-500 mt-1">{{ $totalCommits }} {{ Str::plural('revision', $totalCommits) }} tracked</p>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">Change History</h2>
+                <p class="text-sm text-gray-500 mt-0.5">{{ $totalCommits }} {{ Str::plural('revision', $totalCommits) }} · ISO 13485:2016 Clause 4.2.4</p>
             </div>
             <a href="{{ route('documents.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Back to Documents</a>
         </div>
@@ -16,96 +16,130 @@
                     <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <p class="text-gray-500">No document history yet.</p>
+                    <p class="text-gray-500">No document revisions yet.</p>
                 </div>
             @else
-                {{-- Timeline --}}
-                <div class="relative">
-                    {{-- Timeline line --}}
-                    <div class="absolute left-6 top-0 bottom-0 w-px bg-gray-200"></div>
+                @php $lastDate = null; @endphp
+                @foreach($commits as $commit)
+                    {{-- Date separator --}}
+                    @if($lastDate !== $commit['date']->format('Y-m-d'))
+                        @php $lastDate = $commit['date']->format('Y-m-d'); @endphp
+                        <div class="flex items-center gap-3 {{ !$loop->first ? 'mt-6' : '' }} mb-3">
+                            <div class="h-px flex-1 bg-gray-200"></div>
+                            <span class="text-xs font-medium text-gray-400 shrink-0">{{ $commit['date']->format('F j, Y') }}</span>
+                            <div class="h-px flex-1 bg-gray-200"></div>
+                        </div>
+                    @endif
 
-                    @php $lastDate = null; @endphp
-                    @foreach($commits as $commit)
-                        {{-- Date separator --}}
-                        @if($lastDate !== $commit['date']->format('Y-m-d'))
-                            @php $lastDate = $commit['date']->format('Y-m-d'); @endphp
-                            <div class="relative flex items-center mb-4 {{ !$loop->first ? 'mt-8' : '' }}">
-                                <div class="w-12 flex justify-center">
-                                    <div class="w-3 h-3 bg-gray-300 rounded-full ring-4 ring-white z-10"></div>
-                                </div>
-                                <span class="ml-4 text-sm font-semibold text-gray-500">{{ $commit['date']->format('F j, Y') }}</span>
-                            </div>
-                        @endif
+                    {{-- Revision card --}}
+                    <div x-data="{ open: false }" class="bg-white rounded-lg shadow-sm border border-gray-200 mb-3 overflow-hidden">
+                        <div class="px-5 py-4 cursor-pointer hover:bg-gray-50/50 transition-colors" @click="open = !open">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="min-w-0">
+                                    {{-- Revision description --}}
+                                    <p class="text-sm text-gray-800 leading-snug">{{ Str::before($commit['message'], "\n") }}</p>
 
-                        {{-- Commit card --}}
-                        <div x-data="{ open: false }" class="relative flex mb-3">
-                            {{-- Timeline dot --}}
-                            <div class="w-12 flex justify-center pt-4 shrink-0">
-                                <div class="w-2 h-2 bg-blue-400 rounded-full ring-4 ring-white z-10"></div>
-                            </div>
-
-                            {{-- Card --}}
-                            <div class="flex-1 ml-2 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                                <div class="px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors" @click="open = !open">
-                                    <div class="flex items-start justify-between gap-3">
-                                        <div class="min-w-0">
-                                            <p class="text-sm text-gray-800 font-medium leading-snug">{{ Str::before($commit['message'], "\n") }}</p>
-                                            <div class="flex items-center gap-2 mt-1.5">
-                                                <div class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                                                    <span class="text-[10px] font-semibold text-blue-600">{{ strtoupper(substr($commit['author'], 0, 1)) }}</span>
-                                                </div>
-                                                <span class="text-xs text-gray-500">{{ $commit['author'] }}</span>
-                                                <span class="text-xs text-gray-400">{{ $commit['date']->format('H:i') }}</span>
-                                                <span class="text-xs font-mono text-gray-400">{{ $commit['short_hash'] }}</span>
-                                                @if(count($commit['files']) > 0)
-                                                    <span class="text-xs text-gray-400">· {{ count($commit['files']) }} {{ Str::plural('file', count($commit['files'])) }}</span>
+                                    {{-- Affected documents preview --}}
+                                    <div class="flex flex-wrap items-center gap-1.5 mt-2">
+                                        @foreach($commit['files'] as $file)
+                                            <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full
+                                                {{ $file['status'] === 'added' ? 'bg-green-50 text-green-700' : '' }}
+                                                {{ $file['status'] === 'modified' ? 'bg-blue-50 text-blue-700' : '' }}
+                                                {{ $file['status'] === 'deleted' ? 'bg-red-50 text-red-600' : '' }}">
+                                                @if($file['doc_id'])
+                                                    <span class="font-mono font-medium">{{ $file['doc_id'] }}</span>
+                                                @else
+                                                    <span>{{ $file['doc_title'] }}</span>
                                                 @endif
-                                            </div>
-                                        </div>
-                                        <svg class="w-4 h-4 text-gray-400 shrink-0 mt-1 transition-transform" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                        </svg>
+                                                <span class="text-[10px] opacity-70">
+                                                    {{ $file['status'] === 'added' ? 'created' : ($file['status'] === 'deleted' ? 'removed' : 'updated') }}
+                                                </span>
+                                            </span>
+                                        @endforeach
                                     </div>
                                 </div>
 
-                                {{-- Expanded details --}}
-                                <div x-show="open" x-cloak class="border-t border-gray-100">
-                                    {{-- Full commit message if multiline --}}
-                                    @if(str_contains($commit['message'], "\n"))
-                                        <div class="px-4 py-3 bg-gray-50 text-xs text-gray-600 whitespace-pre-line border-b border-gray-100">{{ $commit['message'] }}</div>
-                                    @endif
-
-                                    {{-- Changed files --}}
-                                    @if(count($commit['files']) > 0)
-                                        <div class="divide-y divide-gray-50">
-                                            @foreach($commit['files'] as $file)
-                                                <div class="px-4 py-2 flex items-center gap-2 text-sm">
-                                                    @if($file['status'] === 'added')
-                                                        <span class="w-5 h-5 rounded flex items-center justify-center bg-green-100 text-green-600 text-xs font-bold shrink-0">+</span>
-                                                    @elseif($file['status'] === 'modified')
-                                                        <span class="w-5 h-5 rounded flex items-center justify-center bg-amber-100 text-amber-600 text-xs font-bold shrink-0">~</span>
-                                                    @elseif($file['status'] === 'deleted')
-                                                        <span class="w-5 h-5 rounded flex items-center justify-center bg-red-100 text-red-600 text-xs font-bold shrink-0">−</span>
-                                                    @else
-                                                        <span class="w-5 h-5 rounded flex items-center justify-center bg-gray-100 text-gray-500 text-xs font-bold shrink-0">?</span>
-                                                    @endif
-                                                    @if($file['status'] !== 'deleted')
-                                                        <a href="{{ route('documents.index', ['path' => str_replace('.md', '', $file['path'])]) }}"
-                                                           class="font-mono text-xs text-blue-600 hover:text-blue-800 hover:underline truncate">
-                                                            {{ $file['path'] }}
-                                                        </a>
-                                                    @else
-                                                        <span class="font-mono text-xs text-gray-500 line-through truncate">{{ $file['path'] }}</span>
-                                                    @endif
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    @endif
+                                <div class="flex items-center gap-3 shrink-0 text-xs text-gray-400">
+                                    <span>{{ $commit['date']->format('H:i') }}</span>
+                                    <svg class="w-3.5 h-3.5 transition-transform" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
                                 </div>
                             </div>
+
+                            {{-- Author + meta --}}
+                            <div class="flex items-center gap-2 mt-2">
+                                <div class="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                                    <span class="text-[10px] font-semibold text-gray-500">{{ strtoupper(substr($commit['author'], 0, 1)) }}</span>
+                                </div>
+                                <span class="text-xs text-gray-500">{{ $commit['author'] }}</span>
+                                <span class="text-xs text-gray-300">·</span>
+                                <span class="text-xs text-gray-400">{{ $commit['date']->diffForHumans() }}</span>
+                            </div>
                         </div>
-                    @endforeach
-                </div>
+
+                        {{-- Expanded details --}}
+                        <div x-show="open" x-cloak class="border-t border-gray-100">
+                            {{-- Full description if multiline --}}
+                            @if(str_contains($commit['message'], "\n"))
+                                @php
+                                    $fullMessage = Str::after($commit['message'], "\n");
+                                    $fullMessage = trim($fullMessage);
+                                @endphp
+                                @if($fullMessage)
+                                    <div class="px-5 py-3 bg-gray-50 text-xs text-gray-600 whitespace-pre-line border-b border-gray-100">{{ $fullMessage }}</div>
+                                @endif
+                            @endif
+
+                            {{-- Affected documents --}}
+                            @if(count($commit['files']) > 0)
+                                <div class="px-5 py-3">
+                                    <div class="text-xs font-medium text-gray-400 mb-2">Affected documents</div>
+                                    <div class="space-y-2">
+                                        @foreach($commit['files'] as $file)
+                                            <div class="flex items-center gap-3">
+                                                @if($file['status'] === 'added')
+                                                    <span class="w-16 text-xs font-medium text-green-600">Created</span>
+                                                @elseif($file['status'] === 'modified')
+                                                    <span class="w-16 text-xs font-medium text-blue-600">Updated</span>
+                                                @elseif($file['status'] === 'deleted')
+                                                    <span class="w-16 text-xs font-medium text-red-600">Removed</span>
+                                                @else
+                                                    <span class="w-16 text-xs font-medium text-gray-500">Changed</span>
+                                                @endif
+
+                                                @if($file['status'] !== 'deleted' && $file['doc_id'])
+                                                    <a href="{{ route('documents.index', ['path' => str_replace('.md', '', $file['path'])]) }}"
+                                                       class="text-sm text-gray-700 hover:text-blue-600 hover:underline">
+                                                        <span class="font-mono text-xs text-gray-400 mr-1">{{ $file['doc_id'] }}</span>
+                                                        {{ $file['doc_title'] }}
+                                                    </a>
+                                                @elseif($file['status'] !== 'deleted')
+                                                    <a href="{{ route('documents.index', ['path' => str_replace('.md', '', $file['path'])]) }}"
+                                                       class="text-sm text-gray-700 hover:text-blue-600 hover:underline">
+                                                        {{ $file['doc_title'] }}
+                                                    </a>
+                                                @else
+                                                    <span class="text-sm text-gray-400 line-through">
+                                                        @if($file['doc_id'])
+                                                            <span class="font-mono text-xs mr-1">{{ $file['doc_id'] }}</span>
+                                                        @endif
+                                                        {{ $file['doc_title'] }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            {{-- Revision reference --}}
+                            <div class="px-5 py-2 bg-gray-50 border-t border-gray-100">
+                                <span class="text-[11px] text-gray-400">Revision {{ $commit['short_hash'] }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
 
                 {{-- Pagination --}}
                 @if($totalPages > 1)

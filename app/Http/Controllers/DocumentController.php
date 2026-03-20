@@ -459,6 +459,17 @@ class DocumentController extends Controller
         $totalCommits = $this->git->getHistoryCount();
         $totalPages = max(1, ceil($totalCommits / $perPage));
 
+        // Enrich file paths with document metadata
+        $docIndex = DocumentMetadata::index($this->basePath);
+        foreach ($commits as &$commit) {
+            foreach ($commit['files'] as &$file) {
+                $meta = $docIndex[$file['path']] ?? null;
+                $file['doc_id'] = $meta['id'] ?? null;
+                $file['doc_title'] = $meta['title'] ?? $this->formatName(str_replace('.md', '', basename($file['path'])));
+                $file['doc_type'] = $meta['type'] ?? null;
+            }
+        }
+
         return view('documents.history', [
             'commits' => $commits,
             'currentPage' => $page,
