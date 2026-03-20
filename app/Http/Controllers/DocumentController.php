@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DocumentChange;
 use App\Models\User;
 use App\Services\GitService;
 use Illuminate\Http\Request;
@@ -45,6 +46,8 @@ class DocumentController extends Controller
         $html = $converter->convert($markdown)->getContent();
 
         $canEdit = in_array($request->user()->role, [User::ROLE_ADMIN, User::ROLE_EDITOR]);
+        $changedFiles = $this->git->getChangedFiles();
+        $pendingCount = count($changedFiles);
 
         return view('documents.index', [
             'tree' => $tree,
@@ -52,6 +55,8 @@ class DocumentController extends Controller
             'currentPath' => $path,
             'canEdit' => $canEdit,
             'directories' => $canEdit ? $this->getDirectories() : [],
+            'changedFiles' => $changedFiles,
+            'pendingCount' => $pendingCount,
         ]);
     }
 
@@ -66,13 +71,10 @@ class DocumentController extends Controller
         }
 
         $content = File::get($filePath);
-        $tree = $this->buildTree($this->basePath);
 
         return view('documents.edit', [
-            'tree' => $tree,
             'content' => $content,
             'currentPath' => $path,
-            'canEdit' => true,
         ]);
     }
 
@@ -92,10 +94,10 @@ class DocumentController extends Controller
         }
 
         File::put($filePath, $request->input('content'));
-        $this->git->commitAndPush($request->user(), "Edit: {$path}");
+        $this->logChange($request->user(), 'edit', $path);
 
         return redirect()->route('documents.index', ['path' => $path])
-            ->with('success', 'Document saved.');
+            ->with('success', 'Document saved. Remember to publish when ready.');
     }
 
     public function create(Request $request)
@@ -103,13 +105,10 @@ class DocumentController extends Controller
         $this->authorizeEditor($request->user());
 
         $directory = $request->query('directory', '');
-        $tree = $this->buildTree($this->basePath);
 
         return view('documents.create', [
-            'tree' => $tree,
             'directory' => $directory,
             'directories' => $this->getDirectories(),
-            'canEdit' => true,
         ]);
     }
 
@@ -129,7 +128,7 @@ class DocumentController extends Controller
         $fullPath = $this->basePath . '/' . $relativePath;
 
         if (File::exists($fullPath)) {
-            return back()->withErrors(['filename' => 'A file with this name already exists.']);
+            return back()->withErrors(['filename' => 'A file with this name already exists.'])->withInput();
         }
 
         $dir = dirname($fullPath);
@@ -139,11 +138,10 @@ class DocumentController extends Controller
 
         $content = $request->input('content', "# " . $request->input('filename') . "\n");
         File::put($fullPath, $content);
-
-        $this->git->commitAndPush($request->user(), "Create: {$relativePath}");
+        $this->logChange($request->user(), 'create', $relativePath);
 
         return redirect()->route('documents.index', ['path' => $relativePath])
-            ->with('success', 'Document created.');
+            ->with('success', 'Document created. Remember to publish when ready.');
     }
 
     public function move(Request $request)
@@ -152,7 +150,7 @@ class DocumentController extends Controller
 
         $request->validate([
             'path' => 'required|string',
-            'destination' => 'required|string',
+            'destination' => 'present|string',
         ]);
 
         $oldPath = $request->input('path');
@@ -165,16 +163,22 @@ class DocumentController extends Controller
 
         $filename = basename($oldPath);
         $newPath = $destination ? $destination . '/' . $filename : $filename;
-
         $newFull = $this->basePath . '/' . $newPath;
+
         if (File::exists($newFull)) {
             return back()->withErrors(['destination' => 'A file with this name already exists in the destination.']);
         }
 
-        $this->git->moveFile($oldPath, $newPath, $request->user());
+        $newDir = dirname($newFull);
+        if (! is_dir($newDir)) {
+            mkdir($newDir, 0755, true);
+        }
+
+        rename($oldFull, $newFull);
+        $this->logChange($request->user(), 'move', $newPath, ['old_path' => $oldPath]);
 
         return redirect()->route('documents.index', ['path' => $newPath])
-            ->with('success', 'Document moved.');
+            ->with('success', 'Document moved. Remember to publish when ready.');
     }
 
     public function rename(Request $request)
@@ -195,16 +199,17 @@ class DocumentController extends Controller
         $newFilename = Str::slug($request->input('new_name')) . '.md';
         $directory = dirname($oldPath);
         $newPath = ($directory !== '.') ? $directory . '/' . $newFilename : $newFilename;
-
         $newFull = $this->basePath . '/' . $newPath;
+
         if (File::exists($newFull)) {
             return back()->withErrors(['new_name' => 'A file with this name already exists.']);
         }
 
-        $this->git->moveFile($oldPath, $newPath, $request->user());
+        rename($oldFull, $newFull);
+        $this->logChange($request->user(), 'rename', $newPath, ['old_path' => $oldPath]);
 
         return redirect()->route('documents.index', ['path' => $newPath])
-            ->with('success', 'Document renamed.');
+            ->with('success', 'Document renamed. Remember to publish when ready.');
     }
 
     public function destroy(Request $request)
@@ -219,10 +224,11 @@ class DocumentController extends Controller
             abort(404);
         }
 
-        $this->git->deleteFile($path, $request->user());
+        unlink($fullPath);
+        $this->logChange($request->user(), 'delete', $path);
 
         return redirect()->route('documents.index')
-            ->with('success', 'Document deleted.');
+            ->with('success', 'Document deleted. Remember to publish when ready.');
     }
 
     public function createDirectory(Request $request)
@@ -244,12 +250,66 @@ class DocumentController extends Controller
         }
 
         mkdir($fullPath, 0755, true);
-
-        // Git doesn't track empty directories, create a .gitkeep
         File::put($fullPath . '/.gitkeep', '');
-        $this->git->commitAndPush($request->user(), "Create directory: {$relativePath}");
 
         return back()->with('success', 'Directory created.');
+    }
+
+    public function changes(Request $request)
+    {
+        $this->authorizeEditor($request->user());
+
+        $changedFiles = $this->git->getChangedFiles();
+        $changeLog = DocumentChange::with('user')->oldest()->get();
+
+        return view('documents.changes', [
+            'changedFiles' => $changedFiles,
+            'changeLog' => $changeLog,
+            'canPublish' => $request->user()->role === User::ROLE_ADMIN,
+        ]);
+    }
+
+    public function publish(Request $request)
+    {
+        if ($request->user()->role !== User::ROLE_ADMIN) {
+            abort(403);
+        }
+
+        $request->validate([
+            'message' => 'required|string|max:500',
+        ]);
+
+        try {
+            $this->git->publish($request->user(), $request->input('message'));
+        } catch (\RuntimeException $e) {
+            return back()->withErrors(['publish' => $e->getMessage()]);
+        }
+
+        return redirect()->route('documents.index')
+            ->with('success', 'All changes published successfully.');
+    }
+
+    public function discard(Request $request)
+    {
+        $this->authorizeEditor($request->user());
+
+        $request->validate(['path' => 'required|string']);
+
+        $this->git->discard($request->input('path'));
+
+        return back()->with('success', 'Changes discarded.');
+    }
+
+    public function discardAll(Request $request)
+    {
+        if ($request->user()->role !== User::ROLE_ADMIN) {
+            abort(403);
+        }
+
+        $this->git->discardAll();
+
+        return redirect()->route('documents.index')
+            ->with('success', 'All changes discarded.');
     }
 
     private function authorizeEditor($user): void
@@ -257,6 +317,16 @@ class DocumentController extends Controller
         if (! in_array($user->role, [User::ROLE_ADMIN, User::ROLE_EDITOR])) {
             abort(403);
         }
+    }
+
+    private function logChange(User $user, string $action, string $path, ?array $details = null): void
+    {
+        DocumentChange::create([
+            'user_id' => $user->id,
+            'action' => $action,
+            'path' => $path,
+            'details' => $details,
+        ]);
     }
 
     private function resolvePath(string $path): ?string

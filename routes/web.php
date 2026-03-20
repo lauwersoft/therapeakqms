@@ -22,6 +22,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/documents/rename', [DocumentController::class, 'rename'])->name('documents.rename');
     Route::delete('/documents', [DocumentController::class, 'destroy'])->name('documents.destroy');
     Route::post('/documents/directory', [DocumentController::class, 'createDirectory'])->name('documents.directory.store');
+    Route::get('/documents/changes', [DocumentController::class, 'changes'])->name('documents.changes');
+    Route::post('/documents/publish', [DocumentController::class, 'publish'])->name('documents.publish');
+    Route::post('/documents/discard', [DocumentController::class, 'discard'])->name('documents.discard');
+    Route::post('/documents/discard-all', [DocumentController::class, 'discardAll'])->name('documents.discard-all');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

@@ -139,8 +139,19 @@
                 </div>
             </div>
             <nav class="p-3 flex-1">
-                @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $canEdit])
+                @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $canEdit, 'changedFiles' => $changedFiles])
             </nav>
+            @if($canEdit && $pendingCount > 0)
+                <div class="p-3 border-t border-gray-200">
+                    <a href="{{ route('documents.changes') }}"
+                       class="flex items-center justify-between w-full px-3 py-2 text-sm bg-amber-50 text-amber-800 rounded-md hover:bg-amber-100 border border-amber-200">
+                        <span class="font-medium">{{ $pendingCount }} unpublished {{ Str::plural('change', $pendingCount) }}</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            @endif
         </aside>
 
         {{-- Main Content --}}
