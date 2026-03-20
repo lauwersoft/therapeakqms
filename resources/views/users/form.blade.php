@@ -46,7 +46,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
                             <select name="role" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
                                 @foreach($roles as $role)
-                                    <option value="{{ $role }}" {{ old('role', $user?->role ?? 'editor') === $role ? 'selected' : '' }}>
+                                    <option value="{{ $role }}" {{ old('role', $user?->role ?? 'auditor') === $role ? 'selected' : '' }}>
                                         {{ ucfirst($role) }}
                                         @if($role === 'admin')
                                             — Full access, can publish changes and manage users

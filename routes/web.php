@@ -12,6 +12,10 @@ Route::get('/', function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/approval-pending', function () {
+    return view('auth.approval-pending');
+})->middleware('auth')->name('approval.pending');
+
 Route::middleware('auth')->group(function () {
     // QMS document actions (must be before catch-all)
     Route::get('/qms/history', [DocumentController::class, 'history'])->name('documents.history');
