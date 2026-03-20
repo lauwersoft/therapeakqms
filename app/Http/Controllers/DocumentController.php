@@ -224,8 +224,18 @@ class DocumentController extends Controller
             abort(404);
         }
 
+        $dir = dirname($fullPath);
         unlink($fullPath);
         $this->logChange($request->user(), 'delete', $path);
+
+        // If directory is now empty, add .gitkeep so git still tracks it
+        if (is_dir($dir)) {
+            $remaining = collect(File::files($dir))->filter(fn ($f) => $f->getFilename() !== '.gitkeep');
+            $subDirs = File::directories($dir);
+            if ($remaining->isEmpty() && empty($subDirs) && ! File::exists($dir . '/.gitkeep')) {
+                File::put($dir . '/.gitkeep', '');
+            }
+        }
 
         return redirect()->route('documents.index')
             ->with('success', 'Document deleted. Remember to publish when ready.');
@@ -251,8 +261,97 @@ class DocumentController extends Controller
 
         mkdir($fullPath, 0755, true);
         File::put($fullPath . '/.gitkeep', '');
+        $this->logChange($request->user(), 'create', $relativePath, ['type' => 'directory']);
 
         return back()->with('success', 'Directory created.');
+    }
+
+    public function renameDirectory(Request $request)
+    {
+        $this->authorizeEditor($request->user());
+
+        $request->validate([
+            'path' => 'required|string',
+            'new_name' => 'required|string|max:255',
+        ]);
+
+        $oldPath = $request->input('path');
+        $oldFull = $this->basePath . '/' . $oldPath;
+
+        if (! is_dir($oldFull) || ! str_starts_with(realpath($oldFull), realpath($this->basePath))) {
+            abort(404);
+        }
+
+        $newName = Str::slug($request->input('new_name'));
+        $parent = dirname($oldPath);
+        $newPath = ($parent !== '.') ? $parent . '/' . $newName : $newName;
+        $newFull = $this->basePath . '/' . $newPath;
+
+        if (is_dir($newFull)) {
+            return back()->withErrors(['new_name' => 'A directory with this name already exists.']);
+        }
+
+        rename($oldFull, $newFull);
+        $this->logChange($request->user(), 'rename', $newPath, ['old_path' => $oldPath, 'type' => 'directory']);
+
+        return redirect()->route('documents.index')
+            ->with('success', 'Directory renamed.');
+    }
+
+    public function destroyDirectory(Request $request)
+    {
+        $this->authorizeEditor($request->user());
+
+        $request->validate(['path' => 'required|string']);
+
+        $path = $request->input('path');
+        $fullPath = $this->basePath . '/' . $path;
+
+        if (! is_dir($fullPath) || ! str_starts_with(realpath($fullPath), realpath($this->basePath))) {
+            abort(404);
+        }
+
+        // Check if directory has real files (not just .gitkeep)
+        $realFiles = collect(File::allFiles($fullPath))->filter(fn ($f) => $f->getFilename() !== '.gitkeep');
+        if ($realFiles->isNotEmpty()) {
+            return back()->withErrors(['path' => 'Directory is not empty. Delete all files inside first.']);
+        }
+
+        File::deleteDirectory($fullPath);
+        $this->logChange($request->user(), 'delete', $path, ['type' => 'directory']);
+
+        return redirect()->route('documents.index')
+            ->with('success', 'Directory deleted.');
+    }
+
+    public function quickCreate(Request $request)
+    {
+        $this->authorizeEditor($request->user());
+
+        $request->validate([
+            'filename' => 'required|string|max:255',
+            'directory' => 'nullable|string',
+        ]);
+
+        $filename = Str::slug($request->input('filename')) . '.md';
+        $directory = $request->input('directory', '');
+        $relativePath = $directory ? $directory . '/' . $filename : $filename;
+        $fullPath = $this->basePath . '/' . $relativePath;
+
+        if (File::exists($fullPath)) {
+            return back()->withErrors(['filename' => 'A file with this name already exists.']);
+        }
+
+        $dir = dirname($fullPath);
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        $title = $request->input('filename');
+        File::put($fullPath, "# {$title}\n");
+        $this->logChange($request->user(), 'create', $relativePath);
+
+        return redirect()->route('documents.edit', ['path' => $relativePath]);
     }
 
     public function changes(Request $request)

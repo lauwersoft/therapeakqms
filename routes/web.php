@@ -22,6 +22,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/documents/rename', [DocumentController::class, 'rename'])->name('documents.rename');
     Route::delete('/documents', [DocumentController::class, 'destroy'])->name('documents.destroy');
     Route::post('/documents/directory', [DocumentController::class, 'createDirectory'])->name('documents.directory.store');
+    Route::post('/documents/directory/rename', [DocumentController::class, 'renameDirectory'])->name('documents.directory.rename');
+    Route::delete('/documents/directory', [DocumentController::class, 'destroyDirectory'])->name('documents.directory.destroy');
+    Route::post('/documents/quick-create', [DocumentController::class, 'quickCreate'])->name('documents.quick-create');
     Route::get('/documents/changes', [DocumentController::class, 'changes'])->name('documents.changes');
     Route::post('/documents/publish', [DocumentController::class, 'publish'])->name('documents.publish');
     Route::post('/documents/discard', [DocumentController::class, 'discard'])->name('documents.discard');

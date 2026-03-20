@@ -5,6 +5,9 @@
             <div class="mb-1">
                 <div x-data="{ open: true }">
                     <button @click="open = !open"
+                            @if($canEdit)
+                                @contextmenu="openDirMenu($event, '{{ $item['path'] }}', '{{ addslashes($item['name']) }}')"
+                            @endif
                             class="flex items-center w-full px-2 py-1.5 text-sm font-medium text-gray-700 rounded hover:bg-gray-100">
                         <svg class="w-4 h-4 mr-2 text-gray-400 transition-transform" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -30,7 +33,7 @@
             <div class="sortable-item" data-path="{{ $item['path'] }}">
                 <a href="{{ route('documents.index', ['path' => $item['path']]) }}"
                    @if($canEdit)
-                       @contextmenu="openContextMenu($event, '{{ $item['path'] }}', '{{ addslashes($item['name']) }}')"
+                       @contextmenu="openFileMenu($event, '{{ $item['path'] }}', '{{ addslashes($item['name']) }}')"
                        @dblclick.prevent="window.location='{{ route('documents.edit', ['path' => $item['path']]) }}'"
                    @endif
                    class="flex items-center px-2 py-1.5 text-sm rounded mb-0.5 cursor-pointer
@@ -46,10 +49,10 @@
                     <span class="truncate">{{ $item['name'] }}</span>
                     @if($fileStatus)
                         <span class="ml-auto shrink-0 w-2 h-2 rounded-full
-                            {{ $fileStatus === 'new' ? 'bg-green-500' : '' }}
+                            {{ in_array($fileStatus, ['new', 'added']) ? 'bg-green-500' : '' }}
                             {{ $fileStatus === 'modified' ? 'bg-amber-500' : '' }}
                             {{ $fileStatus === 'deleted' ? 'bg-red-500' : '' }}
-                            {{ $fileStatus === 'added' ? 'bg-green-500' : '' }}"
+                            {{ in_array($fileStatus, ['move', 'rename']) ? 'bg-blue-500' : '' }}"
                               title="{{ ucfirst($fileStatus) }}">
                         </span>
                     @endif
