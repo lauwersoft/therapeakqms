@@ -92,7 +92,13 @@ class DocumentController extends Controller
         }
 
         File::put($filePath, $request->input('content'));
-        $this->git->commitAndPush($request->user(), "Edit: {$path}");
+
+        try {
+            $this->git->commitAndPush($request->user(), "Edit: {$path}");
+        } catch (\RuntimeException $e) {
+            return redirect()->route('documents.edit', ['path' => $path])
+                ->withErrors(['git' => $e->getMessage()]);
+        }
 
         return redirect()->route('documents.index', ['path' => $path])
             ->with('success', 'Document saved.');
@@ -139,7 +145,12 @@ class DocumentController extends Controller
 
         $content = $request->input('content', "# " . $request->input('filename') . "\n");
         File::put($fullPath, $content);
-        $this->git->commitAndPush($request->user(), "Create: {$relativePath}");
+
+        try {
+            $this->git->commitAndPush($request->user(), "Create: {$relativePath}");
+        } catch (\RuntimeException $e) {
+            return back()->withErrors(['git' => $e->getMessage()]);
+        }
 
         return redirect()->route('documents.index', ['path' => $relativePath])
             ->with('success', 'Document created.');
@@ -170,7 +181,11 @@ class DocumentController extends Controller
             return back()->withErrors(['destination' => 'A file with this name already exists in the destination.']);
         }
 
-        $this->git->moveFile($oldPath, $newPath, $request->user());
+        try {
+            $this->git->moveFile($oldPath, $newPath, $request->user());
+        } catch (\RuntimeException $e) {
+            return back()->withErrors(['git' => $e->getMessage()]);
+        }
 
         return redirect()->route('documents.index', ['path' => $newPath])
             ->with('success', 'Document moved.');
@@ -200,7 +215,11 @@ class DocumentController extends Controller
             return back()->withErrors(['new_name' => 'A file with this name already exists.']);
         }
 
-        $this->git->moveFile($oldPath, $newPath, $request->user());
+        try {
+            $this->git->moveFile($oldPath, $newPath, $request->user());
+        } catch (\RuntimeException $e) {
+            return back()->withErrors(['git' => $e->getMessage()]);
+        }
 
         return redirect()->route('documents.index', ['path' => $newPath])
             ->with('success', 'Document renamed.');
@@ -218,7 +237,11 @@ class DocumentController extends Controller
             abort(404);
         }
 
-        $this->git->deleteFile($path, $request->user());
+        try {
+            $this->git->deleteFile($path, $request->user());
+        } catch (\RuntimeException $e) {
+            return back()->withErrors(['git' => $e->getMessage()]);
+        }
 
         return redirect()->route('documents.index')
             ->with('success', 'Document deleted.');
