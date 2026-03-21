@@ -409,7 +409,7 @@
         {{-- Main Content --}}
         <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0 flex flex-col">
             {{-- Top bar: path + mobile hamburger --}}
-            <div class="flex items-center gap-3 px-4 py-2 bg-white border-b border-gray-200 shrink-0">
+            <div class="flex items-center gap-3 px-4 py-2 bg-white border-b border-gray-200 shrink-0 shadow-sm relative z-10">
                 <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 lg:hidden">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -658,7 +658,7 @@
             </div>{{-- close inner scroll div --}}
 
             {{-- Bottom bar --}}
-            <div class="shrink-0 bg-white border-t border-gray-200 px-4 py-2">
+            <div class="shrink-0 bg-white border-t border-gray-200 px-4 py-2 shadow-[0_-2px_4px_rgba(0,0,0,0.05)] relative z-10">
                 <div class="flex items-center justify-between gap-4 max-w-5xl mx-auto">
                     <div class="flex items-center gap-2 text-xs text-gray-400 min-w-0 overflow-hidden">
                         @if($meta['id'])
