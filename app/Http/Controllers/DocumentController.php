@@ -85,7 +85,20 @@ class DocumentController extends Controller
         }
 
         // File info for non-markdown files
-        $fileInfo = ! $isMarkdown ? [
+        $isForm = str_ends_with($path, '.form.json');
+        $formSchema = null;
+        $formSubmissions = null;
+
+        if ($isForm) {
+            $formSchema = json_decode(File::get($filePath), true);
+            $formSubmissions = \App\Models\FormSubmission::where('form_path', $path)
+                ->with('user')
+                ->latest()
+                ->take(10)
+                ->get();
+        }
+
+        $fileInfo = (! $isMarkdown && ! $isForm) ? [
             'size' => File::size($filePath),
             'extension' => strtolower(pathinfo($path, PATHINFO_EXTENSION)),
             'mime' => File::mimeType($filePath),
@@ -93,6 +106,9 @@ class DocumentController extends Controller
         ] : null;
 
         return view('documents.index', [
+            'isForm' => $isForm,
+            'formSchema' => $formSchema,
+            'formSubmissions' => $formSubmissions,
             'tree' => $tree,
             'fileHistory' => $fileHistory,
             'content' => $html,

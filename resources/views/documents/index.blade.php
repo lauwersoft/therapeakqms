@@ -433,7 +433,67 @@
                         </div>
                     @endif
                     <div class="p-5 sm:p-8 {{ $meta['id'] ? 'pt-4' : '' }}">
-                        @if($isMarkdown)
+                        @if($isForm && $formSchema)
+                            {{-- Form template view --}}
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-800 mb-4">{{ $formSchema['title'] ?? $meta['title'] }}</h2>
+
+                                {{-- Form fields preview --}}
+                                <div class="space-y-4 mb-6">
+                                    @foreach($formSchema['fields'] ?? [] as $field)
+                                        <div class="border border-gray-200 rounded-md p-3">
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                                {{ $field['label'] }}
+                                                @if($field['required'] ?? false)
+                                                    <span class="text-red-400">*</span>
+                                                @endif
+                                            </label>
+                                            <div class="text-xs text-gray-400">
+                                                {{ ucfirst($field['type']) }}
+                                                @if($field['type'] === 'select' && !empty($field['options']))
+                                                    — {{ implode(', ', $field['options']) }}
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                <a href="{{ route('forms.fill', $currentPath) }}"
+                                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    Fill in this form
+                                </a>
+
+                                {{-- Recent submissions --}}
+                                @if($formSubmissions && $formSubmissions->isNotEmpty())
+                                    <div class="mt-8 pt-6 border-t border-gray-100">
+                                        <h3 class="text-sm font-semibold text-gray-700 mb-3">Recent submissions</h3>
+                                        <div class="space-y-2">
+                                            @foreach($formSubmissions as $sub)
+                                                <a href="{{ route('forms.submission', $sub) }}"
+                                                   class="flex items-center gap-3 p-3 rounded-md border border-gray-100 hover:bg-gray-50 transition-colors">
+                                                    <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+                                                        <span class="text-[10px] font-semibold text-gray-500">{{ strtoupper(substr($sub->user->name, 0, 1)) }}</span>
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <span class="text-sm text-gray-800 block">{{ $sub->title }}</span>
+                                                        <span class="text-xs text-gray-400">{{ $sub->user->name }} · {{ $sub->created_at->diffForHumans() }}</span>
+                                                    </div>
+                                                    <span class="text-xs font-medium px-1.5 py-0.5 rounded
+                                                        {{ $sub->status === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
+                                                        {{ $sub->status === 'submitted' ? 'bg-blue-100 text-blue-700' : '' }}
+                                                        {{ $sub->status === 'approved' ? 'bg-green-100 text-green-700' : '' }}">
+                                                        {{ ucfirst($sub->status) }}
+                                                    </span>
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        @elseif($isMarkdown)
                             <div class="prose prose-sm sm:prose-base max-w-none
                                         text-gray-700 prose-headings:text-gray-800
                                         prose-h1:text-xl sm:prose-h1:text-2xl prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-3 prose-h1:mb-6
@@ -443,7 +503,7 @@
                                         prose-a:text-blue-600">
                                 {!! $content !!}
                             </div>
-                        @else
+                        @elseif($fileInfo)
                             {{-- Non-markdown file view --}}
                             <div class="text-center py-8">
                                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gray-100 mb-4">

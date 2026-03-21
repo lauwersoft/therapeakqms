@@ -39,6 +39,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/qms/discard', [DocumentController::class, 'discard'])->name('documents.discard');
     Route::post('/qms/discard-all', [DocumentController::class, 'discardAll'])->name('documents.discard-all');
 
+    // Forms
+    Route::get('/forms/create', [\App\Http\Controllers\FormController::class, 'create'])->name('forms.create');
+    Route::post('/forms', [\App\Http\Controllers\FormController::class, 'store'])->name('forms.store');
+    Route::get('/forms/fill/{path}', [\App\Http\Controllers\FormController::class, 'fill'])->where('path', '.*')->name('forms.fill');
+    Route::post('/forms/submit', [\App\Http\Controllers\FormController::class, 'submit'])->name('forms.submit');
+    Route::get('/forms/submission/{submission}', [\App\Http\Controllers\FormController::class, 'submission'])->name('forms.submission');
+    Route::get('/forms/submissions/{formId}', [\App\Http\Controllers\FormController::class, 'submissions'])->name('forms.submissions');
+
     // QMS document viewer (catch-all, must be last)
     Route::get('/qms/{path?}', [DocumentController::class, 'index'])->where('path', '.*')->name('documents.index');
 

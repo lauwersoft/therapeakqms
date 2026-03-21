@@ -229,6 +229,14 @@ class DocumentMetadata
     }
 
     /**
+     * Check if a file is a form template.
+     */
+    public static function isForm(string $filename): bool
+    {
+        return str_ends_with(strtolower($filename), '.form.json');
+    }
+
+    /**
      * Check if a file is a markdown document.
      */
     public static function isMarkdown(string $filename): bool
