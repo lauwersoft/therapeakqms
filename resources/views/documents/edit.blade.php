@@ -55,9 +55,24 @@
             .sortable-ghost { opacity: 0.4; }
             .sortable-drag { opacity: 0.9; }
 
-            /* Fullscreen override — MUST be after EasyMDE CDN CSS to win cascade */
-            .EasyMDEContainer.fullscreen {
+            /* Fullscreen override — EasyMDE puts fullscreen class on children, not container */
+            .EasyMDEContainer:has(.editor-toolbar.fullscreen) {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
                 z-index: 9999 !important;
+                background: #fff !important;
+            }
+            .editor-toolbar.fullscreen {
+                z-index: 10000 !important;
+            }
+            .CodeMirror-fullscreen {
+                z-index: 10000 !important;
+            }
+            .editor-preview-side {
+                z-index: 10000 !important;
             }
         </style>
     @endpush
@@ -208,14 +223,30 @@
         <script>
             // Standalone fullscreen sync — hides/shows surrounding UI
             window._editorSyncFullscreen = function() {
+                // EasyMDE puts 'fullscreen' on .editor-toolbar, NOT on .EasyMDEContainer
+                var toolbar = document.querySelector('.editor-toolbar.fullscreen');
+                var isFs = !!toolbar;
                 var container = document.querySelector('.EasyMDEContainer');
-                var isFs = container && container.classList.contains('fullscreen');
 
-                // Force z-index via inline style (overrides everything)
-                if (container && isFs) {
-                    container.style.zIndex = '9999';
-                } else if (container) {
-                    container.style.zIndex = '';
+                // Force the container to cover the screen
+                if (container) {
+                    if (isFs) {
+                        container.style.position = 'fixed';
+                        container.style.top = '0';
+                        container.style.left = '0';
+                        container.style.right = '0';
+                        container.style.bottom = '0';
+                        container.style.zIndex = '9999';
+                        container.style.background = '#fff';
+                    } else {
+                        container.style.position = '';
+                        container.style.top = '';
+                        container.style.left = '';
+                        container.style.right = '';
+                        container.style.bottom = '';
+                        container.style.zIndex = '';
+                        container.style.background = '';
+                    }
                 }
 
                 // Hide/show all surrounding elements

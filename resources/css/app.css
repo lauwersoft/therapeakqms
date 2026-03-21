@@ -48,33 +48,20 @@
 }
 
 /* EasyMDE fullscreen / side-by-side: take over entire screen */
-.EasyMDEContainer.fullscreen {
-    z-index: 9999 !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-}
-
-body:has(.EasyMDEContainer.fullscreen) {
-    overflow: hidden !important;
-}
-
-body:has(.EasyMDEContainer.fullscreen) > div > nav,
-body:has(.EasyMDEContainer.fullscreen) > div > header {
+/* EasyMDE puts 'fullscreen' on .editor-toolbar, NOT on .EasyMDEContainer */
+body:has(.editor-toolbar.fullscreen) > div > nav,
+body:has(.editor-toolbar.fullscreen) > div > header {
     display: none !important;
 }
 
-body:has(.EasyMDEContainer.fullscreen) aside {
+body:has(.editor-toolbar.fullscreen) aside {
     display: none !important;
 }
 
-body:has(.EasyMDEContainer.fullscreen) .editor-topbar {
+body:has(.editor-toolbar.fullscreen) .editor-topbar {
     display: none !important;
 }
 
-body:has(.EasyMDEContainer.fullscreen) > div > main {
+body:has(.editor-toolbar.fullscreen) > div > main {
     overflow: visible !important;
-    position: static !important;
 }
