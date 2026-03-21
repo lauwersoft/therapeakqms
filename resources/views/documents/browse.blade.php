@@ -4,12 +4,16 @@
             <div class="flex items-center gap-3">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">Browse Documents</h2>
             </div>
-            @if(in_array(Auth::user()->role, ['admin', 'editor']))
+            @if($canEdit)
                 <div class="flex items-center gap-2">
                     <a href="{{ route('forms.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 rounded-md text-sm text-gray-600 hover:bg-gray-50">
                         <svg class="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                         New form
                     </a>
+                    <button onclick="document.getElementById('browse-upload-modal-toggle').click()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 rounded-md text-sm text-gray-600 hover:bg-gray-50">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                        Upload
+                    </button>
                     <a href="{{ route('documents.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                         New document
@@ -25,24 +29,109 @@
          @dragover.prevent="dragOver = true"
          @dragleave.self.prevent="dragOver = false"
          @drop.prevent="handleDrop($event)"
+         x-init="document.addEventListener('dragleave', (e) => { if (!e.relatedTarget && e.clientX === 0 && e.clientY === 0) dragOver = false; }); document.addEventListener('drop', () => dragOver = false);"
          class="py-6 relative">
 
-        {{-- Drop overlay --}}
         @if($canEdit)
-            <div x-show="dragOver" x-cloak
-                 class="fixed inset-0 z-40 bg-blue-50/80 flex items-center justify-center pointer-events-none" style="top: 128px;">
-                <div class="text-center bg-white rounded-2xl shadow-lg border-2 border-dashed border-blue-400 px-12 py-8">
-                    <svg class="w-12 h-12 text-blue-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            {{-- File context menu --}}
+            <div x-show="ctx.show && ctx.type === 'file'" x-cloak
+                 :style="`top:${ctx.y}px;left:${ctx.x}px`" @click.stop
+                 class="fixed z-50 bg-white rounded-lg shadow-lg border border-gray-200 py-1 w-52">
+                <div class="px-3 py-1.5 text-[10px] font-medium text-gray-400 uppercase tracking-wider">This document</div>
+                <a :href="ctx.isMarkdown ? ('/qms/edit/' + ctx.path.replace(/\.md$/, '')) : ('/qms/download/' + ctx.path)"
+                   class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x-bind:d="ctx.isMarkdown ? 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' : 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'"/>
                     </svg>
-                    <p class="text-lg font-medium text-blue-600">Drop file to upload</p>
-                    <p class="text-sm text-blue-400 mt-1">PDF, images, spreadsheets, or any file</p>
+                    <span x-text="ctx.isMarkdown ? 'Edit' : 'Download'"></span>
+                </a>
+                <a :href="'/qms/' + ctx.urlPath" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    View
+                </a>
+                <button @click="showRename()" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    Rename
+                </button>
+                <button @click="showMove()" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
+                    Move to...
+                </button>
+                <button @click="showDelete()" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    Delete
+                </button>
+                <div class="border-t border-gray-100 my-1"></div>
+                <div class="px-3 py-1.5 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Create new</div>
+                <a href="{{ route('documents.index') }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    New document
+                </a>
+                <a href="{{ route('forms.create') }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                    New form
+                </a>
+                <button @click="ctx.show = false; uploadModal = true" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                    Upload file
+                </button>
+            </div>
+
+            {{-- Rename modal --}}
+            <div x-show="renameModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="renameModal = false">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-sm mx-4 p-5" @click.stop>
+                    <h3 class="text-base font-semibold mb-3">Rename</h3>
+                    <form method="POST" action="{{ route('documents.rename') }}">
+                        @csrf
+                        <input type="hidden" name="path" :value="ctx.path">
+                        <input type="text" name="new_name" x-model="renameName" x-ref="browseRenameInput"
+                               class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                        <div class="flex justify-end gap-2 mt-3">
+                            <button type="button" @click="renameModal = false" class="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md">Cancel</button>
+                            <button type="submit" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Rename</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-        @endif
 
-        {{-- Upload modal for browse page --}}
-        @if($canEdit)
+            {{-- Move modal --}}
+            <div x-show="moveModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="moveModal = false">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-sm mx-4 p-5" @click.stop>
+                    <h3 class="text-base font-semibold mb-3">Move to</h3>
+                    <form method="POST" action="{{ route('documents.move') }}">
+                        @csrf
+                        <input type="hidden" name="path" :value="ctx.path">
+                        <select name="destination" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                            @foreach($directories as $value => $label)
+                                <option value="{{ $value }}">{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        <div class="flex justify-end gap-2 mt-3">
+                            <button type="button" @click="moveModal = false" class="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md">Cancel</button>
+                            <button type="submit" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Move</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {{-- Delete modal --}}
+            <div x-show="deleteModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="deleteModal = false">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-sm mx-4 p-5" @click.stop>
+                    <h3 class="text-base font-semibold mb-2">Delete document?</h3>
+                    <p class="text-sm text-gray-600 mb-4">This is tracked and can be reverted from git.</p>
+                    <form method="POST" action="{{ route('documents.destroy') }}">
+                        @csrf
+                        @method('DELETE')
+                        <input type="hidden" name="path" :value="ctx.path">
+                        <div class="flex justify-end gap-2">
+                            <button type="button" @click="deleteModal = false" class="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md">Cancel</button>
+                            <button type="submit" class="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {{-- Upload modal --}}
             <div x-show="uploadModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="uploadModal = false">
                 <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-5" @click.stop>
                     <h3 class="text-base font-semibold mb-3">Upload file</h3>
@@ -69,7 +158,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-500 mb-1">Directory</label>
-                                <select name="directory" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                <select name="directory" id="browse-upload-dir" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
                                     @foreach($directories as $value => $label)
                                         <option value="{{ $value }}">{{ $label }}</option>
                                     @endforeach
@@ -83,36 +172,18 @@
                     </form>
                 </div>
             </div>
-        @endif
+            <button id="browse-upload-modal-toggle" @click="uploadModal = true" class="hidden"></button>
 
-        {{-- Context menu --}}
-        @if($canEdit)
-            <div x-show="ctx.show" x-cloak
-                 :style="`top:${ctx.y}px;left:${ctx.x}px`"
-                 @click.stop
-                 class="fixed z-50 bg-white rounded-lg shadow-lg border border-gray-200 py-1 w-52">
-                <div class="px-3 py-1.5 text-[10px] font-medium text-gray-400 uppercase tracking-wider">This document</div>
-                <a :href="ctx.isMarkdown ? ('/qms/edit/' + ctx.path.replace(/\.md$/, '')) : ('/qms/download/' + ctx.path)"
-                   class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x-bind:d="ctx.isMarkdown ? 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' : 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'"/>
+            {{-- Drop overlay --}}
+            <div x-show="dragOver" x-cloak
+                 class="fixed inset-0 z-40 bg-blue-50/80 flex items-center justify-center pointer-events-none" style="top: 128px;">
+                <div class="text-center bg-white rounded-2xl shadow-lg border-2 border-dashed border-blue-400 px-12 py-8">
+                    <svg class="w-12 h-12 text-blue-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                     </svg>
-                    <span x-text="ctx.isMarkdown ? 'Edit' : 'Download'"></span>
-                </a>
-                <a :href="'/qms/' + ctx.urlPath" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                    View
-                </a>
-                <div class="border-t border-gray-100 my-1"></div>
-                <div class="px-3 py-1.5 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Create new</div>
-                <a href="{{ route('documents.index') }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    New document
-                </a>
-                <a href="{{ route('forms.create') }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                    New form
-                </a>
+                    <p class="text-lg font-medium text-blue-600">Drop file to upload</p>
+                    <p class="text-sm text-blue-400 mt-1">PDF, images, spreadsheets, or any file</p>
+                </div>
             </div>
         @endif
 
@@ -179,17 +250,17 @@
                         class="text-xs text-blue-600 hover:text-blue-800">Clear all filters</button>
             </div>
 
-            {{-- Document list grouped by directory --}}
+            {{-- Document list --}}
             <template x-if="filteredDocs.length > 0">
                 <div>
-                    {{-- Root files (no directory) --}}
+                    {{-- Root files --}}
                     <template x-if="filteredDocs.some(d => d.raw_directory === '')">
                         <div class="mb-5">
                             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                                 <template x-for="doc in filteredDocs.filter(d => d.raw_directory === '')" :key="doc.path">
                                     <a :href="'/qms/' + doc.url_path"
                                        @if($canEdit)
-                                           @contextmenu.prevent="openCtx($event, doc)"
+                                           @contextmenu.prevent="openFileCtx($event, doc)"
                                        @endif
                                        class="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
                                         <span class="font-mono text-xs text-gray-400 w-20 shrink-0" x-text="doc.doc_id"></span>
@@ -198,29 +269,23 @@
                                         </div>
                                         <span x-show="doc.type" class="text-[11px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded shrink-0" x-text="doc.type"></span>
                                         <span class="shrink-0 text-[11px] font-medium px-1.5 py-0.5 rounded"
-                                              :class="{
-                                                  'bg-gray-100 text-gray-500': doc.status === 'draft',
-                                                  'bg-yellow-100 text-yellow-700': doc.status === 'in_review',
-                                                  'bg-green-100 text-green-700': doc.status === 'approved',
-                                                  'bg-red-100 text-red-600': doc.status === 'obsolete',
-                                              }" x-text="doc.status_label"></span>
+                                              :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                         <span x-show="doc.version" class="text-xs text-gray-400 w-10 text-right shrink-0" x-text="'v' + doc.version"></span>
-                                        <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                     </a>
                                 </template>
                             </div>
                         </div>
                     </template>
 
-                    {{-- Directory groups --}}
+                    {{-- Directories --}}
                     <template x-for="dir in uniqueDirs.filter(d => d !== '')" :key="dir">
                         <div x-show="filteredDocs.some(d => d.raw_directory === dir)" class="mb-5">
-                            <div class="flex items-center gap-2 mb-2">
-                                <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
-                                </svg>
+                            <div class="flex items-center gap-2 mb-2"
+                                 @if($canEdit)
+                                     @contextmenu.prevent="openDirCtx($event, dir)"
+                                 @endif>
+                                <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
                                 <span class="text-sm font-medium text-gray-500" x-text="dir.replace(/[-_]/g, ' ').replace(/\//g, ' / ').replace(/\b\w/g, l => l.toUpperCase())"></span>
                                 <span class="text-[11px] text-gray-400" x-text="filteredDocs.filter(d => d.raw_directory === dir).length"></span>
                             </div>
@@ -228,7 +293,7 @@
                                 <template x-for="doc in filteredDocs.filter(d => d.raw_directory === dir)" :key="doc.path">
                                     <a :href="'/qms/' + doc.url_path"
                                        @if($canEdit)
-                                           @contextmenu.prevent="openCtx($event, doc)"
+                                           @contextmenu.prevent="openFileCtx($event, doc)"
                                        @endif
                                        class="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
                                         <span class="font-mono text-xs text-gray-400 w-20 shrink-0" x-text="doc.doc_id"></span>
@@ -237,17 +302,10 @@
                                         </div>
                                         <span x-show="doc.type" class="text-[11px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded shrink-0" x-text="doc.type"></span>
                                         <span class="shrink-0 text-[11px] font-medium px-1.5 py-0.5 rounded"
-                                              :class="{
-                                                  'bg-gray-100 text-gray-500': doc.status === 'draft',
-                                                  'bg-yellow-100 text-yellow-700': doc.status === 'in_review',
-                                                  'bg-green-100 text-green-700': doc.status === 'approved',
-                                                  'bg-red-100 text-red-600': doc.status === 'obsolete',
-                                              }" x-text="doc.status_label"></span>
+                                              :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                         <span x-show="doc.version" class="text-xs text-gray-400 w-10 text-right shrink-0" x-text="'v' + doc.version"></span>
                                         <span x-show="doc.author" class="text-xs text-gray-400 shrink-0 hidden sm:inline" x-text="doc.author"></span>
-                                        <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                     </a>
                                 </template>
                             </div>
@@ -274,9 +332,13 @@
                     statusFilter: '',
                     docs: docs,
                     uniqueDirs: dirs,
-                    ctx: { show: false, x: 0, y: 0, path: '', urlPath: '', isMarkdown: true },
+                    ctx: { show: false, type: '', x: 0, y: 0, path: '', urlPath: '', isMarkdown: true, title: '', dir: '' },
                     dragOver: false,
                     uploadModal: false,
+                    renameModal: false,
+                    moveModal: false,
+                    deleteModal: false,
+                    renameName: '',
 
                     get filteredDocs() {
                         return this.docs.filter(d => {
@@ -295,35 +357,66 @@
                         });
                     },
 
-                    openCtx(e, doc) {
+                    statusClass(status) {
+                        return {
+                            'bg-gray-100 text-gray-500': status === 'draft',
+                            'bg-yellow-100 text-yellow-700': status === 'in_review',
+                            'bg-green-100 text-green-700': status === 'approved',
+                            'bg-red-100 text-red-600': status === 'obsolete',
+                        };
+                    },
+
+                    openFileCtx(e, doc) {
                         e.preventDefault();
                         this.ctx = {
-                            show: true,
-                            x: e.clientX,
-                            y: e.clientY,
+                            show: true, type: 'file',
+                            x: e.clientX, y: e.clientY,
                             path: doc.path,
                             urlPath: doc.url_path,
                             isMarkdown: doc.path.endsWith('.md'),
+                            title: doc.title,
+                            dir: doc.raw_directory,
                         };
+                    },
+
+                    openDirCtx(e, dir) {
+                        e.preventDefault();
+                        this.ctx = {
+                            show: true, type: 'dir',
+                            x: e.clientX, y: e.clientY,
+                            path: '', urlPath: '', isMarkdown: false, title: '', dir: dir,
+                        };
+                    },
+
+                    showRename() {
+                        this.ctx.show = false;
+                        this.renameName = this.ctx.title;
+                        this.renameModal = true;
+                        this.$nextTick(() => this.$refs.browseRenameInput?.focus());
+                    },
+
+                    showMove() {
+                        this.ctx.show = false;
+                        this.moveModal = true;
+                    },
+
+                    showDelete() {
+                        this.ctx.show = false;
+                        this.deleteModal = true;
                     },
 
                     handleDrop(e) {
                         this.dragOver = false;
                         const files = e.dataTransfer.files;
                         if (files.length === 0) return;
-
                         this.uploadModal = true;
                         this.$nextTick(() => {
-                            const fileInput = document.querySelector('#browse-upload-file');
-                            if (fileInput) {
-                                const dt = new DataTransfer();
-                                dt.items.add(files[0]);
-                                fileInput.files = dt.files;
-                            }
-                            const titleInput = document.querySelector('#browse-upload-title');
-                            if (titleInput && !titleInput.value) {
+                            const fi = document.querySelector('#browse-upload-file');
+                            if (fi) { const dt = new DataTransfer(); dt.items.add(files[0]); fi.files = dt.files; }
+                            const ti = document.querySelector('#browse-upload-title');
+                            if (ti && !ti.value) {
                                 const name = files[0].name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
-                                titleInput.value = name.charAt(0).toUpperCase() + name.slice(1);
+                                ti.value = name.charAt(0).toUpperCase() + name.slice(1);
                             }
                         });
                     },
