@@ -295,7 +295,7 @@
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
                @dragover.prevent="dragOver = true"
                @drop.prevent="handleDrop($event)"
-               class="fixed inset-y-0 left-0 top-16 w-80 bg-white border-r border-gray-200 shadow-[2px_0_8px_-2px_rgba(0,0,0,0.08)] overflow-y-auto z-30
+               class="fixed inset-y-0 left-0 top-16 w-80 bg-white border-r border-gray-200 shadow-[2px_0_6px_-2px_rgba(0,0,0,0.06)] overflow-y-auto z-30
                       transform transition-transform duration-200 ease-in-out
                       lg:relative lg:top-0 lg:translate-x-0 lg:shrink-0 flex flex-col">
             <div class="px-4 h-16 border-b border-gray-200 flex items-center justify-between shrink-0">
@@ -409,7 +409,7 @@
         {{-- Main Content --}}
         <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0 flex flex-col">
             {{-- Top bar: path + edit --}}
-            <div class="bg-white border-b border-gray-200 shadow-sm shrink-0 relative z-10 px-4 h-16 flex items-center">
+            <div class="bg-white border-b border-gray-200 shadow-sm shrink-0 relative z-40 px-4 h-16 flex items-center">
                 <div class="flex items-center justify-between gap-3 w-full">
                     <div class="flex items-center gap-3 min-w-0">
                         <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 lg:hidden shrink-0">
