@@ -408,14 +408,66 @@
 
         {{-- Main Content --}}
         <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0 flex flex-col">
-            {{-- Top bar: path + mobile hamburger --}}
-            <div class="flex items-center gap-3 px-4 py-2 bg-white border-b border-gray-200 shrink-0 shadow-sm relative z-10">
-                <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 lg:hidden">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
-                <span class="text-xs text-gray-400 font-mono truncate">/{{ $currentPath }}</span>
+            {{-- Top bar: path + metadata + actions --}}
+            <div class="bg-white border-b border-gray-200 shrink-0 shadow-sm relative z-10 px-4 py-2">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 lg:hidden shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </button>
+                        <div class="min-w-0">
+                            <span class="text-xs text-gray-400 font-mono block truncate">/{{ $currentPath }}</span>
+                            <div class="flex items-center gap-1.5 text-[11px] text-gray-400 mt-0.5 flex-wrap">
+                                @if($meta['id'])
+                                    <span class="font-mono font-medium px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
+                                @endif
+                                @if($meta['title'])
+                                    <span>{{ $meta['title'] }}</span>
+                                @endif
+                                <span class="px-1 py-0.5 rounded text-[10px] font-medium
+                                    {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
+                                    {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
+                                    {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
+                                    {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">{{ \App\Services\DocumentMetadata::STATUSES[$meta['status']] ?? ucfirst($meta['status']) }}</span>
+                                @if($meta['version'])
+                                    <span>v{{ $meta['version'] }}</span>
+                                @endif
+                                @if($meta['author'])
+                                    <span class="hidden sm:inline">{{ $meta['author'] }}</span>
+                                @endif
+                                @if(!empty($meta['iso_refs']))
+                                    <span class="hidden sm:inline text-blue-400">ISO {{ implode(', ', $meta['iso_refs']) }}</span>
+                                @endif
+                                @if(!empty($meta['mdr_refs']))
+                                    <span class="hidden md:inline text-blue-400">MDR {{ implode(', ', $meta['mdr_refs']) }}</span>
+                                @endif
+                                @if($lastEdit)
+                                    <span class="hidden sm:inline">·</span>
+                                    <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="hidden sm:inline hover:text-blue-500">{{ $lastEdit['name'] }} {{ $lastEdit['date']->diffForHumans() }}</a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    @if($canEdit && $isMarkdown)
+                        <a href="{{ route('documents.edit', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Edit
+                        </a>
+                    @elseif(!$isMarkdown && !$isForm)
+                        <a href="{{ route('documents.download', $currentPath) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Download
+                        </a>
+                    @endif
+                </div>
             </div>
 
             <div class="flex-1 overflow-y-auto">
@@ -440,85 +492,7 @@
 
             <div class="max-w-5xl mx-auto py-4 px-3 sm:py-8 sm:px-6 lg:px-8">
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                    @if($meta['id'])
-                        <div class="px-3 sm:px-8 pt-3 sm:pt-5 pb-0">
-                            <div class="flex items-start justify-between gap-4 pb-3 border-b border-gray-100">
-                                <div class="text-xs space-y-1.5">
-                                    {{-- Row 1: ID, type, status, version --}}
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-mono font-semibold {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }} px-1.5 py-0.5 rounded">{{ $meta['id'] }}</span>
-                                        <span class="text-gray-400">·</span>
-                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium
-                                            {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
-                                            {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
-                                            {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
-                                            {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">
-                                            {{ \App\Services\DocumentMetadata::STATUSES[$meta['status']] ?? ucfirst($meta['status']) }}
-                                        </span>
-                                        @if($meta['version'])
-                                            <span class="text-gray-400">v{{ $meta['version'] }}</span>
-                                        @endif
-                                        @if($meta['effective_date'])
-                                            <span class="text-gray-400">· Effective {{ $meta['effective_date'] }}</span>
-                                        @endif
-                                    </div>
-                                    {{-- Row 2: References + last edit (single line) --}}
-                                    <div class="flex items-center gap-2 text-gray-400">
-                                        @if($meta['author'])
-                                            <span>{{ $meta['author'] }}</span>
-                                        @endif
-                                        @if(!empty($meta['iso_refs']))
-                                            <span>·</span>
-                                            <span class="text-blue-400">ISO {{ implode(', ', $meta['iso_refs']) }}</span>
-                                        @endif
-                                        @if(!empty($meta['mdr_refs']))
-                                            <span>·</span>
-                                            <span class="text-blue-400">MDR {{ implode(', ', $meta['mdr_refs']) }}</span>
-                                        @endif
-                                        @if($lastEdit)
-                                            <span>·</span>
-                                            <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="hover:text-blue-500">Last edited by {{ $lastEdit['name'] }} {{ $lastEdit['date']->diffForHumans() }}</a>
-                                        @endif
-                                    </div>
-                                </div>
-                                @if($canEdit && $isMarkdown)
-                                    <a href="{{ route('documents.edit', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
-                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-md text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition-colors shrink-0">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                        </svg>
-                                        Edit
-                                    </a>
-                                @elseif(!$isMarkdown)
-                                    <a href="{{ route('documents.download', $currentPath) }}"
-                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-md text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition-colors shrink-0">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                        </svg>
-                                        Download
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    @elseif($canEdit && $isMarkdown)
-                        <div class="px-3 sm:px-8 pt-3 sm:pt-5 pb-0">
-                            <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-                                @if($lastEdit)
-                                    <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="text-xs text-gray-400 hover:text-blue-500">Last edited by {{ $lastEdit['name'] }} {{ $lastEdit['date']->diffForHumans() }}</a>
-                                @else
-                                    <span></span>
-                                @endif
-                                <a href="{{ route('documents.edit', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
-                                   class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-md text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                    Edit
-                                </a>
-                            </div>
-                        </div>
-                    @endif
-                    <div class="p-3 sm:p-8 {{ $meta['id'] ? 'pt-3 sm:pt-4' : '' }}">
+                    <div class="p-3 sm:p-8">
                         @if($isForm && $formSchema)
                             {{-- Form template view --}}
                             <div>
@@ -657,52 +631,6 @@
             </div>
             </div>{{-- close inner scroll div --}}
 
-            {{-- Bottom bar --}}
-            <div class="shrink-0 bg-white border-t border-gray-200 px-4 py-2 shadow-[0_-2px_4px_rgba(0,0,0,0.05)] relative z-10">
-                <div class="flex items-center justify-between gap-4 max-w-5xl mx-auto">
-                    <div class="flex items-center gap-2 text-xs text-gray-400 min-w-0 overflow-hidden">
-                        @if($meta['id'])
-                            <span class="font-mono font-medium shrink-0 px-1 py-0.5 rounded text-[10px] {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
-                            <span class="shrink-0">·</span>
-                        @endif
-                        @if($meta['title'])
-                            <span class="truncate">{{ $meta['title'] }}</span>
-                            <span class="shrink-0">·</span>
-                        @endif
-                        <span class="shrink-0 px-1.5 py-0.5 rounded text-[10px] font-medium
-                            {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
-                            {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
-                            {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
-                            {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">
-                            {{ \App\Services\DocumentMetadata::STATUSES[$meta['status']] ?? ucfirst($meta['status']) }}
-                        </span>
-                        @if($meta['version'])
-                            <span class="shrink-0">v{{ $meta['version'] }}</span>
-                        @endif
-                        @if($lastEdit)
-                            <span class="shrink-0 hidden sm:inline">·</span>
-                            <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="shrink-0 hidden sm:inline hover:text-blue-500">{{ $lastEdit['name'] }} {{ $lastEdit['date']->diffForHumans() }}</a>
-                        @endif
-                    </div>
-                    @if($canEdit && $isMarkdown)
-                        <a href="{{ route('documents.edit', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 shrink-0">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                            Edit
-                        </a>
-                    @elseif(!$isMarkdown && !$isForm)
-                        <a href="{{ route('documents.download', $currentPath) }}"
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                            </svg>
-                            Download
-                        </a>
-                    @endif
-                </div>
-            </div>
         </main>
     </div>
 
