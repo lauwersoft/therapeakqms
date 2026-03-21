@@ -340,6 +340,7 @@
                                         <span class="font-mono text-xs text-gray-400 w-20 shrink-0" x-text="doc.doc_id"></span>
                                         <div class="flex-1 min-w-0">
                                             <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
+                                            <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'/' + doc.path"></span>
                                         </div>
                                         <span x-show="doc.type" class="text-[11px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded shrink-0" x-text="doc.type"></span>
                                         <span class="shrink-0 text-[11px] font-medium px-1.5 py-0.5 rounded"
@@ -375,6 +376,7 @@
                                         <span class="font-mono text-xs text-gray-400 w-20 shrink-0" x-text="doc.doc_id"></span>
                                         <div class="flex-1 min-w-0">
                                             <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
+                                            <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'/' + doc.path"></span>
                                         </div>
                                         <span x-show="doc.type" class="text-[11px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded shrink-0" x-text="doc.type"></span>
                                         <span class="shrink-0 text-[11px] font-medium px-1.5 py-0.5 rounded"

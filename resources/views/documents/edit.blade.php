@@ -94,9 +94,9 @@
                             </svg>
                             Back
                         </a>
-                        <span class="text-sm text-gray-400">{{ str_replace('/', ' / ', $currentPath) }}</span>
+                        <span class="text-xs text-gray-400 font-mono">/{{ $currentPath }}</span>
                         @if($meta['id'])
-                            <span class="text-sm font-mono font-semibold text-gray-700">{{ $meta['id'] }}</span>
+                            <span class="text-xs font-mono font-semibold text-gray-600">{{ $meta['id'] }}</span>
                         @endif
                     </div>
                 </div>

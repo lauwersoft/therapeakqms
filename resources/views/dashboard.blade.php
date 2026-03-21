@@ -65,17 +65,20 @@
                                                     <span class="text-gray-400">{{ $commit['date']->diffForHumans() }}</span>
                                                 </p>
                                                 <p class="text-sm text-gray-600 mt-0.5">{{ Str::before($commit['message'], "\n") }}</p>
-                                                <div class="flex flex-wrap gap-1.5 mt-1.5">
+                                                <div class="space-y-1 mt-1.5">
                                                     @foreach($commit['files'] as $file)
-                                                        <span class="inline-flex items-center gap-1 text-[11px] px-1.5 py-0.5 rounded
-                                                            {{ $file['status'] === 'added' ? 'bg-green-50 text-green-600' : '' }}
-                                                            {{ $file['status'] === 'modified' ? 'bg-blue-50 text-blue-600' : '' }}
-                                                            {{ $file['status'] === 'deleted' ? 'bg-red-50 text-red-500' : '' }}">
-                                                            @if($file['doc_id'])
-                                                                <span class="font-mono font-medium">{{ $file['doc_id'] }}</span>
-                                                            @endif
-                                                            <span>{{ $file['status'] === 'added' ? 'created' : ($file['status'] === 'deleted' ? 'removed' : 'updated') }}</span>
-                                                        </span>
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="inline-flex items-center gap-1 text-[11px] px-1.5 py-0.5 rounded shrink-0
+                                                                {{ $file['status'] === 'added' ? 'bg-green-50 text-green-600' : '' }}
+                                                                {{ $file['status'] === 'modified' ? 'bg-blue-50 text-blue-600' : '' }}
+                                                                {{ $file['status'] === 'deleted' ? 'bg-red-50 text-red-500' : '' }}">
+                                                                @if($file['doc_id'])
+                                                                    <span class="font-mono font-medium">{{ $file['doc_id'] }}</span>
+                                                                @endif
+                                                                {{ $file['status'] === 'added' ? 'created' : ($file['status'] === 'deleted' ? 'removed' : 'updated') }}
+                                                            </span>
+                                                            <span class="text-[10px] text-gray-400 font-mono truncate">/{{ $file['path'] }}</span>
+                                                        </div>
                                                     @endforeach
                                                 </div>
                                             </div>

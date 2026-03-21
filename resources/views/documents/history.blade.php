@@ -39,25 +39,24 @@
                                     <p class="text-sm text-gray-800 leading-snug">{{ Str::before($commit['message'], "\n") }}</p>
 
                                     {{-- Affected documents preview --}}
-                                    <div class="flex flex-wrap items-center gap-1.5 mt-2">
+                                    <div class="space-y-1 mt-2">
                                         @foreach($commit['files'] as $file)
-                                            @php
-                                                $dir = dirname($file['path']);
-                                                $dirLabel = ($dir !== '.' && $dir !== '') ? str_replace('/', ' / ', $dir) . ' / ' : '';
-                                            @endphp
-                                            <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full
-                                                {{ $file['status'] === 'added' ? 'bg-green-50 text-green-700' : '' }}
-                                                {{ $file['status'] === 'modified' ? 'bg-blue-50 text-blue-700' : '' }}
-                                                {{ $file['status'] === 'deleted' ? 'bg-red-50 text-red-600' : '' }}">
-                                                @if($file['doc_id'])
-                                                    <span class="font-mono font-medium">{{ $file['doc_id'] }}</span>
-                                                @else
-                                                    <span>{{ $file['doc_title'] }}</span>
-                                                @endif
-                                                <span class="text-[10px] opacity-70">
-                                                    {{ $file['status'] === 'added' ? 'created' : ($file['status'] === 'deleted' ? 'removed' : 'updated') }}
+                                            <div class="flex items-center gap-2">
+                                                <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full shrink-0
+                                                    {{ $file['status'] === 'added' ? 'bg-green-50 text-green-700' : '' }}
+                                                    {{ $file['status'] === 'modified' ? 'bg-blue-50 text-blue-700' : '' }}
+                                                    {{ $file['status'] === 'deleted' ? 'bg-red-50 text-red-600' : '' }}">
+                                                    @if($file['doc_id'])
+                                                        <span class="font-mono font-medium">{{ $file['doc_id'] }}</span>
+                                                    @else
+                                                        <span>{{ $file['doc_title'] }}</span>
+                                                    @endif
+                                                    <span class="text-[10px] opacity-70">
+                                                        {{ $file['status'] === 'added' ? 'created' : ($file['status'] === 'deleted' ? 'removed' : 'updated') }}
+                                                    </span>
                                                 </span>
-                                            </span>
+                                                <span class="text-[10px] text-gray-400 font-mono truncate">/{{ $file['path'] }}</span>
+                                            </div>
                                         @endforeach
                                     </div>
                                 </div>
