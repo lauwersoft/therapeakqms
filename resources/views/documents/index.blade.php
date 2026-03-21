@@ -297,7 +297,7 @@
                @drop.prevent="handleDrop($event)"
                class="fixed inset-y-0 left-0 top-16 w-80 bg-white border-r border-gray-200 overflow-y-auto z-30
                       transform transition-transform duration-200 ease-in-out
-                      lg:relative lg:top-0 lg:translate-x-0 lg:shrink-0 flex flex-col relative">
+                      lg:relative lg:top-0 lg:translate-x-0 lg:shrink-0 flex flex-col">
             <div class="p-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="font-semibold text-gray-800 text-lg">Documents</h2>
                 <div class="flex items-center gap-1">
