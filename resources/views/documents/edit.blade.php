@@ -55,20 +55,19 @@
             .sortable-ghost { opacity: 0.4; }
             .sortable-drag { opacity: 0.9; }
 
-            /* EasyMDE fullscreen: hide everything else and take over the screen */
+            /* EasyMDE fullscreen / side-by-side: take over entire screen */
             .EasyMDEContainer.fullscreen {
-                z-index: 100 !important;
+                z-index: 9999 !important;
             }
-            .editor-fullscreen-active nav,
-            .editor-fullscreen-active header,
-            .editor-fullscreen-active aside,
-            .editor-fullscreen-active .editor-topbar {
+            body:has(.EasyMDEContainer.fullscreen) > div > nav,
+            body:has(.EasyMDEContainer.fullscreen) > div > header,
+            body:has(.EasyMDEContainer.fullscreen) aside {
                 display: none !important;
             }
-            .editor-fullscreen-active .editor-main {
-                position: fixed !important;
-                inset: 0 !important;
-                z-index: 99 !important;
+            body:has(.EasyMDEContainer.fullscreen) .editor-topbar {
+                display: none !important;
+            }
+            body:has(.EasyMDEContainer.fullscreen) > div > main {
                 overflow: visible !important;
             }
         </style>
@@ -438,14 +437,6 @@
                                 return html;
                             },
                         });
-
-                        // Watch for fullscreen toggle and hide surrounding UI
-                        const container = document.querySelector('.EasyMDEContainer');
-                        if (container) {
-                            new MutationObserver(() => {
-                                document.body.classList.toggle('editor-fullscreen-active', container.classList.contains('fullscreen'));
-                            }).observe(container, { attributes: true, attributeFilter: ['class'] });
-                        }
                     }
                 };
             }
