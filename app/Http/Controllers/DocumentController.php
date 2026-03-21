@@ -619,11 +619,13 @@ class DocumentController extends Controller
         $directories = collect($documents)->pluck('directory')->unique()->values()->toArray();
 
         $grouped = collect($documents)->groupBy('raw_directory');
+        $canEdit = in_array($request->user()->role, [User::ROLE_ADMIN, User::ROLE_EDITOR]);
 
         return view('documents.browse', [
             'documents' => $documents,
             'grouped' => $grouped,
             'totalDocs' => count($documents),
+            'directories' => $canEdit ? $this->getDirectories() : [],
         ]);
     }
 

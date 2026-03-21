@@ -21,7 +21,69 @@
 
     @php $canEdit = in_array(Auth::user()->role, ['admin', 'editor']); @endphp
 
-    <div x-data="documentBrowser()" @click="ctx.show = false" class="py-6">
+    <div x-data="documentBrowser()" @click="ctx.show = false"
+         @dragover.prevent="dragOver = true"
+         @dragleave.self.prevent="dragOver = false"
+         @drop.prevent="handleDrop($event)"
+         class="py-6 relative">
+
+        {{-- Drop overlay --}}
+        @if($canEdit)
+            <div x-show="dragOver" x-cloak
+                 class="fixed inset-0 z-40 bg-blue-50/80 flex items-center justify-center pointer-events-none" style="top: 128px;">
+                <div class="text-center bg-white rounded-2xl shadow-lg border-2 border-dashed border-blue-400 px-12 py-8">
+                    <svg class="w-12 h-12 text-blue-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                    <p class="text-lg font-medium text-blue-600">Drop file to upload</p>
+                    <p class="text-sm text-blue-400 mt-1">PDF, images, spreadsheets, or any file</p>
+                </div>
+            </div>
+        @endif
+
+        {{-- Upload modal for browse page --}}
+        @if($canEdit)
+            <div x-show="uploadModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="uploadModal = false">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-5" @click.stop>
+                    <h3 class="text-base font-semibold mb-3">Upload file</h3>
+                    <form method="POST" action="{{ route('documents.upload') }}" enctype="multipart/form-data">
+                        @csrf
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">File</label>
+                                <input type="file" name="file" id="browse-upload-file" required
+                                       class="w-full text-sm border border-gray-300 rounded-md file:mr-3 file:py-1.5 file:px-3 file:border-0 file:text-sm file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Document type</label>
+                                <select name="doc_type" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                    @foreach(\App\Services\DocumentMetadata::TYPES as $key => $label)
+                                        <option value="{{ $key }}">{{ $key }} — {{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Title</label>
+                                <input type="text" name="title" id="browse-upload-title" placeholder="e.g. ISO 13485 Certificate" required
+                                       class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Directory</label>
+                                <select name="directory" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                    @foreach($directories as $value => $label)
+                                        <option value="{{ $value }}">{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex justify-end gap-2 mt-4">
+                            <button type="button" @click="uploadModal = false" class="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md">Cancel</button>
+                            <button type="submit" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Upload</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        @endif
 
         {{-- Context menu --}}
         @if($canEdit)
@@ -213,6 +275,8 @@
                     docs: docs,
                     uniqueDirs: dirs,
                     ctx: { show: false, x: 0, y: 0, path: '', urlPath: '', isMarkdown: true },
+                    dragOver: false,
+                    uploadModal: false,
 
                     get filteredDocs() {
                         return this.docs.filter(d => {
@@ -241,6 +305,27 @@
                             urlPath: doc.url_path,
                             isMarkdown: doc.path.endsWith('.md'),
                         };
+                    },
+
+                    handleDrop(e) {
+                        this.dragOver = false;
+                        const files = e.dataTransfer.files;
+                        if (files.length === 0) return;
+
+                        this.uploadModal = true;
+                        this.$nextTick(() => {
+                            const fileInput = document.querySelector('#browse-upload-file');
+                            if (fileInput) {
+                                const dt = new DataTransfer();
+                                dt.items.add(files[0]);
+                                fileInput.files = dt.files;
+                            }
+                            const titleInput = document.querySelector('#browse-upload-title');
+                            if (titleInput && !titleInput.value) {
+                                const name = files[0].name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+                                titleInput.value = name.charAt(0).toUpperCase() + name.slice(1);
+                            }
+                        });
                     },
                 };
             }

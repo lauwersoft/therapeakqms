@@ -249,7 +249,7 @@
                     <div class="space-y-3">
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">File</label>
-                            <input type="file" name="file" required
+                            <input type="file" name="file" id="upload-file-input" required
                                    class="w-full text-sm border border-gray-300 rounded-md file:mr-3 file:py-1.5 file:px-3 file:border-0 file:text-sm file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200">
                             <p class="text-xs text-gray-400 mt-1">Max 50MB. PDF, images, spreadsheets, or any other file type.</p>
                         </div>
@@ -263,7 +263,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Title</label>
-                            <input type="text" name="title" placeholder="e.g. ISO 13485 Certificate" required
+                            <input type="text" name="title" id="upload-title-input" placeholder="e.g. ISO 13485 Certificate" required
                                    class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div>
@@ -291,9 +291,22 @@
 
         {{-- Sidebar --}}
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+               @dragover.prevent="dragOver = true"
+               @dragleave.prevent="dragOver = false"
+               @drop.prevent="handleDrop($event)"
                class="fixed inset-y-0 left-0 top-16 w-80 bg-white border-r border-gray-200 overflow-y-auto z-30
                       transform transition-transform duration-200 ease-in-out
-                      lg:relative lg:top-0 lg:translate-x-0 lg:shrink-0 flex flex-col">
+                      lg:relative lg:top-0 lg:translate-x-0 lg:shrink-0 flex flex-col relative">
+            {{-- Drop overlay --}}
+            <div x-show="dragOver" x-cloak
+                 class="absolute inset-0 z-40 bg-blue-50/90 border-2 border-dashed border-blue-400 rounded-lg flex items-center justify-center pointer-events-none">
+                <div class="text-center">
+                    <svg class="w-10 h-10 text-blue-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                    <p class="text-sm font-medium text-blue-600">Drop file to upload</p>
+                </div>
+            </div>
             <div class="p-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="font-semibold text-gray-800 text-lg">Documents</h2>
                 <div class="flex items-center gap-1">
@@ -645,6 +658,8 @@
                     sidebarOpen: false,
                     canEdit: @json($canEdit),
                     sidebarSearch: '',
+                    dragOver: false,
+                    droppedFile: null,
                     sidebarTypeFilter: '',
                     sidebarStatusFilter: '',
                     sidebarDocs: @json($sidebarDocs),
@@ -752,6 +767,32 @@
                         this.ctx.targetDir = dir;
                         this.modal.newDir = true;
                         this.$nextTick(() => this.$refs.newDirInput.focus());
+                    },
+
+                    handleDrop(e) {
+                        this.dragOver = false;
+                        if (!this.canEdit) return;
+                        const files = e.dataTransfer.files;
+                        if (files.length === 0) return;
+
+                        // Put the dropped file into the upload modal's file input
+                        this.droppedFile = files[0];
+                        this.modal.upload = true;
+
+                        // After modal opens, set the file input and pre-fill title
+                        this.$nextTick(() => {
+                            const fileInput = document.querySelector('#upload-file-input');
+                            if (fileInput) {
+                                const dt = new DataTransfer();
+                                dt.items.add(this.droppedFile);
+                                fileInput.files = dt.files;
+                            }
+                            const titleInput = document.querySelector('#upload-title-input');
+                            if (titleInput && !titleInput.value) {
+                                const name = this.droppedFile.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+                                titleInput.value = name.charAt(0).toUpperCase() + name.slice(1);
+                            }
+                        });
                     },
 
                     initSortable(el, directory) {
