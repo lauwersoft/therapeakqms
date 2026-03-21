@@ -54,6 +54,11 @@
 
             .sortable-ghost { opacity: 0.4; }
             .sortable-drag { opacity: 0.9; }
+
+            /* Fullscreen override — MUST be after EasyMDE CDN CSS to win cascade */
+            .EasyMDEContainer.fullscreen {
+                z-index: 9999 !important;
+            }
         </style>
     @endpush
 
