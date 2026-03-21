@@ -13,9 +13,20 @@ class DocumentMetadata
         'SOP' => 'Standard Operating Procedure',
         'WI' => 'Work Instruction',
         'FM' => 'Form',
+        'TMP' => 'Template',
         'PLN' => 'Plan',
         'REC' => 'Record',
         'RPT' => 'Report',
+        'LOG' => 'Log',
+        'LST' => 'List / Register',
+        'SPE' => 'Specification',
+        'DWG' => 'Drawing / Diagram',
+        'AGR' => 'Agreement',
+        'CER' => 'Certificate',
+        'LBL' => 'Label / IFU',
+        'RA' => 'Risk Assessment',
+        'CE' => 'Clinical Evaluation',
+        'MAN' => 'Manual / Guide',
     ];
 
     const STATUSES = [

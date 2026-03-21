@@ -108,10 +108,21 @@ Content goes here...
 | `POL` | Policy | Quality policy, data privacy policy, etc. |
 | `SOP` | Standard Operating Procedure | Step-by-step procedures (CAPA, complaints, audits, etc.) |
 | `WI` | Work Instruction | Detailed instructions for specific tasks |
-| `FM` | Form | Templates and forms (audit checklists, CAPA forms, etc.) |
-| `PLN` | Plan | Plans (risk management plan, clinical evaluation plan, etc.) |
-| `REC` | Record | Record templates |
-| `RPT` | Report | Report templates (management review, audit reports, etc.) |
+| `FM` | Form | Fillable forms (audit checklists, CAPA forms, deviation forms, etc.) |
+| `TMP` | Template | Document templates (report templates, meeting minutes templates, etc.) |
+| `PLN` | Plan | Plans (risk management plan, clinical evaluation plan, PMCF plan, etc.) |
+| `REC` | Record | Records (training records, calibration records, etc.) |
+| `RPT` | Report | Reports (management review, audit reports, clinical evaluation report, etc.) |
+| `LOG` | Log | Logs (training log, supplier log, change log, etc.) |
+| `LST` | List / Register | Lists and registers (approved supplier list, equipment list, etc.) |
+| `SPE` | Specification | Specifications (product specs, software requirements, etc.) |
+| `DWG` | Drawing / Diagram | Drawings, diagrams, flowcharts, process maps |
+| `AGR` | Agreement | Agreements (quality agreements with suppliers, NDAs, etc.) |
+| `CER` | Certificate | Certificates (ISO certificates, calibration certificates, etc.) |
+| `LBL` | Label / IFU | Labels and instructions for use |
+| `RA` | Risk Assessment | Risk assessments and risk management files |
+| `CE` | Clinical Evaluation | Clinical evaluation reports and related documents |
+| `MAN` | Manual / Guide | User manuals, training guides, reference guides |
 
 ### Document Linking
 To link to another document, use double-bracket syntax with the document ID:
