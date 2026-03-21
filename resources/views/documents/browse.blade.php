@@ -75,6 +75,25 @@
                 </button>
             </div>
 
+            {{-- Background context menu (empty space) --}}
+            <div x-show="ctx.show && ctx.type === 'bg'" x-cloak
+                 :style="`top:${ctx.y}px;left:${ctx.x}px`" @click.stop
+                 class="fixed z-50 bg-white rounded-lg shadow-lg border border-gray-200 py-1 w-52">
+                <div class="px-3 py-1.5 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Create new</div>
+                <a href="{{ route('documents.index') }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    New document
+                </a>
+                <a href="{{ route('forms.create') }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                    New form
+                </a>
+                <button @click="ctx.show = false; uploadModal = true" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                    Upload file
+                </button>
+            </div>
+
             {{-- Rename modal --}}
             <div x-show="renameModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="renameModal = false">
                 <div class="bg-white rounded-lg shadow-xl w-full max-w-sm mx-4 p-5" @click.stop>
@@ -315,6 +334,13 @@
             <div x-show="filteredDocs.length === 0" x-cloak class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
                 <p class="text-gray-400">No documents match your filters.</p>
             </div>
+
+            {{-- Empty space for background right-click --}}
+            @if($canEdit)
+                <div class="min-h-[200px]"
+                     @contextmenu.prevent="ctx = { show: true, type: 'bg', x: $event.clientX, y: $event.clientY, path: '', urlPath: '', isMarkdown: false, title: '', dir: '' }">
+                </div>
+            @endif
         </div>
     </div>
 
