@@ -298,7 +298,7 @@
                class="fixed inset-y-0 left-0 top-16 w-80 bg-white border-r border-gray-200 overflow-y-auto z-30
                       transform transition-transform duration-200 ease-in-out
                       lg:relative lg:top-0 lg:translate-x-0 lg:shrink-0 flex flex-col">
-            <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+            <div class="px-4 h-16 border-b border-gray-200 flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-2">
                     <h2 class="font-semibold text-gray-800 text-lg">Documents</h2>
                     <span class="text-xs text-gray-400">{{ count($sidebarDocs) }}</span>
@@ -410,8 +410,8 @@
         <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0 flex flex-col">
             {{-- Top bar: path + metadata + actions --}}
             <div class="bg-white border-b border-gray-200 shrink-0 shadow-sm relative z-10 px-4 h-16 flex items-center">
-                <div class="flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-3 min-w-0">
+                <div class="flex items-center justify-between gap-3 w-full">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
                         <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 lg:hidden shrink-0">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
