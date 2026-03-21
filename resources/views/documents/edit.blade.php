@@ -110,7 +110,7 @@
         @include('documents.partials.sidebar', ['sidebarCanEdit' => $canEdit])
 
         {{-- Main Content --}}
-        <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0 flex flex-col editor-main">
+        <main class="flex-1 overflow-y-scroll bg-gray-50 min-w-0 flex flex-col editor-main">
             {{-- Top bar --}}
             <div class="bg-white border-b border-gray-200 shadow-sm shrink-0 relative z-40 px-4 h-16 flex items-center editor-topbar">
                 <div class="flex items-center justify-between gap-3 w-full">
