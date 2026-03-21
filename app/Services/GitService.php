@@ -443,6 +443,34 @@ class GitService
         return null;
     }
 
+    /**
+     * Get commit history for a specific file.
+     */
+    public function getFileHistory(string $path, int $limit = 20): array
+    {
+        $result = Process::path($this->base)
+            ->run(['git', 'log', '--no-merges', '--format=%H|%an|%ae|%aI|%s', '-' . $limit, '--', 'qms/documents/' . $path]);
+
+        $commits = [];
+        if ($result->successful() && trim($result->output())) {
+            foreach (explode("\n", trim($result->output())) as $line) {
+                $parts = explode('|', $line, 5);
+                if (count($parts) !== 5) continue;
+                if ($this->isNoiseCommit($parts[4])) continue;
+
+                $commits[] = [
+                    'hash' => $parts[0],
+                    'short_hash' => substr($parts[0], 0, 7),
+                    'author' => $parts[1],
+                    'date' => \Carbon\Carbon::parse($parts[3]),
+                    'message' => $parts[4],
+                ];
+            }
+        }
+
+        return $commits;
+    }
+
     public function getFileDiff(string $path): string
     {
         $result = Process::path($this->base)

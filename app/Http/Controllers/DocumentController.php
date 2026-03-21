@@ -66,9 +66,11 @@ class DocumentController extends Controller
 
         // Get last edit info
         $lastEdit = $this->git->getLastCommitInfo($path);
+        $fileHistory = $this->git->getFileHistory($path);
 
         return view('documents.index', [
             'tree' => $tree,
+            'fileHistory' => $fileHistory,
             'content' => $html,
             'meta' => $meta,
             'lastEdit' => $lastEdit,

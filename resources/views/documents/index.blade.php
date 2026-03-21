@@ -387,6 +387,33 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- File change history --}}
+                @if(!empty($fileHistory))
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mt-6">
+                        <div class="px-5 py-3 border-b border-gray-100">
+                            <h3 class="text-sm font-semibold text-gray-700">Document History</h3>
+                        </div>
+                        <div class="divide-y divide-gray-50">
+                            @foreach($fileHistory as $commit)
+                                <a href="{{ route('documents.revision', $commit['hash']) }}"
+                                   class="flex items-center gap-3 px-5 py-2.5 hover:bg-gray-50 transition-colors">
+                                    <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+                                        <span class="text-[9px] font-semibold text-gray-500">{{ strtoupper(substr($commit['author'], 0, 1)) }}</span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <span class="text-sm text-gray-700">{{ $commit['message'] }}</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400 shrink-0">{{ $commit['author'] }}</span>
+                                    <span class="text-xs text-gray-400 shrink-0">{{ $commit['date']->diffForHumans() }}</span>
+                                    <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
             </div>
         </main>
     </div>
