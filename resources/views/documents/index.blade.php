@@ -432,10 +432,10 @@
                 </div>
             @endif
 
-            <div class="max-w-5xl mx-auto py-6 px-4 sm:py-8 sm:px-6 lg:px-8">
+            <div class="max-w-5xl mx-auto py-4 px-3 sm:py-8 sm:px-6 lg:px-8">
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                     @if($meta['id'])
-                        <div class="px-5 sm:px-8 pt-4 sm:pt-5 pb-0">
+                        <div class="px-3 sm:px-8 pt-3 sm:pt-5 pb-0">
                             <div class="flex items-start justify-between gap-4 pb-3 border-b border-gray-100">
                                 <div class="text-xs space-y-1.5">
                                     {{-- Row 1: ID, type, status, version --}}
@@ -499,7 +499,7 @@
                             </div>
                         </div>
                     @elseif($canEdit && $isMarkdown)
-                        <div class="px-5 sm:px-8 pt-4 sm:pt-5 pb-0">
+                        <div class="px-3 sm:px-8 pt-3 sm:pt-5 pb-0">
                             <div class="flex items-center justify-between pb-3 border-b border-gray-100">
                                 @if($lastEdit)
                                     <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="text-xs text-gray-400 hover:text-blue-500">Last edited by {{ $lastEdit['name'] }} {{ $lastEdit['date']->diffForHumans() }}</a>
@@ -516,7 +516,7 @@
                             </div>
                         </div>
                     @endif
-                    <div class="p-5 sm:p-8 {{ $meta['id'] ? 'pt-4' : '' }}">
+                    <div class="p-3 sm:p-8 {{ $meta['id'] ? 'pt-3 sm:pt-4' : '' }}">
                         @if($isForm && $formSchema)
                             {{-- Form template view --}}
                             <div>

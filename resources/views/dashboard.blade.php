@@ -83,7 +83,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-sm font-semibold text-gray-800">Browse Documents</h3>
+                                <h3 class="text-sm font-semibold text-gray-800">Browser</h3>
                                 <p class="text-xs text-gray-400">View all files and directories</p>
                             </div>
                         </div>
