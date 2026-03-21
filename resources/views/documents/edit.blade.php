@@ -52,9 +52,6 @@
             .doc-link-item.selected { background: #dbeafe; }
             .doc-link-item + .doc-link-item { border-top: 1px solid #f3f4f6; }
 
-            .sortable-ghost { opacity: 0.4; }
-            .sortable-drag { opacity: 0.9; }
-
             /* Fullscreen override — EasyMDE puts fullscreen class on children, not container */
             .EasyMDEContainer:has(.editor-toolbar.fullscreen) {
                 position: fixed !important;
