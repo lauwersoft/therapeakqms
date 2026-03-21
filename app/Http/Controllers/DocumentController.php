@@ -173,6 +173,27 @@ class DocumentController extends Controller
             ->values()
             ->toArray();
 
+        $tree = $this->buildTree($this->basePath, '', $docIndex);
+        $changedFiles = $this->git->getChangedFiles();
+        $changeLogCount = DocumentChange::count();
+        $pendingCount = max(count($changedFiles), $changeLogCount);
+
+        $sidebarDocs = [];
+        foreach ($docIndex as $docPath => $docMeta) {
+            $dir = dirname($docPath);
+            $docType = $docMeta['id'] ? explode('-', $docMeta['id'])[0] : '';
+            $sidebarDocs[] = [
+                'path' => $docPath,
+                'url_path' => preg_replace('/\.md$/', '', $docPath),
+                'doc_id' => $docMeta['id'] ?? null,
+                'title' => $docMeta['title'] ?? $this->formatName(pathinfo($docPath, PATHINFO_FILENAME)),
+                'type' => $docType,
+                'status' => $docMeta['status'] ?? 'draft',
+                'directory' => ($dir !== '.' && $dir !== '') ? ucwords(str_replace(['-', '_'], ' ', $dir)) : null,
+                'is_markdown' => $docMeta['_is_markdown'] ?? true,
+            ];
+        }
+
         return view('documents.edit', [
             'content' => $parsed['body'],
             'meta' => $parsed['meta'],
@@ -180,6 +201,12 @@ class DocumentController extends Controller
             'documentTypes' => DocumentMetadata::TYPES,
             'statuses' => DocumentMetadata::STATUSES,
             'docList' => $docList,
+            'tree' => $tree,
+            'sidebarDocs' => $sidebarDocs,
+            'changedFiles' => $changedFiles,
+            'pendingCount' => $pendingCount,
+            'canEdit' => true,
+            'directories' => $this->getDirectories(),
         ]);
     }
 

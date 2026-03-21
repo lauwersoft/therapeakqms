@@ -51,10 +51,13 @@
             .doc-link-item:hover { background: #f3f4f6; }
             .doc-link-item.selected { background: #dbeafe; }
             .doc-link-item + .doc-link-item { border-top: 1px solid #f3f4f6; }
+
+            .sortable-ghost { opacity: 0.4; }
+            .sortable-drag { opacity: 0.9; }
         </style>
     @endpush
 
-    <div x-data="documentEditor()" class="flex h-full overflow-hidden">
+    <div x-data="documentEditor()" @click="closeMenus()" class="flex h-full overflow-hidden">
         {{-- Document link modal --}}
         <div x-show="linkModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="linkModal = false">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-5" @click.stop>
@@ -83,101 +86,182 @@
             </div>
         </div>
 
-        <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0">
-            <div class="max-w-5xl mx-auto py-6 px-4 sm:py-8 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-3">
+        {{-- Mobile overlay --}}
+        <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-out duration-200" x-transition:leave="transition-opacity ease-in duration-150"
+             @click="sidebarOpen = false"
+             class="fixed inset-0 bg-gray-900/50 z-20 lg:hidden"></div>
+
+        {{-- Sidebar --}}
+        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+               class="fixed inset-y-0 left-0 top-16 w-72 bg-white border-r border-gray-200 shadow-[2px_0_6px_-2px_rgba(0,0,0,0.06)] overflow-y-auto z-30
+                      transform transition-transform duration-200 ease-in-out
+                      lg:relative lg:top-0 lg:translate-x-0 lg:shrink-0 flex flex-col">
+            <div class="px-4 h-14 border-b border-gray-200 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2">
+                    <h2 class="font-semibold text-gray-800 text-base">Documents</h2>
+                    <span class="text-xs text-gray-400">{{ count($sidebarDocs) }}</span>
+                </div>
+                <button @click="sidebarOpen = false" class="lg:hidden p-1.5 rounded hover:bg-gray-100 text-gray-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            {{-- Sidebar search + filters --}}
+            <div class="px-3 pt-3 pb-1 space-y-2">
+                <div class="relative">
+                    <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input type="text" x-model="sidebarSearch" placeholder="Search..."
+                           class="w-full pl-8 pr-3 py-1.5 text-xs border-gray-200 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-gray-50">
+                </div>
+                @php
+                    $existingTypes = collect($sidebarDocs)->pluck('type')->filter()->unique()->sort()->values();
+                    $existingStatuses = collect($sidebarDocs)->pluck('status')->filter()->unique()->sort()->values();
+                @endphp
+                <div class="flex gap-1.5">
+                    <select x-model="sidebarTypeFilter" class="flex-1 text-[11px] border-gray-200 rounded-md py-1 pl-2 pr-6 bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">All types</option>
+                        @foreach($existingTypes as $type)
+                            <option value="{{ $type }}">{{ $type }} ({{ collect($sidebarDocs)->where('type', $type)->count() }})</option>
+                        @endforeach
+                    </select>
+                    <select x-model="sidebarStatusFilter" class="flex-1 text-[11px] border-gray-200 rounded-md py-1 pl-2 pr-6 bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">All statuses</option>
+                        @foreach($existingStatuses as $status)
+                            <option value="{{ $status }}">{{ \App\Services\DocumentMetadata::STATUSES[$status] ?? ucfirst($status) }} ({{ collect($sidebarDocs)->where('status', $status)->count() }})</option>
+                        @endforeach
+                    </select>
+                </div>
+                <button x-show="sidebarSearch || sidebarTypeFilter || sidebarStatusFilter" x-cloak
+                        @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''"
+                        class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
+            </div>
+            <nav class="p-3 flex-1 flex flex-col overflow-y-auto">
+                <div>
+                    @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => false, 'changedFiles' => $changedFiles])
+                </div>
+            </nav>
+            @if($pendingCount > 0)
+                <div class="p-3 border-t border-gray-200">
+                    <a href="{{ route('documents.changes') }}"
+                       class="flex items-center justify-between w-full px-3 py-2 text-sm bg-amber-50 text-amber-800 rounded-md hover:bg-amber-100 border border-amber-200">
+                        <span class="font-medium">{{ $pendingCount }} unpublished {{ Str::plural('change', $pendingCount) }}</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            @endif
+        </aside>
+
+        {{-- Main Content --}}
+        <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0 flex flex-col">
+            {{-- Top bar --}}
+            <div class="bg-white border-b border-gray-200 shadow-sm shrink-0 relative z-40 px-4 h-14 flex items-center">
+                <div class="flex items-center justify-between gap-3 w-full">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 lg:hidden shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </button>
                         <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
-                           class="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900">
+                           class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                             </svg>
-                            Back
                         </a>
-                        <span class="text-xs text-gray-400 font-mono">/{{ $currentPath }}</span>
+                        <span class="text-sm font-semibold text-gray-800">Editing</span>
+                        <span class="text-xs text-gray-400 font-mono truncate">/{{ $currentPath }}</span>
                         @if($meta['id'])
                             <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
                         @endif
                     </div>
                 </div>
+            </div>
 
-                @if($errors->any())
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700 mb-4">
-                        @foreach($errors->all() as $error)
-                            <p>{{ $error }}</p>
-                        @endforeach
-                    </div>
-                @endif
-
-                <form method="POST" action="{{ route('documents.update') }}">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" name="path" value="{{ $currentPath }}">
-
-                    {{-- Metadata panel --}}
-                    @if($meta['id'])
-                        <div x-data="{ showMeta: false }" class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-3 text-sm">
-                                    <span class="font-mono font-semibold px-1.5 py-0.5 rounded text-sm {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
-                                        {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-600' : '' }}
-                                        {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
-                                        {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
-                                        {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">
-                                        {{ $statuses[$meta['status']] ?? ucfirst($meta['status']) }}
-                                    </span>
-                                    <span class="text-gray-400">v{{ $meta['version'] }}</span>
-                                    @if($meta['author'])
-                                        <span class="text-gray-400">{{ $meta['author'] }}</span>
-                                    @endif
-                                </div>
-                                <button type="button" @click="showMeta = !showMeta" class="text-xs text-blue-600 hover:text-blue-800">
-                                    <span x-text="showMeta ? 'Hide properties' : 'Edit properties'"></span>
-                                </button>
-                            </div>
-
-                            <div x-show="showMeta" x-cloak class="mt-4 pt-4 border-t border-gray-100">
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
-                                        <select name="meta_status" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
-                                            @foreach($statuses as $key => $label)
-                                                <option value="{{ $key }}" {{ $meta['status'] === $key ? 'selected' : '' }}>{{ $label }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-500 mb-1">Version</label>
-                                        <input type="text" name="meta_version" value="{{ $meta['version'] }}"
-                                               class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-500 mb-1">Effective date</label>
-                                        <input type="date" name="meta_effective_date" value="{{ $meta['effective_date'] }}"
-                                               class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-500 mb-1">Author</label>
-                                        <input type="text" name="meta_author" value="{{ $meta['author'] }}"
-                                               class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
-                                    </div>
-                                </div>
-                            </div>
+            <div class="flex-1 overflow-y-auto">
+                <div class="max-w-5xl mx-auto py-4 px-3 sm:py-6 sm:px-6 lg:px-8">
+                    @if($errors->any())
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700 mb-4">
+                            @foreach($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
                         </div>
                     @endif
 
-                    {{-- Editor --}}
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5">
-                        <textarea id="editor" name="content">{{ $content }}</textarea>
-                        <div class="flex justify-end gap-2 mt-4">
-                            <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
-                               class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md border border-gray-300">Cancel</a>
-                            <button type="submit"
-                                    class="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Save</button>
+                    <form method="POST" action="{{ route('documents.update') }}">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="path" value="{{ $currentPath }}">
+
+                        {{-- Metadata panel --}}
+                        @if($meta['id'])
+                            <div x-data="{ showMeta: false }" class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3 text-sm">
+                                        <span class="font-mono font-semibold px-1.5 py-0.5 rounded text-sm {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
+                                            {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-600' : '' }}
+                                            {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
+                                            {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
+                                            {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">
+                                            {{ $statuses[$meta['status']] ?? ucfirst($meta['status']) }}
+                                        </span>
+                                        <span class="text-gray-400">v{{ $meta['version'] }}</span>
+                                        @if($meta['author'])
+                                            <span class="text-gray-400">{{ $meta['author'] }}</span>
+                                        @endif
+                                    </div>
+                                    <button type="button" @click="showMeta = !showMeta" class="text-xs text-blue-600 hover:text-blue-800">
+                                        <span x-text="showMeta ? 'Hide properties' : 'Edit properties'"></span>
+                                    </button>
+                                </div>
+
+                                <div x-show="showMeta" x-cloak class="mt-4 pt-4 border-t border-gray-100">
+                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                                            <select name="meta_status" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                                @foreach($statuses as $key => $label)
+                                                    <option value="{{ $key }}" {{ $meta['status'] === $key ? 'selected' : '' }}>{{ $label }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Version</label>
+                                            <input type="text" name="meta_version" value="{{ $meta['version'] }}"
+                                                   class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Effective date</label>
+                                            <input type="date" name="meta_effective_date" value="{{ $meta['effective_date'] }}"
+                                                   class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Author</label>
+                                            <input type="text" name="meta_author" value="{{ $meta['author'] }}"
+                                                   class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- Editor --}}
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5">
+                            <textarea id="editor" name="content">{{ $content }}</textarea>
+                            <div class="flex justify-end gap-2 mt-4">
+                                <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
+                                   class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md border border-gray-300">Cancel</a>
+                                <button type="submit"
+                                        class="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Save</button>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </main>
     </div>
@@ -187,10 +271,47 @@
         <script>
             function documentEditor() {
                 return {
+                    sidebarOpen: false,
                     linkModal: false,
                     linkSearch: '',
                     docs: @json($docList),
                     editor: null,
+                    sidebarSearch: '',
+                    sidebarTypeFilter: '',
+                    sidebarStatusFilter: '',
+                    sidebarDocs: @json($sidebarDocs),
+
+                    // Context menus (needed for tree partial compatibility)
+                    fileMenu: { show: false, x: 0, y: 0 },
+                    dirMenu: { show: false, x: 0, y: 0 },
+                    bgMenu: { show: false, x: 0, y: 0 },
+                    ctx: { path: '', name: '', dirPath: '', dirName: '', targetDir: '' },
+
+                    closeMenus() {
+                        this.fileMenu.show = false;
+                        this.dirMenu.show = false;
+                        this.bgMenu.show = false;
+                    },
+
+                    openFileMenu(e, path, name) { e.preventDefault(); },
+                    openDirMenu(e, path, name) { e.preventDefault(); },
+                    openBgMenu(e) { e.preventDefault(); },
+                    initSortable() {},
+
+                    get sidebarFilteredDocs() {
+                        return this.sidebarDocs.filter(d => {
+                            if (this.sidebarTypeFilter && d.type !== this.sidebarTypeFilter) return false;
+                            if (this.sidebarStatusFilter && d.status !== this.sidebarStatusFilter) return false;
+                            if (this.sidebarSearch) {
+                                const q = this.sidebarSearch.toLowerCase();
+                                return (d.doc_id && d.doc_id.toLowerCase().includes(q)) ||
+                                       (d.title && d.title.toLowerCase().includes(q)) ||
+                                       (d.type && d.type.toLowerCase().includes(q)) ||
+                                       (d.directory && d.directory.toLowerCase().includes(q));
+                            }
+                            return true;
+                        });
+                    },
 
                     getFilteredDocs() {
                         if (!this.linkSearch || this.linkSearch.trim() === '') return this.docs;
