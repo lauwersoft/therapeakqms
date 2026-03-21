@@ -57,7 +57,7 @@
         </style>
     @endpush
 
-    <div x-data="documentEditor()" @click="closeMenus()" class="flex h-full overflow-hidden">
+    <div x-data="documentEditor()" class="flex h-full overflow-hidden">
         {{-- Document link modal --}}
         <div x-show="linkModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="linkModal = false">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-5" @click.stop>
@@ -86,80 +86,12 @@
             </div>
         </div>
 
-        {{-- Mobile overlay --}}
-        <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-out duration-200" x-transition:leave="transition-opacity ease-in duration-150"
-             @click="sidebarOpen = false"
-             class="fixed inset-0 bg-gray-900/50 z-20 lg:hidden"></div>
-
-        {{-- Sidebar --}}
-        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-               class="fixed inset-y-0 left-0 top-16 w-72 bg-white border-r border-gray-200 shadow-[2px_0_6px_-2px_rgba(0,0,0,0.06)] overflow-y-auto z-30
-                      transform transition-transform duration-200 ease-in-out
-                      lg:relative lg:top-0 lg:translate-x-0 lg:shrink-0 flex flex-col">
-            <div class="px-4 h-14 border-b border-gray-200 flex items-center justify-between shrink-0">
-                <div class="flex items-center gap-2">
-                    <h2 class="font-semibold text-gray-800 text-base">Documents</h2>
-                    <span class="text-xs text-gray-400">{{ count($sidebarDocs) }}</span>
-                </div>
-                <button @click="sidebarOpen = false" class="lg:hidden p-1.5 rounded hover:bg-gray-100 text-gray-500">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            {{-- Sidebar search + filters --}}
-            <div class="px-3 pt-3 pb-1 space-y-2">
-                <div class="relative">
-                    <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                    <input type="text" x-model="sidebarSearch" placeholder="Search..."
-                           class="w-full pl-8 pr-3 py-1.5 text-xs border-gray-200 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-gray-50">
-                </div>
-                @php
-                    $existingTypes = collect($sidebarDocs)->pluck('type')->filter()->unique()->sort()->values();
-                    $existingStatuses = collect($sidebarDocs)->pluck('status')->filter()->unique()->sort()->values();
-                @endphp
-                <div class="flex gap-1.5">
-                    <select x-model="sidebarTypeFilter" class="flex-1 text-[11px] border-gray-200 rounded-md py-1 pl-2 pr-6 bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">All types</option>
-                        @foreach($existingTypes as $type)
-                            <option value="{{ $type }}">{{ $type }} ({{ collect($sidebarDocs)->where('type', $type)->count() }})</option>
-                        @endforeach
-                    </select>
-                    <select x-model="sidebarStatusFilter" class="flex-1 text-[11px] border-gray-200 rounded-md py-1 pl-2 pr-6 bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">All statuses</option>
-                        @foreach($existingStatuses as $status)
-                            <option value="{{ $status }}">{{ \App\Services\DocumentMetadata::STATUSES[$status] ?? ucfirst($status) }} ({{ collect($sidebarDocs)->where('status', $status)->count() }})</option>
-                        @endforeach
-                    </select>
-                </div>
-                <button x-show="sidebarSearch || sidebarTypeFilter || sidebarStatusFilter" x-cloak
-                        @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''"
-                        class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
-            </div>
-            <nav class="p-3 flex-1 flex flex-col overflow-y-auto">
-                <div>
-                    @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => false, 'changedFiles' => $changedFiles])
-                </div>
-            </nav>
-            @if($pendingCount > 0)
-                <div class="p-3 border-t border-gray-200">
-                    <a href="{{ route('documents.changes') }}"
-                       class="flex items-center justify-between w-full px-3 py-2 text-sm bg-amber-50 text-amber-800 rounded-md hover:bg-amber-100 border border-amber-200">
-                        <span class="font-medium">{{ $pendingCount }} unpublished {{ Str::plural('change', $pendingCount) }}</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </a>
-                </div>
-            @endif
-        </aside>
+        @include('documents.partials.sidebar', ['sidebarCanEdit' => false])
 
         {{-- Main Content --}}
         <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0 flex flex-col">
             {{-- Top bar --}}
-            <div class="bg-white border-b border-gray-200 shadow-sm shrink-0 relative z-40 px-4 h-14 flex items-center">
+            <div class="bg-white border-b border-gray-200 shadow-sm shrink-0 relative z-40 px-4 h-16 flex items-center">
                 <div class="flex items-center justify-between gap-3 w-full">
                     <div class="flex items-center gap-3 min-w-0">
                         <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 lg:hidden shrink-0">
@@ -281,21 +213,12 @@
                     sidebarStatusFilter: '',
                     sidebarDocs: @json($sidebarDocs),
 
-                    // Context menus (needed for tree partial compatibility)
+                    // Stubs for sidebar partial compatibility
                     fileMenu: { show: false, x: 0, y: 0 },
                     dirMenu: { show: false, x: 0, y: 0 },
                     bgMenu: { show: false, x: 0, y: 0 },
                     ctx: { path: '', name: '', dirPath: '', dirName: '', targetDir: '' },
-
-                    closeMenus() {
-                        this.fileMenu.show = false;
-                        this.dirMenu.show = false;
-                        this.bgMenu.show = false;
-                    },
-
-                    openFileMenu(e, path, name) { e.preventDefault(); },
-                    openDirMenu(e, path, name) { e.preventDefault(); },
-                    openBgMenu(e) { e.preventDefault(); },
+                    closeMenus() { this.fileMenu.show = false; this.dirMenu.show = false; this.bgMenu.show = false; },
                     initSortable() {},
 
                     get sidebarFilteredDocs() {
