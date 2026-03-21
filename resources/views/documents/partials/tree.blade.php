@@ -3,11 +3,17 @@
     @foreach ($items as $item)
         @if ($item['type'] === 'directory')
             @php
-                $dirSearchStr = strtolower($item['name']);
+                $dirId = 'dir-' . Str::slug($item['path']);
                 $fileCount = collect($item['children'])->where('type', 'file')->count();
             @endphp
-            <div class="mb-1"
-                 x-show="(!sidebarSearch && !sidebarTypeFilter && !sidebarStatusFilter) || '{{ addslashes($dirSearchStr) }}'.includes((sidebarSearch || '').toLowerCase()) || $el.querySelector('.sortable-item:not([style*=\'display: none\'])')">
+            <div class="mb-1" x-data="{ visibleCount: {{ $fileCount }} }"
+                 x-effect="
+                    let c = document.querySelectorAll('#{{ $dirId }} > .sortable-group > .sortable-item');
+                    let count = 0;
+                    c.forEach(el => { if (el.style.display !== 'none') count++; });
+                    visibleCount = count;
+                 "
+                 x-show="visibleCount > 0 || (!sidebarSearch && !sidebarTypeFilter && !sidebarStatusFilter)">
                 <div x-data="{ open: true }" x-effect="if (sidebarSearch || sidebarTypeFilter || sidebarStatusFilter) open = true">
                     <div class="group flex items-center">
                         <button @click="open = !open"
@@ -22,7 +28,7 @@
                                 <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
                             </svg>
                             <span class="truncate">{{ $item['name'] }}</span>
-                            <span class="ml-auto text-[10px] text-gray-400 shrink-0">{{ $fileCount }}</span>
+                            <span class="ml-auto text-[10px] text-gray-400 shrink-0" x-text="visibleCount"></span>
                         </button>
                         @if($canEdit)
                             <div x-data="{ ddOpen: false }" class="relative shrink-0 opacity-0 group-hover:opacity-100 sm:opacity-100 sm:group-hover:opacity-100 transition-opacity">
@@ -64,7 +70,7 @@
                             </div>
                         @endif
                     </div>
-                    <div x-show="open" class="ml-4">
+                    <div x-show="open" class="ml-4" id="{{ $dirId }}">
                         @include('documents.partials.tree', [
                             'items' => $item['children'],
                             'currentPath' => $currentPath,
