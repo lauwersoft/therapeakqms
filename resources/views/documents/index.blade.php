@@ -292,21 +292,11 @@
         {{-- Sidebar --}}
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
                @dragover.prevent="dragOver = true"
-               @dragleave.prevent="dragOver = false"
+               @dragleave.self.prevent="dragOver = false"
                @drop.prevent="handleDrop($event)"
                class="fixed inset-y-0 left-0 top-16 w-80 bg-white border-r border-gray-200 overflow-y-auto z-30
                       transform transition-transform duration-200 ease-in-out
                       lg:relative lg:top-0 lg:translate-x-0 lg:shrink-0 flex flex-col relative">
-            {{-- Drop overlay --}}
-            <div x-show="dragOver" x-cloak
-                 class="absolute inset-0 z-40 bg-blue-50/90 border-2 border-dashed border-blue-400 rounded-lg flex items-center justify-center pointer-events-none">
-                <div class="text-center">
-                    <svg class="w-10 h-10 text-blue-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                    </svg>
-                    <p class="text-sm font-medium text-blue-600">Drop file to upload</p>
-                </div>
-            </div>
             <div class="p-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="font-semibold text-gray-800 text-lg">Documents</h2>
                 <div class="flex items-center gap-1">
@@ -385,8 +375,19 @@
                     <div class="flex-1 min-h-[100px]" @contextmenu.prevent="openBgMenu($event)"></div>
                 @endif
             </nav>
+            {{-- Drop hint bar --}}
+            @if($canEdit)
+                <div x-show="dragOver" x-cloak class="p-3 border-t border-blue-200 bg-blue-50">
+                    <div class="flex items-center gap-2 text-xs text-blue-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                        </svg>
+                        Drop on a folder, or here for root
+                    </div>
+                </div>
+            @endif
             @if($canEdit && $pendingCount > 0)
-                <div class="p-3 border-t border-gray-200">
+                <div x-show="!dragOver" class="p-3 border-t border-gray-200">
                     <a href="{{ route('documents.changes') }}"
                        class="flex items-center justify-between w-full px-3 py-2 text-sm bg-amber-50 text-amber-800 rounded-md hover:bg-amber-100 border border-amber-200">
                         <span class="font-medium">{{ $pendingCount }} unpublished {{ Str::plural('change', $pendingCount) }}</span>
