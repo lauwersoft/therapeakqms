@@ -32,6 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/qms/directory/rename', [DocumentController::class, 'renameDirectory'])->name('documents.directory.rename');
     Route::delete('/qms/directory', [DocumentController::class, 'destroyDirectory'])->name('documents.directory.destroy');
     Route::post('/qms/quick-create', [DocumentController::class, 'quickCreate'])->name('documents.quick-create');
+    Route::post('/qms/upload', [DocumentController::class, 'upload'])->name('documents.upload');
+    Route::get('/qms/download/{path}', [DocumentController::class, 'download'])->where('path', '.*')->name('documents.download');
     Route::get('/qms/changes', [DocumentController::class, 'changes'])->name('documents.changes');
     Route::post('/qms/publish', [DocumentController::class, 'publish'])->name('documents.publish');
     Route::post('/qms/discard', [DocumentController::class, 'discard'])->name('documents.discard');

@@ -207,6 +207,50 @@
             </div>
         </div>
 
+        {{-- Modal: Upload file --}}
+        <div x-show="modal.upload" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="modal.upload = false">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-5" @click.stop>
+                <h3 class="text-base font-semibold mb-3">Upload file</h3>
+                <form method="POST" action="{{ route('documents.upload') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">File</label>
+                            <input type="file" name="file" required
+                                   class="w-full text-sm border border-gray-300 rounded-md file:mr-3 file:py-1.5 file:px-3 file:border-0 file:text-sm file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200">
+                            <p class="text-xs text-gray-400 mt-1">Max 50MB. PDF, images, spreadsheets, or any other file type.</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Document type</label>
+                            <select name="doc_type" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                @foreach(\App\Services\DocumentMetadata::TYPES as $key => $label)
+                                    <option value="{{ $key }}">{{ $key }} — {{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Title</label>
+                            <input type="text" name="title" placeholder="e.g. ISO 13485 Certificate" required
+                                   class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Directory</label>
+                            <select name="directory" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                @foreach($directories as $value => $label)
+                                    <option value="{{ $value }}">{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2">Document ID will be assigned automatically.</p>
+                    <div class="flex justify-end gap-2 mt-4">
+                        <button type="button" @click="modal.upload = false" class="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md">Cancel</button>
+                        <button type="submit" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         {{-- Mobile overlay --}}
         <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-out duration-200" x-transition:leave="transition-opacity ease-in duration-150"
              @click="sidebarOpen = false"
@@ -229,6 +273,11 @@
                         <button @click="showNewSubdir('')" class="p-1.5 rounded hover:bg-gray-100 text-gray-500" title="New directory">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                            </svg>
+                        </button>
+                        <button @click="modal.upload = true" class="p-1.5 rounded hover:bg-gray-100 text-gray-500" title="Upload file">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                             </svg>
                         </button>
                     @endif
@@ -346,7 +395,7 @@
                                         @endif
                                     </div>
                                 </div>
-                                @if($canEdit)
+                                @if($canEdit && $isMarkdown)
                                     <a href="{{ route('documents.edit', ['path' => str_replace('.md', '', $currentPath)]) }}"
                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-md text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition-colors shrink-0">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -354,10 +403,18 @@
                                         </svg>
                                         Edit
                                     </a>
+                                @elseif(!$isMarkdown)
+                                    <a href="{{ route('documents.download', $currentPath) }}"
+                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-md text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition-colors shrink-0">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                        </svg>
+                                        Download
+                                    </a>
                                 @endif
                             </div>
                         </div>
-                    @elseif($canEdit)
+                    @elseif($canEdit && $isMarkdown)
                         <div class="px-5 sm:px-8 pt-4 sm:pt-5 pb-0">
                             <div class="flex items-center justify-between pb-3 border-b border-gray-100">
                                 @if($lastEdit)
@@ -376,15 +433,52 @@
                         </div>
                     @endif
                     <div class="p-5 sm:p-8 {{ $meta['id'] ? 'pt-4' : '' }}">
-                        <div class="prose prose-sm sm:prose-base max-w-none
-                                    text-gray-700 prose-headings:text-gray-800
-                                    prose-h1:text-xl sm:prose-h1:text-2xl prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-3 prose-h1:mb-6
-                                    prose-h2:text-lg sm:prose-h2:text-xl prose-h2:mt-8
-                                    prose-strong:text-gray-800
-                                    prose-table:text-sm prose-th:bg-gray-50 prose-th:px-3 prose-th:py-2 prose-td:px-3 prose-td:py-2
-                                    prose-a:text-blue-600">
-                            {!! $content !!}
-                        </div>
+                        @if($isMarkdown)
+                            <div class="prose prose-sm sm:prose-base max-w-none
+                                        text-gray-700 prose-headings:text-gray-800
+                                        prose-h1:text-xl sm:prose-h1:text-2xl prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-3 prose-h1:mb-6
+                                        prose-h2:text-lg sm:prose-h2:text-xl prose-h2:mt-8
+                                        prose-strong:text-gray-800
+                                        prose-table:text-sm prose-th:bg-gray-50 prose-th:px-3 prose-th:py-2 prose-td:px-3 prose-td:py-2
+                                        prose-a:text-blue-600">
+                                {!! $content !!}
+                            </div>
+                        @else
+                            {{-- Non-markdown file view --}}
+                            <div class="text-center py-8">
+                                <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gray-100 mb-4">
+                                    <span class="text-lg font-bold text-gray-500 uppercase">{{ $fileInfo['extension'] }}</span>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-800 mb-1">{{ $fileInfo['filename'] }}</h3>
+                                <p class="text-sm text-gray-500 mb-6">
+                                    {{ strtoupper($fileInfo['extension']) }} file · {{ number_format($fileInfo['size'] / 1024, 1) }} KB
+                                </p>
+
+                                {{-- Preview for images --}}
+                                @if(str_starts_with($fileInfo['mime'], 'image/'))
+                                    <div class="mb-6 border border-gray-200 rounded-lg overflow-hidden inline-block max-w-full">
+                                        <img src="{{ route('documents.download', $currentPath) }}" alt="{{ $meta['title'] ?? $fileInfo['filename'] }}" class="max-h-96">
+                                    </div>
+                                @endif
+
+                                {{-- Preview for PDFs --}}
+                                @if($fileInfo['mime'] === 'application/pdf')
+                                    <div class="mb-6 border border-gray-200 rounded-lg overflow-hidden" style="height: 600px;">
+                                        <iframe src="{{ route('documents.download', $currentPath) }}" class="w-full h-full"></iframe>
+                                    </div>
+                                @endif
+
+                                <div>
+                                    <a href="{{ route('documents.download', $currentPath) }}"
+                                       class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                        </svg>
+                                        Download
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -432,7 +526,7 @@
                     bgMenu: { show: false, x: 0, y: 0 },
 
                     // Modals
-                    modal: { rename: false, move: false, delete: false, renameDir: false, deleteDir: false, quickCreate: false, newDir: false },
+                    modal: { rename: false, move: false, delete: false, renameDir: false, deleteDir: false, quickCreate: false, newDir: false, upload: false },
 
                     // Context data
                     ctx: { path: '', name: '', dirPath: '', dirName: '', targetDir: '' },

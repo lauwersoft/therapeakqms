@@ -67,11 +67,17 @@
             <div class="sortable-item" data-path="{{ $item['path'] }}"
                  x-show="!sidebarSearch || '{{ addslashes($searchStr) }}'.includes(sidebarSearch.toLowerCase())"
             >
+                @php
+                    $isItemMarkdown = $item['is_markdown'] ?? true;
+                    $linkPath = $isItemMarkdown ? str_replace('.md', '', $item['path']) : $item['path'];
+                @endphp
                 <div class="group flex items-center">
-                    <a href="{{ route('documents.index', ['path' => str_replace('.md', '', $item['path'])]) }}"
+                    <a href="{{ route('documents.index', ['path' => $linkPath]) }}"
                        @if($canEdit)
                            @contextmenu="openFileMenu($event, '{{ $item['path'] }}', '{{ addslashes($item['name']) }}')"
-                           @dblclick.prevent="window.location='{{ route('documents.edit', ['path' => str_replace('.md', '', $item['path'])]) }}'"
+                           @if($isItemMarkdown)
+                               @dblclick.prevent="window.location='{{ route('documents.edit', ['path' => str_replace('.md', '', $item['path'])]) }}'"
+                           @endif
                        @endif
                        class="flex items-center flex-1 min-w-0 px-2 py-1.5 text-sm rounded mb-0.5 cursor-pointer
                               {{ $currentPath === $item['path'] ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100' }}">
@@ -80,9 +86,16 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
                             </svg>
                         @endif
-                        <svg class="w-4 h-4 mr-2 shrink-0 self-start mt-0.5 {{ $currentPath === $item['path'] ? 'text-blue-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
+                        @if($item['is_markdown'] ?? true)
+                            <svg class="w-4 h-4 mr-2 shrink-0 self-start mt-0.5 {{ $currentPath === $item['path'] ? 'text-blue-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        @else
+                            <span class="w-4 h-4 mr-2 shrink-0 self-start mt-0.5 flex items-center justify-center rounded text-[8px] font-bold uppercase
+                                {{ $currentPath === $item['path'] ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-500' }}">
+                                {{ Str::limit($item['extension'] ?? '?', 3, '') }}
+                            </span>
+                        @endif
                         <span class="min-w-0 flex-1">
                             <span class="truncate block leading-tight">{{ $item['name'] }}</span>
                             @if($item['doc_id'] ?? null)

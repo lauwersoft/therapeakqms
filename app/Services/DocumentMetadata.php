@@ -196,6 +196,47 @@ class DocumentMetadata
     }
 
     /**
+     * Read sidecar metadata for a non-markdown file.
+     */
+    public static function readSidecar(string $filePath): ?array
+    {
+        $metaPath = $filePath . '.meta.json';
+        if (File::exists($metaPath)) {
+            $data = json_decode(File::get($metaPath), true);
+            if (is_array($data)) {
+                return array_merge(self::DEFAULTS, $data);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Write sidecar metadata for a non-markdown file.
+     */
+    public static function writeSidecar(string $filePath, array $meta): void
+    {
+        $clean = array_filter($meta, fn ($v) => $v !== null && $v !== '' && $v !== []);
+        File::put($filePath . '.meta.json', json_encode($clean, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+    }
+
+    /**
+     * Check if a file is a hidden system file (.gitkeep, .meta.json).
+     */
+    public static function isSystemFile(string $filename): bool
+    {
+        return $filename === '.gitkeep'
+            || str_ends_with($filename, '.meta.json');
+    }
+
+    /**
+     * Check if a file is a markdown document.
+     */
+    public static function isMarkdown(string $filename): bool
+    {
+        return str_ends_with(strtolower($filename), '.md');
+    }
+
+    /**
      * Generate the next document ID for a given type prefix.
      * Scans all files to find the highest existing number.
      */
@@ -208,17 +249,24 @@ class DocumentMetadata
             return $prefix . '-001';
         }
 
+        // Scan both markdown frontmatter and sidecar metadata
         $files = File::allFiles($basePath);
         foreach ($files as $file) {
-            if (! str_ends_with($file->getFilename(), '.md')) {
-                continue;
+            $name = $file->getFilename();
+            if (self::isSystemFile($name)) continue;
+
+            $id = null;
+            if (self::isMarkdown($name)) {
+                $content = File::get($file->getPathname());
+                $parsed = self::parse($content);
+                $id = $parsed['meta']['id'] ?? null;
+            } else {
+                $sidecar = self::readSidecar($file->getPathname());
+                $id = $sidecar['id'] ?? null;
             }
 
-            $content = File::get($file->getPathname());
-            $parsed = self::parse($content);
-
-            if (! empty($parsed['meta']['id']) && str_starts_with($parsed['meta']['id'], $prefix . '-')) {
-                $num = (int) substr($parsed['meta']['id'], strlen($prefix) + 1);
+            if ($id && str_starts_with($id, $prefix . '-')) {
+                $num = (int) substr($id, strlen($prefix) + 1);
                 if ($num > $highest) {
                     $highest = $num;
                 }
@@ -241,15 +289,29 @@ class DocumentMetadata
 
         $files = File::allFiles($basePath);
         foreach ($files as $file) {
-            if (! str_ends_with($file->getFilename(), '.md')) {
-                continue;
-            }
+            $name = $file->getFilename();
+            if (self::isSystemFile($name)) continue;
 
             $relativePath = str_replace($basePath . '/', '', $file->getPathname());
-            $content = File::get($file->getPathname());
-            $parsed = self::parse($content);
 
-            $index[$relativePath] = $parsed['meta'];
+            if (self::isMarkdown($name)) {
+                $content = File::get($file->getPathname());
+                $parsed = self::parse($content);
+                $index[$relativePath] = $parsed['meta'];
+                $index[$relativePath]['_is_markdown'] = true;
+            } else {
+                $sidecar = self::readSidecar($file->getPathname());
+                if ($sidecar) {
+                    $index[$relativePath] = $sidecar;
+                } else {
+                    $index[$relativePath] = array_merge(self::DEFAULTS, [
+                        'title' => pathinfo($name, PATHINFO_FILENAME),
+                    ]);
+                }
+                $index[$relativePath]['_is_markdown'] = false;
+                $index[$relativePath]['_extension'] = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+                $index[$relativePath]['_size'] = $file->getSize();
+            }
         }
 
         return $index;

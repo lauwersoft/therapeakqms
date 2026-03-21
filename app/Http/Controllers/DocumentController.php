@@ -29,44 +29,61 @@ class DocumentController extends Controller
         $docIndex = DocumentMetadata::index($this->basePath);
         $tree = $this->buildTree($this->basePath, '', $docIndex);
 
-        // Add .md extension if not present
+        // Default to quality manual
         if (! $path) {
             $path = 'quality-manual.md';
-        } elseif (! str_ends_with($path, '.md')) {
-            $path .= '.md';
         }
 
+        // Try to resolve the path — first as-is, then with .md appended
         $filePath = $this->resolvePath($path);
-        if (! $filePath || ! str_ends_with($filePath, '.md')) {
+        if (! $filePath && ! str_contains($path, '.')) {
+            $path .= '.md';
+            $filePath = $this->resolvePath($path);
+        }
+
+        if (! $filePath) {
             abort(404);
         }
 
-        $raw = File::get($filePath);
-        $parsed = DocumentMetadata::parse($raw);
-        $meta = $parsed['meta'];
-
-        $environment = new Environment([
-            'html_input' => 'strip',
-            'allow_unsafe_links' => false,
-        ]);
-        $environment->addExtension(new \League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension());
-        $environment->addExtension(new TableExtension());
-
-        $converter = new MarkdownConverter($environment);
-        $html = $converter->convert($parsed['body'])->getContent();
-
-        // Resolve [[DOC-ID]] links
-        $idMap = DocumentMetadata::idMap($docIndex);
-        $html = DocumentMetadata::resolveLinks($html, $idMap);
-
+        $isMarkdown = DocumentMetadata::isMarkdown($path);
         $canEdit = in_array($request->user()->role, [User::ROLE_ADMIN, User::ROLE_EDITOR]);
         $changedFiles = $this->git->getChangedFiles();
         $changeLogCount = DocumentChange::count();
         $pendingCount = max(count($changedFiles), $changeLogCount);
-
-        // Get last edit info
         $lastEdit = $this->git->getLastCommitInfo($path);
         $fileHistory = $this->git->getFileHistory($path);
+
+        if ($isMarkdown) {
+            $raw = File::get($filePath);
+            $parsed = DocumentMetadata::parse($raw);
+            $meta = $parsed['meta'];
+
+            $environment = new Environment([
+                'html_input' => 'strip',
+                'allow_unsafe_links' => false,
+            ]);
+            $environment->addExtension(new \League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension());
+            $environment->addExtension(new TableExtension());
+
+            $converter = new MarkdownConverter($environment);
+            $html = $converter->convert($parsed['body'])->getContent();
+
+            $idMap = DocumentMetadata::idMap($docIndex);
+            $html = DocumentMetadata::resolveLinks($html, $idMap);
+        } else {
+            $meta = DocumentMetadata::readSidecar($filePath) ?? array_merge(DocumentMetadata::DEFAULTS, [
+                'title' => pathinfo($path, PATHINFO_FILENAME),
+            ]);
+            $html = null;
+        }
+
+        // File info for non-markdown files
+        $fileInfo = ! $isMarkdown ? [
+            'size' => File::size($filePath),
+            'extension' => strtolower(pathinfo($path, PATHINFO_EXTENSION)),
+            'mime' => File::mimeType($filePath),
+            'filename' => basename($path),
+        ] : null;
 
         return view('documents.index', [
             'tree' => $tree,
@@ -75,6 +92,8 @@ class DocumentController extends Controller
             'meta' => $meta,
             'lastEdit' => $lastEdit,
             'currentPath' => $path,
+            'isMarkdown' => $isMarkdown,
+            'fileInfo' => $fileInfo,
             'canEdit' => $canEdit,
             'directories' => $canEdit ? $this->getDirectories() : [],
             'changedFiles' => $changedFiles,
@@ -451,6 +470,66 @@ class DocumentController extends Controller
         return redirect()->route('documents.edit', ['path' => str_replace('.md', '', $relativePath)]);
     }
 
+    public function upload(Request $request)
+    {
+        $this->authorizeEditor($request->user());
+
+        $request->validate([
+            'file' => 'required|file|max:51200', // 50MB max
+            'directory' => 'nullable|string',
+            'doc_type' => 'required|string|in:' . implode(',', array_keys(DocumentMetadata::TYPES)),
+            'title' => 'required|string|max:255',
+        ]);
+
+        $file = $request->file('file');
+        $directory = $request->input('directory', '');
+        $originalName = $file->getClientOriginalName();
+        $safeName = Str::slug(pathinfo($originalName, PATHINFO_FILENAME)) . '.' . strtolower($file->getClientOriginalExtension());
+
+        $relativePath = $directory ? $directory . '/' . $safeName : $safeName;
+        $fullPath = $this->basePath . '/' . $relativePath;
+
+        if (File::exists($fullPath)) {
+            return back()->withErrors(['file' => 'A file with this name already exists in the target directory.']);
+        }
+
+        $dir = dirname($fullPath);
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        $file->move($dir, $safeName);
+
+        // Create sidecar metadata
+        $docType = $request->input('doc_type');
+        $docId = DocumentMetadata::nextId($docType, $this->basePath);
+
+        DocumentMetadata::writeSidecar($fullPath, [
+            'id' => $docId,
+            'title' => $request->input('title'),
+            'type' => $docType,
+            'version' => '0.1',
+            'status' => 'draft',
+            'author' => $request->user()->name,
+        ]);
+
+        $this->logChange($request->user(), 'create', $relativePath);
+
+        return redirect()->route('documents.index', ['path' => $relativePath])
+            ->with('success', "File uploaded as {$docId}. Remember to publish when ready.");
+    }
+
+    public function download(string $path)
+    {
+        $fullPath = $this->basePath . '/' . $path;
+
+        if (! File::exists($fullPath) || ! str_starts_with(realpath($fullPath), realpath($this->basePath))) {
+            abort(404);
+        }
+
+        return response()->download($fullPath);
+    }
+
     public function browse(Request $request)
     {
         $docIndex = DocumentMetadata::index($this->basePath);
@@ -726,7 +805,7 @@ class DocumentController extends Controller
             $name = basename($entry);
             $relativePath = $prefix ? $prefix . '/' . $name : $name;
 
-            if ($name === '.gitkeep') {
+            if (DocumentMetadata::isSystemFile($name)) {
                 continue;
             }
 
@@ -737,13 +816,16 @@ class DocumentController extends Controller
                     'path' => $relativePath,
                     'children' => $this->buildTree($entry, $relativePath, $docIndex),
                 ];
-            } elseif (str_ends_with($name, '.md')) {
+            } else {
                 $meta = $docIndex[$relativePath] ?? null;
+                $isMarkdown = DocumentMetadata::isMarkdown($name);
                 $items[] = [
                     'type' => 'file',
-                    'name' => $meta['title'] ?? $this->formatName(str_replace('.md', '', $name)),
+                    'name' => $meta['title'] ?? $this->formatName(pathinfo($name, PATHINFO_FILENAME)),
                     'doc_id' => $meta['id'] ?? null,
                     'doc_status' => $meta['status'] ?? null,
+                    'is_markdown' => $isMarkdown,
+                    'extension' => strtolower(pathinfo($name, PATHINFO_EXTENSION)),
                     'path' => $relativePath,
                 ];
             }
