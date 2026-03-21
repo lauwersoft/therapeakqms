@@ -407,15 +407,18 @@
         </aside>
 
         {{-- Main Content --}}
-        <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0">
-            <div class="lg:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200">
-                <button @click="sidebarOpen = true" class="p-2 rounded-md hover:bg-gray-100 text-gray-600">
+        <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0 flex flex-col">
+            {{-- Top bar: path + mobile hamburger --}}
+            <div class="flex items-center gap-3 px-4 py-2 bg-white border-b border-gray-200 shrink-0">
+                <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 lg:hidden">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
-                <span class="text-sm font-medium text-gray-600 truncate">{{ str_replace('/', ' / ', $currentPath) }}</span>
+                <span class="text-xs text-gray-400 font-mono truncate">/{{ $currentPath }}</span>
             </div>
+
+            <div class="flex-1 overflow-y-auto">
 
             @if(session('success'))
                 <div class="max-w-5xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
@@ -655,6 +658,54 @@
                         </div>
                     </div>
                 @endif
+            </div>
+            </div>{{-- close inner scroll div --}}
+
+            {{-- Bottom bar --}}
+            <div class="shrink-0 bg-white border-t border-gray-200 px-4 py-2">
+                <div class="flex items-center justify-between gap-4 max-w-5xl mx-auto">
+                    <div class="flex items-center gap-2 text-xs text-gray-400 min-w-0 overflow-hidden">
+                        @if($meta['id'])
+                            <span class="font-mono font-medium text-gray-600 shrink-0">{{ $meta['id'] }}</span>
+                            <span class="shrink-0">·</span>
+                        @endif
+                        @if($meta['title'])
+                            <span class="truncate">{{ $meta['title'] }}</span>
+                            <span class="shrink-0">·</span>
+                        @endif
+                        <span class="shrink-0 px-1.5 py-0.5 rounded text-[10px] font-medium
+                            {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
+                            {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
+                            {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
+                            {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">
+                            {{ \App\Services\DocumentMetadata::STATUSES[$meta['status']] ?? ucfirst($meta['status']) }}
+                        </span>
+                        @if($meta['version'])
+                            <span class="shrink-0">v{{ $meta['version'] }}</span>
+                        @endif
+                        @if($lastEdit)
+                            <span class="shrink-0 hidden sm:inline">·</span>
+                            <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="shrink-0 hidden sm:inline hover:text-blue-500">{{ $lastEdit['name'] }} {{ $lastEdit['date']->diffForHumans() }}</a>
+                        @endif
+                    </div>
+                    @if($canEdit && $isMarkdown)
+                        <a href="{{ route('documents.edit', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Edit
+                        </a>
+                    @elseif(!$isMarkdown && !$isForm)
+                        <a href="{{ route('documents.download', $currentPath) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Download
+                        </a>
+                    @endif
+                </div>
             </div>
         </main>
     </div>
