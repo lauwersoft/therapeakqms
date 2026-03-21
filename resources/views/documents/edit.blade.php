@@ -203,7 +203,13 @@
 
                         {{-- Editor --}}
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5">
-                            <textarea id="editor" name="content">{{ $content }}</textarea>
+                            <div id="editor-loader" class="flex items-center justify-center" style="min-height:400px">
+                                <svg class="animate-spin h-6 w-6 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                            </div>
+                            <textarea id="editor" name="content" style="min-height:400px;display:none">{{ $content }}</textarea>
                             <div class="flex justify-end gap-2 mt-4">
                                 <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
                                    class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md border border-gray-300">Cancel</a>
@@ -631,6 +637,10 @@
                                 return html;
                             },
                         });
+
+                        // Hide loader, show editor
+                        var loader = document.getElementById('editor-loader');
+                        if (loader) loader.style.display = 'none';
 
                         // Catch Escape key — EasyMDE exits fullscreen without our wrapper
                         document.addEventListener('keydown', function(e) {
