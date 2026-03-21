@@ -508,15 +508,15 @@
                                 {{-- Right column --}}
                                 <div class="space-y-1.5">
                                     @if(!empty($meta['iso_refs']))
-                                        <div class="text-gray-400"><span class="text-gray-500 font-medium">ISO 13485:</span> <span class="text-blue-400">Clause {{ implode(', ', $meta['iso_refs']) }}</span></div>
+                                        <div class="text-gray-400"><span class="text-gray-500 font-medium">ISO 13485:</span> Clause {{ implode(', ', $meta['iso_refs']) }}</div>
                                     @endif
                                     @if(!empty($meta['mdr_refs']))
-                                        <div class="text-gray-400"><span class="text-gray-500 font-medium">EU MDR:</span> <span class="text-blue-400">{{ implode(', ', $meta['mdr_refs']) }}</span></div>
+                                        <div class="text-gray-400"><span class="text-gray-500 font-medium">EU MDR:</span> {{ implode(', ', $meta['mdr_refs']) }}</div>
                                     @endif
                                     @if($lastEdit)
                                         <div class="text-gray-400">
                                             <span class="text-gray-500 font-medium">Last edit:</span>
-                                            <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="hover:text-blue-500">{{ $lastEdit['name'] }}, {{ $lastEdit['date']->diffForHumans() }}</a>
+                                            <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="text-blue-500 hover:text-blue-700 underline decoration-blue-300 hover:decoration-blue-500">{{ $lastEdit['name'] }}, {{ $lastEdit['date']->diffForHumans() }}</a>
                                         </div>
                                     @endif
                                 </div>
