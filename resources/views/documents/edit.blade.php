@@ -206,6 +206,40 @@
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
         <script>
+            // Standalone fullscreen sync — hides/shows surrounding UI
+            window._editorSyncFullscreen = function() {
+                var container = document.querySelector('.EasyMDEContainer');
+                var isFs = container && container.classList.contains('fullscreen');
+
+                // Force z-index via inline style (overrides everything)
+                if (container && isFs) {
+                    container.style.zIndex = '9999';
+                } else if (container) {
+                    container.style.zIndex = '';
+                }
+
+                // Hide/show all surrounding elements
+                var nav = document.querySelector('nav');
+                if (nav) nav.style.display = isFs ? 'none' : '';
+
+                var asides = document.querySelectorAll('aside');
+                for (var i = 0; i < asides.length; i++) {
+                    asides[i].style.display = isFs ? 'none' : '';
+                }
+
+                var topbars = document.querySelectorAll('.editor-topbar');
+                for (var i = 0; i < topbars.length; i++) {
+                    topbars[i].style.display = isFs ? 'none' : '';
+                }
+
+                // The app layout wrapper needs to not constrain the fixed editor
+                var appWrapper = document.querySelector('body > div');
+                if (appWrapper) {
+                    appWrapper.style.overflow = isFs ? 'visible' : '';
+                    appWrapper.style.height = isFs ? 'auto' : '';
+                }
+            };
+
             function documentEditor() {
                 return {
                     sidebarOpen: false,
@@ -260,28 +294,6 @@
                             cm.replaceRange('[[' + docId + ']]', pos);
                             cm.focus();
                         }
-                    },
-
-                    _syncFullscreen() {
-                        const isFs = document.querySelector('.EasyMDEContainer.fullscreen');
-                        // Top navbar
-                        document.querySelectorAll('body > div > nav').forEach(el => el.style.display = isFs ? 'none' : '');
-                        // App header
-                        document.querySelectorAll('body > div > header').forEach(el => el.style.display = isFs ? 'none' : '');
-                        // Sidebar
-                        document.querySelectorAll('aside').forEach(el => el.style.display = isFs ? 'none' : '');
-                        // Editor top bar
-                        document.querySelectorAll('.editor-topbar').forEach(el => el.style.display = isFs ? 'none' : '');
-                        // Let the outer main expand
-                        const outerMain = document.querySelector('body > div > main');
-                        if (outerMain) {
-                            outerMain.style.overflow = isFs ? 'visible' : '';
-                            outerMain.style.position = isFs ? 'static' : '';
-                        }
-                        // Let the editor main expand
-                        document.querySelectorAll('.editor-main').forEach(el => {
-                            el.style.overflow = isFs ? 'visible' : '';
-                        });
                     },
 
                     init() {
@@ -411,18 +423,18 @@
                                 },
                                 {
                                     name: 'side-by-side',
-                                    action: (editor) => {
+                                    action: function(editor) {
                                         EasyMDE.toggleSideBySide(editor);
-                                        self._syncFullscreen();
+                                        window._editorSyncFullscreen();
                                     },
                                     className: 'fa fa-columns no-disable',
                                     title: 'Side by side',
                                 },
                                 {
                                     name: 'fullscreen',
-                                    action: (editor) => {
+                                    action: function(editor) {
                                         EasyMDE.toggleFullScreen(editor);
-                                        self._syncFullscreen();
+                                        window._editorSyncFullscreen();
                                     },
                                     className: 'fa fa-arrows-alt no-disable',
                                     title: 'Fullscreen',
@@ -455,10 +467,10 @@
                             },
                         });
 
-                        // Catch Escape key and F11 — EasyMDE toggles fullscreen without our wrapper
-                        document.addEventListener('keydown', (e) => {
-                            if (e.key === 'Escape' || e.key === 'F11') {
-                                setTimeout(() => self._syncFullscreen(), 50);
+                        // Catch Escape key — EasyMDE exits fullscreen without our wrapper
+                        document.addEventListener('keydown', function(e) {
+                            if (e.key === 'Escape') {
+                                setTimeout(window._editorSyncFullscreen, 100);
                             }
                         });
                     }
