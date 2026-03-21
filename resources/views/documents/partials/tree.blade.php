@@ -2,8 +2,13 @@
      x-init="initSortable($el, '{{ $directory ?? '' }}')">
     @foreach ($items as $item)
         @if ($item['type'] === 'directory')
-            <div class="mb-1" x-show="!sidebarSearch || $el.querySelector('.sortable-item:not([style*=\'display: none\'])')">
-                <div x-data="{ open: true }" :class="{ 'open': sidebarSearch }" x-effect="if (sidebarSearch) open = true">
+            @php
+                $dirSearchStr = strtolower($item['name']);
+                $fileCount = collect($item['children'])->where('type', 'file')->count();
+            @endphp
+            <div class="mb-1"
+                 x-show="(!sidebarSearch && !sidebarTypeFilter && !sidebarStatusFilter) || '{{ addslashes($dirSearchStr) }}'.includes((sidebarSearch || '').toLowerCase()) || $el.querySelector('.sortable-item:not([style*=\'display: none\'])')">
+                <div x-data="{ open: true }" x-effect="if (sidebarSearch || sidebarTypeFilter || sidebarStatusFilter) open = true">
                     <div class="group flex items-center">
                         <button @click="open = !open"
                                 @if($canEdit)
@@ -17,6 +22,7 @@
                                 <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
                             </svg>
                             <span class="truncate">{{ $item['name'] }}</span>
+                            <span class="ml-auto text-[10px] text-gray-400 shrink-0">{{ $fileCount }}</span>
                         </button>
                         @if($canEdit)
                             <div x-data="{ ddOpen: false }" class="relative shrink-0 opacity-0 group-hover:opacity-100 sm:opacity-100 sm:group-hover:opacity-100 transition-opacity">

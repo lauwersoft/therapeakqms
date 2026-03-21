@@ -867,10 +867,10 @@ class DocumentController extends Controller
             }
         }
 
-        // Sort files: by doc_id if present, then by name
+        // Sort: files first (by doc_id), then directories
         usort($items, function ($a, $b) {
             if ($a['type'] !== $b['type']) {
-                return $a['type'] === 'directory' ? -1 : 1;
+                return $a['type'] === 'file' ? -1 : 1;
             }
             $aId = $a['doc_id'] ?? '';
             $bId = $b['doc_id'] ?? '';

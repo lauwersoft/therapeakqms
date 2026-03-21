@@ -3,7 +3,6 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">Browse Documents</h2>
-                <span class="text-sm text-gray-400" x-data x-text="''" id="browse-count"></span>
             </div>
             @if(in_array(Auth::user()->role, ['admin', 'editor']))
                 <div class="flex items-center gap-2">
@@ -20,7 +19,41 @@
         </div>
     </x-slot>
 
-    <div x-data="documentBrowser()" class="py-6">
+    @php $canEdit = in_array(Auth::user()->role, ['admin', 'editor']); @endphp
+
+    <div x-data="documentBrowser()" @click="ctx.show = false" class="py-6">
+
+        {{-- Context menu --}}
+        @if($canEdit)
+            <div x-show="ctx.show" x-cloak
+                 :style="`top:${ctx.y}px;left:${ctx.x}px`"
+                 @click.stop
+                 class="fixed z-50 bg-white rounded-lg shadow-lg border border-gray-200 py-1 w-52">
+                <div class="px-3 py-1.5 text-[10px] font-medium text-gray-400 uppercase tracking-wider">This document</div>
+                <a :href="ctx.isMarkdown ? ('/qms/edit/' + ctx.path.replace(/\.md$/, '')) : ('/qms/download/' + ctx.path)"
+                   class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x-bind:d="ctx.isMarkdown ? 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' : 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'"/>
+                    </svg>
+                    <span x-text="ctx.isMarkdown ? 'Edit' : 'Download'"></span>
+                </a>
+                <a :href="'/qms/' + ctx.urlPath" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    View
+                </a>
+                <div class="border-t border-gray-100 my-1"></div>
+                <div class="px-3 py-1.5 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Create new</div>
+                <a href="{{ route('documents.index') }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    New document
+                </a>
+                <a href="{{ route('forms.create') }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                    New form
+                </a>
+            </div>
+        @endif
+
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             {{-- Search + filters --}}
             <div class="mb-5">
@@ -43,7 +76,6 @@
 
             {{-- Filter bar --}}
             <div class="flex flex-wrap items-center gap-2 mb-5">
-                {{-- Type filters --}}
                 <div class="flex flex-wrap gap-1.5">
                     <button @click="typeFilter = ''" class="px-2.5 py-1 text-xs rounded-full transition-colors"
                             :class="typeFilter === '' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
@@ -59,10 +91,7 @@
                         @endif
                     @endforeach
                 </div>
-
                 <div class="w-px h-5 bg-gray-200"></div>
-
-                {{-- Status filters --}}
                 <div class="flex flex-wrap gap-1.5">
                     <button @click="statusFilter = ''" class="px-2.5 py-1 text-xs rounded-full transition-colors"
                             :class="statusFilter === '' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
@@ -88,10 +117,9 @@
                         class="text-xs text-blue-600 hover:text-blue-800">Clear all filters</button>
             </div>
 
-            {{-- Document list --}}
+            {{-- Document list grouped by directory --}}
             <template x-if="filteredDocs.length > 0">
                 <div>
-                    {{-- Group by directory --}}
                     <template x-for="dir in uniqueDirs" :key="dir">
                         <div x-show="filteredDocs.some(d => d.raw_directory === dir)" class="mb-5">
                             <div class="flex items-center gap-2 mb-2">
@@ -103,6 +131,9 @@
                             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                                 <template x-for="doc in filteredDocs.filter(d => d.raw_directory === dir)" :key="doc.path">
                                     <a :href="'/qms/' + doc.url_path"
+                                       @if($canEdit)
+                                           @contextmenu.prevent="openCtx($event, doc)"
+                                       @endif
                                        class="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
                                         <span class="font-mono text-xs text-gray-400 w-20 shrink-0" x-text="doc.doc_id"></span>
                                         <div class="flex-1 min-w-0">
@@ -129,7 +160,6 @@
                 </div>
             </template>
 
-            {{-- No results --}}
             <div x-show="filteredDocs.length === 0" x-cloak class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
                 <p class="text-gray-400">No documents match your filters.</p>
             </div>
@@ -148,6 +178,7 @@
                     statusFilter: '',
                     docs: docs,
                     uniqueDirs: dirs,
+                    ctx: { show: false, x: 0, y: 0, path: '', urlPath: '', isMarkdown: true },
 
                     get filteredDocs() {
                         return this.docs.filter(d => {
@@ -164,6 +195,18 @@
                             }
                             return true;
                         });
+                    },
+
+                    openCtx(e, doc) {
+                        e.preventDefault();
+                        this.ctx = {
+                            show: true,
+                            x: e.clientX,
+                            y: e.clientY,
+                            path: doc.path,
+                            urlPath: doc.url_path,
+                            isMarkdown: doc.path.endsWith('.md'),
+                        };
                     },
                 };
             }
