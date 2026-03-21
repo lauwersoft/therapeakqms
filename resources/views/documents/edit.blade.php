@@ -52,6 +52,9 @@
             .doc-link-item.selected { background: #dbeafe; }
             .doc-link-item + .doc-link-item { border-top: 1px solid #f3f4f6; }
 
+            .sortable-ghost { opacity: 0.4; }
+            .sortable-drag { opacity: 0.9; }
+
             /* Fullscreen override — EasyMDE puts fullscreen class on children, not container */
             .EasyMDEContainer:has(.editor-toolbar.fullscreen) {
                 position: fixed !important;
@@ -74,7 +77,7 @@
         </style>
     @endpush
 
-    <div x-data="documentEditor()" class="flex h-full overflow-hidden">
+    <div x-data="documentEditor()" @click="closeMenus()" class="flex h-full overflow-hidden">
         {{-- Document link modal --}}
         <div x-show="linkModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="linkModal = false">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-5" @click.stop>
@@ -103,7 +106,8 @@
             </div>
         </div>
 
-        @include('documents.partials.sidebar', ['sidebarCanEdit' => false])
+        @include('documents.partials.sidebar-actions')
+        @include('documents.partials.sidebar', ['sidebarCanEdit' => $canEdit])
 
         {{-- Main Content --}}
         <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0 flex flex-col editor-main">
@@ -278,13 +282,148 @@
                     sidebarStatusFilter: '',
                     sidebarDocs: @json($sidebarDocs),
 
-                    // Stubs for sidebar partial compatibility
+                    canEdit: @json($canEdit),
+                    dragOver: false,
+                    droppedFile: null,
+
+                    // Context menus
                     fileMenu: { show: false, x: 0, y: 0 },
                     dirMenu: { show: false, x: 0, y: 0 },
                     bgMenu: { show: false, x: 0, y: 0 },
+
+                    // Modals
+                    modal: { rename: false, move: false, delete: false, renameDir: false, deleteDir: false, quickCreate: false, newDir: false, upload: false },
+
+                    // Context data
                     ctx: { path: '', name: '', dirPath: '', dirName: '', targetDir: '' },
-                    closeMenus() { this.fileMenu.show = false; this.dirMenu.show = false; this.bgMenu.show = false; },
-                    initSortable() {},
+
+                    closeMenus() {
+                        this.fileMenu.show = false;
+                        this.dirMenu.show = false;
+                        this.bgMenu.show = false;
+                    },
+
+                    openFileMenu(e, path, name) {
+                        if (!this.canEdit) return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.closeMenus();
+                        this.ctx.path = path;
+                        this.ctx.name = name;
+                        this.fileMenu = { show: true, x: e.clientX, y: e.clientY };
+                    },
+
+                    openDirMenu(e, path, name) {
+                        if (!this.canEdit) return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.closeMenus();
+                        this.ctx.dirPath = path;
+                        this.ctx.dirName = name;
+                        this.dirMenu = { show: true, x: e.clientX, y: e.clientY };
+                    },
+
+                    openBgMenu(e) {
+                        if (!this.canEdit) return;
+                        e.preventDefault();
+                        this.closeMenus();
+                        this.bgMenu = { show: true, x: e.clientX, y: e.clientY };
+                    },
+
+                    editFile() {
+                        this.closeMenus();
+                        window.location = '/qms/edit/' + this.ctx.path.replace('.md', '');
+                    },
+
+                    showRename() {
+                        this.closeMenus();
+                        this.modal.rename = true;
+                        this.$nextTick(() => { this.$refs.renameInput.focus(); this.$refs.renameInput.select(); });
+                    },
+
+                    showMove() {
+                        this.closeMenus();
+                        this.modal.move = true;
+                    },
+
+                    showDelete() {
+                        this.closeMenus();
+                        this.modal.delete = true;
+                    },
+
+                    showRenameDir() {
+                        this.closeMenus();
+                        this.modal.renameDir = true;
+                        this.$nextTick(() => { this.$refs.renameDirInput.focus(); this.$refs.renameDirInput.select(); });
+                    },
+
+                    showDeleteDir() {
+                        this.closeMenus();
+                        this.modal.deleteDir = true;
+                    },
+
+                    showQuickCreate(dir) {
+                        this.closeMenus();
+                        this.ctx.targetDir = dir;
+                        this.modal.quickCreate = true;
+                        this.$nextTick(() => this.$refs.quickCreateInput.focus());
+                    },
+
+                    showNewSubdir(dir) {
+                        this.closeMenus();
+                        this.ctx.targetDir = dir;
+                        this.modal.newDir = true;
+                        this.$nextTick(() => this.$refs.newDirInput.focus());
+                    },
+
+                    handleDrop(e) {
+                        this.dragOver = false;
+                        this._openUploadWithFile(e.dataTransfer.files, '');
+                    },
+
+                    handleDropToDir(e, dir) {
+                        this.dragOver = false;
+                        this._openUploadWithFile(e.dataTransfer.files, dir);
+                    },
+
+                    _openUploadWithFile(files, directory) {
+                        if (!this.canEdit || !files || files.length === 0) return;
+                        this.droppedFile = files[0];
+                        this.modal.upload = true;
+                        this.$nextTick(() => {
+                            const fileInput = document.querySelector('#upload-file-input');
+                            if (fileInput) { const dt = new DataTransfer(); dt.items.add(this.droppedFile); fileInput.files = dt.files; }
+                            const titleInput = document.querySelector('#upload-title-input');
+                            if (titleInput && !titleInput.value) { const name = this.droppedFile.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '); titleInput.value = name.charAt(0).toUpperCase() + name.slice(1); }
+                            const dirSelect = document.querySelector('#upload-dir-select');
+                            if (dirSelect && directory) { dirSelect.value = directory; }
+                        });
+                    },
+
+                    initSortable(el, directory) {
+                        if (!this.canEdit) return;
+                        if (typeof Sortable === 'undefined') return;
+                        Sortable.create(el, {
+                            group: 'documents',
+                            animation: 150,
+                            fallbackOnBody: true,
+                            swapThreshold: 0.65,
+                            ghostClass: 'sortable-ghost',
+                            dragClass: 'sortable-drag',
+                            onEnd: (evt) => {
+                                const filePath = evt.item.dataset.path;
+                                const newDir = evt.to.dataset.directory || '';
+                                const oldDir = evt.from.dataset.directory || '';
+                                if (newDir === oldDir) return;
+                                const form = document.createElement('form');
+                                form.method = 'POST';
+                                form.action = '{{ route("documents.move") }}';
+                                form.innerHTML = '<input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="path" value="' + filePath + '"><input type="hidden" name="destination" value="' + newDir + '">';
+                                document.body.appendChild(form);
+                                form.submit();
+                            }
+                        });
+                    },
 
                     get sidebarFilteredDocs() {
                         return this.sidebarDocs.filter(d => {
