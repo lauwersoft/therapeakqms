@@ -1,8 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
+        <div class="flex items-center gap-3">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ Auth::user()->name }}</h2>
+            <span class="text-xs font-medium px-1.5 py-0.5 rounded
+                {{ Auth::user()->role === 'admin' ? 'bg-purple-100 text-purple-600' : '' }}
+                {{ Auth::user()->role === 'editor' ? 'bg-blue-100 text-blue-600' : '' }}
+                {{ Auth::user()->role === 'auditor' ? 'bg-gray-100 text-gray-500' : '' }}">{{ ucfirst(Auth::user()->role) }}</span>
+        </div>
     </x-slot>
 
     <div class="py-12">
