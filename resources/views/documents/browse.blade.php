@@ -342,7 +342,6 @@
                                             <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
                                             <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'/' + doc.path"></span>
                                         </div>
-                                        <span x-show="doc.type" class="text-[11px] px-1.5 py-0.5 rounded shrink-0 font-medium" :class="doc.type_color" x-text="doc.type"></span>
                                         <span class="shrink-0 text-[11px] font-medium px-1.5 py-0.5 rounded"
                                               :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                         <span x-show="doc.version" class="text-xs text-gray-400 w-10 text-right shrink-0" x-text="'v' + doc.version"></span>
@@ -378,7 +377,6 @@
                                             <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
                                             <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'/' + doc.path"></span>
                                         </div>
-                                        <span x-show="doc.type" class="text-[11px] px-1.5 py-0.5 rounded shrink-0 font-medium" :class="doc.type_color" x-text="doc.type"></span>
                                         <span class="shrink-0 text-[11px] font-medium px-1.5 py-0.5 rounded"
                                               :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                         <span x-show="doc.version" class="text-xs text-gray-400 w-10 text-right shrink-0" x-text="'v' + doc.version"></span>
