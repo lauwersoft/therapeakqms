@@ -360,12 +360,39 @@
                         @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''"
                         class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
             </div>
-            <nav class="p-3 flex-1 flex flex-col">
-                <div>
+            <nav class="p-3 flex-1 flex flex-col overflow-y-auto">
+                {{-- Normal tree view (no filters active) --}}
+                <div x-show="!sidebarSearch && !sidebarTypeFilter && !sidebarStatusFilter">
                     @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $canEdit, 'changedFiles' => $changedFiles])
                 </div>
+
+                {{-- Filtered results (flat list) --}}
+                <div x-show="sidebarSearch || sidebarTypeFilter || sidebarStatusFilter" x-cloak>
+                    <template x-for="doc in sidebarFilteredDocs" :key="doc.path">
+                        <a :href="'/qms/' + doc.url_path"
+                           :class="'{{ $currentPath }}' === doc.path ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100'"
+                           class="flex items-center px-2 py-1.5 text-sm rounded mb-0.5">
+                            <svg class="w-4 h-4 mr-2 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="min-w-0 flex-1">
+                                <span class="truncate block leading-tight" x-text="doc.title"></span>
+                                <span class="text-[10px] text-gray-400 font-mono block leading-tight">
+                                    <span x-text="doc.doc_id"></span>
+                                    <template x-if="doc.directory">
+                                        <span x-text="' · ' + doc.directory"></span>
+                                    </template>
+                                </span>
+                            </span>
+                        </a>
+                    </template>
+                    <div x-show="sidebarFilteredDocs.length === 0" class="px-2 py-4 text-xs text-gray-400 text-center">
+                        No results
+                    </div>
+                </div>
+
                 @if($canEdit)
-                    <div class="flex-1 min-h-[150px]" @contextmenu.prevent="openBgMenu($event)"></div>
+                    <div class="flex-1 min-h-[100px]" @contextmenu.prevent="openBgMenu($event)"></div>
                 @endif
             </nav>
             @if($canEdit && $pendingCount > 0)
@@ -643,6 +670,22 @@
                     sidebarSearch: '',
                     sidebarTypeFilter: '',
                     sidebarStatusFilter: '',
+                    sidebarDocs: @json($sidebarDocs),
+
+                    get sidebarFilteredDocs() {
+                        return this.sidebarDocs.filter(d => {
+                            if (this.sidebarTypeFilter && d.type !== this.sidebarTypeFilter) return false;
+                            if (this.sidebarStatusFilter && d.status !== this.sidebarStatusFilter) return false;
+                            if (this.sidebarSearch) {
+                                const q = this.sidebarSearch.toLowerCase();
+                                return (d.doc_id && d.doc_id.toLowerCase().includes(q)) ||
+                                       (d.title && d.title.toLowerCase().includes(q)) ||
+                                       (d.type && d.type.toLowerCase().includes(q)) ||
+                                       (d.directory && d.directory.toLowerCase().includes(q));
+                            }
+                            return true;
+                        });
+                    },
 
                     // Context menus
                     fileMenu: { show: false, x: 0, y: 0 },

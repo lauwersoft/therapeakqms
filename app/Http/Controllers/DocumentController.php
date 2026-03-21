@@ -111,6 +111,23 @@ class DocumentController extends Controller
             'filename' => basename($path),
         ] : null;
 
+        // Flat doc list for sidebar search
+        $sidebarDocs = [];
+        foreach ($docIndex as $docPath => $docMeta) {
+            $dir = dirname($docPath);
+            $docType = $docMeta['id'] ? explode('-', $docMeta['id'])[0] : '';
+            $sidebarDocs[] = [
+                'path' => $docPath,
+                'url_path' => preg_replace('/\.md$/', '', $docPath),
+                'doc_id' => $docMeta['id'] ?? null,
+                'title' => $docMeta['title'] ?? $this->formatName(pathinfo($docPath, PATHINFO_FILENAME)),
+                'type' => $docType,
+                'status' => $docMeta['status'] ?? 'draft',
+                'directory' => ($dir !== '.' && $dir !== '') ? ucwords(str_replace(['-', '_'], ' ', $dir)) : null,
+                'is_markdown' => $docMeta['_is_markdown'] ?? true,
+            ];
+        }
+
         return view('documents.index', [
             'isForm' => $isForm,
             'formSchema' => $formSchema,
@@ -127,6 +144,7 @@ class DocumentController extends Controller
             'directories' => $canEdit ? $this->getDirectories() : [],
             'changedFiles' => $changedFiles,
             'pendingCount' => $pendingCount,
+            'sidebarDocs' => $sidebarDocs,
         ]);
     }
 
