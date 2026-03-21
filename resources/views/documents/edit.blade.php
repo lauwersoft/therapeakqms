@@ -116,18 +116,16 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                             </svg>
                         </button>
-                        <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
-                           class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                            </svg>
-                        </a>
-                        <span class="text-sm font-semibold text-gray-800">Editing</span>
+                        <span class="text-sm font-semibold text-gray-800">QMS</span>
                         <span class="text-xs text-gray-400 font-mono truncate">/{{ $currentPath }}</span>
-                        @if($meta['id'])
-                            <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
-                        @endif
                     </div>
+                    <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        Back to document
+                    </a>
                 </div>
             </div>
 
