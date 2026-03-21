@@ -408,15 +408,34 @@
 
         {{-- Main Content --}}
         <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0 flex flex-col">
-            {{-- Top bar: path only --}}
-            <div class="bg-white border-b border-gray-200 shrink-0 shadow-sm relative z-10 px-4 h-16 flex items-center">
-                <div class="flex items-center gap-3 w-full">
-                    <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 lg:hidden shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                        </svg>
-                    </button>
-                    <span class="text-xs text-gray-400 font-mono truncate">/{{ $currentPath }}</span>
+            {{-- Top bar: path + edit --}}
+            <div class="bg-white border-b border-gray-200 shrink-0 relative z-10 px-4 h-16 flex items-center">
+                <div class="flex items-center justify-between gap-3 w-full">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 lg:hidden shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </button>
+                        <span class="text-xs text-gray-400 font-mono truncate">/{{ $currentPath }}</span>
+                    </div>
+                    @if($canEdit && $isMarkdown)
+                        <a href="{{ route('documents.edit', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Edit
+                        </a>
+                    @elseif(!$isMarkdown && !$isForm)
+                        <a href="{{ route('documents.download', $currentPath) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Download
+                        </a>
+                    @endif
                 </div>
             </div>
 
@@ -461,44 +480,45 @@
                         </a>
                     @endif
 
-                    {{-- Document metadata header --}}
+                    {{-- Document metadata header (2 columns) --}}
                     @if($meta['id'])
-                        <div class="px-3 sm:px-8 pt-4 sm:pt-6 pb-3 sm:pb-4 border-b border-gray-100 pr-12">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="font-mono font-semibold text-sm px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
-                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium
-                                    {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
-                                    {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
-                                    {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
-                                    {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">{{ \App\Services\DocumentMetadata::STATUSES[$meta['status']] ?? ucfirst($meta['status']) }}</span>
-                                @if($meta['version'])
-                                    <span class="text-xs text-gray-400">v{{ $meta['version'] }}</span>
-                                @endif
-                            </div>
-                            <div class="text-xs text-gray-400 space-y-0.5">
-                                <div class="flex items-center gap-2">
+                        <div class="px-3 sm:px-8 py-4 sm:py-5 border-b border-gray-100 pr-12">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-xs">
+                                {{-- Left column --}}
+                                <div class="space-y-1.5">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-mono font-semibold text-sm px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium
+                                            {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
+                                            {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
+                                            {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
+                                            {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">{{ \App\Services\DocumentMetadata::STATUSES[$meta['status']] ?? ucfirst($meta['status']) }}</span>
+                                        @if($meta['version'])
+                                            <span class="text-gray-400">v{{ $meta['version'] }}</span>
+                                        @endif
+                                    </div>
                                     @if($meta['author'])
-                                        <span>{{ $meta['author'] }}</span>
+                                        <div class="text-gray-400"><span class="text-gray-500 font-medium">Author:</span> {{ $meta['author'] }}</div>
                                     @endif
                                     @if($meta['effective_date'])
-                                        <span>· Effective {{ $meta['effective_date'] }}</span>
+                                        <div class="text-gray-400"><span class="text-gray-500 font-medium">Effective:</span> {{ $meta['effective_date'] }}</div>
                                     @endif
                                 </div>
-                                @if(!empty($meta['iso_refs']) || !empty($meta['mdr_refs']))
-                                    <div class="flex items-center gap-2">
-                                        @if(!empty($meta['iso_refs']))
-                                            <span class="text-blue-400">ISO {{ implode(', ', $meta['iso_refs']) }}</span>
-                                        @endif
-                                        @if(!empty($meta['mdr_refs']))
-                                            <span class="text-blue-400">MDR {{ implode(', ', $meta['mdr_refs']) }}</span>
-                                        @endif
-                                    </div>
-                                @endif
-                                @if($lastEdit)
-                                    <div>
-                                        <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="hover:text-blue-500">Last edited by {{ $lastEdit['name'] }} {{ $lastEdit['date']->diffForHumans() }}</a>
-                                    </div>
-                                @endif
+                                {{-- Right column --}}
+                                <div class="space-y-1.5">
+                                    @if(!empty($meta['iso_refs']))
+                                        <div class="text-gray-400"><span class="text-gray-500 font-medium">ISO 13485:</span> <span class="text-blue-400">Clause {{ implode(', ', $meta['iso_refs']) }}</span></div>
+                                    @endif
+                                    @if(!empty($meta['mdr_refs']))
+                                        <div class="text-gray-400"><span class="text-gray-500 font-medium">EU MDR:</span> <span class="text-blue-400">{{ implode(', ', $meta['mdr_refs']) }}</span></div>
+                                    @endif
+                                    @if($lastEdit)
+                                        <div class="text-gray-400">
+                                            <span class="text-gray-500 font-medium">Last edit:</span>
+                                            <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="hover:text-blue-500">{{ $lastEdit['name'] }}, {{ $lastEdit['date']->diffForHumans() }}</a>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     @endif
