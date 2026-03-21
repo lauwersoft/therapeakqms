@@ -73,9 +73,11 @@
             @php
                 $fileStatus = isset($changedFiles[$item['path']]) ? $changedFiles[$item['path']]['status'] : null;
                 $searchStr = strtolower(($item['doc_id'] ?? '') . ' ' . $item['name']);
+                $itemDocType = $item['doc_id'] ? explode('-', $item['doc_id'])[0] : '';
+                $itemDocStatus = $item['doc_status'] ?? '';
             @endphp
             <div class="sortable-item" data-path="{{ $item['path'] }}"
-                 x-show="!sidebarSearch || '{{ addslashes($searchStr) }}'.includes(sidebarSearch.toLowerCase())"
+                 x-show="(!sidebarSearch || '{{ addslashes($searchStr) }}'.includes(sidebarSearch.toLowerCase())) && (!sidebarTypeFilter || sidebarTypeFilter === '{{ $itemDocType }}') && (!sidebarStatusFilter || sidebarStatusFilter === '{{ $itemDocStatus }}')"
             >
                 @php
                     $isItemMarkdown = $item['is_markdown'] ?? true;

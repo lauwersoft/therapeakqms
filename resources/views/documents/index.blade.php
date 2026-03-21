@@ -333,8 +333,8 @@
                     </button>
                 </div>
             </div>
-            {{-- Sidebar search --}}
-            <div class="px-3 pt-3 pb-1">
+            {{-- Sidebar search + filters --}}
+            <div class="px-3 pt-3 pb-1 space-y-2">
                 <div class="relative">
                     <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -342,6 +342,23 @@
                     <input type="text" x-model="sidebarSearch" placeholder="Search..."
                            class="w-full pl-8 pr-3 py-1.5 text-xs border-gray-200 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-gray-50">
                 </div>
+                <div class="flex gap-1.5">
+                    <select x-model="sidebarTypeFilter" class="flex-1 text-[11px] border-gray-200 rounded-md py-1 pl-2 pr-6 bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">All types</option>
+                        @foreach(\App\Services\DocumentMetadata::TYPES as $key => $label)
+                            <option value="{{ $key }}">{{ $key }}</option>
+                        @endforeach
+                    </select>
+                    <select x-model="sidebarStatusFilter" class="flex-1 text-[11px] border-gray-200 rounded-md py-1 pl-2 pr-6 bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">All statuses</option>
+                        @foreach(\App\Services\DocumentMetadata::STATUSES as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <button x-show="sidebarSearch || sidebarTypeFilter || sidebarStatusFilter" x-cloak
+                        @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''"
+                        class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
             </div>
             <nav class="p-3 flex-1 flex flex-col">
                 <div>
@@ -624,6 +641,8 @@
                     sidebarOpen: false,
                     canEdit: @json($canEdit),
                     sidebarSearch: '',
+                    sidebarTypeFilter: '',
+                    sidebarStatusFilter: '',
 
                     // Context menus
                     fileMenu: { show: false, x: 0, y: 0 },
