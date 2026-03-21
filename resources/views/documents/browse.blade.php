@@ -14,10 +14,10 @@
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                         Upload
                     </button>
-                    <a href="{{ route('documents.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
+                    <button @click="ctx.dir = ''; quickCreateModal = true; $nextTick(() => $refs.browseQuickCreateInput?.focus())" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                         New document
-                    </a>
+                    </button>
                 </div>
             @endif
         </div>
@@ -70,18 +70,70 @@
 
                 {{-- Create actions (always shown) --}}
                 <div class="px-3 py-1.5 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Create new</div>
-                <a href="{{ route('documents.index') }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <button @click="ctx.show = false; quickCreateModal = true; $nextTick(() => $refs.browseQuickCreateInput?.focus())" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     New document
-                </a>
+                </button>
                 <a href="{{ route('forms.create') }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                     New form
                 </a>
+                <button @click="ctx.show = false; newDirModal = true; $nextTick(() => $refs.browseNewDirInput?.focus())" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+                    New directory
+                </button>
                 <button @click="ctx.show = false; uploadModal = true" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                     Upload file
                 </button>
+            </div>
+
+            {{-- Quick create document modal --}}
+            <div x-show="quickCreateModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="quickCreateModal = false">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-sm mx-4 p-5" @click.stop>
+                    <h3 class="text-base font-semibold mb-3">New document</h3>
+                    <form method="POST" action="{{ route('documents.quick-create') }}">
+                        @csrf
+                        <input type="hidden" name="directory" :value="ctx.dir">
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Document type</label>
+                        <select name="doc_type" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500 mb-3">
+                            @foreach(\App\Services\DocumentMetadata::TYPES as $key => $label)
+                                <option value="{{ $key }}" {{ $key === 'SOP' ? 'selected' : '' }}>{{ $key }} — {{ $label }}</option>
+                            @endforeach
+                        </select>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Document name</label>
+                        <input type="text" name="filename" placeholder="e.g. CAPA Procedure" x-ref="browseQuickCreateInput" required
+                               class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                        <p class="text-xs text-gray-400 mt-1" x-show="ctx.dir">
+                            In: <span x-text="'/' + ctx.dir"></span>
+                        </p>
+                        <p class="text-xs text-gray-400 mt-1">ID assigned automatically.</p>
+                        <div class="flex justify-end gap-2 mt-3">
+                            <button type="button" @click="quickCreateModal = false" class="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md">Cancel</button>
+                            <button type="submit" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Create & Edit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {{-- New directory modal --}}
+            <div x-show="newDirModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="newDirModal = false">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-sm mx-4 p-5" @click.stop>
+                    <h3 class="text-base font-semibold mb-3">New directory</h3>
+                    <form method="POST" action="{{ route('documents.directory.store') }}">
+                        @csrf
+                        <input type="hidden" name="parent" :value="ctx.dir">
+                        <input type="text" name="name" placeholder="Directory name" x-ref="browseNewDirInput" required
+                               class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                        <p class="text-xs text-gray-400 mt-1" x-show="ctx.dir">
+                            In: <span x-text="'/' + ctx.dir"></span>
+                        </p>
+                        <div class="flex justify-end gap-2 mt-3">
+                            <button type="button" @click="newDirModal = false" class="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md">Cancel</button>
+                            <button type="submit" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Create</button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             {{-- Rename modal --}}
@@ -288,7 +340,7 @@
                     {{-- Directories --}}
                     <template x-for="dir in uniqueDirs.filter(d => d !== '')" :key="dir">
                         <div x-show="filteredDocs.some(d => d.raw_directory === dir)" class="mb-5">
-                            <div class="flex items-center gap-2 mb-2 cursor-pointer"
+                            <div class="flex items-center gap-2 mb-2 px-2 py-1 -mx-2 rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
                                  @if($canEdit)
                                      @contextmenu.prevent.stop="openDirCtx($event, dir)"
                                  @endif>
@@ -352,6 +404,8 @@
                     renameModal: false,
                     moveModal: false,
                     deleteModal: false,
+                    quickCreateModal: false,
+                    newDirModal: false,
                     renameName: '',
 
                     get filteredDocs() {
