@@ -120,15 +120,49 @@
             {{-- Document list grouped by directory --}}
             <template x-if="filteredDocs.length > 0">
                 <div>
-                    <template x-for="dir in uniqueDirs" :key="dir">
+                    {{-- Root files (no directory) --}}
+                    <template x-if="filteredDocs.some(d => d.raw_directory === '')">
+                        <div class="mb-5">
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                                <template x-for="doc in filteredDocs.filter(d => d.raw_directory === '')" :key="doc.path">
+                                    <a :href="'/qms/' + doc.url_path"
+                                       @if($canEdit)
+                                           @contextmenu.prevent="openCtx($event, doc)"
+                                       @endif
+                                       class="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
+                                        <span class="font-mono text-xs text-gray-400 w-20 shrink-0" x-text="doc.doc_id"></span>
+                                        <div class="flex-1 min-w-0">
+                                            <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
+                                        </div>
+                                        <span x-show="doc.type" class="text-[11px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded shrink-0" x-text="doc.type"></span>
+                                        <span class="shrink-0 text-[11px] font-medium px-1.5 py-0.5 rounded"
+                                              :class="{
+                                                  'bg-gray-100 text-gray-500': doc.status === 'draft',
+                                                  'bg-yellow-100 text-yellow-700': doc.status === 'in_review',
+                                                  'bg-green-100 text-green-700': doc.status === 'approved',
+                                                  'bg-red-100 text-red-600': doc.status === 'obsolete',
+                                              }" x-text="doc.status_label"></span>
+                                        <span x-show="doc.version" class="text-xs text-gray-400 w-10 text-right shrink-0" x-text="'v' + doc.version"></span>
+                                        <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                        </svg>
+                                    </a>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    {{-- Directory groups --}}
+                    <template x-for="dir in uniqueDirs.filter(d => d !== '')" :key="dir">
                         <div x-show="filteredDocs.some(d => d.raw_directory === dir)" class="mb-5">
                             <div class="flex items-center gap-2 mb-2">
                                 <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
                                 </svg>
-                                <span class="text-sm font-medium text-gray-500" x-text="dir ? dir.replace(/[-_]/g, ' ').replace(/\//g, ' / ').replace(/\b\w/g, l => l.toUpperCase()) : 'Root'"></span>
+                                <span class="text-sm font-medium text-gray-500" x-text="dir.replace(/[-_]/g, ' ').replace(/\//g, ' / ').replace(/\b\w/g, l => l.toUpperCase())"></span>
+                                <span class="text-[11px] text-gray-400" x-text="filteredDocs.filter(d => d.raw_directory === dir).length"></span>
                             </div>
-                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden ml-6">
                                 <template x-for="doc in filteredDocs.filter(d => d.raw_directory === dir)" :key="doc.path">
                                     <a :href="'/qms/' + doc.url_path"
                                        @if($canEdit)
