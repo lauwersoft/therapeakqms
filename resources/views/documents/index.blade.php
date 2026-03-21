@@ -342,17 +342,21 @@
                     <input type="text" x-model="sidebarSearch" placeholder="Search..."
                            class="w-full pl-8 pr-3 py-1.5 text-xs border-gray-200 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-gray-50">
                 </div>
+                @php
+                    $existingTypes = collect($sidebarDocs)->pluck('type')->filter()->unique()->sort()->values();
+                    $existingStatuses = collect($sidebarDocs)->pluck('status')->filter()->unique()->sort()->values();
+                @endphp
                 <div class="flex gap-1.5">
                     <select x-model="sidebarTypeFilter" class="flex-1 text-[11px] border-gray-200 rounded-md py-1 pl-2 pr-6 bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
                         <option value="">All types</option>
-                        @foreach(\App\Services\DocumentMetadata::TYPES as $key => $label)
-                            <option value="{{ $key }}">{{ $key }}</option>
+                        @foreach($existingTypes as $type)
+                            <option value="{{ $type }}">{{ $type }} ({{ collect($sidebarDocs)->where('type', $type)->count() }})</option>
                         @endforeach
                     </select>
                     <select x-model="sidebarStatusFilter" class="flex-1 text-[11px] border-gray-200 rounded-md py-1 pl-2 pr-6 bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
                         <option value="">All statuses</option>
-                        @foreach(\App\Services\DocumentMetadata::STATUSES as $key => $label)
-                            <option value="{{ $key }}">{{ $label }}</option>
+                        @foreach($existingStatuses as $status)
+                            <option value="{{ $status }}">{{ \App\Services\DocumentMetadata::STATUSES[$status] ?? ucfirst($status) }} ({{ collect($sidebarDocs)->where('status', $status)->count() }})</option>
                         @endforeach
                     </select>
                 </div>
