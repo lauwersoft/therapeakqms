@@ -625,6 +625,7 @@ class DocumentController extends Controller
             'documents' => $documents,
             'grouped' => $grouped,
             'totalDocs' => count($documents),
+            'canEdit' => $canEdit,
             'directories' => $canEdit ? $this->getDirectories() : [],
         ]);
     }

@@ -23,8 +23,6 @@
         </div>
     </x-slot>
 
-    @php $canEdit = in_array(Auth::user()->role, ['admin', 'editor']); @endphp
-
     <div x-data="documentBrowser()" @click="ctx.show = false"
          @dragover.prevent="dragOver = true"
          @dragleave.self.prevent="dragOver = false"
