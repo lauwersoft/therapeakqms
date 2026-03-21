@@ -288,9 +288,9 @@
                     {{-- Directories --}}
                     <template x-for="dir in uniqueDirs.filter(d => d !== '')" :key="dir">
                         <div x-show="filteredDocs.some(d => d.raw_directory === dir)" class="mb-5">
-                            <div class="flex items-center gap-2 mb-2"
+                            <div class="flex items-center gap-2 mb-2 cursor-pointer"
                                  @if($canEdit)
-                                     @contextmenu.prevent="openDirCtx($event, dir)"
+                                     @contextmenu.prevent.stop="openDirCtx($event, dir)"
                                  @endif>
                                 <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
                                 <span class="text-sm font-medium text-gray-500" x-text="dir.replace(/[-_]/g, ' ').replace(/\//g, ' / ').replace(/\b\w/g, l => l.toUpperCase())"></span>
