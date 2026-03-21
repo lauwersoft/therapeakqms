@@ -54,6 +54,23 @@
 
             .sortable-ghost { opacity: 0.4; }
             .sortable-drag { opacity: 0.9; }
+
+            /* EasyMDE fullscreen: hide everything else and take over the screen */
+            .EasyMDEContainer.fullscreen {
+                z-index: 100 !important;
+            }
+            .editor-fullscreen-active nav,
+            .editor-fullscreen-active header,
+            .editor-fullscreen-active aside,
+            .editor-fullscreen-active .editor-topbar {
+                display: none !important;
+            }
+            .editor-fullscreen-active .editor-main {
+                position: fixed !important;
+                inset: 0 !important;
+                z-index: 99 !important;
+                overflow: visible !important;
+            }
         </style>
     @endpush
 
@@ -89,9 +106,9 @@
         @include('documents.partials.sidebar', ['sidebarCanEdit' => false])
 
         {{-- Main Content --}}
-        <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0 flex flex-col">
+        <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0 flex flex-col editor-main">
             {{-- Top bar --}}
-            <div class="bg-white border-b border-gray-200 shadow-sm shrink-0 relative z-40 px-4 h-16 flex items-center">
+            <div class="bg-white border-b border-gray-200 shadow-sm shrink-0 relative z-40 px-4 h-16 flex items-center editor-topbar">
                 <div class="flex items-center justify-between gap-3 w-full">
                     <div class="flex items-center gap-3 min-w-0">
                         <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 lg:hidden shrink-0">
@@ -421,6 +438,14 @@
                                 return html;
                             },
                         });
+
+                        // Watch for fullscreen toggle and hide surrounding UI
+                        const container = document.querySelector('.EasyMDEContainer');
+                        if (container) {
+                            new MutationObserver(() => {
+                                document.body.classList.toggle('editor-fullscreen-active', container.classList.contains('fullscreen'));
+                            }).observe(container, { attributes: true, attributeFilter: ['class'] });
+                        }
                     }
                 };
             }
