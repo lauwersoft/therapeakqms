@@ -315,6 +315,17 @@
                                     title: 'Code block',
                                 },
                                 {
+                                    name: 'diagram',
+                                    action: (editor) => {
+                                        const cm = editor.codemirror;
+                                        const pos = cm.getCursor();
+                                        cm.replaceRange('\n```mermaid\nflowchart TD\n    A[Start] --> B[End]\n```\n', pos);
+                                        cm.focus();
+                                    },
+                                    className: 'fa fa-sitemap',
+                                    title: 'Insert diagram',
+                                },
+                                {
                                     name: 'horizontal-rule',
                                     action: EasyMDE.drawHorizontalRule,
                                     className: 'fa fa-minus',
@@ -343,6 +354,28 @@
                             minHeight: '400px',
                             placeholder: 'Start writing...',
                             status: ['lines', 'words'],
+                            previewRender: (plainText, preview) => {
+                                // Default markdown rendering
+                                let html = self.editor.markdown(plainText);
+
+                                // Convert mermaid code blocks
+                                html = html.replace(
+                                    /<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g,
+                                    (match, code) => {
+                                        const decoded = code.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+                                        return `<div class="mermaid">${decoded}</div>`;
+                                    }
+                                );
+
+                                // Re-render mermaid after a tick
+                                setTimeout(() => {
+                                    if (window.mermaid) {
+                                        window.mermaid.run({ nodes: preview.querySelectorAll('.mermaid') });
+                                    }
+                                }, 100);
+
+                                return html;
+                            },
                         });
                     }
                 };

@@ -30,3 +30,19 @@
     scrollbar-width: thin;
     scrollbar-color: #d1d5db transparent;
 }
+
+/* Mermaid diagrams */
+.mermaid {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+}
+
+.mermaid svg {
+    max-width: 100%;
+    height: auto;
+}

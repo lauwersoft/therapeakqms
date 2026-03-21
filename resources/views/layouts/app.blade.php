@@ -34,6 +34,19 @@
                 {{ $slot }}
             </main>
         </div>
+        <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'neutral',
+                flowchart: { curve: 'basis', padding: 15 },
+                themeVariables: {
+                    fontFamily: 'Ubuntu, sans-serif',
+                    fontSize: '14px',
+                }
+            });
+            window.mermaid = mermaid;
+        </script>
         @stack('scripts')
     </body>
 </html>

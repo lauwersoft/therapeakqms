@@ -70,6 +70,13 @@ class DocumentController extends Controller
 
             $idMap = DocumentMetadata::idMap($docIndex);
             $html = DocumentMetadata::resolveLinks($html, $idMap);
+
+            // Convert mermaid code blocks to renderable divs
+            $html = preg_replace(
+                '/<pre><code class="language-mermaid">(.*?)<\/code><\/pre>/s',
+                '<div class="mermaid">$1</div>',
+                $html
+            );
         } else {
             $meta = DocumentMetadata::readSidecar($filePath) ?? array_merge(DocumentMetadata::DEFAULTS, [
                 'title' => pathinfo($path, PATHINFO_FILENAME),

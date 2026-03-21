@@ -124,6 +124,43 @@ Content goes here...
 | `CE` | Clinical Evaluation | Clinical evaluation reports and related documents |
 | `MAN` | Manual / Guide | User manuals, training guides, reference guides |
 
+### Content Types
+
+The system supports multiple content types:
+
+1. **Markdown documents** (`.md`) — The default. Uses frontmatter for metadata, rendered as formatted text. Supports all standard markdown plus Mermaid diagrams and `[[DOC-ID]]` links.
+
+2. **Diagrams** — Created using Mermaid.js syntax inside markdown files. Use fenced code blocks with `mermaid` language identifier. Supported diagram types: flowcharts, sequence diagrams, state diagrams, Gantt charts, class diagrams, ER diagrams.
+
+3. **Uploaded files** — Any file type (PDF, images, spreadsheets, etc.). Metadata stored in `.meta.json` sidecar files. Shown with download button, image/PDF preview where applicable.
+
+4. **Forms** — (Future) Structured forms with fillable fields.
+
+### Diagrams (Mermaid.js)
+
+To create a diagram in a markdown document, use a mermaid code block:
+
+````markdown
+```mermaid
+flowchart TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Action 1]
+    B -->|No| D[Action 2]
+    C --> E[End]
+    D --> E
+```
+````
+
+Common diagram types for QMS:
+- `flowchart TD` — Process flows (top-down), decision trees
+- `flowchart LR` — Process flows (left-right)
+- `sequenceDiagram` — Interactions between systems/roles
+- `stateDiagram-v2` — Status workflows, lifecycle diagrams
+- `gantt` — Timeline plans
+- `classDiagram` — System architecture
+
+The editor has an "Insert diagram" button (sitemap icon) that inserts a template flowchart.
+
 ### Document Linking
 To link to another document, use double-bracket syntax with the document ID:
 - Write `[[SOP-001]]` in the markdown body
