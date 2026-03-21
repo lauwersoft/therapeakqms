@@ -257,6 +257,28 @@
                         }
                     },
 
+                    _syncFullscreen() {
+                        const isFs = document.querySelector('.EasyMDEContainer.fullscreen');
+                        // Top navbar
+                        document.querySelectorAll('body > div > nav').forEach(el => el.style.display = isFs ? 'none' : '');
+                        // App header
+                        document.querySelectorAll('body > div > header').forEach(el => el.style.display = isFs ? 'none' : '');
+                        // Sidebar
+                        document.querySelectorAll('aside').forEach(el => el.style.display = isFs ? 'none' : '');
+                        // Editor top bar
+                        document.querySelectorAll('.editor-topbar').forEach(el => el.style.display = isFs ? 'none' : '');
+                        // Let the outer main expand
+                        const outerMain = document.querySelector('body > div > main');
+                        if (outerMain) {
+                            outerMain.style.overflow = isFs ? 'visible' : '';
+                            outerMain.style.position = isFs ? 'static' : '';
+                        }
+                        // Let the editor main expand
+                        document.querySelectorAll('.editor-main').forEach(el => {
+                            el.style.overflow = isFs ? 'visible' : '';
+                        });
+                    },
+
                     init() {
                         const self = this;
                         this.editor = new EasyMDE({
@@ -384,13 +406,19 @@
                                 },
                                 {
                                     name: 'side-by-side',
-                                    action: EasyMDE.toggleSideBySide,
+                                    action: (editor) => {
+                                        EasyMDE.toggleSideBySide(editor);
+                                        self._syncFullscreen();
+                                    },
                                     className: 'fa fa-columns no-disable',
                                     title: 'Side by side',
                                 },
                                 {
                                     name: 'fullscreen',
-                                    action: EasyMDE.toggleFullScreen,
+                                    action: (editor) => {
+                                        EasyMDE.toggleFullScreen(editor);
+                                        self._syncFullscreen();
+                                    },
                                     className: 'fa fa-arrows-alt no-disable',
                                     title: 'Fullscreen',
                                 },
@@ -420,6 +448,13 @@
 
                                 return html;
                             },
+                        });
+
+                        // Catch Escape key and F11 — EasyMDE toggles fullscreen without our wrapper
+                        document.addEventListener('keydown', (e) => {
+                            if (e.key === 'Escape' || e.key === 'F11') {
+                                setTimeout(() => self._syncFullscreen(), 50);
+                            }
                         });
                     }
                 };
