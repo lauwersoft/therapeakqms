@@ -29,13 +29,17 @@
                     }
                  }"
                  x-show="visibleCount > 0">
-                <div x-data="{ open: true }" x-effect="if (sidebarSearch || sidebarTypeFilter || sidebarStatusFilter) open = true">
+                <div x-data="{ open: true, dirDragOver: false }" x-effect="if (sidebarSearch || sidebarTypeFilter || sidebarStatusFilter) open = true">
                     <div class="group flex items-center">
                         <button @click="open = !open"
                                 @if($canEdit)
                                     @contextmenu="openDirMenu($event, '{{ $item['path'] }}', '{{ addslashes($item['name']) }}')"
+                                    @dragover.prevent="dirDragOver = true"
+                                    @dragleave.prevent="dirDragOver = false"
+                                    @drop.prevent="dirDragOver = false; handleDropToDir($event, '{{ $item['path'] }}')"
                                 @endif
-                                class="flex items-center flex-1 min-w-0 px-2 py-1.5 text-sm font-medium text-gray-700 rounded hover:bg-gray-100">
+                                :class="dirDragOver ? 'bg-blue-100 ring-2 ring-blue-400' : 'hover:bg-gray-100'"
+                                class="flex items-center flex-1 min-w-0 px-2 py-1.5 text-sm font-medium text-gray-700 rounded transition-all">
                             <svg class="w-4 h-4 mr-2 text-gray-400 shrink-0 rotate-90" :class="open ? 'rotate-90' : 'rotate-0'" x-init="$nextTick(() => $el.classList.add('transition-transform'))" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>

@@ -268,7 +268,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Directory</label>
-                            <select name="directory" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                            <select name="directory" id="upload-dir-select" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
                                 @foreach($directories as $value => $label)
                                     <option value="{{ $value }}">{{ $label }}</option>
                                 @endforeach
@@ -771,15 +771,21 @@
 
                     handleDrop(e) {
                         this.dragOver = false;
-                        if (!this.canEdit) return;
-                        const files = e.dataTransfer.files;
-                        if (files.length === 0) return;
+                        this._openUploadWithFile(e.dataTransfer.files, '');
+                    },
 
-                        // Put the dropped file into the upload modal's file input
+                    handleDropToDir(e, dir) {
+                        this.dragOver = false;
+                        this._openUploadWithFile(e.dataTransfer.files, dir);
+                    },
+
+                    _openUploadWithFile(files, directory) {
+                        if (!this.canEdit) return;
+                        if (!files || files.length === 0) return;
+
                         this.droppedFile = files[0];
                         this.modal.upload = true;
 
-                        // After modal opens, set the file input and pre-fill title
                         this.$nextTick(() => {
                             const fileInput = document.querySelector('#upload-file-input');
                             if (fileInput) {
@@ -791,6 +797,10 @@
                             if (titleInput && !titleInput.value) {
                                 const name = this.droppedFile.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
                                 titleInput.value = name.charAt(0).toUpperCase() + name.slice(1);
+                            }
+                            const dirSelect = document.querySelector('#upload-dir-select');
+                            if (dirSelect && directory) {
+                                dirSelect.value = directory;
                             }
                         });
                     },
