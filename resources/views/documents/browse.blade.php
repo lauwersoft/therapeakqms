@@ -23,7 +23,7 @@
         </div>
     </x-slot>
 
-    <div x-data="documentBrowser()" @click="ctx.show = false"
+    <div x-data="documentBrowser()" @click="ctx.show = false" @contextmenu="ctx.show = false"
          @dragover.prevent="dragOver = true"
          @dragleave.self.prevent="dragOver = false"
          @drop.prevent="handleDrop($event)"
@@ -338,7 +338,7 @@
             {{-- Empty space for background right-click --}}
             @if($canEdit)
                 <div class="min-h-[200px]"
-                     @contextmenu.prevent="ctx = { show: true, type: 'bg', x: $event.clientX, y: $event.clientY, path: '', urlPath: '', isMarkdown: false, title: '', dir: '' }">
+                     @contextmenu.prevent.stop="ctx = { show: true, type: 'bg', x: $event.clientX, y: $event.clientY, path: '', urlPath: '', isMarkdown: false, title: '', dir: '' }">
                 </div>
             @endif
         </div>
@@ -392,6 +392,7 @@
 
                     openFileCtx(e, doc) {
                         e.preventDefault();
+                        e.stopPropagation();
                         this.ctx = {
                             show: true, type: 'file',
                             x: e.clientX, y: e.clientY,
@@ -405,6 +406,7 @@
 
                     openDirCtx(e, dir) {
                         e.preventDefault();
+                        e.stopPropagation();
                         this.ctx = {
                             show: true, type: 'dir',
                             x: e.clientX, y: e.clientY,
