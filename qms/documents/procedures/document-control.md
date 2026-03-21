@@ -3,7 +3,7 @@ id: "SOP-001"
 title: "Document Control Procedure"
 type: "SOP"
 version: "0.1"
-status: "draft"
+status: "in_review"
 author: "Sarp Derinsu"
 iso_refs:
   - "4.2.4"
