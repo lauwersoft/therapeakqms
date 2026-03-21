@@ -96,7 +96,7 @@
                         </a>
                         <span class="text-xs text-gray-400 font-mono">/{{ $currentPath }}</span>
                         @if($meta['id'])
-                            <span class="text-xs font-mono font-semibold text-gray-600">{{ $meta['id'] }}</span>
+                            <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
                         @endif
                     </div>
                 </div>
@@ -119,7 +119,7 @@
                         <div x-data="{ showMeta: false }" class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3 text-sm">
-                                    <span class="font-mono font-semibold text-gray-800">{{ $meta['id'] }}</span>
+                                    <span class="font-mono font-semibold px-1.5 py-0.5 rounded text-sm {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
                                         {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-600' : '' }}
                                         {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}

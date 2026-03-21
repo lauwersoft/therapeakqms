@@ -337,7 +337,7 @@
                                            @contextmenu.prevent="openFileCtx($event, doc)"
                                        @endif
                                        class="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
-                                        <span class="font-mono text-xs text-gray-400 w-20 shrink-0" x-text="doc.doc_id"></span>
+                                        <span class="font-mono text-xs w-20 shrink-0 px-1 py-0.5 rounded font-medium" :class="doc.type_color" x-text="doc.doc_id"></span>
                                         <div class="flex-1 min-w-0">
                                             <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
                                             <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'/' + doc.path"></span>
@@ -373,7 +373,7 @@
                                            @contextmenu.prevent="openFileCtx($event, doc)"
                                        @endif
                                        class="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
-                                        <span class="font-mono text-xs text-gray-400 w-20 shrink-0" x-text="doc.doc_id"></span>
+                                        <span class="font-mono text-xs w-20 shrink-0 px-1 py-0.5 rounded font-medium" :class="doc.type_color" x-text="doc.doc_id"></span>
                                         <div class="flex-1 min-w-0">
                                             <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
                                             <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'/' + doc.path"></span>

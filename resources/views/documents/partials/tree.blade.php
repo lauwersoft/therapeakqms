@@ -146,7 +146,7 @@
                         <span class="min-w-0 flex-1">
                             <span class="truncate block leading-tight">{{ $item['name'] }}</span>
                             @if($item['doc_id'] ?? null)
-                                <span class="text-[10px] {{ $currentPath === $item['path'] ? 'text-blue-400' : 'text-gray-400' }} font-mono block leading-tight">{{ $item['doc_id'] }}@if($item['doc_status'] ?? null) · {{ ucfirst($item['doc_status'] === 'in_review' ? 'In Review' : $item['doc_status']) }}@endif</span>
+                                <span class="text-[10px] font-mono block leading-tight"><span class="px-1 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($itemDocType) }}">{{ $item['doc_id'] }}</span>@if($item['doc_status'] ?? null) <span class="text-gray-400">· {{ ucfirst($item['doc_status'] === 'in_review' ? 'In Review' : $item['doc_status']) }}</span>@endif</span>
                             @endif
                         </span>
                         @if($fileStatus)

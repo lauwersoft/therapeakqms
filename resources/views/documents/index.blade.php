@@ -446,7 +446,7 @@
                                 <div class="text-xs space-y-1.5">
                                     {{-- Row 1: ID, type, status, version --}}
                                     <div class="flex items-center gap-2">
-                                        <span class="font-mono font-semibold text-gray-700">{{ $meta['id'] }}</span>
+                                        <span class="font-mono font-semibold {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}  px-1.5 py-0.5 rounded">{{ $meta['id'] }}</span>
                                         @if($meta['type'] && isset(\App\Services\DocumentMetadata::TYPES[$meta['type']]))
                                             <span class="text-gray-400">·</span>
                                             <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium {{ \App\Services\DocumentMetadata::typeColor($meta['type']) }}">{{ $meta['type'] }}</span>
@@ -666,7 +666,7 @@
                 <div class="flex items-center justify-between gap-4 max-w-5xl mx-auto">
                     <div class="flex items-center gap-2 text-xs text-gray-400 min-w-0 overflow-hidden">
                         @if($meta['id'])
-                            <span class="font-mono font-medium text-gray-600 shrink-0">{{ $meta['id'] }}</span>
+                            <span class="font-mono font-medium shrink-0 px-1 py-0.5 rounded text-[10px] {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
                             <span class="shrink-0">·</span>
                         @endif
                         @if($meta['title'])

@@ -47,7 +47,7 @@
                                                     {{ $file['status'] === 'modified' ? 'bg-blue-50 text-blue-700' : '' }}
                                                     {{ $file['status'] === 'deleted' ? 'bg-red-50 text-red-600' : '' }}">
                                                     @if($file['doc_id'])
-                                                        <span class="font-mono font-medium">{{ $file['doc_id'] }}</span>
+                                                        <span class="font-mono font-medium px-1 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($file['doc_type'] ?? '') }}">{{ $file['doc_id'] }}</span>
                                                     @else
                                                         <span>{{ $file['doc_title'] }}</span>
                                                     @endif
@@ -122,7 +122,7 @@
                                                         <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $file['path'])]) }}"
                                                            class="text-sm text-gray-700 hover:text-blue-600 hover:underline">
                                                             @if($file['doc_id'])
-                                                                <span class="font-mono text-xs text-gray-400 mr-1">{{ $file['doc_id'] }}</span>
+                                                                <span class="font-mono text-xs mr-1 px-1 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($file['doc_type'] ?? '') }}">{{ $file['doc_id'] }}</span>
                                                             @endif
                                                             @if($dirLabel)
                                                                 <span class="text-gray-400">{{ $dirLabel }} /</span>
