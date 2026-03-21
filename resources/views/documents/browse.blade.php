@@ -340,7 +340,7 @@
                     {{-- Directories --}}
                     <template x-for="dir in uniqueDirs.filter(d => d !== '')" :key="dir">
                         <div x-show="filteredDocs.some(d => d.raw_directory === dir)" class="mb-5">
-                            <div class="flex items-center gap-2 mb-2 px-2 py-1 -mx-2 rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
+                            <div class="flex items-center gap-2 mb-2 px-3 py-2 -mx-3 rounded-lg cursor-pointer hover:bg-gray-200/60 transition-colors"
                                  @if($canEdit)
                                      @contextmenu.prevent.stop="openDirCtx($event, dir)"
                                  @endif>
