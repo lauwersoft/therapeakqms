@@ -210,7 +210,7 @@ class DocumentController extends Controller
         File::put($filePath, $fileContent);
         $this->logChange($request->user(), 'edit', $path);
 
-        return redirect()->route('documents.index', ['path' => str_replace('.md', '', $path)])
+        return redirect()->route('documents.index', ['path' => preg_replace('/\.md$/', '', $path)])
             ->with('success', 'Document saved. Remember to publish when ready.');
     }
 
@@ -240,6 +240,7 @@ class DocumentController extends Controller
 
         $filename = Str::slug($request->input('filename')) . '.md';
         $directory = $request->input('directory', '');
+        if (str_contains($directory, '..')) { abort(403); }
         $relativePath = $directory ? $directory . '/' . $filename : $filename;
         $fullPath = $this->basePath . '/' . $relativePath;
 
@@ -271,7 +272,7 @@ class DocumentController extends Controller
         File::put($fullPath, $content);
         $this->logChange($request->user(), 'create', $relativePath);
 
-        return redirect()->route('documents.index', ['path' => str_replace('.md', '', $relativePath)])
+        return redirect()->route('documents.index', ['path' => preg_replace('/\.md$/', '', $relativePath)])
             ->with('success', 'Document created. Remember to publish when ready.');
     }
 
@@ -286,6 +287,7 @@ class DocumentController extends Controller
 
         $oldPath = $request->input('path');
         $destination = $request->input('destination');
+        if ($destination && str_contains($destination, '..')) { abort(403); }
 
         $oldFull = $this->resolvePath($oldPath);
         if (! $oldFull) {
@@ -308,7 +310,7 @@ class DocumentController extends Controller
         rename($oldFull, $newFull);
         $this->logChange($request->user(), 'move', $newPath, ['old_path' => $oldPath]);
 
-        return redirect()->route('documents.index', ['path' => str_replace('.md', '', $newPath)])
+        return redirect()->route('documents.index', ['path' => preg_replace('/\.md$/', '', $newPath)])
             ->with('success', 'Document moved. Remember to publish when ready.');
     }
 
@@ -327,7 +329,10 @@ class DocumentController extends Controller
             abort(404);
         }
 
-        $newFilename = Str::slug($request->input('new_name')) . '.md';
+        // Preserve original extension
+        $originalExt = pathinfo($oldPath, PATHINFO_EXTENSION);
+        $ext = $originalExt ? '.' . $originalExt : '.md';
+        $newFilename = Str::slug($request->input('new_name')) . $ext;
         $directory = dirname($oldPath);
         $newPath = ($directory !== '.') ? $directory . '/' . $newFilename : $newFilename;
         $newFull = $this->basePath . '/' . $newPath;
@@ -339,7 +344,7 @@ class DocumentController extends Controller
         rename($oldFull, $newFull);
         $this->logChange($request->user(), 'rename', $newPath, ['old_path' => $oldPath]);
 
-        return redirect()->route('documents.index', ['path' => str_replace('.md', '', $newPath)])
+        return redirect()->route('documents.index', ['path' => preg_replace('/\.md$/', '', $newPath)])
             ->with('success', 'Document renamed. Remember to publish when ready.');
     }
 
@@ -467,6 +472,7 @@ class DocumentController extends Controller
 
         $filename = Str::slug($request->input('filename')) . '.md';
         $directory = $request->input('directory', '');
+        if (str_contains($directory, '..')) { abort(403); }
         $relativePath = $directory ? $directory . '/' . $filename : $filename;
         $fullPath = $this->basePath . '/' . $relativePath;
 
@@ -496,7 +502,7 @@ class DocumentController extends Controller
         File::put($fullPath, $content);
         $this->logChange($request->user(), 'create', $relativePath);
 
-        return redirect()->route('documents.edit', ['path' => str_replace('.md', '', $relativePath)]);
+        return redirect()->route('documents.edit', ['path' => preg_replace('/\.md$/', '', $relativePath)]);
     }
 
     public function upload(Request $request)
@@ -512,6 +518,7 @@ class DocumentController extends Controller
 
         $file = $request->file('file');
         $directory = $request->input('directory', '');
+        if (str_contains($directory, '..')) { abort(403); }
         $originalName = $file->getClientOriginalName();
         $safeName = Str::slug(pathinfo($originalName, PATHINFO_FILENAME)) . '.' . strtolower($file->getClientOriginalExtension());
 
@@ -569,11 +576,11 @@ class DocumentController extends Controller
             $dir = dirname($path);
             $documents[] = [
                 'path' => $path,
-                'url_path' => str_replace('.md', '', $path),
+                'url_path' => preg_replace('/\.md$/', '', $path),
                 'directory' => ($dir !== '.' && $dir !== '') ? ucwords(str_replace(['-', '_', '/'], [' ', ' ', ' / '], $dir)) : 'Root',
                 'raw_directory' => ($dir !== '.' && $dir !== '') ? $dir : '',
                 'doc_id' => $meta['id'] ?? null,
-                'title' => $meta['title'] ?? $this->formatName(str_replace('.md', '', basename($path))),
+                'title' => $meta['title'] ?? $this->formatName(preg_replace('/\.md$/', '', basename($path))),
                 'type' => $meta['type'] ?? null,
                 'type_label' => isset($meta['type']) ? (DocumentMetadata::TYPES[$meta['type']] ?? $meta['type']) : null,
                 'status' => $meta['status'] ?? 'draft',
@@ -613,7 +620,7 @@ class DocumentController extends Controller
         foreach ($commit['files'] as &$file) {
             $meta = $docIndex[$file['path']] ?? null;
             $file['doc_id'] = $meta['id'] ?? null;
-            $file['doc_title'] = $meta['title'] ?? $this->formatName(str_replace('.md', '', basename($file['path'])));
+            $file['doc_title'] = $meta['title'] ?? $this->formatName(preg_replace('/\.md$/', '', basename($file['path'])));
         }
 
         return view('documents.revision', [
@@ -637,7 +644,7 @@ class DocumentController extends Controller
             foreach ($commit['files'] as &$file) {
                 $meta = $docIndex[$file['path']] ?? null;
                 $file['doc_id'] = $meta['id'] ?? null;
-                $file['doc_title'] = $meta['title'] ?? $this->formatName(str_replace('.md', '', basename($file['path'])));
+                $file['doc_title'] = $meta['title'] ?? $this->formatName(preg_replace('/\.md$/', '', basename($file['path'])));
                 $file['doc_type'] = $meta['type'] ?? null;
             }
         }
@@ -894,5 +901,34 @@ class DocumentController extends Controller
     private function formatName(string $name): string
     {
         return ucwords(str_replace(['-', '_'], ' ', $name));
+    }
+
+    /**
+     * Sanitize a user-provided path to prevent directory traversal.
+     * Returns null if the path is invalid.
+     */
+    private function sanitizePath(string $path): ?string
+    {
+        // Block any path containing ..
+        if (str_contains($path, '..')) {
+            return null;
+        }
+
+        // Normalize slashes and remove leading/trailing slashes
+        $path = trim(str_replace('\\', '/', $path), '/');
+
+        if (empty($path)) {
+            return null;
+        }
+
+        return $path;
+    }
+
+    /**
+     * Safely strip .md extension from end of path only.
+     */
+    private function stripMdExtension(string $path): string
+    {
+        return preg_replace('/\.md$/', '', $path);
     }
 }

@@ -411,7 +411,7 @@ class DocumentMetadata
      */
     public static function resolveLinks(string $html, array $idMap): string
     {
-        return preg_replace_callback('/\[\[([A-Z]+-\d{3})\]\]/', function ($matches) use ($idMap) {
+        return preg_replace_callback('/\[\[([A-Z]+-\d{3,})\]\]/', function ($matches) use ($idMap) {
             $docId = $matches[1];
             if (isset($idMap[$docId])) {
                 $url = '/qms/' . self::urlPath($idMap[$docId]);

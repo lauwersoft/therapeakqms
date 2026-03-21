@@ -162,6 +162,7 @@ class FormController extends Controller
 
         $filename = Str::slug($request->input('title')) . '.form.json';
         $directory = $request->input('directory', '');
+        if (str_contains($directory, '..')) { abort(403); }
         $relativePath = $directory ? $directory . '/' . $filename : $filename;
         $fullPath = $this->basePath . '/' . $relativePath;
 

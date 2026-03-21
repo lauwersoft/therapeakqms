@@ -87,7 +87,7 @@
             <div class="max-w-5xl mx-auto py-6 px-4 sm:py-8 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-3">
-                        <a href="{{ route('documents.index', ['path' => str_replace('.md', '', $currentPath)]) }}"
+                        <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
                            class="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -171,7 +171,7 @@
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5">
                         <textarea id="editor" name="content">{{ $content }}</textarea>
                         <div class="flex justify-end gap-2 mt-4">
-                            <a href="{{ route('documents.index', ['path' => str_replace('.md', '', $currentPath)]) }}"
+                            <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
                                class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md border border-gray-300">Cancel</a>
                             <button type="submit"
                                     class="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Save</button>

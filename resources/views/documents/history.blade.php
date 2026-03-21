@@ -117,7 +117,7 @@
 
                                                 <div class="min-w-0">
                                                     @if($file['status'] !== 'deleted')
-                                                        <a href="{{ route('documents.index', ['path' => str_replace('.md', '', $file['path'])]) }}"
+                                                        <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $file['path'])]) }}"
                                                            class="text-sm text-gray-700 hover:text-blue-600 hover:underline">
                                                             @if($file['doc_id'])
                                                                 <span class="font-mono text-xs text-gray-400 mr-1">{{ $file['doc_id'] }}</span>

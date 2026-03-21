@@ -237,7 +237,7 @@
                                         }
 
                                         // Word-level highlight
-                                        function highlightWordDiff($old, $new) {
+                                        if (!function_exists('highlightWordDiff')) { function highlightWordDiff($old, $new) {
                                             $oldWords = preg_split('/([ \t]+)/', $old, -1, PREG_SPLIT_DELIM_CAPTURE);
                                             $newWords = preg_split('/([ \t]+)/', $new, -1, PREG_SPLIT_DELIM_CAPTURE);
 
@@ -267,7 +267,7 @@
                                             }
 
                                             return [$oldHtml, $newHtml];
-                                        }
+                                        } }
 
                                         $highlighted = [];
                                         for ($i = 0; $i < count($rows); $i++) {

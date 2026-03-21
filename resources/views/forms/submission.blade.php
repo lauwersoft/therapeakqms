@@ -12,6 +12,8 @@
             </div>
             @if($meta)
                 <a href="{{ route('documents.index', ['path' => $submission->form_path]) }}" class="text-sm text-gray-500 hover:text-gray-900">Back to form</a>
+            @else
+                <a href="{{ route('documents.index') }}" class="text-sm text-gray-500 hover:text-gray-900">Back to Documents</a>
             @endif
         </div>
     </x-slot>
