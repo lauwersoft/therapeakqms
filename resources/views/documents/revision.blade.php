@@ -37,7 +37,7 @@
                                         {{ $file['status'] === 'modified' ? 'bg-blue-50 text-blue-700' : '' }}
                                         {{ $file['status'] === 'deleted' ? 'bg-red-50 text-red-600' : '' }}">
                                         @if($file['doc_id'])
-                                            <span class="font-mono font-medium px-1 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($file['doc_type'] ?? '') }}">{{ $file['doc_id'] }}</span>
+                                            <span class="font-mono font-medium">{{ $file['doc_id'] }}</span>
                                         @endif
                                         {{ $file['status'] === 'added' ? 'created' : ($file['status'] === 'deleted' ? 'removed' : 'updated') }}
                                     </span>
