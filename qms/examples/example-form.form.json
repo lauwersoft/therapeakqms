@@ -1,0 +1,101 @@
+{
+    "id": "FM-001",
+    "title": "CAPA Form",
+    "type": "FM",
+    "version": "0.1",
+    "status": "draft",
+    "author": "Sarp Derinsu",
+    "fields": [
+        {
+            "label": "CAPA Number",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Date Identified",
+            "type": "date",
+            "required": true
+        },
+        {
+            "label": "Reported By",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Source",
+            "type": "select",
+            "required": true,
+            "options": ["Complaint", "Audit Finding", "Process Deviation", "Post-Market Surveillance", "Management Review", "Other"]
+        },
+        {
+            "label": "Severity",
+            "type": "select",
+            "required": true,
+            "options": ["Low", "Medium", "High", "Critical"]
+        },
+        {
+            "label": "Description of Nonconformity",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Immediate Containment Action",
+            "type": "textarea",
+            "description": "Describe any immediate actions taken to contain the issue"
+        },
+        {
+            "label": "Root Cause Analysis Method",
+            "type": "select",
+            "options": ["5 Why", "Fishbone / Ishikawa", "Fault Tree Analysis", "Other"]
+        },
+        {
+            "label": "Root Cause Description",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Corrective Action Planned",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Preventive Action Planned",
+            "type": "textarea"
+        },
+        {
+            "label": "Responsible Person",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Target Completion Date",
+            "type": "date",
+            "required": true
+        },
+        {
+            "label": "Effectiveness Verification Method",
+            "type": "textarea",
+            "description": "How will you verify the actions were effective?"
+        },
+        {
+            "label": "Risk Assessment Updated",
+            "type": "checkbox"
+        },
+        {
+            "label": "Root Cause Analysis Completed",
+            "type": "checkbox"
+        },
+        {
+            "label": "Corrective Action Implemented",
+            "type": "checkbox"
+        },
+        {
+            "label": "Effectiveness Verified",
+            "type": "checkbox"
+        },
+        {
+            "label": "CAPA Closed",
+            "type": "checkbox"
+        }
+    ]
+}
