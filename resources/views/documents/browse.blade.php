@@ -248,6 +248,20 @@
         @endif
 
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            {{-- Unpublished changes banner --}}
+            @if($pendingCount > 0 && $canEdit)
+                <div class="mb-5">
+                    <a href="{{ route('documents.changes') }}"
+                       class="flex items-center justify-between w-full px-4 py-3 text-sm bg-amber-50 text-amber-800 rounded-lg hover:bg-amber-100 border border-amber-200">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-amber-500 rounded-full shrink-0"></span>
+                            <span class="font-medium">{{ $pendingCount }} unpublished {{ Str::plural('change', $pendingCount) }}</span>
+                        </div>
+                        <span class="text-xs text-amber-600">Review & publish</span>
+                    </a>
+                </div>
+            @endif
+
             {{-- Search + filters --}}
             <div class="mb-5">
                 <div class="relative">
@@ -331,6 +345,8 @@
                                         <span class="shrink-0 text-[11px] font-medium px-1.5 py-0.5 rounded"
                                               :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                         <span x-show="doc.version" class="text-xs text-gray-400 w-10 text-right shrink-0" x-text="'v' + doc.version"></span>
+                                        <span x-show="doc.changed" class="w-2 h-2 rounded-full shrink-0"
+                                              :class="{'bg-green-500': doc.changed === 'new' || doc.changed === 'added', 'bg-amber-500': doc.changed === 'modified', 'bg-red-500': doc.changed === 'deleted', 'bg-blue-500': doc.changed === 'move' || doc.changed === 'rename'}"></span>
                                         <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                     </a>
                                 </template>
@@ -365,6 +381,8 @@
                                               :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                         <span x-show="doc.version" class="text-xs text-gray-400 w-10 text-right shrink-0" x-text="'v' + doc.version"></span>
                                         <span x-show="doc.author" class="text-xs text-gray-400 shrink-0 hidden sm:inline" x-text="doc.author"></span>
+                                        <span x-show="doc.changed" class="w-2 h-2 rounded-full shrink-0"
+                                              :class="{'bg-green-500': doc.changed === 'new' || doc.changed === 'added', 'bg-amber-500': doc.changed === 'modified', 'bg-red-500': doc.changed === 'deleted', 'bg-blue-500': doc.changed === 'move' || doc.changed === 'rename'}"></span>
                                         <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                     </a>
                                 </template>

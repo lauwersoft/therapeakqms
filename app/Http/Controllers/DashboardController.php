@@ -22,6 +22,9 @@ class DashboardController extends Controller
             }
         }
 
+        // Pending changes
+        $pendingCount = \App\Models\DocumentChange::count();
+
         // Stats
         $totalDocs = count($docIndex);
         $draftCount = count(array_filter($docIndex, fn ($m) => ($m['status'] ?? '') === 'draft'));
@@ -47,6 +50,7 @@ class DashboardController extends Controller
             'approvedCount' => $approvedCount,
             'inReviewCount' => $inReviewCount,
             'docList' => $docList,
+            'pendingCount' => $pendingCount,
         ]);
     }
 }

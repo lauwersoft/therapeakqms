@@ -587,11 +587,13 @@ class DocumentController extends Controller
     public function browse(Request $request)
     {
         $docIndex = DocumentMetadata::index($this->basePath);
+        $changedFiles = $this->git->getChangedFiles();
 
         // Build flat list of all documents with full metadata
         $documents = [];
         foreach ($docIndex as $path => $meta) {
             $dir = dirname($path);
+            $changeStatus = isset($changedFiles[$path]) ? $changedFiles[$path]['status'] : null;
             $documents[] = [
                 'path' => $path,
                 'url_path' => preg_replace('/\.md$/', '', $path),
@@ -605,6 +607,7 @@ class DocumentController extends Controller
                 'status_label' => DocumentMetadata::STATUSES[$meta['status'] ?? 'draft'] ?? 'Draft',
                 'version' => $meta['version'] ?? null,
                 'author' => $meta['author'] ?? null,
+                'changed' => $changeStatus,
             ];
         }
 
@@ -621,12 +624,16 @@ class DocumentController extends Controller
         $grouped = collect($documents)->groupBy('raw_directory');
         $canEdit = in_array($request->user()->role, [User::ROLE_ADMIN, User::ROLE_EDITOR]);
 
+        $pendingCount = max(count($changedFiles), DocumentChange::count());
+
         return view('documents.browse', [
             'documents' => $documents,
             'grouped' => $grouped,
             'totalDocs' => count($documents),
             'canEdit' => $canEdit,
             'directories' => $canEdit ? $this->getDirectories() : [],
+            'changedFiles' => $changedFiles,
+            'pendingCount' => $pendingCount,
         ]);
     }
 

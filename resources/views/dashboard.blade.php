@@ -5,6 +5,20 @@
 
     <div class="py-8">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            {{-- Unpublished changes warning --}}
+            @if($pendingCount > 0 && in_array(Auth::user()->role, ['admin', 'editor']))
+                <a href="{{ route('documents.changes') }}"
+                   class="flex items-center justify-between w-full px-4 py-3 mb-6 text-sm bg-amber-50 text-amber-800 rounded-lg hover:bg-amber-100 border border-amber-200">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-amber-500 rounded-full shrink-0 animate-pulse"></span>
+                        <span><strong>{{ $pendingCount }} unpublished {{ Str::plural('change', $pendingCount) }}</strong> — review and publish to save to git</span>
+                    </div>
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            @endif
+
             {{-- Stats --}}
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
