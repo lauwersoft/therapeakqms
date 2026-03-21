@@ -1,7 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Users</h2>
+            <div class="flex items-center gap-3">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">Users</h2>
+                <span class="text-sm text-gray-400">{{ $users->count() }}</span>
+            </div>
             <a href="{{ route('users.create') }}"
                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

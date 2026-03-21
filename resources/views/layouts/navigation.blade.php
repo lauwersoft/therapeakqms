@@ -19,7 +19,7 @@
                         {{ __('Documents') }}
                     </x-nav-link>
                     <x-nav-link :href="route('documents.browse')" :active="request()->routeIs('documents.browse')">
-                        {{ __('Browse') }}
+                        {{ __('Browser') }}
                     </x-nav-link>
                     <x-nav-link :href="route('documents.history')" :active="request()->routeIs('documents.history') || request()->routeIs('documents.revision')">
                         {{ __('History') }}
@@ -88,7 +88,7 @@
                 {{ __('Documents') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('documents.browse')" :active="request()->routeIs('documents.browse')">
-                {{ __('Browse') }}
+                {{ __('Browser') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('documents.history')" :active="request()->routeIs('documents.history') || request()->routeIs('documents.revision')">
                 {{ __('History') }}

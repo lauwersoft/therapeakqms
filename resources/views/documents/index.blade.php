@@ -299,7 +299,10 @@
                       transform transition-transform duration-200 ease-in-out
                       lg:relative lg:top-0 lg:translate-x-0 lg:shrink-0 flex flex-col">
             <div class="p-4 border-b border-gray-200 flex items-center justify-between">
-                <h2 class="font-semibold text-gray-800 text-lg">Documents</h2>
+                <div class="flex items-center gap-2">
+                    <h2 class="font-semibold text-gray-800 text-lg">Documents</h2>
+                    <span class="text-xs text-gray-400">{{ count($sidebarDocs) }}</span>
+                </div>
                 <div class="flex items-center gap-1">
                     @if($canEdit)
                         <div x-data="{ addOpen: false }" class="relative">

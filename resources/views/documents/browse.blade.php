@@ -3,6 +3,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">Browser</h2>
+                <span class="text-sm text-gray-400">{{ $totalDocs }} {{ Str::plural('document', $totalDocs) }}</span>
             </div>
             @if($canEdit)
                 <div class="flex items-center gap-1.5 sm:gap-2">
