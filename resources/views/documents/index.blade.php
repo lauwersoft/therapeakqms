@@ -6,7 +6,9 @@
         </style>
     @endpush
 
-    <div x-data="documentManager()" @click="closeMenus()" class="flex h-full relative overflow-hidden">
+    <div x-data="documentManager()" @click="closeMenus()"
+         x-init="document.addEventListener('dragleave', (e) => { if (!e.relatedTarget && e.clientX === 0 && e.clientY === 0) dragOver = false; }); document.addEventListener('drop', () => dragOver = false);"
+         class="flex h-full relative overflow-hidden">
 
         {{-- Context Menu: File --}}
         <div x-show="fileMenu.show" x-cloak
@@ -292,7 +294,6 @@
         {{-- Sidebar --}}
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
                @dragover.prevent="dragOver = true"
-               @dragleave.self.prevent="dragOver = false"
                @drop.prevent="handleDrop($event)"
                class="fixed inset-y-0 left-0 top-16 w-80 bg-white border-r border-gray-200 overflow-y-auto z-30
                       transform transition-transform duration-200 ease-in-out
@@ -372,22 +373,25 @@
                     @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $canEdit, 'changedFiles' => $changedFiles])
                 </div>
                 @if($canEdit)
-                    <div class="flex-1 min-h-[100px]" @contextmenu.prevent="openBgMenu($event)"></div>
+                    <div class="flex-1 min-h-[100px]"
+                         @contextmenu.prevent="openBgMenu($event)"
+                         x-data="{ rootDragOver: false }"
+                         @dragover.prevent="rootDragOver = true; dragOver = true"
+                         @dragleave.prevent="rootDragOver = false"
+                         @drop.prevent="rootDragOver = false; handleDrop($event)">
+                        <div x-show="dragOver" x-cloak
+                             class="mt-2 mx-1 p-4 rounded-lg border-2 border-dashed transition-colors flex items-center justify-center gap-2"
+                             :class="rootDragOver ? 'border-blue-500 bg-blue-100' : 'border-gray-300 bg-gray-50'">
+                            <svg class="w-5 h-5" :class="rootDragOver ? 'text-blue-500' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                            </svg>
+                            <span class="text-sm font-medium" :class="rootDragOver ? 'text-blue-600' : 'text-gray-400'">Drop here for root</span>
+                        </div>
+                    </div>
                 @endif
             </nav>
-            {{-- Drop hint bar --}}
-            @if($canEdit)
-                <div x-show="dragOver" x-cloak class="p-3 border-t border-blue-200 bg-blue-50">
-                    <div class="flex items-center gap-2 text-xs text-blue-600">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                        </svg>
-                        Drop on a folder, or here for root
-                    </div>
-                </div>
-            @endif
             @if($canEdit && $pendingCount > 0)
-                <div x-show="!dragOver" class="p-3 border-t border-gray-200">
+                <div class="p-3 border-t border-gray-200">
                     <a href="{{ route('documents.changes') }}"
                        class="flex items-center justify-between w-full px-3 py-2 text-sm bg-amber-50 text-amber-800 rounded-md hover:bg-amber-100 border border-amber-200">
                         <span class="font-medium">{{ $pendingCount }} unpublished {{ Str::plural('change', $pendingCount) }}</span>
