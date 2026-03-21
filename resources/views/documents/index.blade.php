@@ -27,6 +27,23 @@
                         <span class="text-sm font-semibold text-gray-800">QMS</span>
                         <span class="text-xs text-gray-400 font-mono truncate">/{{ $currentPath }}</span>
                     </div>
+                    @if($canEdit && $isMarkdown)
+                        <a href="{{ route('documents.edit', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Edit
+                        </a>
+                    @elseif(!$isMarkdown && !$isForm)
+                        <a href="{{ route('documents.download', $currentPath) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Download
+                        </a>
+                    @endif
                 </div>
             </div>
 
@@ -50,7 +67,7 @@
                 </div>
             @endif
 
-            <div class="max-w-5xl mx-auto py-4 px-3 sm:py-8 sm:px-6 lg:px-8">
+            <div class="max-w-5xl mx-auto py-4 px-3 sm:py-6 sm:px-6 lg:px-8">
                 @include('documents.partials.meta-header', ['isEditPage' => false])
 
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 {{ $meta['id'] ? 'mt-4' : '' }}">
