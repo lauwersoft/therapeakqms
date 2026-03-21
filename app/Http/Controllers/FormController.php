@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\DocumentMetadata;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class FormController extends Controller
 {
@@ -18,27 +19,27 @@ class FormController extends Controller
     }
 
     /**
-     * Show a form template (view mode or fill mode).
+     * Safely read and parse a form JSON file. Returns null if invalid.
      */
-    public function show(Request $request, string $path)
+    private function readForm(string $fullPath): ?array
     {
-        if (! str_ends_with($path, '.form.json')) {
-            $path .= '.form.json';
-        }
+        if (! File::exists($fullPath)) return null;
+        if (! str_starts_with(realpath($fullPath), realpath($this->basePath))) return null;
 
-        $fullPath = $this->basePath . '/' . $path;
-        if (! File::exists($fullPath)) {
-            abort(404);
-        }
+        $raw = File::get($fullPath);
+        $data = json_decode($raw, true);
 
-        $schema = json_decode(File::get($fullPath), true);
-        $meta = DocumentMetadata::readSidecar($fullPath) ?? DocumentMetadata::DEFAULTS;
+        if (! is_array($data) || empty($data['fields'])) return null;
 
-        return view('forms.show', [
-            'schema' => $schema,
-            'meta' => $meta,
-            'path' => $path,
-        ]);
+        return $data;
+    }
+
+    /**
+     * Extract metadata from form data.
+     */
+    private function formMeta(array $data): array
+    {
+        return array_merge(DocumentMetadata::DEFAULTS, array_intersect_key($data, DocumentMetadata::DEFAULTS));
     }
 
     /**
@@ -51,16 +52,15 @@ class FormController extends Controller
         }
 
         $fullPath = $this->basePath . '/' . $path;
-        if (! File::exists($fullPath)) {
-            abort(404);
-        }
+        $schema = $this->readForm($fullPath);
 
-        $schema = json_decode(File::get($fullPath), true);
-        $meta = DocumentMetadata::readSidecar($fullPath) ?? DocumentMetadata::DEFAULTS;
+        if (! $schema) {
+            abort(404, 'Form not found or invalid.');
+        }
 
         return view('forms.fill', [
             'schema' => $schema,
-            'meta' => $meta,
+            'meta' => $this->formMeta($schema),
             'path' => $path,
         ]);
     }
@@ -78,10 +78,14 @@ class FormController extends Controller
 
         $path = $request->input('form_path');
         $fullPath = $this->basePath . '/' . $path;
-        $meta = DocumentMetadata::readSidecar($fullPath);
+        $schema = $this->readForm($fullPath);
+
+        if (! $schema) {
+            return back()->withErrors(['form_path' => 'Form template not found or invalid.']);
+        }
 
         $submission = FormSubmission::create([
-            'form_id' => $meta['id'] ?? basename($path),
+            'form_id' => $schema['id'] ?? basename($path),
             'form_path' => $path,
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
@@ -99,8 +103,8 @@ class FormController extends Controller
     public function submission(FormSubmission $submission)
     {
         $fullPath = $this->basePath . '/' . $submission->form_path;
-        $schema = File::exists($fullPath) ? json_decode(File::get($fullPath), true) : null;
-        $meta = $fullPath && File::exists($fullPath) ? DocumentMetadata::readSidecar($fullPath) : null;
+        $schema = $this->readForm($fullPath);
+        $meta = $schema ? $this->formMeta($schema) : null;
 
         return view('forms.submission', [
             'submission' => $submission,
@@ -156,7 +160,7 @@ class FormController extends Controller
             'fields.*.type' => 'required|in:text,textarea,date,select,checkbox,number,email',
         ]);
 
-        $filename = \Illuminate\Support\Str::slug($request->input('title')) . '.form.json';
+        $filename = Str::slug($request->input('title')) . '.form.json';
         $directory = $request->input('directory', '');
         $relativePath = $directory ? $directory . '/' . $filename : $filename;
         $fullPath = $this->basePath . '/' . $relativePath;
@@ -170,25 +174,29 @@ class FormController extends Controller
             mkdir($dir, 0755, true);
         }
 
-        $schema = [
-            'title' => $request->input('title'),
-            'fields' => $request->input('fields'),
-        ];
-
-        File::put($fullPath, json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
-
         $docId = DocumentMetadata::nextId('FM', $this->basePath);
-        DocumentMetadata::writeSidecar($fullPath, [
+
+        $schema = [
             'id' => $docId,
             'title' => $request->input('title'),
             'type' => 'FM',
             'version' => '0.1',
             'status' => 'draft',
             'author' => $request->user()->name,
+            'fields' => $request->input('fields'),
+        ];
+
+        File::put($fullPath, json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+
+        // Log change for git tracking
+        \App\Models\DocumentChange::create([
+            'user_id' => $request->user()->id,
+            'action' => 'create',
+            'path' => $relativePath,
         ]);
 
         return redirect()->route('documents.index', ['path' => $relativePath])
-            ->with('success', "Form {$docId} created.");
+            ->with('success', "Form {$docId} created. Remember to publish when ready.");
     }
 
     private function getDirectories(): array

@@ -268,6 +268,9 @@ class DocumentMetadata
                 $content = File::get($file->getPathname());
                 $parsed = self::parse($content);
                 $id = $parsed['meta']['id'] ?? null;
+            } elseif (self::isForm($name)) {
+                $data = @json_decode(File::get($file->getPathname()), true);
+                $id = is_array($data) ? ($data['id'] ?? null) : null;
             } else {
                 $sidecar = self::readSidecar($file->getPathname());
                 $id = $sidecar['id'] ?? null;
@@ -282,6 +285,20 @@ class DocumentMetadata
         }
 
         return $prefix . '-' . str_pad($highest + 1, 3, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Check if a document ID already exists.
+     */
+    public static function idExists(string $id, string $basePath): bool
+    {
+        $index = self::index($basePath);
+        foreach ($index as $meta) {
+            if (($meta['id'] ?? null) === $id) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -307,6 +324,13 @@ class DocumentMetadata
                 $parsed = self::parse($content);
                 $index[$relativePath] = $parsed['meta'];
                 $index[$relativePath]['_is_markdown'] = true;
+            } elseif (self::isForm($name)) {
+                $data = @json_decode(File::get($file->getPathname()), true);
+                $data = is_array($data) ? $data : [];
+                $index[$relativePath] = array_merge(self::DEFAULTS, array_intersect_key($data, self::DEFAULTS));
+                $index[$relativePath]['_is_markdown'] = false;
+                $index[$relativePath]['_is_form'] = true;
+                $index[$relativePath]['_extension'] = 'form';
             } else {
                 $sidecar = self::readSidecar($file->getPathname());
                 if ($sidecar) {

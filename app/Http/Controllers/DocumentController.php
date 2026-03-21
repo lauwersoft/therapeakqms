@@ -78,9 +78,15 @@ class DocumentController extends Controller
                 $html
             );
         } else {
-            $meta = DocumentMetadata::readSidecar($filePath) ?? array_merge(DocumentMetadata::DEFAULTS, [
-                'title' => pathinfo($path, PATHINFO_FILENAME),
-            ]);
+            // For forms, read metadata from the JSON itself; for other files, use sidecar
+            if (str_ends_with($path, '.form.json')) {
+                $formData = json_decode(File::get($filePath), true);
+                $meta = array_merge(DocumentMetadata::DEFAULTS, array_intersect_key($formData ?? [], DocumentMetadata::DEFAULTS));
+            } else {
+                $meta = DocumentMetadata::readSidecar($filePath) ?? array_merge(DocumentMetadata::DEFAULTS, [
+                    'title' => pathinfo($path, PATHINFO_FILENAME),
+                ]);
+            }
             $html = null;
         }
 
