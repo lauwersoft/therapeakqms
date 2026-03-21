@@ -14,7 +14,7 @@
         @include('documents.partials.sidebar', ['sidebarCanEdit' => $canEdit])
 
         {{-- Main Content --}}
-        <main class="flex-1 overflow-y-scroll bg-gray-50 min-w-0 flex flex-col">
+        <main class="flex-1 bg-gray-50 min-w-0 flex flex-col overflow-hidden">
             {{-- Top bar: path + edit --}}
             <div class="bg-white border-b border-gray-200 shadow-sm shrink-0 relative z-40 px-4 h-16 flex items-center">
                 <div class="flex items-center justify-between gap-3 w-full">
@@ -47,7 +47,7 @@
                 </div>
             </div>
 
-            <div class="flex-1 overflow-y-auto">
+            <div class="flex-1 overflow-y-scroll">
 
             @if(session('success'))
                 <div class="max-w-5xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
