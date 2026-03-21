@@ -409,7 +409,7 @@
         {{-- Main Content --}}
         <main class="flex-1 overflow-y-auto bg-gray-50 min-w-0 flex flex-col">
             {{-- Top bar: path + metadata + actions --}}
-            <div class="bg-white border-b border-gray-200 shrink-0 shadow-sm relative z-10 px-4 py-2">
+            <div class="bg-white border-b border-gray-200 shrink-0 shadow-sm relative z-10 px-4 h-16 flex items-center">
                 <div class="flex items-center justify-between gap-3">
                     <div class="flex items-center gap-3 min-w-0">
                         <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 lg:hidden shrink-0">
