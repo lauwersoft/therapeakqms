@@ -5,15 +5,30 @@
             @php
                 $dirId = 'dir-' . Str::slug($item['path']);
                 $fileCount = collect($item['children'])->where('type', 'file')->count();
+                // Build JSON array of children file data for JS filtering
+                $childrenData = collect($item['children'])->where('type', 'file')->map(function ($child) {
+                    $childType = ($child['doc_id'] ?? null) ? explode('-', $child['doc_id'])[0] : '';
+                    return [
+                        'search' => strtolower(($child['doc_id'] ?? '') . ' ' . $child['name']),
+                        'type' => $childType,
+                        'status' => $child['doc_status'] ?? '',
+                    ];
+                })->values()->toArray();
             @endphp
-            <div class="mb-1" x-data="{ visibleCount: {{ $fileCount }} }"
-                 x-effect="
-                    let c = document.querySelectorAll('#{{ $dirId }} > .sortable-group > .sortable-item');
-                    let count = 0;
-                    c.forEach(el => { if (el.style.display !== 'none') count++; });
-                    visibleCount = count;
-                 "
-                 x-show="visibleCount > 0 || (!sidebarSearch && !sidebarTypeFilter && !sidebarStatusFilter)">
+            <div class="mb-1"
+                 x-data="{
+                    children: {{ json_encode($childrenData) }},
+                    get visibleCount() {
+                        if (!sidebarSearch && !sidebarTypeFilter && !sidebarStatusFilter) return this.children.length;
+                        return this.children.filter(c => {
+                            if (sidebarTypeFilter && c.type !== sidebarTypeFilter) return false;
+                            if (sidebarStatusFilter && c.status !== sidebarStatusFilter) return false;
+                            if (sidebarSearch && !c.search.includes(sidebarSearch.toLowerCase())) return false;
+                            return true;
+                        }).length;
+                    }
+                 }"
+                 x-show="visibleCount > 0">
                 <div x-data="{ open: true }" x-effect="if (sidebarSearch || sidebarTypeFilter || sidebarStatusFilter) open = true">
                     <div class="group flex items-center">
                         <button @click="open = !open"
@@ -70,7 +85,7 @@
                             </div>
                         @endif
                     </div>
-                    <div x-show="open" class="ml-4" id="{{ $dirId }}">
+                    <div x-show="open" class="ml-4">
                         @include('documents.partials.tree', [
                             'items' => $item['children'],
                             'currentPath' => $currentPath,
