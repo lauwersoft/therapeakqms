@@ -29,6 +29,28 @@ class DocumentMetadata
         'MAN' => 'Manual / Guide',
     ];
 
+    const TYPE_COLORS = [
+        'QM' => 'bg-indigo-100 text-indigo-700',
+        'POL' => 'bg-violet-100 text-violet-700',
+        'SOP' => 'bg-blue-100 text-blue-700',
+        'WI' => 'bg-cyan-100 text-cyan-700',
+        'FM' => 'bg-purple-100 text-purple-700',
+        'TMP' => 'bg-fuchsia-100 text-fuchsia-700',
+        'PLN' => 'bg-teal-100 text-teal-700',
+        'REC' => 'bg-slate-100 text-slate-700',
+        'RPT' => 'bg-sky-100 text-sky-700',
+        'LOG' => 'bg-gray-100 text-gray-600',
+        'LST' => 'bg-zinc-100 text-zinc-700',
+        'SPE' => 'bg-orange-100 text-orange-700',
+        'DWG' => 'bg-emerald-100 text-emerald-700',
+        'AGR' => 'bg-amber-100 text-amber-700',
+        'CER' => 'bg-green-100 text-green-700',
+        'LBL' => 'bg-lime-100 text-lime-700',
+        'RA' => 'bg-red-100 text-red-700',
+        'CE' => 'bg-rose-100 text-rose-700',
+        'MAN' => 'bg-stone-100 text-stone-700',
+    ];
+
     const STATUSES = [
         'draft' => 'Draft',
         'in_review' => 'In Review',
@@ -222,6 +244,14 @@ class DocumentMetadata
     /**
      * Check if a file is a hidden system file (.gitkeep, .meta.json).
      */
+    /**
+     * Get CSS classes for a document type badge.
+     */
+    public static function typeColor(string $type): string
+    {
+        return self::TYPE_COLORS[$type] ?? 'bg-gray-100 text-gray-600';
+    }
+
     public static function isSystemFile(string $filename): bool
     {
         return $filename === '.gitkeep'

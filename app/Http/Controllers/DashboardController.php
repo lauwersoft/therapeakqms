@@ -19,6 +19,7 @@ class DashboardController extends Controller
                 $meta = $docIndex[$file['path']] ?? null;
                 $file['doc_id'] = $meta['id'] ?? null;
                 $file['doc_title'] = $meta['title'] ?? ucwords(str_replace(['-', '_'], ' ', str_replace('.md', '', basename($file['path']))));
+                $file['doc_type'] = $meta['type'] ?? null;
             }
         }
 

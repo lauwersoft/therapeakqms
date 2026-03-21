@@ -603,6 +603,7 @@ class DocumentController extends Controller
                 'title' => $meta['title'] ?? $this->formatName(preg_replace('/\.md$/', '', basename($path))),
                 'type' => $meta['type'] ?? null,
                 'type_label' => isset($meta['type']) ? (DocumentMetadata::TYPES[$meta['type']] ?? $meta['type']) : null,
+                'type_color' => isset($meta['type']) ? DocumentMetadata::typeColor($meta['type']) : 'bg-gray-100 text-gray-600',
                 'status' => $meta['status'] ?? 'draft',
                 'status_label' => DocumentMetadata::STATUSES[$meta['status'] ?? 'draft'] ?? 'Draft',
                 'version' => $meta['version'] ?? null,

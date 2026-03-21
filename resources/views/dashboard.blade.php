@@ -77,6 +77,9 @@
                                                                 @endif
                                                                 {{ $file['status'] === 'added' ? 'created' : ($file['status'] === 'deleted' ? 'removed' : 'updated') }}
                                                             </span>
+                                                            @if($file['doc_type'] ?? null)
+                                                                <span class="text-[10px] px-1 py-0.5 rounded font-medium shrink-0 {{ \App\Services\DocumentMetadata::typeColor($file['doc_type']) }}">{{ $file['doc_type'] }}</span>
+                                                            @endif
                                                             <span class="text-[10px] text-gray-400 font-mono truncate">/{{ $file['path'] }}</span>
                                                         </div>
                                                     @endforeach

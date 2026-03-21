@@ -449,7 +449,7 @@
                                         <span class="font-mono font-semibold text-gray-700">{{ $meta['id'] }}</span>
                                         @if($meta['type'] && isset(\App\Services\DocumentMetadata::TYPES[$meta['type']]))
                                             <span class="text-gray-400">·</span>
-                                            <span class="text-gray-400">{{ \App\Services\DocumentMetadata::TYPES[$meta['type']] }}</span>
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium {{ \App\Services\DocumentMetadata::typeColor($meta['type']) }}">{{ $meta['type'] }}</span>
                                         @endif
                                         <span class="text-gray-400">·</span>
                                         <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium

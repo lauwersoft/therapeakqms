@@ -292,7 +292,7 @@
                         @if(collect($documents)->where('type', $key)->count() > 0)
                             <button @click="typeFilter = typeFilter === '{{ $key }}' ? '' : '{{ $key }}'"
                                     class="px-2.5 py-1 text-xs rounded-full transition-colors"
-                                    :class="typeFilter === '{{ $key }}' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
+                                    :class="typeFilter === '{{ $key }}' ? '{{ \App\Services\DocumentMetadata::typeColor($key) }} ring-1 ring-current' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
                                 {{ $key }} <span class="opacity-60">({{ collect($documents)->where('type', $key)->count() }})</span>
                             </button>
                         @endif
@@ -342,7 +342,7 @@
                                             <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
                                             <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'/' + doc.path"></span>
                                         </div>
-                                        <span x-show="doc.type" class="text-[11px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded shrink-0" x-text="doc.type"></span>
+                                        <span x-show="doc.type" class="text-[11px] px-1.5 py-0.5 rounded shrink-0 font-medium" :class="doc.type_color" x-text="doc.type"></span>
                                         <span class="shrink-0 text-[11px] font-medium px-1.5 py-0.5 rounded"
                                               :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                         <span x-show="doc.version" class="text-xs text-gray-400 w-10 text-right shrink-0" x-text="'v' + doc.version"></span>
@@ -378,7 +378,7 @@
                                             <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
                                             <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'/' + doc.path"></span>
                                         </div>
-                                        <span x-show="doc.type" class="text-[11px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded shrink-0" x-text="doc.type"></span>
+                                        <span x-show="doc.type" class="text-[11px] px-1.5 py-0.5 rounded shrink-0 font-medium" :class="doc.type_color" x-text="doc.type"></span>
                                         <span class="shrink-0 text-[11px] font-medium px-1.5 py-0.5 rounded"
                                               :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                         <span x-show="doc.version" class="text-xs text-gray-400 w-10 text-right shrink-0" x-text="'v' + doc.version"></span>
