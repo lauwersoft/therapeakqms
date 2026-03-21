@@ -177,6 +177,7 @@ class DocumentController extends Controller
         $changedFiles = $this->git->getChangedFiles();
         $changeLogCount = DocumentChange::count();
         $pendingCount = max(count($changedFiles), $changeLogCount);
+        $lastEdit = $this->git->getLastCommitInfo($path);
 
         $sidebarDocs = [];
         foreach ($docIndex as $docPath => $docMeta) {
@@ -206,6 +207,7 @@ class DocumentController extends Controller
             'changedFiles' => $changedFiles,
             'pendingCount' => $pendingCount,
             'canEdit' => true,
+            'lastEdit' => $lastEdit,
             'directories' => $this->getDirectories(),
         ]);
     }
@@ -257,6 +259,56 @@ class DocumentController extends Controller
 
         return redirect()->route('documents.index', ['path' => preg_replace('/\.md$/', '', $path)])
             ->with('success', 'Document saved. Remember to publish when ready.');
+    }
+
+    public function updateMeta(Request $request)
+    {
+        $this->authorizeEditor($request->user());
+
+        $request->validate([
+            'path' => 'required|string',
+            'meta_status' => 'nullable|string|in:' . implode(',', array_keys(DocumentMetadata::STATUSES)),
+            'meta_version' => 'nullable|string|max:20',
+            'meta_effective_date' => 'nullable|date',
+            'meta_author' => 'nullable|string|max:255',
+            'redirect' => 'nullable|string|in:edit,show',
+        ]);
+
+        $path = $request->input('path');
+        $filePath = $this->resolvePath($path);
+        if (! $filePath) {
+            abort(404);
+        }
+
+        $raw = File::get($filePath);
+        $parsed = DocumentMetadata::parse($raw);
+        $meta = $parsed['meta'];
+
+        if ($request->filled('meta_status')) {
+            $meta['status'] = $request->input('meta_status');
+        }
+        if ($request->filled('meta_version')) {
+            $meta['version'] = $request->input('meta_version');
+        }
+        if ($request->filled('meta_effective_date')) {
+            $meta['effective_date'] = $request->input('meta_effective_date');
+        }
+        if ($request->has('meta_author')) {
+            $meta['author'] = $request->input('meta_author');
+        }
+
+        $fileContent = $meta['id'] ? DocumentMetadata::build($meta, $parsed['body']) : $parsed['body'];
+        File::put($filePath, $fileContent);
+        $this->logChange($request->user(), 'edit', $path, ['fields' => 'properties']);
+
+        $urlPath = preg_replace('/\.md$/', '', $path);
+        if ($request->input('redirect') === 'edit') {
+            return redirect()->route('documents.edit', ['path' => $urlPath])
+                ->with('success', 'Properties saved.');
+        }
+
+        return redirect()->route('documents.index', ['path' => $urlPath])
+            ->with('success', 'Properties saved. Remember to publish when ready.');
     }
 
     public function create(Request $request)

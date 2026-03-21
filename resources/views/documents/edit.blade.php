@@ -123,13 +123,6 @@
                         <span class="text-sm font-semibold text-gray-800">QMS</span>
                         <span class="text-xs text-gray-400 font-mono truncate">/{{ $currentPath }}</span>
                     </div>
-                    <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                        </svg>
-                        Back to document
-                    </a>
                 </div>
             </div>
 
@@ -148,61 +141,10 @@
                         @method('PUT')
                         <input type="hidden" name="path" value="{{ $currentPath }}">
 
-                        {{-- Metadata panel --}}
-                        @if($meta['id'])
-                            <div x-data="{ showMeta: false }" class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-3 text-sm">
-                                        <span class="font-mono font-semibold px-1.5 py-0.5 rounded text-sm {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
-                                            {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-600' : '' }}
-                                            {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
-                                            {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
-                                            {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">
-                                            {{ $statuses[$meta['status']] ?? ucfirst($meta['status']) }}
-                                        </span>
-                                        <span class="text-gray-400">v{{ $meta['version'] }}</span>
-                                        @if($meta['author'])
-                                            <span class="text-gray-400">{{ $meta['author'] }}</span>
-                                        @endif
-                                    </div>
-                                    <button type="button" @click="showMeta = !showMeta" class="text-xs text-blue-600 hover:text-blue-800">
-                                        <span x-text="showMeta ? 'Hide properties' : 'Edit properties'"></span>
-                                    </button>
-                                </div>
-
-                                <div x-show="showMeta" x-cloak class="mt-4 pt-4 border-t border-gray-100">
-                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                        <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
-                                            <select name="meta_status" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
-                                                @foreach($statuses as $key => $label)
-                                                    <option value="{{ $key }}" {{ $meta['status'] === $key ? 'selected' : '' }}>{{ $label }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Version</label>
-                                            <input type="text" name="meta_version" value="{{ $meta['version'] }}"
-                                                   class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Effective date</label>
-                                            <input type="date" name="meta_effective_date" value="{{ $meta['effective_date'] }}"
-                                                   class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Author</label>
-                                            <input type="text" name="meta_author" value="{{ $meta['author'] }}"
-                                                   class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
+                        @include('documents.partials.meta-header', ['isEditPage' => true])
 
                         {{-- Editor --}}
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5 {{ $meta['id'] ? 'mt-4' : '' }}">
                             <div id="editor-loader" class="flex items-center justify-center" style="min-height:400px">
                                 <svg class="animate-spin h-6 w-6 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

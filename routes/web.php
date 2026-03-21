@@ -23,6 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/qms/revision/{hash}', [DocumentController::class, 'revision'])->name('documents.revision');
     Route::get('/qms/edit/{path}', [DocumentController::class, 'edit'])->where('path', '.*')->name('documents.edit');
     Route::put('/qms/save', [DocumentController::class, 'update'])->name('documents.update');
+    Route::put('/qms/update-meta', [DocumentController::class, 'updateMeta'])->name('documents.update-meta');
     Route::get('/qms/create', [DocumentController::class, 'create'])->name('documents.create');
     Route::post('/qms/store', [DocumentController::class, 'store'])->name('documents.store');
     Route::post('/qms/move', [DocumentController::class, 'move'])->name('documents.move');

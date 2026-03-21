@@ -1,0 +1,131 @@
+@php
+    $isEditPage = $isEditPage ?? false;
+    $metaFormAction = route('documents.update-meta');
+@endphp
+
+@if($meta['id'])
+<div x-data="{ showMeta: false }" class="bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div class="px-4 sm:px-6 py-4 sm:py-5">
+        <div class="flex items-start justify-between gap-4">
+            {{-- 2-column metadata --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-xs flex-1 min-w-0">
+                {{-- Left column --}}
+                <div class="space-y-1.5">
+                    <div class="flex items-center gap-2">
+                        <span class="font-mono font-semibold text-sm px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium
+                            {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
+                            {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
+                            {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
+                            {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">{{ \App\Services\DocumentMetadata::STATUSES[$meta['status']] ?? ucfirst($meta['status']) }}</span>
+                        @if($meta['version'])
+                            <span class="text-gray-400">v{{ $meta['version'] }}</span>
+                        @endif
+                    </div>
+                    @if($meta['author'])
+                        <div class="text-gray-400"><span class="text-gray-500 font-medium">Author:</span> {{ $meta['author'] }}</div>
+                    @endif
+                    @if($meta['effective_date'])
+                        <div class="text-gray-400"><span class="text-gray-500 font-medium">Effective:</span> {{ $meta['effective_date'] }}</div>
+                    @endif
+                </div>
+                {{-- Right column --}}
+                <div class="space-y-1.5">
+                    @if(!empty($meta['iso_refs']))
+                        <div class="text-gray-400"><span class="text-gray-500 font-medium">ISO 13485:</span> Clause {{ implode(', ', $meta['iso_refs']) }}</div>
+                    @endif
+                    @if(!empty($meta['mdr_refs']))
+                        <div class="text-gray-400"><span class="text-gray-500 font-medium">EU MDR:</span> {{ implode(', ', $meta['mdr_refs']) }}</div>
+                    @endif
+                    @if($lastEdit ?? null)
+                        <div class="text-gray-400">
+                            <span class="text-gray-500 font-medium">Last edit:</span>
+                            <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="text-blue-500 hover:text-blue-700 underline decoration-blue-300 hover:decoration-blue-500">{{ $lastEdit['name'] }}, {{ $lastEdit['date']->diffForHumans() }}</a>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Action buttons --}}
+            @if($canEdit ?? false)
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <button type="button" @click="showMeta = !showMeta"
+                            class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-md border transition-colors"
+                            :class="showMeta ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        Properties
+                    </button>
+                    @if(!$isEditPage)
+                        @if($isMarkdown ?? false)
+                            <a href="{{ route('documents.edit', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
+                               class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                Edit
+                            </a>
+                        @elseif(!($isForm ?? false))
+                            <a href="{{ route('documents.download', $currentPath) }}"
+                               class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                                Download
+                            </a>
+                        @endif
+                    @else
+                        <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
+                           class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                            Back to document
+                        </a>
+                    @endif
+                </div>
+            @endif
+        </div>
+    </div>
+
+    {{-- Editable properties panel --}}
+    <div x-show="showMeta" x-cloak class="px-4 sm:px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+        <form method="POST" action="{{ $metaFormAction }}">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="path" value="{{ $currentPath }}">
+            <input type="hidden" name="redirect" value="{{ $isEditPage ? 'edit' : 'show' }}">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                    <select name="meta_status" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                        @foreach(\App\Services\DocumentMetadata::STATUSES as $key => $label)
+                            <option value="{{ $key }}" {{ $meta['status'] === $key ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Version</label>
+                    <input type="text" name="meta_version" value="{{ $meta['version'] }}"
+                           class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Effective date</label>
+                    <input type="date" name="meta_effective_date" value="{{ $meta['effective_date'] }}"
+                           class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Author</label>
+                    <input type="text" name="meta_author" value="{{ $meta['author'] }}"
+                           class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+            <div class="flex justify-end mt-3">
+                <button type="submit" class="px-3 py-1.5 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700">Save properties</button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
