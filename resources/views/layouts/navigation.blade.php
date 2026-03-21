@@ -15,8 +15,12 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @php $navPendingCount = \App\Models\DocumentChange::count(); @endphp
                     <x-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.index') || request()->routeIs('documents.edit') || request()->routeIs('documents.create') || request()->routeIs('documents.changes')">
                         {{ __('Documents') }}
+                        @if($navPendingCount > 0)
+                            <span class="ml-1 w-2 h-2 bg-amber-500 rounded-full inline-block"></span>
+                        @endif
                     </x-nav-link>
                     <x-nav-link :href="route('documents.browse')" :active="request()->routeIs('documents.browse')">
                         {{ __('Browser') }}
@@ -86,6 +90,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.index') || request()->routeIs('documents.edit') || request()->routeIs('documents.create') || request()->routeIs('documents.changes')">
                 {{ __('Documents') }}
+                @if($navPendingCount > 0)
+                    <span class="ml-1 w-2 h-2 bg-amber-500 rounded-full inline-block"></span>
+                @endif
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('documents.browse')" :active="request()->routeIs('documents.browse')">
                 {{ __('Browser') }}
