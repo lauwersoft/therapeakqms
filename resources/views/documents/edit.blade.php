@@ -54,22 +54,6 @@
 
             .sortable-ghost { opacity: 0.4; }
             .sortable-drag { opacity: 0.9; }
-
-            /* EasyMDE fullscreen / side-by-side: take over entire screen */
-            .EasyMDEContainer.fullscreen {
-                z-index: 9999 !important;
-            }
-            body:has(.EasyMDEContainer.fullscreen) > div > nav,
-            body:has(.EasyMDEContainer.fullscreen) > div > header,
-            body:has(.EasyMDEContainer.fullscreen) aside {
-                display: none !important;
-            }
-            body:has(.EasyMDEContainer.fullscreen) .editor-topbar {
-                display: none !important;
-            }
-            body:has(.EasyMDEContainer.fullscreen) > div > main {
-                overflow: visible !important;
-            }
         </style>
     @endpush
 
