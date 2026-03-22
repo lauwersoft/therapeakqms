@@ -1,17 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <div class="min-w-0">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight truncate">{{ $title }}</h2>
-                @if($date)
-                    <span class="inline-flex items-center gap-1 mt-0.5 text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                        <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                        {{ $date }}
-                    </span>
-                @endif
-            </div>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight truncate">{{ $title }}</h2>
             <a href="{{ route('references.index') }}"
                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -23,8 +13,26 @@
     </x-slot>
 
     <div x-data="refViewer()" class="flex h-full overflow-hidden">
+        {{-- Mobile overlay --}}
+        <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-out duration-200" x-transition:leave="transition-opacity ease-in duration-150"
+             @click="sidebarOpen = false"
+             class="fixed inset-0 bg-gray-900/50 z-20 lg:hidden"></div>
+
         {{-- Sidebar --}}
-        <aside class="hidden lg:flex w-80 shrink-0 border-r border-gray-200 shadow-[2px_0_6px_-2px_rgba(0,0,0,0.06)] bg-white flex-col overflow-hidden">
+        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+               class="fixed inset-y-0 left-0 top-16 w-80 bg-white border-r border-gray-200 shadow-[2px_0_6px_-2px_rgba(0,0,0,0.06)] z-30
+                      transform transition-transform duration-200 ease-in-out
+                      lg:relative lg:top-0 lg:translate-x-0 lg:shrink-0 flex flex-col overflow-hidden">
+            {{-- Mobile close --}}
+            <div class="flex items-center justify-between px-4 h-14 border-b border-gray-200 lg:hidden shrink-0">
+                <span class="font-semibold text-gray-800">Navigation</span>
+                <button @click="sidebarOpen = false" class="p-1.5 rounded hover:bg-gray-100 text-gray-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
             {{-- File list --}}
             <div class="border-b border-gray-200 overflow-y-auto" style="max-height: 40%">
                 <div class="px-4 pt-4 pb-2">
@@ -57,7 +65,7 @@
                     </div>
                     <nav class="px-2 pb-4">
                         @foreach($toc as $idx => $item)
-                            <a href="#{{ $item['id'] }}"
+                            <a href="#{{ $item['id'] }}" @click="sidebarOpen = false"
                                :class="activeSection === '{{ $item['id'] }}' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'"
                                class="block px-2 py-1 text-xs rounded truncate transition-colors">
                                 {{ $item['title'] }}
@@ -69,18 +77,30 @@
         </aside>
 
         {{-- Content --}}
-        <main class="flex-1 overflow-y-scroll min-w-0" x-ref="content" @scroll.throttle.100ms="onScroll()">
-            <div class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-10">
-                    <div class="prose prose-sm sm:prose-base max-w-none
-                                text-gray-700 prose-headings:text-gray-800
-                                prose-h1:text-xl sm:prose-h1:text-2xl prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-3 prose-h1:mb-6
-                                prose-h2:text-lg sm:prose-h2:text-xl prose-h2:mt-8 prose-h2:scroll-mt-4
-                                prose-h3:text-base prose-h3:mt-6
-                                prose-strong:text-gray-800
-                                prose-table:text-sm prose-th:bg-gray-50 prose-th:px-3 prose-th:py-2 prose-td:px-3 prose-td:py-2
-                                prose-a:text-blue-600 prose-a:break-all">
-                        {!! $content !!}
+        <main class="flex-1 overflow-y-scroll min-w-0 flex flex-col" x-ref="content" @scroll.throttle.100ms="onScroll()">
+            {{-- Mobile top bar with hamburger --}}
+            <div class="bg-white border-b border-gray-200 shadow-sm shrink-0 px-4 h-12 flex items-center lg:hidden">
+                <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                <span class="ml-3 text-xs text-gray-500 truncate">Contents & References</span>
+            </div>
+
+            <div class="flex-1 overflow-y-auto">
+                <div class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-10">
+                        <div class="prose prose-sm sm:prose-base max-w-none
+                                    text-gray-700 prose-headings:text-gray-800
+                                    prose-h1:text-xl sm:prose-h1:text-2xl prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-3 prose-h1:mb-6
+                                    prose-h2:text-lg sm:prose-h2:text-xl prose-h2:mt-8 prose-h2:scroll-mt-4
+                                    prose-h3:text-base prose-h3:mt-6
+                                    prose-strong:text-gray-800
+                                    prose-table:text-sm prose-th:bg-gray-50 prose-th:px-3 prose-th:py-2 prose-td:px-3 prose-td:py-2
+                                    prose-a:text-blue-600 prose-a:break-all">
+                            {!! $content !!}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -92,6 +112,7 @@
             function refViewer() {
                 return {
                     activeSection: '',
+                    sidebarOpen: false,
                     sections: @json(collect($toc)->pluck('id')->values()),
 
                     onScroll() {

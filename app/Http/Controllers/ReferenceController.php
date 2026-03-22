@@ -25,10 +25,11 @@ class ReferenceController extends Controller
                 $filename = $file->getFilenameWithoutExtension();
                 $content = File::get($file->getPathname());
 
-                // Extract first H1 as title
+                // Extract first H1 as title (strip footnote markers)
                 $title = $filename;
                 if (preg_match('/^#\s+(.+)$/m', $content, $m)) {
-                    $title = $m[1];
+                    $title = preg_replace('/\[\^\d+\]/', '', $m[1]);
+                    $title = trim($title);
                 }
 
                 // Categorize
@@ -83,10 +84,11 @@ class ReferenceController extends Controller
 
         $raw = File::get($filePath);
 
-        // Extract title from first H1
+        // Extract title from first H1 (strip footnote markers)
         $title = $path;
         if (preg_match('/^#\s+(.+)$/m', $raw, $m)) {
-            $title = $m[1];
+            $title = preg_replace('/\[\^\d+\]/', '', $m[1]);
+            $title = trim($title);
         }
 
         // Extract date — look for lines like "October 2021", "March 2020", "June 2025 rev.1"
@@ -111,6 +113,13 @@ class ReferenceController extends Controller
 
         $converter = new MarkdownConverter($environment);
         $html = $converter->convert($raw)->getContent();
+
+        // Style date lines (e.g. "October 2021", "June 2025 rev.1") as badges
+        $html = preg_replace(
+            '/<p>((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}(?:\s*(?:\/\s*(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})?)?(?:\s+rev\.?\s*\d+)?)<\/p>/i',
+            '<p><span class="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full"><svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>$1</span></p>',
+            $html
+        );
 
         // Add IDs to h2 and h3 headings for anchor links
         $toc = [];
