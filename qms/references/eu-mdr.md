@@ -2575,8 +2575,8 @@ Manufacturers shall inform users of any residual risks.
 
 10.2.   Devices shall be designed, manufactured and packaged in such a way as to minimise the risk posed by contaminants and residues to patients, taking account of the intended purpose of the device, and to the persons involved in the transport, storage and use of the devices. Particular attention shall be paid to tissues exposed to those contaminants and residues and to the duration and frequency of exposure.
 10.3.   Devices shall be designed and manufactured in such a way that they can be used safely with the materials and substances, including gases, with which they enter into contact during their intended use; if the devices are intended to administer medicinal products they shall be designed and manufactured in such a way as to be compatible with the medicinal products concerned in accordance with the provisions and restrictions governing those medicinal products and that the performance of both the medicinal products and of the devices is maintained in accordance with their respective indications and intended use.
-10.4.   Substances
-10.4.1.   Design and manufacture of devices
+#### 10.4. Substances
+##### 10.4.1. Design and manufacture of devices
 Devices shall be designed and manufactured in such a way as to reduce as far as possible the risks posed by substances or particles, including wear debris, degradation products and processing residues, that may be released from the device.
 Devices, or those parts thereof or those materials used therein that:
 — are invasive and come into direct contact with the human body,
@@ -2591,11 +2591,11 @@ The justification for the presence of such substances shall be based upon:
 (b) an analysis of possible alternative substances, materials or designs, including, where available, information about independent research, peer-reviewed studies, scientific opinions from relevant scientific committees and an analysis of the availability of such alternatives;
 (c) argumentation as to why possible substance and/ or material substitutes, if available, or design changes, if feasible, are inappropriate in relation to maintaining the functionality, performance and the benefit-risk ratios of the product; including taking into account if the intended use of such devices includes treatment of children or treatment of pregnant or breastfeeding women or treatment of other patient groups considered particularly vulnerable to such substances and/or materials; and
 (d) where applicable and available, the latest relevant scientific committee guidelines in accordance with Sections 10.4.3. and 10.4.4.
-10.4.3.   Guidelines on phthalates
+##### 10.4.3. Guidelines on phthalates
 For the purposes of Section 10.4., the Commission shall, as soon as possible and by 26 May 2018, provide the relevant scientific committee with a mandate to prepare guidelines that shall be ready before 26 May 2020. The mandate for the committee shall encompass at least a benefit-risk assessment of the presence of phthalates which belong to either of the groups of substances referred to in points (a) and (b) of Section 10.4.1. The benefit-risk assessment shall take into account the intended purpose and context of the use of the device, as well as any available alternative substances and alternative materials, designs or medical treatments. When deemed appropriate on the basis of the latest scientific evidence, but at least every five years, the guidelines shall be updated.
-10.4.4.   Guidelines on other CMR and endocrine-disrupting substances
+##### 10.4.4. Guidelines on other CMR and endocrine-disrupting substances
 Subsequently, the Commission shall mandate the relevant scientific committee to prepare guidelines as referred to in Section 10.4.3. also for other substances referred to in points (a) and (b) of Section 10.4.1., where appropriate.
-10.4.5.   Labelling
+##### 10.4.5. Labelling
 Where devices, parts thereof or materials used therein as referred to in Section 10.4.1. contain substances referred to in points (a) or (b) of Section 10.4.1. in a concentration above 0,1 % weight by weight (w/w), the presence of those substances shall be labelled on the device itself and/or on the packaging for each unit or, where appropriate, on the sales packaging, with the list of such substances. If the intended use of such devices includes treatment of children or treatment of pregnant or breastfeeding women or treatment of other patient groups considered particularly vulnerable to such substances and/or materials, information on residual risks for those patient groups and, if applicable, on appropriate precautionary measures shall be given in the instructions for use.
 
 10.5.   Devices shall be designed and manufactured in such a way as to reduce as far as possible the risks posed by the unintentional ingress of substances into the device taking into account the device and the nature of the environment in which it is intended to be used.
@@ -2661,16 +2661,16 @@ Where devices, parts thereof or materials used therein as referred to in Section
 
 16.   Protection against radiation
 
-16.1.   General
+#### 16.1. General
 (a) Devices shall be designed, manufactured and packaged in such a way that exposure of patients, users and other persons to radiation is reduced as far as possible, and in a manner that is compatible with the intended purpose, whilst not restricting the application of appropriate specified levels for therapeutic and diagnostic purposes.
 (b) The operating instructions for devices emitting hazardous or potentially hazardous radiation shall contain detailed information as to the nature of the emitted radiation, the means of protecting the patient and the user, and on ways of avoiding misuse and of reducing the risks inherent to installation as far as possible and appropriate. Information regarding the acceptance and performance testing, the acceptance criteria, and the maintenance procedure shall also be specified.
 
-16.2.   Intended radiation
+#### 16.2. Intended radiation
 (a) Where devices are designed to emit hazardous, or potentially hazardous, levels of ionizing and/or non-ionizing radiation necessary for a specific medical purpose the benefit of which is considered to outweigh the risks inherent to the emission, it shall be possible for the user to control the emissions. Such devices shall be designed and manufactured to ensure reproducibility of relevant variable parameters within an acceptable tolerance.
 (b) Where devices are intended to emit hazardous, or potentially hazardous, ionizing and/or non-ionizing radiation, they shall be fitted, where possible, with visual displays and/or audible warnings of such emissions.
 
 16.3.   Devices shall be designed and manufactured in such a way that exposure of patients, users and other persons to the emission of unintended, stray or scattered radiation is reduced as far as possible. Where possible and appropriate, methods shall be selected which reduce the exposure to radiation of patients, users and other persons who may be affected.
-16.4.   Ionising radiation
+#### 16.4. Ionising radiation
 (a) Devices intended to emit ionizing radiation shall be designed and manufactured taking into account the requirements of the Directive 2013/59/Euratom laying down basic safety standards for protection against the dangers arising from exposure to ionising radiation.
 (b) Devices intended to emit ionising radiation shall be designed and manufactured in such a way as to ensure that, where possible, taking into account the intended use, the quantity, geometry and quality of the radiation emitted can be varied and controlled, and, if possible, monitored during treatment.
 (c) Devices emitting ionising radiation intended for diagnostic radiology shall be designed and manufactured in such a way as to achieve an image and/or output quality that are appropriate to the intended medical purpose whilst minimising radiation exposure of the patient and user.
@@ -2747,7 +2747,7 @@ The same information shall be given on moving parts and/or their housings where 
 
 23.   Label and instructions for use
 
-23.1.   General requirements regarding the information supplied by the manufacturer
+#### 23.1. General requirements regarding the information supplied by the manufacturer
 Each device shall be accompanied by the information needed to identify the device and its manufacturer, and by any safety and performance information relevant to the user, or any other person, as appropriate. Such information may appear on the device itself, on the packaging or in the instructions for use, and shall, if the manufacturer has a website, be made available and kept up to date on the website, taking into account the following:
 (a) The medium, format, content, legibility, and location of the label and instructions for use shall be appropriate to the particular device, its intended purpose and the technical knowledge, experience, education or training of the intended user(s). In particular, instructions for use shall be written in terms readily understood by the intended user and, where appropriate, supplemented with drawings and diagrams.
 (b) The information required on the label shall be provided on the device itself. If this is not practicable or appropriate, some or all of the information may appear on the packaging for each unit, and/or on the packaging of multiple devices.
@@ -2758,7 +2758,7 @@ Each device shall be accompanied by the information needed to identify the devic
 (g) Residual risks which are required to be communicated to the user and/or other person shall be included as limitations, contra-indications, precautions or warnings in the information supplied by the manufacturer.
 (h) Where appropriate, the information supplied by the manufacturer shall take the form of internationally recognised symbols. Any symbol or identification colour used shall conform to the harmonised standards or CS. In areas for which no harmonised standards or CS exist, the symbols and colours shall be described in the documentation supplied with the device.
 
-23.2.   Information on the label
+#### 23.2. Information on the label
 The label shall bear all of the following particulars:
 (a) the name or trade name of the device;
 (b) the details strictly necessary for a user to identify the device, the contents of the packaging and, where it is not obvious for the user, the intended purpose of the device;
@@ -2796,7 +2796,7 @@ The following particulars shall appear on the sterile packaging:
 (i) an unambiguous indication of the time limit for using or implanting the device safely expressed at least in terms of year and month, and
 (j) an instruction to check the instructions for use for what to do if the sterile packaging is damaged or unintentionally opened before use.
 
-23.4.   Information in the instructions for use
+#### 23.4. Information in the instructions for use
 The instructions for use shall contain all of the following particulars:
 (a) the particulars referred to in points (a), (c), (e), (f), (k), (l), (n) and (r) of Section 23.2;
 (b) the device's intended purpose with a clear specification of indications, contra-indications, the patient target group or groups, and of the intended users, as appropriate;
@@ -2855,7 +2855,7 @@ The technical documentation and, if applicable, the summary thereof to be drawn 
 
 1.   DEVICE DESCRIPTION AND SPECIFICATION, INCLUDING VARIANTS AND ACCESSORIES
 
-1.1.   Device description and specification
+#### 1.1. Device description and specification
 (a) product or trade name and a general description of the device including its intended purpose and intended users;
 (b) the Basic UDI-DI as referred to in Part C of Annex VI assigned by the manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability;
 (c) the intended patient population and medical conditions to be diagnosed, treated and/or monitored and other considerations such as patient selection criteria, indications, contra-indications, warnings;
@@ -2869,7 +2869,7 @@ The technical documentation and, if applicable, the summary thereof to be drawn 
 (k) a description of the raw materials incorporated into key functional elements and those making either direct contact with the human body or indirect contact with the body, e.g., during extracorporeal circulation of body fluids;
 (l) technical specifications, such as features, dimensions and performance attributes, of the device and any variants/configurations and accessories that would typically appear in the product specification made available to the user, for example in brochures, catalogues and similar publications.
 
-1.2.   Reference to previous and similar generations of the device
+#### 1.2. Reference to previous and similar generations of the device
 (a) an overview of the previous generation or generations of the device produced by the manufacturer, where such devices exist;
 (b) an overview of identified similar devices available on the Union or international markets, where such devices exist.
 
@@ -2898,7 +2898,7 @@ The documentation shall contain information on:
 6.   PRODUCT VERIFICATION AND VALIDATION
 The documentation shall contain the results and critical analyses of all verifications and validation tests and/or studies undertaken to demonstrate conformity of the device with the requirements of this Regulation and in particular the applicable general safety and performance requirements.
 
-6.1.   Pre-clinical and clinical data
+#### 6.1. Pre-clinical and clinical data
 (a) results of tests, such as engineering, laboratory, simulated use and animal tests, and evaluation of published literature applicable to the device, taking into account its intended purpose, or to similar devices, regarding the pre-clinical safety of the device and its conformity with the specifications;
 (b) detailed information regarding test design, complete test or study protocols, methods of data analysis, in addition to data summaries and test conclusions regarding in particular:
 — the biocompatibility of the device including the identification of all materials in direct or indirect contact with the patient or user;
@@ -2912,7 +2912,7 @@ Where no new testing has been undertaken, the documentation shall incorporate a 
 (c) the clinical evaluation report and its updates and the clinical evaluation plan referred to in Article 61(12) and Part A of Annex XIV;
 (d) the PMCF plan and PMCF evaluation report referred to in Part B of Annex XIV or a justification why a PMCF is not applicable.
 
-6.2.   Additional information required in specific cases
+#### 6.2. Additional information required in specific cases
 (a) Where a device incorporates, as an integral part, a substance which, if used separately, may be considered to be a medicinal product within the meaning of point 2 of Article 1 of Directive 2001/83/EC, including a medicinal product derived from human blood or human plasma, as referred to in the first subparagraph of Article 1(8), a statement indicating this fact. In this case, the documentation shall identify the source of that substance and contain the data of the tests conducted to assess its safety, quality and usefulness, taking account of the intended purpose of the device.
 (b) Where a device is manufactured utilising tissues or cells of human or animal origin, or their derivatives, and is covered by this Regulation in accordance with points (f) and (g) of Article 1(6, and where a device incorporates, as an integral part, tissues or cells of human origin or their derivatives that have an action ancillary to that of the device and is covered by this Regulation in accordance with the first subparagraph of Article 1(10), a statement indicating this fact. In such a case, the documentation shall identify all materials of human or animal origin used and provide detailed information concerning the conformity with Sections 13.1. or 13.2., respectively, of Annex I.
 (c) In the case of devices that are composed of substances or combinations of substances that are intended to be introduced into the human body and that are absorbed by or locally dispersed in the human body, detailed information, including test design, complete test or study protocols, methods of data analysis, and data summaries and test conclusions, regarding studies in relation to:
@@ -2932,7 +2932,7 @@ In the absence of such studies, a justification shall be provided.
 
 The technical documentation on post-market surveillance to be drawn up by the manufacturer in accordance with Articles 83 to 86 shall be presented in a clear, organised, readily searchable and unambiguous manner and shall include in particular the elements described in this Annex.
 
-1.1.   The post-market surveillance plan drawn up in accordance with Article 84.
+#### 1.1. The post-market surveillance plan drawn up in accordance with Article 84.
 The manufacturer shall prove in a post-market surveillance plan that it complies with the obligation referred to in Article 83.
 (a) The post-market surveillance plan shall address the collection and utilization of available information, in particular:
 — information concerning serious incidents, including information from PSURs, and field safety corrective actions;
@@ -3113,16 +3113,16 @@ UDI carriers include, inter alia, ID/linear bar code, 2D/Matrix bar code, RFID.
 2.   General requirements
 
 2.1.   The affixing of the UDI is an additional requirement — it does not replace any other marking or labelling requirements laid down in Annex I to this Regulation.
-2.2.   The manufacturer shall assign and maintain unique UDIs for its devices.
-2.3.   Only the manufacturer may place the UDI on the device or its packaging.
+#### 2.2. The manufacturer shall assign and maintain unique UDIs for its devices.
+#### 2.3. Only the manufacturer may place the UDI on the device or its packaging.
 2.4.   Only coding standards provided by issuing entities designated by the Commission pursuant to Article 27(2) may be used.
 
 3.   The UDI
 
 3.1.   A UDI shall be assigned to the device itself or its packaging. Higher levels of packaging shall have their own UDI.
 3.2.   Shipping containers shall be exempted from the requirement in Section 3.1. By way of example, a UDI shall not be required on a logistics unit; where a healthcare provider orders multiple devices using the UDI or model number of individual devices and the manufacturer places those devices in a container for shipping or to protect the individually packaged devices, the container (logistics unit) shall not be subject to UDI requirements.
-3.3.   The UDI shall contain two parts: a UDI-DI and a UDI-PI.
-3.4.   The UDI-DI shall be unique at each level of device packaging.
+#### 3.3. The UDI shall contain two parts: a UDI-DI and a UDI-PI.
+#### 3.4. The UDI-DI shall be unique at each level of device packaging.
 3.5.   If a lot number, serial number, software identification or expiry date appears on the label, it shall be part of the UDI-PI. If there is also a manufacturing date on the label, it does not need to be included in the UDI-PI. If there is only a manufacturing date on the label, this shall be used as the UDI-PI.
 3.6.   Each component that is considered to be a device and is commercially available on its own shall be assigned a separate UDI unless the components are part of a configurable device that is marked with its own UDI.
 3.7.   Systems and procedure packs as referred to in Article 22 shall be assigned and bear their own UDI.
@@ -3147,7 +3147,7 @@ UDI carriers include, inter alia, ID/linear bar code, 2D/Matrix bar code, RFID.
 4.5.   When AIDC carriers other than the UDI carrier are part of the product labelling, the UDI carrier shall be readily identifiable.
 4.6.   If linear bar codes are used, the UDI-DI and UDI-PI may be concatenated or non-concatenated in two or more bar codes. All parts and elements of the linear bar code shall be distinguishable and identifiable.
 4.7.   If there are significant constraints limiting the use of both AIDC and HRI on the label, only the AIDC format shall be required to appear on the label. For devices intended to be used outside healthcare facilities, such as devices for home care, the HRI shall however appear on the label even if this results in there being no space for the AIDC.
-4.8.   The HRI format shall follow the rules of the UDI code-issuing entity.
+#### 4.8. The HRI format shall follow the rules of the UDI code-issuing entity.
 4.9.   If the manufacturer is using RFID technology, a linear or 2D bar code in line with the standard provided by the issuing entities shall also be provided on the label.
 4.10.   Devices that are reusable shall bear a UDI carrier on the device itself. The UDI carrier for reusable devices that require cleaning, disinfection, sterilisation or refurbishing between patient uses shall be permanent and readable after each process performed to make the device ready for the subsequent use throughout the intended lifetime of the device. The requirement of this Section shall not apply to devices in the following circumstances:
 (a) any type of direct marking would interfere with the safety or performance of the device;
@@ -3175,7 +3175,7 @@ UDI carriers include, inter alia, ID/linear bar code, 2D/Matrix bar code, RFID.
 
 6.   Rules for specific device types
 
-6.1.   Implantable devices:
+#### 6.1. Implantable devices:
 6.1.1.
 Implantable devices shall, at their lowest level of packaging (‘unit packs’), be identified, or marked using AIDC, with a UDI (UDI-DI + UDI-PI);
 6.1.2.
@@ -3189,36 +3189,36 @@ The UDI of the implantable device shall be identifiable prior to implantation.
 6.2.1.   The UDI of such devices shall be placed on the device and be readable after each procedure to make the device ready for the next use.
 6.2.2.   The UDI-PI characteristics such as the lot or serial number shall be defined by the manufacturer.
 
-6.3.   Systems and procedure packs as referred to in Article 22
+#### 6.3. Systems and procedure packs as referred to in Article 22
 6.3.1.   The natural or legal person referred to in Article 22 shall be responsible for identifying the system or procedure pack with a UDI including both UDI-DI and UDI-PI.
 6.3.2.   Device contents of system or procedure packs shall bear a UDI carrier on their packaging or on the device itself.
 Exemptions:
 (a) individual single-use disposable devices, the uses of which are generally known to the persons by whom they are intended to be used, which are contained within a system or procedure pack, and which are not intended for individual use outside the context of the system or procedure pack, shall not be required to bear their own UDI carrier;
 (b) devices that are exempted from bearing a UDI carrier on the relevant level of packaging shall not be required to bear a UDI carrier when included within a system or procedure pack.
-6.3.3.   Placement of the UDI carrier on systems or procedure packs
+##### 6.3.3. Placement of the UDI carrier on systems or procedure packs
 (a) The system or procedure pack UDI carrier shall as a general rule be affixed to the outside of the packaging.
 (b) The UDI carrier shall be readable, or, in the case of AIDC, scannable, whether placed on the outside of the packaging of the system or procedure pack or inside transparent packaging.
 
-6.4.   Configurable devices:
+#### 6.4. Configurable devices:
 6.4.1.   A UDI shall be assigned to the configurable device in its entirety and shall be called the configurable device UDI.
 6.4.2.   The configurable device UDI-DI shall be assigned to groups of configurations, not per configuration within the group. A group of configurations is defined as the collection of possible configurations for a given device as described in the technical documentation.
 6.4.3.   A configurable device UDI-PI shall be assigned to each individual configurable device.
 6.4.4.   The carrier of the configurable device UDI shall be placed on the assembly that is most unlikely to be exchanged during the lifetime of the system and shall be identified as the configurable device UDI.
 6.4.5.   Each component that is considered a device and is commercially available on its own shall be assigned a separate UDI.
 
-6.5.   Device Software
-6.5.1.   UDI assignment Criteria
+#### 6.5. Device Software
+##### 6.5.1. UDI assignment Criteria
 The UDI shall be assigned at the system level of the software. Only software which is commercially available on its own and software which constitutes a device in itself shall be subject to that requirement.
 The software identification shall be considered to be the manufacturing control mechanism and shall be displayed in the UDI-PI.
-6.5.2.   A new UDI-DI shall be required whenever there is a modification that changes:
+##### 6.5.2. A new UDI-DI shall be required whenever there is a modification that changes:
 (a) the original performance;
 (b) the safety or the intended use of the software;
 (c) interpretation of data.
 Such modifications include new or modified algorithms, database structures, operating platform, architecture or new user interfaces or new channels for interoperability.
-6.5.3.   Minor software revisions shall require a new UDI-PI and not a new UDI-DI.
+##### 6.5.3. Minor software revisions shall require a new UDI-PI and not a new UDI-DI.
 Minor software revisions are generally associated with bug fixes, usability enhancements that are not for safety purposes, security patches or operating efficiency.
 Minor software revisions shall be identified by a manufacturer-specific form of identification.
-6.5.4.   UDI placement criteria for software
+##### 6.5.4. UDI placement criteria for software
 (a) where the software is delivered on a physical medium, e.g. CD or DVD, each packaging level shall bear the human readable and AIDC representation of the complete UDI. The UDI that is applied to the physical medium containing the software and its packaging shall be identical to the UDI assigned to the system level software;
 (b) the UDI shall be provided on a readily accessible screen for the user in an easily-readable plain-text format, such as an ‘about’ file, or included on the start-up screen;
 (c) software lacking a user interface such as middleware for image conversion, shall be capable of transmitting the UDI through an application programming interface (API);
@@ -3231,7 +3231,7 @@ Minor software revisions shall be identified by a manufacturer-specific form of 
 
 1.   ORGANISATIONAL AND GENERAL REQUIREMENTS
 
-1.1.   Legal status and organisational structure
+#### 1.1. Legal status and organisational structure
 1.1.1.   Each notified body shall be established under the national law of a Member State, or under the law of a third country with which the Union has concluded an agreement in this respect. Its legal personality and status shall be fully documented. Such documentation shall include information about ownership and the legal or natural persons exercising control over the notified body.
 1.1.2.   If the notified body is a legal entity that is part of a larger organisation, the activities of that organisation as well as its organisational structure and governance, and the relationship with the notified body shall be clearly documented. In such cases, the requirements of Section 1.2 are applicable to both the notified body and the organisation to which it belongs.
 1.1.3.   If a notified body wholly or partly owns legal entities established in a Member State or in a third country or is owned by another legal entity, the activities and responsibilities of those entities, as well as their legal and operational relationships with the notified body, shall be clearly defined and documented. Personnel of those entities performing conformity assessment activities under this Regulation shall be subject to the applicable requirements of this Regulation.
@@ -3246,7 +3246,7 @@ Minor software revisions shall be identified by a manufacturer-specific form of 
 — the delegation of authority to personnel and/or committees, where necessary, for the performance of defined activities;
 — the interaction with the authority responsible for notified bodies and the obligations regarding communications with other competent authorities, the Commission and other notified bodies.
 
-1.2.   Independence and impartiality
+#### 1.2. Independence and impartiality
 1.2.1.   The notified body shall be a third-party body that is independent of the manufacturer of the device in relation to which it performs conformity assessment activities. The notified body shall also be independent of any other economic operator having an interest in the device as well as of any competitors of the manufacturer. This does not preclude the notified body from carrying out conformity assessment activities for competing manufacturers.
 1.2.2.   The notified body shall be organised and operated so as to safeguard the independence, objectivity and impartiality of its activities. The notified body shall document and implement a structure and procedures for safeguarding impartiality and for promoting and applying the principles of impartiality throughout its organisation, personnel and assessment activities. Such procedures shall provide for the identification, investigation and resolution of any case in which a conflict of interest may arise, including involvement in consultancy services in the field of devices prior to taking up employment with the notified body. The investigation, outcome and its resolution shall be documented.
 1.2.3.   The notified body, its top-level management and the personnel responsible for carrying out the conformity assessment tasks shall not:
@@ -3262,18 +3262,18 @@ Minor software revisions shall be identified by a manufacturer-specific form of 
 1.2.8.   The notified body shall operate in accordance with a set of consistent, fair and reasonable terms and conditions, taking into account the interests of small and medium-sized enterprises as defined in Recommendation 2003/361/EC in relation to fees.
 1.2.9.   The requirements laid down in this Section in no way preclude exchanges of technical information and regulatory guidance between a notified body and a manufacturer applying for conformity assessment.
 
-1.3.   Confidentiality
+#### 1.3. Confidentiality
 1.3.1.   The notified body shall have documented procedures in place ensuring that its personnel, committees, subsidiaries, subcontractors, and any associated body or personnel of external bodies respect the confidentiality of the information which comes into its possession during the performance of conformity assessment activities, except when disclosure is required by law.
 1.3.2.   The personnel of a notified body shall observe professional secrecy in carrying out their tasks under this Regulation or any provision of national law giving effect to it, except in relation to the authorities responsible for notified bodies, competent authorities for medical devices in the Member States or the Commission. Proprietary rights shall be protected. The notified body shall have documented procedures in place in respect of the requirements of this Section.
 
-1.4.   Liability
+#### 1.4. Liability
 1.4.1.   The notified body shall take out appropriate liability insurance for its conformity assessment activities, unless liability is assumed by the Member State in question in accordance with national law or that Member State is directly responsible for the conformity assessment.
 1.4.2.   The scope and overall financial value of the liability insurance shall correspond to the level and geographic scope of activities of the notified body and be commensurate with the risk profile of the devices certified by the notified body. The liability insurance shall cover cases where the notified body may be obliged to withdraw, restrict or suspend certificates.
 
-1.5.   Financial requirements
+#### 1.5. Financial requirements
 The notified body shall have at its disposal the financial resources required to conduct its conformity assessment activities within its scope of designation and related business operations. It shall document and provide evidence of its financial capacity and its long-term economic viability, taking into account, where relevant, any specific circumstances during an initial start-up phase.
 
-1.6.   Participation in coordination activities
+#### 1.6. Participation in coordination activities
 1.6.1.   The notified body shall participate in, or ensure that its assessment personnel is informed of, any relevant standardisation activities and in the activities of the notified body coordination group referred to in Article 49 and that its assessment and decision-making personnel are informed of all relevant legislation, guidance and best practice documents adopted in the framework of this Regulation.
 1.6.2.   The notified body shall take into consideration guidance and best practice documents.
 
@@ -3299,7 +3299,7 @@ Where documents are used in various languages, the notified body shall ensure an
 
 3.   RESOURCE REQUIREMENTS
 
-3.1.   General
+#### 3.1. General
 3.1.1.   Notified bodies shall be capable of carrying out all the tasks falling to them under this Regulation with the highest degree of professional integrity and the requisite competence in the specific field, whether those tasks are carried out by notified bodies themselves or on their behalf and under their responsibility.
 In particular, notified bodies shall have the necessary personnel and possess or have access to all equipment, facilities and competence needed to perform properly the technical, scientific and administrative tasks entailed in the conformity assessment activities in relation to which they have been designated.
 Such requirement presupposes at all times and for each conformity assessment procedure and each type of devices in relation to which they have been designated, that the notified body has permanent availability of sufficient administrative, technical and scientific personnel who possess experience and knowledge relating to the relevant devices and the corresponding technologies. Such personnel shall be in sufficient numbers to ensure that the notified body in question can perform the conformity assessment tasks, including the assessment of the medical functionality, clinical evaluations and the performance and safety of devices, for which it has been designated, having regard to the requirements of this Regulation, in particular, those set out in Annex I.
@@ -3309,7 +3309,7 @@ The notified body shall identify at least one individual within its top-level ma
 3.1.2.   The notified body shall ensure that personnel involved in conformity assessment activities maintain their qualification and expertise by implementing a system for exchange of experience and a continuous training and education programme.
 3.1.3.   The notified body shall clearly document the extent and limits of duties and responsibilities and the level of authorisation of the personnel, including any subcontractors and external experts, involved in conformity assessment activities and inform those personnel accordingly.
 
-3.2.   Qualification criteria in relation to personnel
+#### 3.2. Qualification criteria in relation to personnel
 3.2.1.   The Notified Body shall establish and document qualification criteria and procedures for selection and authorisation of persons involved in conformity assessment activities, including as regards knowledge, experience and other competence required, and the required initial and ongoing training. The qualification criteria shall address the various functions within the conformity assessment process, such as auditing, product evaluation or testing, technical documentation review and decision-making, as well as the devices, technologies and areas, such as biocompatibility, sterilisation, tissues and cells of human and animal origin and clinical evaluation, covered by the scope of designation.
 3.2.2.   The qualification criteria referred to in Section 3.2.1 shall refer to the scope of a notified body's designation in accordance with the scope description used by the Member State for the notification referred to in Article 42(3), providing a sufficient level of detail for the required qualification within the subdivisions of the scope description.
 Specific qualification criteria shall be defined at least for the assessment of:
@@ -3364,13 +3364,13 @@ Specific qualification criteria shall be defined at least for the assessment of:
 — the notified body's quality management system, related procedures and the required qualifications for personnel involved;
 — the ability to draw up records and reports demonstrating that the conformity assessment activities have been appropriately carried out.
 
-3.3.   Documentation of qualification, training and authorisation of personnel
+#### 3.3. Documentation of qualification, training and authorisation of personnel
 3.3.1.   The notified body shall have a procedure in place to fully document the qualification of each member of personnel involved in conformity assessment activities and the satisfaction of the qualification criteria referred to in Section 3.2. Where in exceptional circumstances the fulfilment of the qualification criteria set out in Section 3.2. cannot be fully demonstrated, the notified body shall justify to the authority responsible for notified bodies the authorisation of those members of personnel to carry out specific conformity assessment activities.
 3.3.2.   For all of its personnel referred to in Sections 3.2.3 to 3.2.7, the notified body shall establish and maintain up to date:
 — a matrix detailing the authorisations and responsibilities of the personnel in respect of conformity assessment activities; and
 — records attesting to the required knowledge and experience for the conformity assessment activity for which they are authorised. The records shall contain a rationale for defining the scope of the responsibilities for each of the assessment personnel and records of the conformity assessment activities carried out by each of them.
 
-3.4.   Subcontractors and external experts
+#### 3.4. Subcontractors and external experts
 3.4.1.   Notified bodies may, without prejudice to Section 3.2, subcontract certain clearly defined component parts of a conformity assessment activity.
 The subcontracting of the auditing of quality management systems or of product related reviews as a whole shall not be permitted; nevertheless parts of those activities may be conducted by subcontractors and external auditors and experts working on behalf of the notified body. The notified body in question shall retain full responsibility for being able to produce appropriate evidence of the competence of subcontractors and experts to fulfil their specific tasks, for making a decision based on a subcontractor's assessment and for the work conducted by subcontractors and experts on its behalf.
 The following activities may not be subcontracted by notified bodies:
@@ -3385,7 +3385,7 @@ The following activities may not be subcontracted by notified bodies:
 Any subcontracting or consultation of external personnel shall be properly documented, shall not involve any intermediaries and shall be subject to a written agreement covering, among other things, confidentiality and conflicts of interest. The notified body in question shall take full responsibility for the tasks performed by subcontractors.
 3.4.3.   Where subcontractors or external experts are used in the context of a conformity assessment, in particular regarding novel, invasive and implantable devices or technologies, the notified body in question shall have internal competence in each product area for which it is designated that is adequate for the purpose of leading the overall conformity assessment, verifying the appropriateness and validity of expert opinions and making decisions on certification.
 
-3.5.   Monitoring of competences, training and exchange of experience
+#### 3.5. Monitoring of competences, training and exchange of experience
 3.5.1.   The notified body shall establish procedures for the initial evaluation and on-going monitoring of the competence, conformity assessment activities and performance of all internal and external personnel, and subcontractors, involved in conformity assessment activities.
 3.5.2.   Notified bodies shall review at regular intervals, the competence of their personnel, identify training needs and draw up a training plan to maintain the required level of qualification and knowledge of individual personnel. That review shall at a minimum, verify that personnel:
 — are aware of Union and national law in force on devices, relevant harmonised standards, CS, guidance documents and the results of the coordination activities referred to in Section 1.6; and
@@ -3393,11 +3393,11 @@ Any subcontracting or consultation of external personnel shall be properly docum
 
 4.   PROCESS REQUIREMENTS
 
-4.1.   General
+#### 4.1. General
 The notified body shall have in place documented processes and sufficiently detailed procedures for the conduct of each conformity assessment activity for which it is designated, comprising the individual steps from pre-application activities up to decision making and surveillance and taking into account, when necessary, the respective specificities of the devices.
 The requirements laid down in Sections 4.3, 4.4, 4.7 and 4.8 shall be fulfilled as part of the internal activities of notified bodies and shall not be subcontracted.
 
-4.2.   Notified body quotations and pre-application activities
+#### 4.2. Notified body quotations and pre-application activities
 The notified body shall:
 (a) publish a publicly available description of the application procedure by which manufacturers can obtain certification from it. That description shall include which languages are acceptable for submission of documentation and for any related correspondence;
 (b) have documented procedures relating to, and documented details about, fees charged for specific conformity assessment activities and any other financial conditions relating to notified bodies' assessment activities for devices;
@@ -3405,7 +3405,7 @@ The notified body shall:
 (d) have documented procedures requiring the review of pre-application information, including the preliminary verification that the product is covered by this Regulation and its classification, prior to issuing any quotation to the manufacturer relating to a specific conformity assessment; and
 (e) ensure that all contracts relating to the conformity assessment activities covered by this Regulation are concluded directly between the manufacturer and the notified body and not with any other organisation.
 
-4.3.   Application review and contract
+#### 4.3. Application review and contract
 The notified body shall require a formal application signed by a manufacturer or an authorised representative containing all of the information and the manufacturer's declarations required by the relevant conformity assessment as referred to in Annexes IX to XI.
 The contract between a notified body and a manufacturer shall take the form of a written agreement signed by both parties. It shall be kept by the notified body. This contract shall have clear terms and conditions and contain obligations that enable the notified body to act as required under this Regulation, including an obligation on the manufacturer to inform the notified body of vigilance reports, the right of the notified body to suspend, restrict or withdraw certificates issued and the duty of the notified body to fulfil its information obligations.
 The notified body shall have documented procedures to review applications, addressing:
@@ -3416,12 +3416,12 @@ The notified body shall have documented procedures to review applications, addre
 (e) the availability of sufficient and appropriate resources.
 The outcome of each review of an application shall be documented. Refusals or withdrawals of applications shall be notified to the electronic system referred to in Article 57 and shall be accessible to other notified bodies.
 
-4.4.   Allocation of resources
+#### 4.4. Allocation of resources
 The notified body shall have documented procedures to ensure that all conformity assessment activities are conducted by appropriately authorised and qualified personnel who are sufficiently experienced in the evaluation of the devices, systems and processes and related documentation that are subject to conformity assessment.
 For each application, the notified body shall determine the resources needed and identify one individual responsible for ensuring that the assessment of that application is conducted in accordance with the relevant procedures and for ensuring that the appropriate resources including personnel are utilised for each of the tasks of the assessment. The allocation of tasks required to be carried out as part of the conformity assessment and any changes subsequently made to this allocation shall be documented.
 
-4.5.   Conformity assessment activities
-4.5.1.   General
+#### 4.5. Conformity assessment activities
+##### 4.5.1. General
 The notified body and its personnel shall carry out the conformity assessment activities with the highest degree of professional integrity and the requisite technical and scientific competence in the specific fields.
 The notified body shall have expertise, facilities and documented procedures that are sufficient to effectively conduct the conformity assessment activities for which the notified body in question is designated, taking account of the relevant requirements set out in Annexes IX to XI, and in particular all of the following requirements:
 — appropriately plan the conduct of each individual project,
@@ -3437,7 +3437,7 @@ The notified body shall have expertise, facilities and documented procedures tha
 — relating to the sampling of devices, verify that the manufactured device is in conformity with the technical documentation; such requirements shall define the relevant sampling criteria and testing procedure prior to sampling,
 — evaluate and verify a manufacturer's compliance with relevant Annexes.
 The notified body shall, where relevant, take into consideration available CS, guidance and best practice documents and harmonised standards, even if the manufacturer does not claim to be in compliance.
-4.5.2.   Quality management system auditing
+##### 4.5.2. Quality management system auditing
 (a) As part of the assessment of the quality management system, a notified body shall prior to an audit and in accordance with its documented procedures:
 — assess the documentation submitted in accordance with the relevant conformity assessment Annex, and draw up an audit programme which clearly identifies the number and sequence of activities required to demonstrate complete coverage of a manufacturer's quality management system and to determine whether it meets the requirements of this Regulation,
 — identify links between, and allocation of responsibilities among, the various manufacturing sites, and identify relevant suppliers and/or subcontractors of the manufacturer, and consider the need to specifically audit any of those suppliers or subcontractors or both,
@@ -3458,7 +3458,7 @@ The documentation shall be sampled in such a manner as to reflect the risks asso
 — if not already covered by the audit programme, audit the control of processes on the premises of the manufacturer's suppliers, when the conformity of finished devices is significantly influenced by the activity of suppliers and, in particular when the manufacturer cannot demonstrate sufficient control over its suppliers,
 — conduct assessments of the technical documentation based on its sampling plan and taking account of Sections 4.5.4. and 4.5.5. for pre-clinical and clinical evaluations, and
 — the notified body shall ensure that audit findings are appropriately and consistently classified in accordance with the requirements of this Regulation and with relevant standards, or with best practice documents developed or adopted by the MDCG.
-4.5.3.   Product verification
+##### 4.5.3. Product verification
 Assessment of the technical documentation
 For assessment of the technical documentation conducted in accordance with Chapter II of Annex IX, notified bodies shall have sufficient expertise, facilities and documented procedures for:
 — the allocation of appropriately qualified and authorised personnel for the examination of individual aspects such as use of the device, biocompatibility, clinical evaluation, risk management, and sterilisation, and
@@ -3481,7 +3481,7 @@ The notified body shall:
 (d) have documented procedures to carry out the appropriate assessments and tests in order to verify the conformity of the device with the requirements of this Regulation by examining and testing every product as specified in Section 15 of Annex XI;
 (e) have documented procedures providing for the reaching of an agreement with the applicant concerning when and where necessary tests that are not to be carried out by the notified body itself are to be performed; and
 (f) assume full responsibility for test results in accordance with documented procedures; test reports submitted by the manufacturer shall only be taken into account if they have been issued by conformity assessment bodies which are competent and independent of the manufacturer.
-4.5.4.   Pre-clinical evaluation assessment
+##### 4.5.4. Pre-clinical evaluation assessment
 The notified body shall have documented procedures in place for the review of the manufacturer's procedures and documentation relating to the evaluation of pre-clinical aspects. The notified body shall examine, validate and verify that the manufacturer's procedures and documentation adequately address:
 (a) the planning, conduct, assessment, reporting and, where appropriate, updating of the pre-clinical evaluation, in particular of
 — the scientific pre-clinical literature search, and
@@ -3490,7 +3490,7 @@ The notified body shall have documented procedures in place for the review of th
 (c) the interface with the risk management process, and
 (d) the appraisal and analysis of the available pre-clinical data and its relevance with regard to demonstrating conformity with the relevant requirements in Annex I.
 The notified body's assessment of pre-clinical evaluation procedures and documentation shall address the results of literature searches and all validation, verification and testing performed and conclusions drawn, and shall typically include considering the use of alternative materials and substances and take account of the packaging, stability, including shelf life, of the finished device. Where no new testing has been undertaken by a manufacturer or where there are deviations from procedures, the notified body in question shall critically examine the justification presented by the manufacturer.
-4.5.5.   Clinical evaluation assessment
+##### 4.5.5. Clinical evaluation assessment
 The notified body shall have documented procedures in place relating to the assessment of a manufacturer's procedures and documentation relating to clinical evaluation both for initial conformity assessment and on an ongoing basis. The notified body shall examine, validate and verify that manufacturers' procedures and documentation adequately address:
 — the planning, conduct, assessment, reporting and updating of the clinical evaluation as referred to in Annex XIV,
 — post-market surveillance and PMCF,
@@ -3510,11 +3510,11 @@ The notified body's assessment of clinical evaluations as referred to in Annex X
 — justifications in relation to non-performance of clinical investigations or PMCF.
 In relation to clinical data from clinical investigations included within the clinical evaluation, the notified body in question shall ensure that the conclusions drawn by the manufacturer are valid in the light of the approved clinical investigation plan.
 The notified body shall ensure that the clinical evaluation adequately addresses the relevant safety and performance requirements provided for in Annex I, that it is appropriately aligned with the risk management requirements, that it is conducted in accordance with Annex XIV and that it is appropriately reflected in the information provided relating to the device.
-4.5.6.   Specific Procedures
+##### 4.5.6. Specific Procedures
 The notified body shall have documented procedures, sufficient expertise and facilities for the procedures referred to in Sections 5 and 6 of Annex IX, Section 6 of Annex X and Section 16 of Annex XI, for which they are designated.
 In the case of devices manufactured utilising tissues or cells of animal origin or their derivatives, such as from TSE susceptible species, as referred to in Regulation (EU) No 722/2012, the notified body shall have documented procedures in place that fulfil the requirements laid down in that Regulation, including for the preparation of a summary evaluation report for the relevant competent authority.
 
-4.6.   Reporting
+#### 4.6. Reporting
 The notified body shall:
 — ensure that all steps of the conformity assessment are documented so that the conclusions of the assessment are clear and demonstrate compliance with the requirements of this Regulation and can represent objective evidence of such compliance to persons that are not themselves involved in the assessment, for example personnel in designating authorities,
 — ensure that records that are sufficient to provide a discernible audit trail are available for quality management system audits,
@@ -3525,13 +3525,13 @@ The report of the notified body shall:
 — make a recommendation for a final review and for a final decision to be taken by the notified body; this recommendation shall be signed off by the member of personnel responsible in the notified body, and
 — be provided to the manufacturer in question.
 
-4.7.   Final review
+#### 4.7. Final review
 The notified body shall prior to making a final decision:
 — ensure that the personnel assigned for the final review and decision-making on specific projects are appropriately authorised and are different from the personnel who have conducted the assessments,
 — verify that the report or reports and supporting documentation needed for decision making, including concerning resolution of non-conformities noted during assessment, are complete and sufficient with respect to the scope of the application, and
 — verify whether there are any unresolved non-conformities preventing issuance of a certificate.
 
-4.8.   Decisions and Certifications
+#### 4.8. Decisions and Certifications
 The notified body shall have documented procedures for decision-making including as regards the allocation of responsibilities for the issuance, suspension, restriction and withdrawal of certificates. Those procedures shall include the notification requirements laid down in Chapter V of this Regulation. The procedures shall allow the notified body in question to:
 — decide, based on the assessment documentation and additional information available, whether the requirements of this Regulation are fulfilled,
 — decide, based on the results of its assessment of the clinical evaluation and risk management, whether the post-market surveillance plan, including the PMCF plan, is adequate,
@@ -3544,7 +3544,7 @@ The notified body shall have documented procedures for decision-making including
 — issue a certificate or certificates for the applicant alone and shall not issue certificates covering multiple entities, and
 — ensure that the manufacturer is notified of the outcome of the assessment and the resultant decision and that they are entered into the electronic system referred to in Article 57.
 
-4.9.   Changes and modifications
+#### 4.9. Changes and modifications
 The notified body shall have documented procedures and contractual arrangements with manufacturers in place relating to the manufacturers' information obligations and the assessment of changes to:
 — the approved quality management system or systems or to the product-range covered,
 — the approved design of a device,
@@ -3557,7 +3557,7 @@ In accordance with its documented procedures, the notified body in question shal
 — assess the changes proposed and verify whether, after these changes, the quality management system, or the design of a device or type of a device, still meets the requirements of this Regulation, and
 — notify the manufacturer of its decision and provide a report or as applicable a supplementary report, which shall contain the justified conclusions of its assessment.
 
-4.10.   Surveillance activities and post-certification monitoring
+#### 4.10. Surveillance activities and post-certification monitoring
 The notified body shall have documented procedures:
 — defining how and when surveillance activities of manufacturers are to be conducted. Those procedures shall include arrangements for unannounced on-site audits of manufacturers and, where applicable, subcontractors and suppliers carrying out product tests and the monitoring of compliance with any conditions binding manufacturers and associated with certification decisions, such as updates to clinical data at defined intervals,
 — for screening relevant sources of scientific and clinical data and post-market information relating to the scope of their designation. Such information shall be taken into account in the planning and conduct of surveillance activities, and
@@ -3583,7 +3583,7 @@ The notified body shall, if listed as part of the conditions for certification:
 — clearly document the outcome of the in-depth review and address any specific concerns to the manufacturer or impose any specific conditions on it, and
 — ensure that the clinical evaluation as most recently updated, is appropriately reflected in the instructions for use and, where applicable, the summary of safety and performance.
 
-4.11.   Re-certification
+#### 4.11. Re-certification
 The notified body shall have documented procedures in place relating to the re-certification reviews and the renewal of certificates. Re-certification of approved quality management systems or EU technical documentation assessment certificates or EU type-examination certificates shall occur at least every five years.
 The notified body shall have documented procedures relating to renewals of EU technical documentation assessment certificates and EU type-examination certificates and those procedures shall require the manufacturer in question to submit a summary of changes and scientific findings for the device, including:
 (a) all changes to the originally approved device, including changes not yet notified,
@@ -3614,18 +3614,18 @@ For the decision on re-certification, the notified body in question shall use th
 1.   DURATION OF USE
 1.1.    ‘Transient’ means normally intended for continuous use for less than 60 minutes.
 1.2.    ‘Short term’ means normally intended for continuous use for between 60 minutes and 30 days.
-1.3.    ‘Long term’ means normally intended for continuous use for more than 30 days.
+#### 1.3. ‘Long term’ means normally intended for continuous use for more than 30 days.
 
 2.   INVASIVE AND ACTIVE DEVICES
 2.1.    ‘Body orifice’ means any natural opening in the body, as well as the external surface of the eyeball, or any permanent artificial opening, such as a stoma.
-2.2.    ‘Surgically invasive device’ means:
+#### 2.2. ‘Surgically invasive device’ means:
 (a) an invasive device which penetrates inside the body through the surface of the body, including through mucous membranes of body orifices with the aid or in the context of a surgical operation; and
 (b) a device which produces penetration other than through a body orifice.
 2.3.    ‘Reusable surgical instrument’ means an instrument intended for surgical use in cutting, drilling, sawing, scratching, scraping, clamping, retracting, clipping or similar procedures, without a connection to an active device and which is intended by the manufacturer to be reused after appropriate procedures such as cleaning, disinfection and sterilisation have been carried out.
 2.4.    ‘Active therapeutic device’ means any active device used, whether alone or in combination with other devices, to support, modify, replace or restore biological functions or structures with a view to treatment or alleviation of an illness, injury or disability.
 2.5.    ‘Active device intended for diagnosis and monitoring’ means any active device used, whether alone or in combination with other devices, to supply information for detecting, diagnosing, monitoring or treating physiological conditions, states of health, illnesses or congenital deformities.
 2.6.    ‘Central circulatory system’ means the following blood vessels: arteriae pulmonales, aorta ascendens, arcus aortae, aorta descendens to the bifurcatio aortae, arteriae coronariae, arteria carotis communis, arteria carotis externa, arteria carotis interna, arteriae cerebrales, truncus brachiocephalicus, venae cordis, venae pulmonales, vena cava superior and vena cava inferior.
-2.7.    ‘Central nervous system’ means the brain, meninges and spinal cord.
+#### 2.7. ‘Central nervous system’ means the brain, meninges and spinal cord.
 2.8.    ‘Injured skin or mucous membrane’ means an area of skin or a mucous membrane presenting a pathological change or change following disease or a wound.
 
 
@@ -3651,20 +3651,20 @@ If the software is independent of any other device, it shall be classified in it
 
 4.   NON-INVASIVE DEVICES
 
-4.1.   Rule 1
+#### 4.1. Rule 1
 All non-invasive devices are classified as class I, unless one of the rules set out hereinafter applies.
 
-4.2.   Rule 2
+#### 4.2. Rule 2
 All non-invasive devices intended for channelling or storing blood, body liquids, cells or tissues, liquids or gases for the purpose of eventual infusion, administration or introduction into the body are classified as class IIa:
 — if they may be connected to a class IIa, class IIb or class III active device; or
 — if they are intended for use for channelling or storing blood or other body liquids or for storing organs, parts of organs or body cells and tissues, except for blood bags; blood bags are classified as class IIb.
 In all other cases, such devices are classified as class I.
 
-4.3.   Rule 3
+#### 4.3. Rule 3
 All non-invasive devices intended for modifying the biological or chemical composition of human tissues or cells, blood, other body liquids or other liquids intended for implantation or administration into the body are classified as class IIb, unless the treatment for which the device is used consists of filtration, centrifugation or exchanges of gas, heat, in which case they are classified as class IIa.
 All non-invasive devices consisting of a substance or a mixture of substances intended to be used in vitro in direct contact with human cells, tissues or organs taken from the human body or used in vitro with human embryos before their implantation or administration into the body are classified as class III.
 
-4.4.   Rule 4
+#### 4.4. Rule 4
 All non-invasive devices which come into contact with injured skin or mucous membrane are classified as:
 — class I if they are intended to be used as a mechanical barrier, for compression or for absorption of exudates;
 — class IIb if they are intended to be used principally for injuries to skin which have breached the dermis or mucous membrane and can only heal by secondary intent;
@@ -3674,14 +3674,14 @@ This rule applies also to the invasive devices that come into contact with injur
 
 5.   INVASIVE DEVICES
 
-5.1.   Rule 5
+#### 5.1. Rule 5
 All invasive devices with respect to body orifices, other than surgically invasive devices, which are not intended for connection to an active device or which are intended for connection to a class I active device are classified as:
 — class I if they are intended for transient use;
 — class IIa if they are intended for short-term use, except if they are used in the oral cavity as far as the pharynx, in an ear canal up to the ear drum or in the nasal cavity, in which case they are classified as class I; and
 — class IIb if they are intended for long-term use, except if they are used in the oral cavity as far as the pharynx, in an ear canal up to the ear drum or in the nasal cavity and are not liable to be absorbed by the mucous membrane, in which case they are classified as class IIa.
 All invasive devices with respect to body orifices, other than surgically invasive devices, intended for connection to a class IIa, class IIb or class III active device, are classified as class IIa.
 
-5.2.   Rule 6
+#### 5.2. Rule 6
 All surgically invasive devices intended for transient use are classified as class IIa unless they:
 — are intended specifically to control, diagnose, monitor or correct a defect of the heart or of the central circulatory system through direct contact with those parts of the body, in which case they are classified as class III;
 — are reusable surgical instruments, in which case they are classified as class I;
@@ -3690,7 +3690,7 @@ All surgically invasive devices intended for transient use are classified as cla
 — have a biological effect or are wholly or mainly absorbed in which case they are classified as class IIb; or
 — are intended to administer medicinal products by means of a delivery system, if such administration of a medicinal product is done in a manner that is potentially hazardous taking account of the mode of application, in which case they are classified as class IIb.
 
-5.3.   Rule 7
+#### 5.3. Rule 7
 All surgically invasive devices intended for short-term use are classified as class IIa unless they:
 — are intended specifically to control, diagnose, monitor or correct a defect of the heart or of the central circulatory system through direct contact with those parts of the body, in which case they are classified as class III;
 — are intended specifically for use in direct contact with the heart or central circulatory system or the central nervous system, in which case they are classified as class III;
@@ -3699,7 +3699,7 @@ All surgically invasive devices intended for short-term use are classified as cl
 — are intended to undergo chemical change in the body in which case they are classified as class IIb, except if the devices are placed in the teeth; or
 — are intended to administer medicines, in which case they are classified as class IIb.
 
-5.4.   Rule 8
+#### 5.4. Rule 8
 All implantable devices and long-term surgically invasive devices are classified as class IIb unless they:
 — are intended to be placed in the teeth, in which case they are classified as class IIa;
 — are intended to be used in direct contact with the heart, the central circulatory system or the central nervous system, in which case they are classified as class III;
@@ -3713,68 +3713,68 @@ All implantable devices and long-term surgically invasive devices are classified
 
 6.   ACTIVE DEVICES
 
-6.1.   Rule 9
+#### 6.1. Rule 9
 All active therapeutic devices intended to administer or exchange energy are classified as class IIa unless their characteristics are such that they may administer energy to or exchange energy with the human body in a potentially hazardous way, taking account of the nature, the density and site of application of the energy, in which case they are classified as class IIb.
 All active devices intended to control or monitor the performance of active therapeutic class IIb devices, or intended directly to influence the performance of such devices are classified as class IIb.
 All active devices intended to emit ionizing radiation for therapeutic purposes, including devices which control or monitor such devices, or which directly influence their performance, are classified as class IIb.
 All active devices that are intended for controlling, monitoring or directly influencing the performance of active implantable devices are classified as class III.
 
-6.2.   Rule 10
+#### 6.2. Rule 10
 Active devices intended for diagnosis and monitoring are classified as class IIa:
 — if they are intended to supply energy which will be absorbed by the human body, except for devices intended to illuminate the patient's body, in the visible spectrum, in which case they are classified as class I;
 — if they are intended to image in vivo distribution of radiopharmaceuticals; or
 — if they are intended to allow direct diagnosis or monitoring of vital physiological processes, unless they are specifically intended for monitoring of vital physiological parameters and the nature of variations of those parameters is such that it could result in immediate danger to the patient, for instance variations in cardiac performance, respiration, activity of the central nervous system, or they are intended for diagnosis in clinical situations where the patient is in immediate danger, in which cases they are classified as class IIb.
 Active devices intended to emit ionizing radiation and intended for diagnostic or therapeutic radiology, including interventional radiology devices and devices which control or monitor such devices, or which directly influence their performance, are classified as class IIb.
 
-6.3.   Rule 11
+#### 6.3. Rule 11
 Software intended to provide information which is used to take decisions with diagnosis or therapeutic purposes is classified as class IIa, except if such decisions have an impact that may cause:
 — death or an irreversible deterioration of a person's state of health, in which case it is in class III; or
 — a serious deterioration of a person's state of health or a surgical intervention, in which case it is classified as class IIb.
 Software intended to monitor physiological processes is classified as class IIa, except if it is intended for monitoring of vital physiological parameters, where the nature of variations of those parameters is such that it could result in immediate danger to the patient, in which case it is classified as class IIb.
 All other software is classified as class I.
 
-6.4.   Rule 12
+#### 6.4. Rule 12
 All active devices intended to administer and/or remove medicinal products, body liquids or other substances to or from the body are classified as class IIa, unless this is done in a manner that is potentially hazardous, taking account of the nature of the substances involved, of the part of the body concerned and of the mode of application in which case they are classified as class IIb.
 
-6.5.   Rule 13
+#### 6.5. Rule 13
 All other active devices are classified as class I.
 
 7.   SPECIAL RULES
 
-7.1.   Rule 14
+#### 7.1. Rule 14
 All devices incorporating, as an integral part, a substance which, if used separately, can be considered to be a medicinal product, as defined in point 2 of Article 1 of Directive 2001/83/EC, including a medicinal product derived from human blood or human plasma, as defined in point 10 of Article 1 of that Directive, and that has an action ancillary to that of the devices, are classified as class III.
 
-7.2.   Rule 15
+#### 7.2. Rule 15
 All devices used for contraception or prevention of the transmission of sexually transmitted diseases are classified as class IIb, unless they are implantable or long term invasive devices, in which case they are classified as class III.
 
-7.3.   Rule 16
+#### 7.3. Rule 16
 All devices intended specifically to be used for disinfecting, cleaning, rinsing or, where appropriate, hydrating contact lenses are classified as class IIb.
 All devices intended specifically to be used for disinfecting or sterilising medical devices are classified as class IIa, unless they are disinfecting solutions or washer-disinfectors intended specifically to be used for disinfecting invasive devices, as the end point of processing, in which case they are classified as class IIb.
 This rule does not apply to devices that are intended to clean devices other than contact lenses by means of physical action only.
 
-7.4.   Rule 17
+#### 7.4. Rule 17
 Devices specifically intended for recording of diagnostic images generated by X-ray radiation are classified as class IIa.
 
-7.5.   Rule 18
+#### 7.5. Rule 18
 All devices manufactured utilising tissues or cells of human or animal origin, or their derivatives, which are non-viable or rendered non-viable, are classified as class III, unless such devices are manufactured utilising tissues or cells of animal origin, or their derivatives, which are non-viable or rendered non-viable and are devices intended to come into contact with intact skin only.
 
-7.6.   Rule 19
+#### 7.6. Rule 19
 All devices incorporating or consisting of nanomaterial are classified as:
 — class III if they present a high or medium potential for internal exposure;
 — class IIb if they present a low potential for internal exposure; and
 — class IIa if they present a negligible potential for internal exposure.
 
-7.7.   Rule 20
+#### 7.7. Rule 20
 All invasive devices with respect to body orifices, other than surgically invasive devices, which are intended to administer medicinal products by inhalation are classified as class IIa, unless their mode of action has an essential impact on the efficacy and safety of the administered medicinal product or they are intended to treat life-threatening conditions, in which case they are classified as class IIb.
 
-7.8.   Rule 21
+#### 7.8. Rule 21
 Devices that are composed of substances or of combinations of substances that are intended to be introduced into the human body via a body orifice or applied to the skin and that are absorbed by or locally dispersed in the human body are classified as:
 — class III if they, or their products of metabolism, are systemically absorbed by the human body in order to achieve the intended purpose;
 — class III if they achieve their intended purpose in the stomach or lower gastrointestinal tract and they, or their products of metabolism, are systemically absorbed by the human body;
 — class IIa if they are applied to the skin or if they are applied in the nasal or oral cavity as far as the pharynx, and achieve their intended purpose on those cavities; and
 — class IIb in all other cases.
 
-7.9.   Rule 22
+#### 7.9. Rule 22
 Active therapeutic devices with an integrated or incorporated diagnostic function which significantly determines the patient management by the device, such as closed loop systems or automated external defibrillators, are classified as class III.
 
 
@@ -3823,7 +3823,7 @@ Moreover, the documentation to be submitted for the assessment of the quality ma
 (e) the appropriate tests and trials which are to be carried out before, during and after manufacture, the frequency with which they are to take place, and the test equipment to be used; it shall be possible to trace back adequately the calibration of that test equipment.
 In addition, the manufacturer shall grant the notified body access to the technical documentation referred to in Annexes II and III.
 
-2.3.   Audit
+#### 2.3. Audit
 The notified body shall audit the quality management system to determine whether it meets the requirements referred to in Section 2.2. Where the manufacturer uses a harmonised standard or CS related to a quality management system, the notified body shall assess conformity with those standards or CS. The notified body shall assume that a quality management system which satisfies the relevant harmonised standards or CS conforms to the requirements covered by those standards or CS, unless it duly substantiates not doing so.
 The audit team of the notified body shall include at least one member with past experience of assessments of the technology concerned in accordance with Sections 4.3. to 4.5. of Annex VII. In circumstances where such experience is not immediately obvious or applicable, the notified body shall provide a documented rationale for the composition of that team. The assessment procedure shall include an audit on the manufacturer's premises and, if appropriate, on the premises of the manufacturer's suppliers and/or subcontractors to verify the manufacturing and other relevant processes.
 Moreover, in the case of class IIa and class IIb devices, the quality management system assessment shall be accompanied by the assessment of technical documentation for devices selected on a representative basis in accordance with Sections 4.4 to 4.8. In choosing representative samples, the notified body shall take into account the published guidance developed by the MDCG pursuant to Article 105 and in particular the novelty of the technology, similarities in design, technology, manufacturing and sterilisation methods, the intended purpose and the results of any previous relevant assessments such as with regard to physical, chemical, biological or clinical properties, that have been carried out in accordance with this Regulation. The notified body in question shall document its rationale for the samples taken.
@@ -3871,7 +3871,7 @@ In the case of class III devices, the surveillance assessment shall also include
 
 5.   Specific additional procedures
 
-5.1.   Assessment procedure for certain class III and class IIb devices
+#### 5.1. Assessment procedure for certain class III and class IIb devices
 (a) For class III implantable devices, and for class IIb active devices intended to administer and/or remove a medicinal product as referred to in Section 6.4. of Annex VIII (Rule 12), the notified body shall, having verified the quality of clinical data supporting the clinical evaluation report of the manufacturer referred to in Article 61(12), prepare a clinical evaluation assessment report which sets out its conclusions concerning the clinical evidence provided by the manufacturer, in particular concerning the benefit-risk determination, the consistency of that evidence with the intended purpose, including the medical indication or indications and the PMCF plan referred to in Article 10(3) and Part B of Annex XIV.
 The notified body shall transmit its clinical evaluation assessment report, along with the manufacturer's clinical evaluation documentation, referred to in points (c) and (d) of Section 6.1 of Annex II, to the Commission.
 The Commission shall immediately transmit those documents to the relevant expert panel referred to in Article 106.
@@ -3887,7 +3887,7 @@ whether to provide a scientific opinion on the clinical evaluation assessment re
 (g) The notified body shall give due consideration to the views expressed in the scientific opinion of the expert panel. Where the expert panel finds that the level of clinical evidence is not sufficient or otherwise gives rise to serious concerns about the benefit-risk determination, the consistency of that evidence with the intended purpose, including the medical indication(s), and with the PMCF plan, the notified body shall, if necessary, advise the manufacturer to restrict the intended purpose of the device to certain groups of patients or certain medical indications and/or to impose a limit on the duration of validity of the certificate, to undertake specific PMCF studies, to adapt the instructions for use or the summary of safety and performance, or to impose other restrictions in its conformity assessment report, as appropriate. The notified body shall provide a full justification where it has not followed the advice of the expert panel in its conformity assessment report and the Commission shall without prejudice to Article 109 make both the scientific opinion of the expert panel and the written justification provided by the notified body publicly available via Eudamed.
 (h) The Commission, after consultation with the Member States and relevant scientific experts shall provide guidance for expert panels for consistent interpretation of the criteria in point (c) before 26 May 2020.
 
-5.2.   Procedure in the case of devices incorporating a medicinal substance
+#### 5.2. Procedure in the case of devices incorporating a medicinal substance
 (a) Where a device incorporates, as an integral part, a substance which, if used separately, may be considered to be a medicinal product within the meaning of point 2 of Article 1 of Directive 2001/83/EC, including a medicinal product derived from human blood or human plasma and that has an action ancillary to that of the device, the quality, safety and usefulness of the substance shall be verified by analogy with the methods specified in Annex I to Directive 2001/83/EC.
 (b) Before issuing an EU technical documentation assessment certificate, the notified body shall, having verified the usefulness of the substance as part of the device and taking account of the intended purpose of the device, seek a scientific opinion from one of the competent authorities designated by the Member States in accordance with Directive 2001/83/EC or from the EMA, either of which to be referred to in this Section as ‘the medicinal products authority consulted’ depending on which has been consulted under this point, on the quality and safety of the substance including the benefit or risk of the incorporation of the substance into the device. Where the device incorporates a human blood or plasma derivative or a substance that, if used separately, may be considered to be a medicinal product falling exclusively within the scope of the Annex to Regulation (EC) No 726/2004, the notified body shall seek the opinion of the EMA.
 (c) When issuing its opinion, the medicinal products authority consulted shall take into account the manufacturing process and the data relating to the usefulness of incorporation of the substance into the device as determined by the notified body.
@@ -3897,12 +3897,12 @@ whether to provide a scientific opinion on the clinical evaluation assessment re
 (g) Where the medicinal products authority consulted obtains information on the ancillary substance, which could have an impact on the risk or benefit previously established concerning the incorporation of the substance into the device, it shall advise the notified body as to whether this information has an impact on the risk or benefit previously established concerning the incorporation of the substance into the device. The notified body shall take that advice into account in reconsidering its assessment of the conformity assessment procedure.
 
 5.3.   Procedure in the case of devices manufactured utilising, or incorporating, tissues or cells of human or animal origin, or their derivatives, that are non-viable or rendered non-viable
-5.3.1.   Tissues or cells of human origin or their derivatives
+##### 5.3.1. Tissues or cells of human origin or their derivatives
 (a) For devices manufactured utilising derivatives of tissues or cells of human origin that are covered by this Regulation in accordance with point (g) of Article 1(6) and for devices that incorporate, as an integral part, tissues or cells of human origin, or their derivatives, covered by Directive 2004/23/EC, that have an action ancillary to that of the device, the notified body shall, prior to issuing an EU technical documentation assessment certificate, seek a scientific opinion from one of the competent authorities designated by the Member States in accordance with Directive 2004/23/EC (‘human tissues and cells competent authority’) on the aspects relating to the donation, procurement and testing of tissues or cells of human origin or their derivatives. The notified body shall submit a summary of the preliminary conformity assessment which provides, among other things, information about the non-viability of the human tissues or cells in question, their donation, procurement and testing and the risk or benefit of the incorporation of the tissues or cells of human origin or their derivatives into the device.
 (b) Within 120 days of receipt of all the necessary documentation, the human tissues and cells competent authority shall provide to the notified body its opinion.
 (c) The scientific opinion of the human tissues and cells competent authority, and any possible update, shall be included in the documentation of the notified body concerning the device. The notified body shall give due consideration to the views expressed in the scientific opinion of the human tissues and cells competent authority when making its decision. The notified body shall not deliver the certificate if that scientific opinion is unfavourable. It shall convey its final decision to the human tissues and cells competent authority concerned.
 (d) Before any change is made with respect to non-viable tissues or cells of human origin or their derivatives incorporated in a device, in particular relating to their donation, testing or procurement, the manufacturer shall inform the notified body of the intended changes. The notified body shall consult the authority that was involved in the initial consultation, in order to confirm that the quality and safety of the tissues or cells of human origin or their derivatives incorporated in the device are maintained. The human tissues and cells competent authority concerned shall take into account the data relating to the usefulness of incorporation of the tissues or cells of human origin or their derivatives into the device as determined by the notified body, in order to ensure that the changes have no negative impact on the established benefit-risk ratio of the addition of the tissues or cells of human origin or their derivatives in the device. It shall provide its opinion within 60 days of receipt of all the necessary documentation regarding the intended changes. The notified body shall not deliver a supplement to the EU technical documentation assessment certificate if the scientific opinion is unfavourable and shall convey its final decision to the human tissues and cells competent authority concerned.
-5.3.2.   Tissues or cells of animal origin or their derivatives
+##### 5.3.2. Tissues or cells of animal origin or their derivatives
 In the case of devices manufactured utilising animal tissue which is rendered non-viable or utilising non-viable products derived from animal tissue, as referred to in Regulation (EU) No 722/2012, the notified body shall apply the relevant requirements laid down in that Regulation.
 
 5.4.   Procedure in the case of devices that are composed of substances or of combinations of substances that are absorbed by or locally dispersed in the human body
@@ -3998,10 +3998,10 @@ Section 8 of Annex IX shall apply.
 6.2.   Implementation of the quality management system shall be such as to ensure that there is compliance with the type described in the EU type-examination certificate and with the provisions of this Regulation which apply to the devices at each stage. All the elements, requirements and provisions adopted by the manufacturer for its quality management system shall be documented in a systematic and orderly manner in the form of a quality manual and written policies and procedures, such as quality programmes, quality plans and quality records.
 That documentation shall, in particular, include an adequate description of all elements listed in points (a), (b), (d) and (e) of Section 2.2 of Annex IX.
 
-6.3.   The first and second paragraph of Section 2.3 of Annex IX shall apply.
+#### 6.3. The first and second paragraph of Section 2.3 of Annex IX shall apply.
 If the quality management system is such that it ensures that the devices conform to the type described in the EU type-examination certificate and that it conforms to the relevant provisions of this Regulation, the notified body shall issue an EU quality assurance certificate. The notified body shall notify the manufacturer of its decision to issue the certificate. That decision shall contain the conclusions of the notified body's audit and a reasoned assessment.
 
-6.4.   Section 2.4 of Annex IX shall apply.
+#### 6.4. Section 2.4 of Annex IX shall apply.
 
 7.   Surveillance
 Section 3.1, the first, second and fourth indents of Section 3.2, Sections 3.3, 3.4, 3.6 and 3.7 of Annex IX shall apply.
@@ -4182,7 +4182,7 @@ Both favourable and unfavourable data considered in the clinical evaluation shal
 (d) ensuring the continued acceptability of the benefit-risk ratio referred to in Sections 1 and 9 of Annex I, and
 (e) identifying possible systematic misuse or off-label use of the device, with a view to verifying that the intended purpose is correct.
 
-6.2.   The PMCF plan shall include at least:
+#### 6.2. The PMCF plan shall include at least:
 (a) the general methods and procedures of the PMCF to be applied, such as gathering of clinical experience gained, feedback from users, screening of scientific literature and of other sources of clinical data;
 (b) the specific methods and procedures of PMCF to be applied, such as evaluation of suitable registers or PMCF studies;
 (c) a rationale for the appropriateness of the methods and procedures referred to in points (a) and (b);
@@ -4284,7 +4284,7 @@ A detailed description of the clinical procedures and diagnostic tests used in t
 3.   Clinical Investigation Plan
 The clinical investigation plan (CIP) shall set out the rationale, objectives, design methodology, monitoring, conduct, record-keeping and the method of analysis for the clinical investigation. It shall contain in particular the information as laid down in this Annex. If part of this information is submitted in a separate document, it shall be referenced in the CIP.
 
-3.1.   General
+#### 3.1. General
 3.1.1.   Single identification number of the clinical investigation, as referred to in Article 70(1).
 3.1.2.   Identification of the sponsor — name, address and contact details of the sponsor and, where applicable, the name, address and contact details of the sponsor's contact person or legal representative in accordance with Article 62(2) established in the Union.
 3.1.3.   Information on the principal investigator at each investigational site, the coordinating investigator for the investigation, the address details for each investigational site and the emergency contact details for the principal investigator at each site. The roles, responsibilities and qualifications of the various kinds of investigators shall be specified in the CIP.
@@ -4294,28 +4294,28 @@ The clinical investigation plan (CIP) shall set out the rationale, objectives, d
 3.2.   Identification and description of the device, including its intended purpose, its manufacturer, its traceability, the target population, materials coming into contact with the human body, the medical or surgical procedures involved in its use and the necessary training and experience for its use, background literature review, the current state of the art in clinical care in the relevant field of application and the proposed benefits of the new device.
 3.3.   Risks and clinical benefits of the device to be examined, with justification of the corresponding expected clinical outcomes in the clinical investigation plan.
 3.4.   Description of the relevance of the clinical investigation in the context of the state of the art of clinical practice.
-3.5.   Objectives and hypotheses of the clinical investigation.
+#### 3.5. Objectives and hypotheses of the clinical investigation.
 3.6.   Design of the clinical investigation with evidence of its scientific robustness and validity.
 3.6.1.   General information such as type of investigation with rationale for choosing it, for its endpoints and for its variables as set out in the clinical evaluation plan.
 3.6.2.   Information on the investigational device, on any comparator and on any other device or medication to be used in the clinical investigation.
 3.6.3.   Information on subjects, selection criteria, size of investigation population, representativeness of investigation population in relation to target population and, if applicable, information on vulnerable subjects involved such as children, pregnant women, immuno-compromised or, elderly subjects.
 3.6.4.   Details of measures to be taken to minimise bias, such as randomisation, and management of potential confounding factors.
 3.6.5.   Description of the clinical procedures and diagnostic methods relating to the clinical investigation and in particular highlighting any deviation from normal clinical practice.
-3.6.6.   Monitoring plan.
+##### 3.6.6. Monitoring plan.
 
 3.7.   Statistical considerations, with justification, including a power calculation for the sample size, if applicable.
-3.8.   Data management.
-3.9.   Information about any amendments to the CIP.
+#### 3.8. Data management.
+#### 3.9. Information about any amendments to the CIP.
 3.10.   Policy regarding follow-up and management of any deviations from the CIP at the investigational site and clear prohibition of use of waivers from the CIP.
 3.11.   Accountability regarding the device, in particular control of access to the device, follow-up in relation to the device used in the clinical investigation and the return of unused, expired or malfunctioning devices.
 3.12.   Statement of compliance with the recognised ethical principles for medical research involving humans, and the principles of good clinical practice in the field of clinical investigations of devices, as well as with the applicable regulatory requirements.
-3.13.   Description of the Informed consent process.
+#### 3.13. Description of the Informed consent process.
 3.14.   Safety reporting, including definitions of adverse events and serious adverse events, device deficiencies, procedures and timelines for reporting.
 3.15.   Criteria and procedures for follow-up of subjects following the end, temporary halt or early termination of an investigation, for follow-up of subjects who have withdrawn their consent and procedures for subjects lost to follow-up. Such procedures shall for implantable devices, cover as a minimum traceability.
 3.16.   A description of the arrangements for taking care of the subjects after their participation in the clinical investigation has ended, where such additional care is necessary because of the subjects' participation in the clinical investigation and where it differs from that normally expected for the medical condition in question.
 3.17.   Policy as regards the establishment of the clinical investigation report and publication of results in accordance with the legal requirements and the ethical principles referred to in Section 1 of Chapter I.
 3.18.   List of the technical and functional features of the device, with specific mention of those covered by the investigation.
-3.19.   Bibliography.
+#### 3.19. Bibliography.
 
 4.   Other information
 

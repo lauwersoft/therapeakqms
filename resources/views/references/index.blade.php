@@ -23,7 +23,7 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <span class="text-sm font-medium text-gray-800 block">{{ $doc['title'] }}</span>
-                                <span class="text-xs text-gray-400">{{ number_format($doc['size'] / 1024, 0) }} KB</span>
+                                <span class="text-xs text-gray-400">{{ $doc['date'] ?? '' }}{{ $doc['date'] ? ' · ' : '' }}{{ number_format($doc['size'] / 1024, 0) }} KB</span>
                             </div>
                             <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>

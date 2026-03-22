@@ -41,10 +41,17 @@ class ReferenceController extends Controller
                     $category = 'MDCG Guidance';
                 }
 
+                // Extract date
+                $date = null;
+                if (preg_match('/^((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}(?:\s+rev\.?\s*\d+)?)/mi', $content, $dm)) {
+                    $date = $dm[1];
+                }
+
                 return [
                     'filename' => $filename,
                     'title' => $title,
                     'category' => $category,
+                    'date' => $date,
                     'size' => $file->getSize(),
                 ];
             })
@@ -82,6 +89,12 @@ class ReferenceController extends Controller
             $title = $m[1];
         }
 
+        // Extract date — look for lines like "October 2021", "March 2020", "June 2025 rev.1"
+        $date = null;
+        if (preg_match('/^((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}(?:\s+rev\.?\s*\d+)?)/mi', $raw, $dm)) {
+            $date = $dm[1];
+        }
+
         $environment = new Environment([
             'html_input' => 'strip',
             'allow_unsafe_links' => false,
@@ -116,6 +129,7 @@ class ReferenceController extends Controller
 
         return view('references.show', [
             'title' => $title,
+            'date' => $date,
             'content' => $html,
             'toc' => $toc,
             'path' => $path,

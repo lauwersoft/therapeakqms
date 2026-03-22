@@ -6,7 +6,12 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
             </a>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight truncate">{{ $title }}</h2>
+            <div class="min-w-0">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight truncate">{{ $title }}</h2>
+                @if($date)
+                    <span class="text-xs text-gray-400">{{ $date }}</span>
+                @endif
+            </div>
         </div>
     </x-slot>
 
