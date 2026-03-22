@@ -75,6 +75,16 @@ body:has(.editor-toolbar.fullscreen) > div > main {
     color: #6b7280;
 }
 
+.footnotes hr {
+    display: none;
+}
+
+/* Hide the "## Footnotes" heading rendered before the footnotes container */
+h2#footnotes,
+.footnotes + .footnotes {
+    display: none;
+}
+
 .footnotes ol {
     padding-left: 1.5rem;
     list-style: decimal;

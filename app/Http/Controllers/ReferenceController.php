@@ -100,7 +100,7 @@ class ReferenceController extends Controller
             'allow_unsafe_links' => false,
             'footnote' => [
                 'backref_class' => 'footnote-backref',
-                'container_add_hr' => true,
+                'container_add_hr' => false,
                 'container_class' => 'footnotes',
             ],
         ]);

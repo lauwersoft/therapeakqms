@@ -1,17 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('references.index') }}" class="text-gray-400 hover:text-gray-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-            </a>
+        <div class="flex items-center justify-between">
             <div class="min-w-0">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight truncate">{{ $title }}</h2>
                 @if($date)
-                    <span class="text-xs text-gray-400">{{ $date }}</span>
+                    <span class="inline-flex items-center gap-1 mt-0.5 text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                        <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        {{ $date }}
+                    </span>
                 @endif
             </div>
+            <a href="{{ route('references.index') }}"
+               class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Back to references
+            </a>
         </div>
     </x-slot>
 
