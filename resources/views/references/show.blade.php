@@ -1,17 +1,4 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between gap-3">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight truncate">{{ $title }}</h2>
-            <a href="{{ route('references.index') }}"
-               class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0 ml-auto">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-                Back to references
-            </a>
-        </div>
-    </x-slot>
-
     <div x-data="refViewer()" class="flex h-full overflow-hidden">
         {{-- Mobile overlay --}}
         <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-out duration-200" x-transition:leave="transition-opacity ease-in duration-150"
@@ -78,14 +65,25 @@
 
         {{-- Content --}}
         <main class="flex-1 min-w-0 flex flex-col overflow-hidden">
-            {{-- Mobile top bar with hamburger --}}
-            <div class="bg-white border-b border-gray-200 shadow-sm shrink-0 px-4 h-12 flex items-center lg:hidden">
-                <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
-                <span class="ml-3 text-xs text-gray-500 truncate">Contents & References</span>
+            {{-- Top bar --}}
+            <div class="bg-white border-b border-gray-200 shadow-sm shrink-0 relative z-40 px-4 h-16 flex items-center">
+                <div class="flex items-center justify-between gap-3 w-full">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 lg:hidden shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </button>
+                        <span class="text-sm font-semibold text-gray-800 truncate">{{ $title }}</span>
+                    </div>
+                    <a href="{{ route('references.index') }}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        Back to references
+                    </a>
+                </div>
             </div>
 
             <div class="flex-1 overflow-y-scroll" x-ref="content" @scroll.throttle.100ms="onScroll()">
