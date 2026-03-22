@@ -10,10 +10,13 @@
                class="fixed inset-y-0 left-0 top-16 w-80 bg-white border-r border-gray-200 shadow-[2px_0_6px_-2px_rgba(0,0,0,0.06)] z-30
                       transform transition-transform duration-200 ease-in-out
                       lg:relative lg:top-0 lg:translate-x-0 lg:shrink-0 flex flex-col overflow-hidden">
-            {{-- Mobile close --}}
-            <div class="flex items-center justify-between px-4 h-14 border-b border-gray-200 lg:hidden shrink-0">
-                <span class="font-semibold text-gray-800">Navigation</span>
-                <button @click="sidebarOpen = false" class="p-1.5 rounded hover:bg-gray-100 text-gray-500">
+            {{-- Sidebar header --}}
+            <div class="px-4 h-16 border-b border-gray-200 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2">
+                    <h2 class="font-semibold text-gray-800 text-lg">References</h2>
+                    <span class="text-xs text-gray-400">{{ count($files) }}</span>
+                </div>
+                <button @click="sidebarOpen = false" class="lg:hidden p-1.5 rounded hover:bg-gray-100 text-gray-500">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -22,8 +25,8 @@
 
             {{-- File list --}}
             <div class="border-b border-gray-200 overflow-y-auto" style="max-height: 40%">
-                <div class="px-4 pt-4 pb-2">
-                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">References</h3>
+                <div class="px-3 pt-3 pb-1">
+                    <h3 class="text-[10px] font-medium text-gray-400 uppercase tracking-wider px-2">Documents</h3>
                 </div>
                 <nav class="px-2 pb-2">
                     @php $currentCategory = ''; @endphp
