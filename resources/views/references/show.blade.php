@@ -34,7 +34,7 @@
             </div>
 
             {{-- File list --}}
-            <div class="border-b border-gray-200 overflow-y-auto" style="max-height: 40%">
+            <div class="border-b border-gray-200 overflow-y-auto lg:border-t" style="max-height: 40%">
                 <div class="px-4 pt-4 pb-2">
                     <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">References</h3>
                 </div>
@@ -77,7 +77,7 @@
         </aside>
 
         {{-- Content --}}
-        <main class="flex-1 overflow-y-scroll min-w-0 flex flex-col" x-ref="content" @scroll.throttle.100ms="onScroll()">
+        <main class="flex-1 min-w-0 flex flex-col overflow-hidden">
             {{-- Mobile top bar with hamburger --}}
             <div class="bg-white border-b border-gray-200 shadow-sm shrink-0 px-4 h-12 flex items-center lg:hidden">
                 <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400">
@@ -88,7 +88,7 @@
                 <span class="ml-3 text-xs text-gray-500 truncate">Contents & References</span>
             </div>
 
-            <div class="flex-1 overflow-y-auto">
+            <div class="flex-1 overflow-y-scroll" x-ref="content" @scroll.throttle.100ms="onScroll()">
                 <div class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-10">
                         <div class="prose prose-sm sm:prose-base max-w-none
