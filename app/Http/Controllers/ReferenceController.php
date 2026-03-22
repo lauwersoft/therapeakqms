@@ -85,9 +85,16 @@ class ReferenceController extends Controller
         $environment = new Environment([
             'html_input' => 'strip',
             'allow_unsafe_links' => false,
+            'footnote' => [
+                'backref_class' => 'footnote-backref',
+                'container_add_hr' => true,
+                'container_class' => 'footnotes',
+            ],
         ]);
         $environment->addExtension(new \League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension());
         $environment->addExtension(new TableExtension());
+        $environment->addExtension(new \League\CommonMark\Extension\Footnote\FootnoteExtension());
+        $environment->addExtension(new \League\CommonMark\Extension\Autolink\AutolinkExtension());
 
         $converter = new MarkdownConverter($environment);
         $html = $converter->convert($raw)->getContent();

@@ -58,7 +58,7 @@
 
         {{-- Content --}}
         <main class="flex-1 overflow-y-scroll min-w-0" x-ref="content" @scroll.throttle.100ms="onScroll()">
-            <div class="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-10">
                     <div class="prose prose-sm sm:prose-base max-w-none
                                 text-gray-700 prose-headings:text-gray-800
@@ -67,7 +67,7 @@
                                 prose-h3:text-base prose-h3:mt-6
                                 prose-strong:text-gray-800
                                 prose-table:text-sm prose-th:bg-gray-50 prose-th:px-3 prose-th:py-2 prose-td:px-3 prose-td:py-2
-                                prose-a:text-blue-600">
+                                prose-a:text-blue-600 prose-a:break-all">
                         {!! $content !!}
                     </div>
                 </div>
