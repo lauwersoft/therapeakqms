@@ -1,4 +1,4 @@
-# EU MDR 2017/745 — Regulation on Medical Devices
+# EU MDR 2017/745 - Regulation on Medical Devices
 
 REGULATION (EU) 2017/745 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL
 of 5 April 2017
