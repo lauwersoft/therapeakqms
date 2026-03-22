@@ -28,6 +28,9 @@
                     <x-nav-link :href="route('documents.history')" :active="request()->routeIs('documents.history') || request()->routeIs('documents.revision')">
                         {{ __('History') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('references.index')" :active="request()->routeIs('references.*')">
+                        {{ __('References') }}
+                    </x-nav-link>
                     @if(Auth::user()->isAdmin())
                         <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                             {{ __('Users') }}
@@ -105,6 +108,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('documents.history')" :active="request()->routeIs('documents.history') || request()->routeIs('documents.revision')">
                 {{ __('History') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('references.index')" :active="request()->routeIs('references.*')">
+                {{ __('References') }}
             </x-responsive-nav-link>
             @if(Auth::user()->isAdmin())
                 <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">

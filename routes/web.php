@@ -48,6 +48,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/forms/submission/{submission}', [\App\Http\Controllers\FormController::class, 'submission'])->name('forms.submission');
     Route::get('/forms/submissions/{formId}', [\App\Http\Controllers\FormController::class, 'submissions'])->name('forms.submissions');
 
+    // References
+    Route::get('/references', [\App\Http\Controllers\ReferenceController::class, 'index'])->name('references.index');
+    Route::get('/references/{path}', [\App\Http\Controllers\ReferenceController::class, 'show'])->where('path', '.*')->name('references.show');
+
     // QMS document viewer (catch-all, must be last)
     Route::get('/qms/{path?}', [DocumentController::class, 'index'])->where('path', '.*')->name('documents.index');
 
