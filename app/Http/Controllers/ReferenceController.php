@@ -104,11 +104,41 @@ class ReferenceController extends Controller
             return '<' . $tag . ' id="' . $id . '">' . $m[2] . '</' . $tag . '>';
         }, $html);
 
+        // File list for sidebar
+        $files = $this->getFileList();
+
         return view('references.show', [
             'title' => $title,
             'content' => $html,
             'toc' => $toc,
             'path' => $path,
+            'files' => $files,
         ]);
+    }
+
+    private function getFileList(): array
+    {
+        return collect(File::files($this->basePath))
+            ->filter(fn ($f) => $f->getExtension() === 'md')
+            ->map(function ($file) {
+                $filename = $file->getFilenameWithoutExtension();
+                $content = File::get($file->getPathname());
+                $title = $filename;
+                if (preg_match('/^#\s+(.+)$/m', $content, $m)) {
+                    $title = $m[1];
+                }
+                $category = 'Other';
+                if (str_starts_with($filename, 'iso-')) {
+                    $category = 'ISO Standards';
+                } elseif (str_starts_with($filename, 'eu-mdr')) {
+                    $category = 'EU MDR';
+                } elseif (str_starts_with($filename, 'mdcg-')) {
+                    $category = 'MDCG Guidance';
+                }
+                return ['filename' => $filename, 'title' => $title, 'category' => $category];
+            })
+            ->sortBy('title')
+            ->values()
+            ->toArray();
     }
 }
