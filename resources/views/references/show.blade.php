@@ -21,7 +21,7 @@
             </div>
 
             {{-- File list --}}
-            <div class="border-b border-gray-200 overflow-y-auto lg:border-t" style="max-height: 40%">
+            <div class="border-b border-gray-200 overflow-y-auto" style="max-height: 40%">
                 <div class="px-4 pt-4 pb-2">
                     <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">References</h3>
                 </div>
