@@ -56,7 +56,7 @@ class ReferenceController extends Controller
                     'size' => $file->getSize(),
                 ];
             })
-            ->sortBy('title')
+            ->sortBy('filename', SORT_NATURAL)
             ->groupBy('category');
 
         // Ensure consistent ordering of categories
@@ -167,7 +167,7 @@ class ReferenceController extends Controller
                 }
                 return ['filename' => $filename, 'title' => $title, 'category' => $category];
             })
-            ->sortBy('title')
+            ->sortBy('filename', SORT_NATURAL)
             ->values()
             ->toArray();
     }
