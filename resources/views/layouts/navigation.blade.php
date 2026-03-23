@@ -92,7 +92,7 @@
     </div>
 
     <!-- Responsive Navigation Overlay (starts below the nav bar) -->
-    <div x-show="open" @click="open = false" class="fixed left-0 right-0 bottom-0 bg-gray-900/50 lg:hidden" style="z-index: 45; top: 4rem;" x-cloak></div>
+    <div x-show="open" @click="open = false" class="fixed left-0 right-0 bottom-0 bg-gray-900/50 lg:hidden" style="z-index: 45; top: 4rem; display: none;" x-cloak></div>
 
     <!-- Responsive Navigation Menu -->
     <div x-show="open" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
