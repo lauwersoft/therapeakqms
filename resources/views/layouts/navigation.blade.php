@@ -92,11 +92,12 @@
     </div>
 
     <!-- Responsive Navigation Overlay -->
-    <div x-show="open" x-transition:enter="transition-opacity ease-out duration-200" x-transition:leave="transition-opacity ease-in duration-150"
-         @click="open = false" class="fixed inset-0 bg-gray-900/50 z-40 lg:hidden" x-cloak></div>
+    <div x-show="open" @click="open = false" class="fixed inset-0 bg-gray-900/50 lg:hidden" style="z-index: 45;" x-cloak></div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden absolute left-0 right-0 bg-white shadow-lg border-b border-gray-200 z-50">
+    <div x-show="open" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
+         class="lg:hidden absolute left-0 right-0 bg-white shadow-lg border-b border-gray-200" style="z-index: 55;" x-cloak>
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
