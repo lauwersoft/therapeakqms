@@ -46,13 +46,14 @@
 
             {{-- Table of contents --}}
             @if(count($toc) > 0)
-                <div class="flex-1 overflow-y-auto">
+                <div class="flex-1 overflow-y-auto" x-ref="tocContainer">
                     <div class="px-4 pt-4 pb-2">
                         <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Contents</h3>
                     </div>
                     <nav class="px-2 pb-4">
                         @foreach($toc as $idx => $item)
                             <a href="#{{ $item['id'] }}" @click="sidebarOpen = false"
+                               :id="'toc-' + '{{ $item['id'] }}'"
                                :class="activeSection === '{{ $item['id'] }}' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'"
                                class="block px-2 py-1 text-xs rounded truncate transition-colors">
                                 {{ $item['title'] }}
@@ -129,7 +130,15 @@
                                 }
                             }
                         }
-                        this.activeSection = active;
+                        if (active !== this.activeSection) {
+                            this.activeSection = active;
+                            this.$nextTick(() => {
+                                var tocItem = document.getElementById('toc-' + active);
+                                if (tocItem && this.$refs.tocContainer) {
+                                    tocItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                                }
+                            });
+                        }
                     },
 
                     init() {
