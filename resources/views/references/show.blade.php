@@ -121,12 +121,17 @@
                         var scrollTop = container.scrollTop;
                         var active = '';
 
-                        for (var i = 0; i < this.sections.length; i++) {
-                            var el = document.getElementById(this.sections[i]);
-                            if (el) {
-                                var offset = el.offsetTop - container.offsetTop;
-                                if (offset <= scrollTop + 100) {
-                                    active = this.sections[i];
+                        // If scrolled to the bottom, activate the last section
+                        if (scrollTop + container.clientHeight >= container.scrollHeight - 10) {
+                            active = this.sections[this.sections.length - 1];
+                        } else {
+                            for (var i = 0; i < this.sections.length; i++) {
+                                var el = document.getElementById(this.sections[i]);
+                                if (el) {
+                                    var offset = el.offsetTop - container.offsetTop;
+                                    if (offset <= scrollTop + 100) {
+                                        active = this.sections[i];
+                                    }
                                 }
                             }
                         }
