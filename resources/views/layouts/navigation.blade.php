@@ -91,8 +91,12 @@
         </div>
     </div>
 
+    <!-- Responsive Navigation Overlay -->
+    <div x-show="open" x-transition:enter="transition-opacity ease-out duration-200" x-transition:leave="transition-opacity ease-in duration-150"
+         @click="open = false" class="fixed inset-0 bg-gray-900/50 z-40 lg:hidden" x-cloak></div>
+
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden absolute left-0 right-0 bg-white shadow-lg border-b border-gray-200">
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden absolute left-0 right-0 bg-white shadow-lg border-b border-gray-200 z-50">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
