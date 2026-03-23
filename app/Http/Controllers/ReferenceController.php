@@ -127,7 +127,7 @@ class ReferenceController extends Controller
             $tag = $m[1];
             $text = strip_tags($m[2]);
             $id = \Illuminate\Support\Str::slug($text);
-            if ($tag === 'h2') {
+            if ($tag === 'h2' && strtolower($text) !== 'footnotes') {
                 $toc[] = ['id' => $id, 'title' => $text];
             }
             return '<' . $tag . ' id="' . $id . '">' . $m[2] . '</' . $tag . '>';
