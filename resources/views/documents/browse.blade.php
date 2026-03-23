@@ -284,14 +284,14 @@
             {{-- Filter bar --}}
             <div class="flex flex-wrap items-center gap-2 mb-5">
                 <div class="flex flex-wrap gap-1.5">
-                    <button @click="typeFilter = ''" class="px-2.5 py-1 text-xs rounded-full transition-colors"
+                    <button @click="typeFilter = ''" class="px-2.5 py-1 text-xs rounded-full transition-colors bg-gray-800 text-white"
                             :class="typeFilter === '' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
                         All types
                     </button>
                     @foreach(\App\Services\DocumentMetadata::TYPES as $key => $label)
                         @if(collect($documents)->where('type', $key)->count() > 0)
                             <button @click="typeFilter = typeFilter === '{{ $key }}' ? '' : '{{ $key }}'"
-                                    class="px-2.5 py-1 text-xs rounded-full transition-colors"
+                                    class="px-2.5 py-1 text-xs rounded-full transition-colors bg-white border border-gray-200 text-gray-600"
                                     :class="typeFilter === '{{ $key }}' ? '{{ \App\Services\DocumentMetadata::typeColor($key) }} ring-1 ring-current' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
                                 {{ $key }} <span class="opacity-60">({{ collect($documents)->where('type', $key)->count() }})</span>
                             </button>
@@ -300,14 +300,14 @@
                 </div>
                 <div class="w-px h-5 bg-gray-200"></div>
                 <div class="flex flex-wrap gap-1.5">
-                    <button @click="statusFilter = ''" class="px-2.5 py-1 text-xs rounded-full transition-colors"
+                    <button @click="statusFilter = ''" class="px-2.5 py-1 text-xs rounded-full transition-colors bg-gray-800 text-white"
                             :class="statusFilter === '' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
                         All statuses
                     </button>
                     @foreach(\App\Services\DocumentMetadata::STATUSES as $key => $label)
                         @if(collect($documents)->where('status', $key)->count() > 0)
                             <button @click="statusFilter = statusFilter === '{{ $key }}' ? '' : '{{ $key }}'"
-                                    class="px-2.5 py-1 text-xs rounded-full transition-colors"
+                                    class="px-2.5 py-1 text-xs rounded-full transition-colors bg-white border border-gray-200 text-gray-600"
                                     :class="statusFilter === '{{ $key }}' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
                                 {{ $label }} <span class="opacity-60">({{ collect($documents)->where('status', $key)->count() }})</span>
                             </button>
