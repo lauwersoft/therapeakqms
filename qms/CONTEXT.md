@@ -78,6 +78,173 @@
 - **Clause 7** — Product realization (design controls, purchasing, production, traceability)
 - **Clause 8** — Measurement, analysis and improvement (CAPA, complaints, audits)
 
+## Complete QMS Document Checklist
+
+Every document below is required for the NB audit. The `iso_refs` and `mdr_refs` columns show which requirements each document satisfies. Documents are listed in recommended creation order (dependencies first).
+
+### Tier 1: Foundation Documents (create first)
+
+| Doc ID | Type | Title | iso_refs | mdr_refs | Notes |
+|--------|------|-------|----------|----------|-------|
+| QM-001 | QM | Quality Manual | 4.2.2 | Article 10(9) | Top-level document. References all SOPs, policies, org chart, process interactions. |
+| POL-001 | POL | Quality Policy | 5.3 | Article 10(9) | Quality objectives, management commitment. |
+
+### Tier 2: Core SOPs (create second — these define all QMS processes)
+
+| Doc ID | Type | Title | iso_refs | mdr_refs | Notes |
+|--------|------|-------|----------|----------|-------|
+| SOP-001 | SOP | Document Control | 4.2.4, 4.2.5 | Article 10(9) | How documents are created, reviewed, approved, revised, obsoleted. |
+| SOP-002 | SOP | Risk Management | 7.1, 7.3.3 | Article 10(2), Annex I | References PLN-001 (Risk Management Plan). Links to ISO 14971. |
+| SOP-003 | SOP | CAPA (Corrective and Preventive Action) | 8.5.2, 8.5.3 | Article 10(9) | References FM-001 (CAPA Form). |
+| SOP-004 | SOP | Complaint Handling | 8.2.2 | Article 10(9), Article 87-92 | Customer complaints, links to vigilance. |
+| SOP-005 | SOP | Internal Audit | 8.2.2 | Article 10(9) | Audit scheduling, execution, findings, follow-up. |
+| SOP-006 | SOP | Management Review | 5.6 | Article 10(9) | Inputs, outputs, frequency, records. |
+| SOP-007 | SOP | Design and Development | 7.3 | Article 10(3), Annex II | Design planning, inputs, outputs, review, verification, validation, transfer, changes. Critical for SaMD. |
+| SOP-008 | SOP | Purchasing and Supplier Control | 7.4 | Article 10(9) | Supplier evaluation, approved supplier list, incoming inspection. |
+| SOP-009 | SOP | Post-Market Surveillance | 8.2.1 | Article 83-86, Annex III | PMS system, PMS plan, PMS report, PSUR, trend reporting. |
+| SOP-010 | SOP | Training and Competency | 6.2 | Article 10(9) | Training needs, records, effectiveness evaluation. |
+| SOP-011 | SOP | Software Lifecycle Management | 7.3, 7.5.6 | Article 10(9), Annex I | Software development, verification, validation, maintenance, configuration management. Based on IEC 62304 principles. |
+| SOP-012 | SOP | Clinical Evaluation | 7.3.7 | Article 61, Annex XIV | Clinical evaluation process, literature search, PMCF. |
+| SOP-013 | SOP | Vigilance and Field Safety | 8.2.3 | Article 87-92 | Serious incident reporting, FSCAs, FSNs, timelines. |
+| SOP-014 | SOP | Product Identification and Traceability | 7.5.8, 7.5.9 | Article 25-28 | UDI, traceability, labelling. |
+| SOP-015 | SOP | Control of Nonconforming Product | 8.3 | Article 10(9) | Detection, segregation, disposition of nonconforming product. |
+| SOP-016 | SOP | Cybersecurity Management | 7.3 | Annex I, Section 17.2 | Based on MDCG 2019-16. Threat modelling, security requirements, vulnerability management. |
+| SOP-017 | SOP | Change Management | 7.3.9 | Article 10(9) | Design changes, significant vs non-significant changes, re-assessment triggers. |
+
+### Tier 3: Plans (create after SOPs they reference)
+
+| Doc ID | Type | Title | iso_refs | mdr_refs | Notes |
+|--------|------|-------|----------|----------|-------|
+| PLN-001 | PLN | Risk Management Plan | 7.1 | Article 10(2), Annex I | Risk acceptability criteria, risk matrix, methods (FMEA, FTA). Referenced by SOP-002. |
+| PLN-002 | PLN | Clinical Evaluation Plan | 7.3.2 | Article 61, Annex XIV Part A | Literature search strategy, equivalence assessment, clinical data appraisal plan. |
+| PLN-003 | PLN | Post-Market Clinical Follow-up Plan | 8.2.1 | Annex XIV Part B | Based on MDCG 2020-7 template. PMCF activities, timelines, endpoints. |
+| PLN-004 | PLN | Post-Market Surveillance Plan | 8.2.1 | Article 84, Annex III | PMS data sources, methods, analysis, reporting schedule. |
+| PLN-005 | PLN | Software Development Plan | 7.3.2 | Annex II | Development lifecycle, tools, environments, V&V strategy. |
+| PLN-006 | PLN | Usability Engineering Plan | 7.3.2 | Annex I, Section 5 | Use specification, hazard-related use scenarios, usability testing plan. |
+
+### Tier 4: Forms (create alongside the SOPs that reference them)
+
+| Doc ID | Type | Title | Referenced by | Notes |
+|--------|------|-------|--------------|-------|
+| FM-001 | FM | CAPA Form | SOP-003 | Fields: CAPA number, source, severity, description, root cause, actions, verification. |
+| FM-002 | FM | Deviation/Nonconformance Form | SOP-015 | Fields: description, classification, disposition, corrective action. |
+| FM-003 | FM | Change Request Form | SOP-017 | Fields: change description, risk impact, classification (significant/non-significant). |
+| FM-004 | FM | Complaint Form | SOP-004 | Fields: source, device info, event description, health impact, investigation. |
+| FM-005 | FM | Supplier Evaluation Form | SOP-008 | Fields: supplier name, products, quality system, evaluation criteria, approval status. |
+| FM-006 | FM | Training Record Form | SOP-010 | Fields: employee, training topic, date, trainer, effectiveness assessment. |
+| FM-007 | FM | Design Review Form | SOP-007 | Fields: project, phase, participants, review items, actions, decisions. |
+| FM-008 | FM | Internal Audit Checklist | SOP-005 | Fields: audit area, clause, question, finding, evidence, classification. |
+| FM-009 | FM | Management Review Form | SOP-006 | Fields: date, attendees, inputs reviewed, decisions, actions. |
+
+### Tier 5: Supporting Documents (create as needed)
+
+| Doc ID | Type | Title | iso_refs | mdr_refs | Notes |
+|--------|------|-------|----------|----------|-------|
+| RA-001 | RA | Risk Management File | 7.1 | Annex I | Risk analysis, evaluation, controls, residual risk. Based on ISO 14971. |
+| CE-001 | CE | Clinical Evaluation Report | 7.3.7 | Article 61, Annex XIV | Clinical data, literature review, equivalence, benefit-risk. |
+| RPT-001 | RPT | PMS Report | 8.2.1 | Article 85 | Annual PMS report (Class IIa = PMS report, not PSUR). |
+| LST-001 | LST | Approved Supplier List | 7.4.1 | Article 10(9) | Supplier name, products, approval status, last evaluation date. |
+| LOG-001 | LOG | Training Log | 6.2 | Article 10(9) | All training records in one place. |
+| SPE-001 | SPE | Software Requirements Specification | 7.3.3 | Annex II | Functional, performance, safety, security requirements. |
+| SPE-002 | SPE | Product Specification | 7.3.3 | Annex II | Device description, intended purpose, indications, contraindications. |
+| LBL-001 | LBL | Instructions for Use | 7.3.3 | Annex I, Chapter III | IFU content per MDR Annex I Section 23. |
+| DWG-001 | DWG | Process Interaction Diagram | 4.2.2 | — | Shows how QMS processes interact. Include in Quality Manual. |
+| DWG-002 | DWG | Software Architecture Diagram | 7.3.3 | Annex II | System architecture, data flows, interfaces. |
+
+### Document Dependencies Map
+
+```
+Quality Manual (QM-001)
+├── references all SOPs (SOP-001 to SOP-017)
+├── references Quality Policy (POL-001)
+├── includes Process Interaction Diagram (DWG-001)
+│
+├── SOP-002 Risk Management
+│   ├── references PLN-001 Risk Management Plan
+│   └── references RA-001 Risk Management File
+│
+├── SOP-003 CAPA
+│   └── references FM-001 CAPA Form
+│
+├── SOP-004 Complaint Handling
+│   ├── references FM-004 Complaint Form
+│   └── references SOP-013 Vigilance (escalation path)
+│
+├── SOP-007 Design and Development
+│   ├── references FM-007 Design Review Form
+│   ├── references FM-003 Change Request Form
+│   ├── references SPE-001 Software Requirements
+│   ├── references PLN-005 Software Development Plan
+│   └── references SOP-011 Software Lifecycle
+│
+├── SOP-009 Post-Market Surveillance
+│   ├── references PLN-004 PMS Plan
+│   ├── references RPT-001 PMS Report
+│   └── references PLN-003 PMCF Plan
+│
+├── SOP-012 Clinical Evaluation
+│   ├── references PLN-002 Clinical Evaluation Plan
+│   └── references CE-001 Clinical Evaluation Report
+│
+└── SOP-016 Cybersecurity
+    └── based on MDCG 2019-16 guidance
+```
+
+## Class IIa AI Therapy SaMD — Specific Considerations
+
+When creating documents, always consider these AI SaMD-specific aspects:
+
+### Software Classification
+- Classified as Class IIa under MDR Annex VIII, Rule 11
+- MDSW qualification per MDCG 2019-11: software with a medical purpose = MDSW
+- Classification rationale must be documented (reference MDCG 2021-24 for guidance)
+
+### AI-Specific Risk Management
+- AI model risks: training data bias, model drift, overfitting, adversarial inputs
+- Retraining/updates = design changes → must go through change management (SOP-017)
+- Predetermined change control plan for AI model updates
+- Algorithm transparency and explainability requirements
+
+### Clinical Evidence for AI Therapy
+- Clinical evaluation must demonstrate therapy effectiveness (not just software performance)
+- Valid clinical association → technical performance → clinical performance (per MDCG 2020-1)
+- Real-world performance monitoring via PMCF
+- Patient outcome data collection strategy
+
+### Cybersecurity (MDCG 2019-16)
+- Threat modelling for the AI pipeline (data ingestion, model, API, client)
+- Data integrity requirements (therapy decisions depend on data quality)
+- Secure model deployment and update mechanisms
+- Vulnerability disclosure and patch management
+
+### AI Act Interplay (MDCG 2025-6)
+- AI therapy SaMD may also fall under EU AI Act as high-risk AI system
+- Dual compliance requirements: MDR + AI Act
+- Data governance, technical documentation, human oversight requirements
+- Refer to MDCG 2025-6 for FAQ on interplay
+
+### Key MDCG Documents to Reference When Writing
+- **MDCG 2019-11** — Use when writing SOP-011 (Software Lifecycle), SPE-001 (Requirements), and classification rationale
+- **MDCG 2019-16** — Use when writing SOP-016 (Cybersecurity)
+- **MDCG 2020-1** — Use when writing PLN-002 (Clinical Evaluation Plan), CE-001 (CER)
+- **MDCG 2020-7** — Use as template for PLN-003 (PMCF Plan)
+- **MDCG 2021-24** — Use when documenting classification rationale
+- **MDCG 2025-6** — Use when addressing AI Act compliance
+- **MDCG 2025-10** — Use when writing SOP-009 (PMS), PLN-004 (PMS Plan)
+
+## How to Create a QMS Document (Step-by-Step for Claude Code)
+
+1. **Check what exists**: `grep -r '^id:' qms/documents/` to see all existing document IDs
+2. **Read the relevant example**: Always read the example file in `qms/examples/` for that document type
+3. **Read the relevant reference**: Read the ISO 13485 clause and/or MDR article that the document must satisfy (from `qms/references/`)
+4. **Read any referenced MDCG guidance**: If the document relates to software, clinical evaluation, cybersecurity, PMS, etc.
+5. **Determine the next ID**: Use the correct prefix from the document types table, find the highest existing number, use the next one
+6. **Write the document**: Include complete frontmatter, proper `iso_refs` and `mdr_refs`, use `[[DOC-ID]]` links to reference other documents
+7. **Follow the standard structure**: Purpose → Scope → Responsibilities → Procedure → Records → References
+8. **Include reference links**: Link to specific clauses/articles using markdown links (e.g. `[Clause 4.2.4](/references/iso-13485#clause-4-2-4)`)
+9. **Place in the correct directory**: `procedures/`, `policies/`, `plans/`, `forms/`, `diagrams/`, `reports/`, `records/`, `certificates/`, `risk/`
+10. **Cross-reference related documents**: Use `[[DOC-ID]]` syntax to link to related SOPs, forms, plans
+
 ## Approach
 - QMS documents are being built using Claude Code
 - All reference standards/regulations are stored in `qms/references/` as markdown — readable by both AI and humans via the platform
