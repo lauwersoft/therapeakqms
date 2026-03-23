@@ -5,7 +5,7 @@
 {{-- Mobile overlay --}}
 <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-out duration-200" x-transition:leave="transition-opacity ease-in duration-150"
      @click="sidebarOpen = false"
-     class="fixed inset-0 bg-gray-900/50 z-20 lg:hidden"></div>
+     class="fixed inset-0 bg-gray-900/50 z-[60] lg:hidden" style="display:none;" x-cloak></div>
 
 {{-- Sidebar --}}
 <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
@@ -13,9 +13,9 @@
            @dragover.prevent="dragOver = true"
            @drop.prevent="handleDrop($event)"
        @endif
-       class="fixed inset-y-0 left-0 top-16 w-80 bg-white border-r border-gray-200 shadow-[2px_0_6px_-2px_rgba(0,0,0,0.06)] overflow-y-auto z-30
-              transform transition-transform duration-200 ease-in-out
-              lg:relative lg:top-0 lg:translate-x-0 lg:shrink-0 flex flex-col">
+       class="fixed inset-y-0 left-0 top-0 w-80 bg-white border-r border-gray-200 shadow-[2px_0_6px_-2px_rgba(0,0,0,0.06)] overflow-y-auto z-[70]
+              -translate-x-full transform transition-transform duration-200 ease-in-out
+              lg:relative lg:top-0 lg:z-30 lg:translate-x-0 lg:shrink-0 flex flex-col">
     <div class="px-4 h-16 border-b border-gray-200 flex items-center justify-between shrink-0">
         <div class="flex items-center gap-2">
             <h2 class="font-semibold text-gray-800 text-lg">Documents</h2>
