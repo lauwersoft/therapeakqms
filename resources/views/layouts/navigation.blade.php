@@ -93,7 +93,7 @@
 
     <!-- Responsive Navigation Overlay (starts below the nav bar) -->
     <div x-show="open"
-         x-transition:enter="transition-opacity ease-out duration-50 delay-[50ms]"
+         x-transition:enter="transition-opacity ease-out duration-[25ms] delay-[25ms]"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
          x-transition:leave="transition-opacity ease-in duration-100"
