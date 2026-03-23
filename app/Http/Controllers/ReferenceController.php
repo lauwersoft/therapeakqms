@@ -167,7 +167,11 @@ class ReferenceController extends Controller
                 }
                 return ['filename' => $filename, 'title' => $title, 'category' => $category];
             })
-            ->sortBy('filename', SORT_NATURAL)
+            ->sort(function ($a, $b) {
+                $order = ['ISO Standards' => 0, 'EU MDR' => 1, 'MDCG Guidance' => 2, 'Other' => 3];
+                $catCmp = ($order[$a['category']] ?? 9) <=> ($order[$b['category']] ?? 9);
+                return $catCmp !== 0 ? $catCmp : strnatcmp($a['filename'], $b['filename']);
+            })
             ->values()
             ->toArray();
     }
