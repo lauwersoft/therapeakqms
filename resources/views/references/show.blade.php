@@ -3,11 +3,11 @@
         {{-- Mobile overlay --}}
         <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-out duration-200" x-transition:leave="transition-opacity ease-in duration-150"
              @click="sidebarOpen = false"
-             class="fixed inset-0 bg-gray-900/50 z-40 lg:hidden"></div>
+             class="fixed inset-0 bg-gray-900/50 z-[60] lg:hidden"></div>
 
         {{-- Sidebar --}}
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-               class="fixed inset-y-0 left-0 top-0 w-80 bg-white border-r border-gray-200 shadow-[2px_0_6px_-2px_rgba(0,0,0,0.06)] z-50
+               class="fixed inset-y-0 left-0 top-0 w-80 bg-white border-r border-gray-200 shadow-[2px_0_6px_-2px_rgba(0,0,0,0.06)] z-[70]
                       transform transition-transform duration-200 ease-in-out
                       lg:relative lg:top-0 lg:z-30 lg:translate-x-0 lg:shrink-0 flex flex-col overflow-hidden">
             {{-- Sidebar header --}}
