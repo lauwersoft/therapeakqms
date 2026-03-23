@@ -324,8 +324,16 @@
                         class="text-xs text-blue-600 hover:text-blue-800">Clear all filters</button>
             </div>
 
+            {{-- Loading spinner --}}
+            <div x-show="!ready" class="flex items-center justify-center py-16">
+                <svg class="animate-spin h-6 w-6 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+            </div>
+
             {{-- Document list --}}
-            <template x-if="filteredDocs.length > 0">
+            <template x-if="ready && filteredDocs.length > 0">
                 <div>
                     {{-- Root files --}}
                     <template x-if="filteredDocs.some(d => d.raw_directory === '')">
@@ -392,7 +400,7 @@
                 </div>
             </template>
 
-            <div x-show="filteredDocs.length === 0" x-cloak class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+            <div x-show="ready && filteredDocs.length === 0" x-cloak class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
                 <p class="text-gray-400">No documents match your filters.</p>
             </div>
 
@@ -412,6 +420,7 @@
                 const dirs = [...new Set(docs.map(d => d.raw_directory))].sort();
 
                 return {
+                    ready: false,
                     search: '',
                     typeFilter: '',
                     statusFilter: '',
@@ -426,6 +435,10 @@
                     quickCreateModal: false,
                     newDirModal: false,
                     renameName: '',
+
+                    init() {
+                        this.$nextTick(() => this.ready = true);
+                    },
 
                     get filteredDocs() {
                         return this.docs.filter(d => {
