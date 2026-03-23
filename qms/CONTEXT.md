@@ -23,10 +23,19 @@
 - The NB will audit the QMS against both ISO 13485 and EU MDR
 
 ## Reference Documents in this Directory
-- `iso_13485_2016.txt` — Full ISO 13485:2016 standard text
-- `iso_14971_2019.txt` — Full ISO 14971:2019 standard text
-- `eu_mdr_2017_745.txt` — Full EU MDR 2017/745 regulation text (Annexes I–XVI)
-- `mdcg/` — MDCG guidance documents (free, from EU Commission)
+- `references/` — All regulatory reference documents as markdown (viewable on the platform at `/references`)
+  - `references/iso-13485.md` — Full ISO 13485:2016 standard text
+  - `references/iso-14971.md` — Full ISO 14971:2019 standard text
+  - `references/eu-mdr.md` — Full EU MDR 2017/745 regulation text (all 123 articles, Annexes I–XVI)
+  - `references/mdcg-2019-9.md` — MDCG 2019-9 Rev.1: Summary of Safety and Clinical Performance
+  - `references/mdcg-2019-11.md` — MDCG 2019-11 Rev.1: Guidance on Qualification and Classification of Software
+  - `references/mdcg-2019-16.md` — MDCG 2019-16 Rev.1: Guidance on Cybersecurity for Medical Devices
+  - `references/mdcg-2020-1.md` — MDCG 2020-1: Clinical Evaluation of Medical Device Software
+  - `references/mdcg-2020-7.md` — MDCG 2020-7: PMCF Plan Template
+  - `references/mdcg-2021-24.md` — MDCG 2021-24: Classification of Medical Devices
+  - `references/mdcg-2025-4.md` — MDCG 2025-4: MDSW Apps on Online Platforms
+  - `references/mdcg-2025-6.md` — MDCG 2025-6: MDR/IVDR and AI Act Interplay
+  - `references/mdcg-2025-10.md` — MDCG 2025-10: Post-market Surveillance Guidance
 - `examples/` — **REAL example files for each content type** (not visible in the QMS, for AI reference only):
   - `example-sop.md` — Full SOP with all sections (CAPA Procedure)
   - `example-form.form.json` — Full form with all field types (CAPA Form)
@@ -36,6 +45,23 @@
   - `example-policy.md` — Quality Policy
   - `example-uploaded-file.meta.json` — Sidecar metadata for uploaded files
   - **ALWAYS read the relevant example file before creating a new document of that type**
+
+## References Platform Feature
+- All reference documents are viewable at `/references` on the platform
+- Each document has a sidebar with file list and table of contents with scroll-spy highlighting
+- Document metadata fields `iso_refs` and `mdr_refs` in QMS documents generate clickable links to the reference pages with anchor navigation (e.g. `iso_refs: ["4.2.2"]` links to `/references/iso-13485#clause-4-2-2`)
+- References are NOT part of the controlled QMS document system — they have no doc IDs, no publish workflow, no version tracking
+- The reference files support markdown footnotes (via CommonMark Footnote extension) and auto-linked URLs (via Autolink extension)
+- When writing QMS documents, read the relevant reference file to ensure accurate clause/article citations
+- You can link directly to specific sections in reference documents from QMS document markdown content using standard markdown links:
+  - ISO 13485 clause: `[Clause 4.2.4](/references/iso-13485#clause-4-2-4)`
+  - ISO 14971 clause: `[Clause 7.1](/references/iso-14971#71-risk-control-option-analysis)`
+  - EU MDR article: `[Article 10](/references/eu-mdr#article-10-general-obligations-of-manufacturers)`
+  - EU MDR annex: `[Annex I](/references/eu-mdr#annex-i-general-safety-and-performance-requirements)`
+  - MDCG document: `[MDCG 2019-11](/references/mdcg-2019-11)`
+  - MDCG section: `[MDCG 2019-11, Section 3.2](/references/mdcg-2019-11#32-medical-device-software-mdsw)`
+- The anchor IDs are auto-generated slugs from the heading text (lowercase, hyphens, no special chars)
+- The `iso_refs` and `mdr_refs` frontmatter fields also auto-generate clickable links to references in the document metadata header
 
 ## Key MDR Sections for QMS
 - **Article 10** — General obligations of manufacturers
@@ -54,10 +80,11 @@
 
 ## Approach
 - QMS documents are being built using Claude Code
-- All reference standards/regulations are stored in `/qms` as plain text for AI consumption
-- Documents should cross-reference both ISO 13485 clauses and MDR requirements
-- Documents are stored in `qms/documents/`
-- Only `qms/documents/` is shown on the website — everything else is for AI/reference only
+- All reference standards/regulations are stored in `qms/references/` as markdown — readable by both AI and humans via the platform
+- Documents should cross-reference both ISO 13485 clauses and MDR requirements using `iso_refs` and `mdr_refs` frontmatter fields
+- QMS documents are stored in `qms/documents/` and viewable at `/qms`
+- Reference documents are stored in `qms/references/` and viewable at `/references`
+- The platform has: Documents (viewer + editor with sidebar), Browser, History, References, Dashboard, User management
 
 ---
 
