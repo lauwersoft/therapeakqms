@@ -34,7 +34,7 @@
                     @if(!empty($meta['iso_refs']))
                         <div class="text-gray-400"><span class="text-gray-500 font-medium">ISO 13485:</span>
                             @foreach($meta['iso_refs'] as $ref)
-                                <a href="{{ route('references.show', 'iso-13485') }}#clause-{{ \Illuminate\Support\Str::slug($ref) }}" class="text-blue-500 hover:text-blue-700 underline decoration-blue-300 hover:decoration-blue-500">Clause {{ $ref }}</a>{{ !$loop->last ? ', ' : '' }}
+                                <a href="{{ route('references.show', 'iso-13485') }}#{{ \Illuminate\Support\Str::slug($ref) }}" class="text-blue-500 hover:text-blue-700 underline decoration-blue-300 hover:decoration-blue-500">Clause {{ $ref }}</a>{{ !$loop->last ? ', ' : '' }}
                             @endforeach
                         </div>
                     @endif

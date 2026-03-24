@@ -52,7 +52,7 @@
                     </div>
                     <nav class="px-2 pb-4">
                         @foreach($toc as $idx => $item)
-                            <a href="#{{ $item['id'] }}" @click="sidebarOpen = false"
+                            <a href="#{{ $item['id'] }}" @click="sidebarOpen = false; $nextTick(() => highlightRefSection('{{ $item['id'] }}'))"
                                :id="'toc-' + '{{ $item['id'] }}'"
                                :class="activeSection === '{{ $item['id'] }}' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'"
                                class="block px-2 py-1 text-xs rounded truncate transition-colors">
@@ -109,6 +109,34 @@
 
     @push('scripts')
         <script>
+            function highlightRefSection(id) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var level = parseInt(el.tagName.charAt(1)) || 2;
+                var elements = [el];
+                var next = el.nextElementSibling;
+                while (next) {
+                    if (/^H[1-6]$/.test(next.tagName) && parseInt(next.tagName.charAt(1)) <= level) break;
+                    elements.push(next);
+                    next = next.nextElementSibling;
+                }
+                elements.forEach(function(e) {
+                    e.style.backgroundColor = '#fef9c3';
+                    e.style.borderLeft = '3px solid #f59e0b';
+                    e.style.paddingLeft = '12px';
+                    e.style.marginLeft = '-15px';
+                    e.style.transition = 'background-color 2s ease-out, border-color 2s ease-out';
+                });
+                setTimeout(function() {
+                    elements.forEach(function(e) {
+                        e.style.backgroundColor = '';
+                        e.style.borderLeft = '';
+                        e.style.paddingLeft = '';
+                        e.style.marginLeft = '';
+                    });
+                }, 3000);
+            }
+
             function refViewer() {
                 return {
                     activeSection: '',
@@ -148,6 +176,52 @@
 
                     init() {
                         this.$nextTick(() => this.onScroll());
+
+                        // Highlight section if URL has a hash
+                        if (window.location.hash) {
+                            var self = this;
+                            setTimeout(function() {
+                                var id = window.location.hash.substring(1);
+                                var el = document.getElementById(id);
+                                // Fuzzy match: if exact ID not found, find heading that starts with the hash
+                                if (!el) {
+                                    var headings = document.querySelectorAll('[id]');
+                                    for (var i = 0; i < headings.length; i++) {
+                                        if (headings[i].id.startsWith(id)) {
+                                            el = headings[i];
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (el) {
+                                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    // Highlight the section
+                                    var level = parseInt(el.tagName.charAt(1)) || 2;
+                                    var elements = [el];
+                                    var next = el.nextElementSibling;
+                                    while (next) {
+                                        if (/^H[1-6]$/.test(next.tagName) && parseInt(next.tagName.charAt(1)) <= level) break;
+                                        elements.push(next);
+                                        next = next.nextElementSibling;
+                                    }
+                                    elements.forEach(function(e) {
+                                        e.style.backgroundColor = '#fef9c3';
+                                        e.style.borderLeft = '3px solid #f59e0b';
+                                        e.style.paddingLeft = '12px';
+                                        e.style.marginLeft = '-15px';
+                                        e.style.transition = 'background-color 2s ease-out, border-color 2s ease-out';
+                                    });
+                                    setTimeout(function() {
+                                        elements.forEach(function(e) {
+                                            e.style.backgroundColor = '';
+                                            e.style.borderLeft = '';
+                                            e.style.paddingLeft = '';
+                                            e.style.marginLeft = '';
+                                        });
+                                    }, 3000);
+                                }
+                            }, 500);
+                        }
                     }
                 };
             }

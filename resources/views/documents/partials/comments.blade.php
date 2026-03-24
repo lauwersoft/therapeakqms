@@ -181,36 +181,90 @@
         height: 12px;
     }
 
-    /* Glow animation for highlighted elements */
-    @keyframes comment-glow {
-        0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5); background-color: rgba(59, 130, 246, 0.08); }
-        50% { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0); background-color: rgba(59, 130, 246, 0.05); }
-        100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); background-color: transparent; }
+    /* Section highlight animation */
+    .section-highlight {
+        background-color: #fef9c3 !important;
+        border-left: 3px solid #f59e0b !important;
+        padding-left: 12px !important;
+        margin-left: -15px !important;
+        transition: background-color 2s ease-out, border-color 2s ease-out;
     }
-    .comment-glow {
-        animation: comment-glow 1.5s ease-out;
-        border-radius: 6px;
+    .section-highlight-fade {
+        background-color: transparent !important;
+        border-left-color: transparent !important;
+    }
+    /* Card highlight */
+    .card-highlight {
+        box-shadow: 0 0 0 2px #f59e0b !important;
+        transition: box-shadow 2s ease-out;
+    }
+    .card-highlight-fade {
+        box-shadow: none !important;
     }
 </style>
 @endpush
 
 @push('scripts')
 <script>
-    // Glow helper — highlights an element by ID
-    function glowElement(id) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        el.classList.remove('comment-glow');
-        void el.offsetWidth; // force reflow to restart animation
-        el.classList.add('comment-glow');
-        setTimeout(function() { el.classList.remove('comment-glow'); }, 2000);
+    // Highlight an entire section (heading + content until next heading)
+    function highlightSection(id) {
+        // Clear any existing highlights
+        document.querySelectorAll('.section-highlight').forEach(function(el) {
+            el.classList.remove('section-highlight');
+        });
+
+        var heading = document.getElementById(id);
+        if (!heading) return;
+
+        // Collect heading + all siblings until next heading of same or higher level
+        var level = parseInt(heading.tagName.charAt(1));
+        var elements = [heading];
+        var next = heading.nextElementSibling;
+        while (next) {
+            if (/^H[1-6]$/.test(next.tagName) && parseInt(next.tagName.charAt(1)) <= level) break;
+            elements.push(next);
+            next = next.nextElementSibling;
+        }
+
+        // Apply highlight
+        elements.forEach(function(el) { el.classList.add('section-highlight'); });
+
+        // Fade out after 2 seconds
+        setTimeout(function() {
+            elements.forEach(function(el) {
+                el.classList.add('section-highlight-fade');
+                setTimeout(function() {
+                    el.classList.remove('section-highlight', 'section-highlight-fade');
+                }, 2000);
+            });
+        }, 1500);
     }
 
-    // Scroll helper — scrolls to element in the nearest scrollable parent
+    // Highlight a card element (comment card, not a section)
+    function highlightCard(el) {
+        if (!el) return;
+        el.classList.remove('card-highlight', 'card-highlight-fade');
+        void el.offsetWidth;
+        el.classList.add('card-highlight');
+        setTimeout(function() {
+            el.classList.add('card-highlight-fade');
+            setTimeout(function() {
+                el.classList.remove('card-highlight', 'card-highlight-fade');
+            }, 2000);
+        }, 1500);
+    }
+
+    // Scroll to element smoothly
     function scrollToElement(id) {
         var el = document.getElementById(id);
         if (!el) return;
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Combined: scroll + highlight section
+    function glowElement(id) {
+        scrollToElement(id);
+        setTimeout(function() { highlightSection(id); }, 300);
     }
 
     // Slugify helper (matches Laravel's Str::slug)
@@ -239,15 +293,12 @@
                     var target = document.getElementById('comments-section');
                     if (target) {
                         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        // Glow the matching comment section card
                         setTimeout(function() {
                             var cards = target.querySelectorAll('[data-section]');
                             cards.forEach(function(card) {
                                 if (card.dataset.section === text) {
-                                    card.classList.remove('comment-glow');
-                                    void card.offsetWidth;
-                                    card.classList.add('comment-glow');
-                                    setTimeout(function() { card.classList.remove('comment-glow'); }, 2000);
+                                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    setTimeout(function() { highlightCard(card); }, 300);
                                 }
                             });
                         }, 500);
