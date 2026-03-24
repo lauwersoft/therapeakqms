@@ -39,7 +39,10 @@
 
 {{-- New comment dialog --}}
 @if($canComment)
-<div id="new-comment-dialog" class="hidden fixed bottom-20 right-6 z-30 lg:bottom-24 lg:right-8 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
+<div id="new-comment-dialog" class="hidden fixed z-30
+    inset-x-0 bottom-0 rounded-t-xl
+    lg:inset-x-auto lg:bottom-24 lg:right-8 lg:w-96 lg:rounded-lg
+    bg-white shadow-xl border border-gray-200 overflow-hidden">
     <div class="px-4 py-2.5 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
         <span class="text-xs font-semibold text-gray-700">New Comment</span>
         <button onclick="this.closest('#new-comment-dialog').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
