@@ -7,7 +7,7 @@
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             {{-- Unresolved comments grouped by document --}}
             @if($unresolvedComments > 0)
-                <div class="mb-4">
+                <div class="mb-8">
                     <div class="flex items-center gap-2 mb-3">
                         <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
@@ -49,7 +49,8 @@
                                 {{-- Comments for this document --}}
                                 <div class="divide-y divide-gray-50">
                                     @foreach($rcGroup as $rc)
-                                        <div class="px-4 py-2.5 flex items-start gap-2.5">
+                                        <a href="{{ $rcPath ? route('documents.index', ['path' => $rcPath]) : '#' }}#comment-{{ $rc['id'] ?? '' }}"
+                                           class="flex items-start gap-2.5 px-4 py-2.5 hover:bg-gray-50 transition-colors">
                                             <div class="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5
                                                 {{ ($rc['type'] ?? '') === 'required_change' ? 'bg-red-100' : '' }}
                                                 {{ ($rc['type'] ?? '') === 'question' ? 'bg-purple-100' : '' }}
@@ -72,7 +73,8 @@
                                                 </div>
                                                 <p class="text-xs text-gray-600 mt-0.5 line-clamp-2">{{ $rc['content'] ?? '' }}</p>
                                             </div>
-                                        </div>
+                                            <svg class="w-3.5 h-3.5 text-gray-300 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                        </a>
                                     @endforeach
                                 </div>
                             </div>

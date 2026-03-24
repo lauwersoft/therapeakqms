@@ -241,6 +241,19 @@
             .replace(/^-+|-+$/g, '').replace(/--+/g, '-');
     }
 
+    // On page load, scroll to and highlight a specific comment if hash present
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.location.hash && window.location.hash.startsWith('#comment-')) {
+            var el = document.getElementById(window.location.hash.substring(1));
+            if (el) {
+                el.scrollIntoView({ block: 'center' });
+                // Flash the parent card
+                var card = el.closest('[data-section], .rounded-lg');
+                if (card) flashCard(card);
+            }
+        }
+    });
+
     // Inject comment indicators into document headings
     document.addEventListener('DOMContentLoaded', function() {
         var dataEl = document.getElementById('comment-data');

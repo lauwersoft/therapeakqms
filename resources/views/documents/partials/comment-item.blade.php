@@ -6,7 +6,7 @@
         'resolved_at' => null, 'replies' => [], 'created_at' => now()->toIso8601String(),
     ], $comment);
 @endphp
-<div class="px-4 py-3">
+<div id="comment-{{ $comment['id'] }}" class="px-4 py-3">
     <div class="flex items-start gap-3">
         {{-- Type indicator --}}
         <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5
