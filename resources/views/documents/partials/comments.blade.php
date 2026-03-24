@@ -187,15 +187,15 @@
         100% { background-color: transparent; }
     }
     .heading-flash {
-        animation: heading-flash 2.5s ease-out;
+        animation: heading-flash 1s ease-out;
         border-radius: 4px;
     }
     @keyframes card-flash {
-        0% { outline: 2px solid #3b82f6; outline-offset: 0; }
-        100% { outline: 2px solid transparent; outline-offset: 0; }
+        0% { outline: 2px solid #3b82f6; }
+        100% { outline: 2px solid transparent; }
     }
     .card-flash {
-        animation: card-flash 2.5s ease-out;
+        animation: card-flash 1s ease-out;
     }
 </style>
 @endpush
