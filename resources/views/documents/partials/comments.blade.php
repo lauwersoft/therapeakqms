@@ -13,7 +13,7 @@
 @endphp
 
 @if($docId)
-<div x-data="commentSystem()" class="mt-6 space-y-3">
+<div x-data="{ showResolved: false, newCommentOpen: false, newCommentSection: '', replyTo: null, resolveId: null }" class="mt-6 space-y-3">
 
     {{-- Summary bar --}}
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-3 flex items-center justify-between">
@@ -110,8 +110,7 @@
             $sectionOpen = collect($sectionGroup)->where('resolved', false);
             $sectionResolved = collect($sectionGroup)->where('resolved', true);
         @endphp
-        @if($sectionOpen->count() > 0 || $showResolved ?? false)
-            <div x-show="{{ $sectionOpen->count() > 0 ? 'true' : '' }}{{ $sectionOpen->count() === 0 ? 'showResolved' : '' }}" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div x-show="{{ $sectionOpen->count() > 0 ? 'true' : 'showResolved' }}" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                 {{-- Section header --}}
                 <div class="px-4 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
                     <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,15 +124,12 @@
                 {{-- Comments in this section --}}
                 <div class="divide-y divide-gray-50">
                     @foreach($sectionGroup as $comment)
-                        @if(!$comment['resolved'] || true)
-                            <div x-show="{{ !$comment['resolved'] ? 'true' : 'showResolved' }}" class="{{ $comment['resolved'] ? 'opacity-60' : '' }}">
-                                @include('documents.partials.comment-item', ['comment' => $comment, 'docId' => $docId, 'userRole' => $userRole, 'canComment' => $canComment])
-                            </div>
-                        @endif
+                        <div x-show="{{ !$comment['resolved'] ? 'true' : 'showResolved' }}" class="{{ $comment['resolved'] ? 'opacity-60' : '' }}">
+                            @include('documents.partials.comment-item', ['comment' => $comment, 'docId' => $docId, 'userRole' => $userRole, 'canComment' => $canComment])
+                        </div>
                     @endforeach
                 </div>
             </div>
-        @endif
     @endforeach
 
     {{-- General comments (no section) --}}
@@ -156,17 +152,4 @@
     @endif
 </div>
 
-@push('scripts')
-<script>
-    function commentSystem() {
-        return {
-            showResolved: false,
-            newCommentOpen: false,
-            newCommentSection: '',
-            replyTo: null,
-            resolveId: null,
-        };
-    }
-</script>
-@endpush
 @endif

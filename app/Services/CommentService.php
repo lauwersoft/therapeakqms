@@ -13,8 +13,13 @@ class CommentService
     {
         $this->basePath = base_path('qms/comments');
 
-        if (! File::isDirectory($this->basePath)) {
-            File::makeDirectory($this->basePath, 0775, true);
+        try {
+            if (! File::isDirectory($this->basePath)) {
+                File::makeDirectory($this->basePath, 0775, true);
+            }
+        } catch (\Throwable $e) {
+            // Directory might already exist or permissions may prevent creation
+            // Comments will gracefully return empty arrays if dir doesn't exist
         }
     }
 

@@ -1,3 +1,11 @@
+@php
+    $comment = array_merge([
+        'id' => '', 'user_id' => 0, 'user_name' => 'Unknown', 'section' => null,
+        'type' => 'observation', 'visibility' => 'internal', 'content' => '',
+        'resolved' => false, 'resolved_by' => null, 'resolved_note' => null,
+        'resolved_at' => null, 'replies' => [], 'created_at' => now()->toIso8601String(),
+    ], $comment);
+@endphp
 <div class="px-4 py-3">
     <div class="flex items-start gap-3">
         {{-- Type indicator --}}
