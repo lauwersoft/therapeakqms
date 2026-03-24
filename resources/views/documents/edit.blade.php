@@ -110,7 +110,7 @@
         @include('documents.partials.sidebar', ['sidebarCanEdit' => $canEdit])
 
         {{-- Main Content --}}
-        <main class="flex-1 bg-gray-50 min-w-0 flex flex-col overflow-hidden editor-main">
+        <main class="flex-1 bg-gray-100 min-w-0 flex flex-col overflow-hidden editor-main">
             {{-- Top bar --}}
             <div x-data="{ barZ: false }" x-effect="if (sidebarOpen) { barZ = true } else { setTimeout(() => barZ = false, 200) }"
                  class="bg-white border-b border-gray-200 shadow-sm shrink-0 relative px-4 h-16 flex items-center editor-topbar" :class="barZ ? 'z-0' : 'z-40'">
