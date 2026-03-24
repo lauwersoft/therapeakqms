@@ -7,11 +7,44 @@
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             {{-- Unresolved comments --}}
             @if($unresolvedComments > 0)
-                <div class="flex items-center gap-2 px-4 py-3 mb-4 text-sm bg-blue-50 text-blue-800 rounded-lg border border-blue-200">
-                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
-                    </svg>
-                    <span><strong>{{ $unresolvedComments }} unresolved {{ Str::plural('comment', $unresolvedComments) }}</strong> across your documents</span>
+                <div class="mb-4 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+                        </svg>
+                        <span class="text-sm font-medium text-gray-700">{{ $unresolvedComments }} unresolved {{ Str::plural('comment', $unresolvedComments) }}</span>
+                    </div>
+                    @foreach($recentComments as $rc)
+                        @php
+                            $rcDocPath = collect($docList)->firstWhere('doc_id', $rc['_doc_id']);
+                            $rcPath = $rcDocPath ? $rcDocPath['path'] : '';
+                        @endphp
+                        <a href="{{ $rcPath ? route('documents.index', ['path' => $rcPath]) : '#' }}"
+                           class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 border-b border-gray-50 last:border-b-0">
+                            <div class="w-6 h-6 rounded-full flex items-center justify-center shrink-0
+                                {{ ($rc['type'] ?? '') === 'required_change' ? 'bg-red-100 text-red-500' : '' }}
+                                {{ ($rc['type'] ?? '') === 'question' ? 'bg-purple-100 text-purple-500' : '' }}
+                                {{ ($rc['type'] ?? '') === 'observation' ? 'bg-blue-100 text-blue-500' : '' }}">
+                                @if(($rc['type'] ?? '') === 'required_change')
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01"/></svg>
+                                @elseif(($rc['type'] ?? '') === 'question')
+                                    <span class="text-[9px] font-bold">?</span>
+                                @else
+                                    <span class="text-[8px] font-bold">{{ strtoupper(substr($rc['user_name'] ?? '?', 0, 1)) }}</span>
+                                @endif
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs font-medium text-gray-500">{{ $rc['_doc_id'] }}</span>
+                                    @if($rc['section'] ?? null)
+                                        <span class="text-[10px] text-gray-400">· {{ Str::limit($rc['section'], 30) }}</span>
+                                    @endif
+                                </div>
+                                <p class="text-sm text-gray-700 truncate">{{ $rc['content'] ?? '' }}</p>
+                            </div>
+                            <span class="text-[10px] text-gray-300 shrink-0">{{ \Carbon\Carbon::parse($rc['created_at'] ?? now())->diffForHumans() }}</span>
+                        </a>
+                    @endforeach
                 </div>
             @endif
 

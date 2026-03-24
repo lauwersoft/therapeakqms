@@ -116,7 +116,7 @@
                 <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
                 </svg>
-                <span class="text-xs font-medium text-gray-600">{{ $section }}</span>
+                <a href="#{{ \Illuminate\Support\Str::slug(strip_tags($section)) }}" class="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline">{{ $section }}</a>
                 @if($sectionOpen->count() > 0)
                     <span class="text-[10px] px-1.5 py-0.5 rounded-full {{ $sectionOpen->where('type', 'required_change')->count() > 0 ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600' }} font-medium">{{ $sectionOpen->count() }}</span>
                 @endif

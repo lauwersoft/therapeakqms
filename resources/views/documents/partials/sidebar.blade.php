@@ -91,7 +91,7 @@
     </div>
     <nav class="p-3 flex-1 flex flex-col overflow-y-auto">
         <div>
-            @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $sidebarCanEdit, 'changedFiles' => $changedFiles])
+            @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $sidebarCanEdit, 'changedFiles' => $changedFiles, 'commentSummary' => $commentSummary ?? []])
         </div>
         @if($sidebarCanEdit)
             <div class="flex-1 min-h-[100px]"

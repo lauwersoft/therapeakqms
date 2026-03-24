@@ -261,6 +261,43 @@ class CommentService
     }
 
     /**
+     * Get recent unresolved comments across all documents.
+     */
+    public function recentUnresolved(int $limit = 5, ?string $role = 'admin'): array
+    {
+        $all = [];
+        $files = File::glob($this->basePath . '/*.json');
+
+        foreach ($files as $file) {
+            try {
+                $data = json_decode(File::get($file), true);
+                if (! is_array($data)) {
+                    continue;
+                }
+
+                $docId = pathinfo($file, PATHINFO_FILENAME);
+                foreach ($data as $comment) {
+                    if ($comment['resolved'] ?? false) {
+                        continue;
+                    }
+                    if ($role === 'auditor' && ($comment['visibility'] ?? 'internal') !== 'all') {
+                        continue;
+                    }
+                    $comment['_doc_id'] = $docId;
+                    $all[] = $comment;
+                }
+            } catch (\Throwable $e) {
+                continue;
+            }
+        }
+
+        // Sort by created_at descending
+        usort($all, fn ($a, $b) => strcmp($b['created_at'] ?? '', $a['created_at'] ?? ''));
+
+        return array_slice($all, 0, $limit);
+    }
+
+    /**
      * Read/modify comments with file locking.
      */
     private function withLock(string $docId, callable $callback): void

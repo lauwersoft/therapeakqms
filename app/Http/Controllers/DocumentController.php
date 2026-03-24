@@ -72,6 +72,14 @@ class DocumentController extends Controller
             $idMap = DocumentMetadata::idMap($docIndex);
             $html = DocumentMetadata::resolveLinks($html, $idMap);
 
+            // Add IDs to headings for comment section linking
+            $html = preg_replace_callback('/<(h[123])>(.*?)<\/\1>/s', function ($m) {
+                $tag = $m[1];
+                $text = strip_tags($m[2]);
+                $id = \Illuminate\Support\Str::slug($text);
+                return '<' . $tag . ' id="' . $id . '">' . $m[2] . '</' . $tag . '>';
+            }, $html);
+
             // Convert mermaid code blocks to renderable divs
             $html = preg_replace(
                 '/<pre><code class="language-mermaid">(.*?)<\/code><\/pre>/s',
@@ -132,6 +140,7 @@ class DocumentController extends Controller
         // Comments
         $commentService = app(CommentService::class);
         $docComments = $meta['id'] ? $commentService->getVisibleComments($meta['id'], $request->user()->role) : [];
+        $commentSummary = $commentService->summary();
 
         return view('documents.index', [
             'isForm' => $isForm,
@@ -151,6 +160,7 @@ class DocumentController extends Controller
             'pendingCount' => $pendingCount,
             'sidebarDocs' => $sidebarDocs,
             'docComments' => $docComments,
+            'commentSummary' => $commentSummary,
         ]);
     }
 
@@ -201,6 +211,10 @@ class DocumentController extends Controller
             ];
         }
 
+        $commentService = app(CommentService::class);
+        $docComments = $parsed['meta']['id'] ? $commentService->getVisibleComments($parsed['meta']['id'], $request->user()->role) : [];
+        $commentSummary = $commentService->summary();
+
         return view('documents.edit', [
             'content' => $parsed['body'],
             'meta' => $parsed['meta'],
@@ -215,6 +229,8 @@ class DocumentController extends Controller
             'canEdit' => true,
             'lastEdit' => $lastEdit,
             'directories' => $this->getDirectories(),
+            'docComments' => $docComments,
+            'commentSummary' => $commentSummary,
         ]);
     }
 

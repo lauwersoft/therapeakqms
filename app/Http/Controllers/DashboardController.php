@@ -48,6 +48,8 @@ class DashboardController extends Controller
         // Comments
         $commentService = app(CommentService::class);
         $unresolvedComments = $commentService->allUnresolvedCount(auth()->user()->role);
+        $recentComments = $commentService->recentUnresolved(5, auth()->user()->role);
+        $commentSummaryDashboard = $commentService->summary();
 
         return view('dashboard', [
             'recentCommits' => $recentCommits,
@@ -57,6 +59,8 @@ class DashboardController extends Controller
             'inReviewCount' => $inReviewCount,
             'docList' => $docList,
             'pendingCount' => $pendingCount,
+            'recentComments' => $recentComments,
+            'commentSummaryDashboard' => $commentSummaryDashboard,
             'unresolvedComments' => $unresolvedComments,
         ]);
     }

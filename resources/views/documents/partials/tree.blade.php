@@ -95,6 +95,7 @@
                             'currentPath' => $currentPath,
                             'canEdit' => $canEdit,
                             'changedFiles' => $changedFiles,
+                            'commentSummary' => $commentSummary ?? [],
                             'directory' => $item['path'],
                         ])
                     </div>
@@ -149,7 +150,12 @@
                                 <span class="text-[10px] font-mono block leading-tight"><span class="px-1 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($itemDocType) }}">{{ $item['doc_id'] }}</span>@if($item['doc_status'] ?? null) <span class="text-gray-400">· {{ ucfirst($item['doc_status'] === 'in_review' ? 'In Review' : $item['doc_status']) }}</span>@endif</span>
                             @endif
                         </span>
-                        @if($fileStatus)
+                        @php
+                            $itemCommentCount = ($item['doc_id'] && isset($commentSummary)) ? ($commentSummary[$item['doc_id']]['unresolved'] ?? 0) : 0;
+                        @endphp
+                        @if($itemCommentCount > 0)
+                            <span class="ml-auto shrink-0 w-4 h-4 rounded-full bg-blue-100 text-blue-600 text-[9px] font-bold flex items-center justify-center" title="{{ $itemCommentCount }} {{ Str::plural('comment', $itemCommentCount) }}">{{ $itemCommentCount }}</span>
+                        @elseif($fileStatus)
                             <span class="ml-auto shrink-0 w-2 h-2 rounded-full
                                 {{ in_array($fileStatus, ['new', 'added']) ? 'bg-green-500' : '' }}
                                 {{ $fileStatus === 'modified' ? 'bg-amber-500' : '' }}
