@@ -182,41 +182,43 @@
     }
 
     /* Simple heading highlight — no layout shift */
-    @keyframes heading-flash {
-        0% { background-color: rgba(59, 130, 246, 0.15); }
-        100% { background-color: transparent; }
-    }
     .heading-flash {
-        animation: heading-flash 1s ease-out;
+        background-color: rgba(59, 130, 246, 0.18);
         border-radius: 4px;
     }
-    @keyframes card-flash {
-        0% { outline: 2px solid #3b82f6; }
-        100% { outline: 2px solid transparent; }
+    .heading-flash-fade {
+        transition: background-color 0.5s ease-out;
+        background-color: transparent;
     }
     .card-flash {
-        animation: card-flash 1s ease-out;
+        outline: 2px solid #3b82f6;
+    }
+    .card-flash-fade {
+        transition: outline-color 0.5s ease-out;
+        outline-color: transparent;
     }
 </style>
 @endpush
 
 @push('scripts')
 <script>
-    // Flash a heading element
+    // Flash a heading: instant on, fade off after 600ms
     function flashElement(id) {
         var el = document.getElementById(id);
         if (!el) return;
-        el.classList.remove('heading-flash');
-        void el.offsetWidth;
+        el.classList.remove('heading-flash', 'heading-flash-fade');
         el.classList.add('heading-flash');
+        setTimeout(function() { el.classList.add('heading-flash-fade'); }, 600);
+        setTimeout(function() { el.classList.remove('heading-flash', 'heading-flash-fade'); }, 1100);
     }
 
-    // Flash a card with outline
+    // Flash a card: instant on, fade off after 600ms
     function flashCard(el) {
         if (!el) return;
-        el.classList.remove('card-flash');
-        void el.offsetWidth;
+        el.classList.remove('card-flash', 'card-flash-fade');
         el.classList.add('card-flash');
+        setTimeout(function() { el.classList.add('card-flash-fade'); }, 600);
+        setTimeout(function() { el.classList.remove('card-flash', 'card-flash-fade'); }, 1100);
     }
 
     // Flash immediately, then scroll

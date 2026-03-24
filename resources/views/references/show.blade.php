@@ -112,10 +112,13 @@
             function highlightRefSection(id) {
                 var el = document.getElementById(id);
                 if (!el) return;
-                el.style.transition = 'background-color 1s ease-out';
-                el.style.backgroundColor = 'rgba(59, 130, 246, 0.15)';
+                el.style.transition = 'none';
+                el.style.backgroundColor = 'rgba(59, 130, 246, 0.18)';
                 el.style.borderRadius = '4px';
-                setTimeout(function() { el.style.backgroundColor = ''; }, 1000);
+                setTimeout(function() {
+                    el.style.transition = 'background-color 0.5s ease-out';
+                    el.style.backgroundColor = '';
+                }, 600);
             }
 
             function refViewer() {
