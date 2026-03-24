@@ -48,6 +48,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/forms/submission/{submission}', [\App\Http\Controllers\FormController::class, 'submission'])->name('forms.submission');
     Route::get('/forms/submissions/{formId}', [\App\Http\Controllers\FormController::class, 'submissions'])->name('forms.submissions');
 
+    // Comments
+    Route::post('/qms/comments', [\App\Http\Controllers\CommentController::class, 'store'])->name('comments.store');
+    Route::post('/qms/comments/reply', [\App\Http\Controllers\CommentController::class, 'reply'])->name('comments.reply');
+    Route::post('/qms/comments/resolve', [\App\Http\Controllers\CommentController::class, 'resolve'])->name('comments.resolve');
+    Route::post('/qms/comments/unresolve', [\App\Http\Controllers\CommentController::class, 'unresolve'])->name('comments.unresolve');
+    Route::delete('/qms/comments', [\App\Http\Controllers\CommentController::class, 'destroy'])->name('comments.destroy');
+
     // References
     Route::get('/references', [\App\Http\Controllers\ReferenceController::class, 'index'])->name('references.index');
     Route::get('/references/{path}', [\App\Http\Controllers\ReferenceController::class, 'show'])->where('path', '.*')->name('references.show');

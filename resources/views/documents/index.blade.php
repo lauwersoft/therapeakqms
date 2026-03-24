@@ -182,6 +182,9 @@
                     </div>
                 </div>
 
+                {{-- Comments --}}
+                @include('documents.partials.comments')
+
                 {{-- File change history --}}
                 @if(!empty($fileHistory))
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 mt-6">

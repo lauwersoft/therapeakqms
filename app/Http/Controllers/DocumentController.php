@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DocumentChange;
 use App\Models\User;
+use App\Services\CommentService;
 use App\Services\DocumentMetadata;
 use App\Services\GitService;
 use Illuminate\Http\Request;
@@ -128,6 +129,10 @@ class DocumentController extends Controller
             ];
         }
 
+        // Comments
+        $commentService = app(CommentService::class);
+        $docComments = $meta['id'] ? $commentService->getVisibleComments($meta['id'], $request->user()->role) : [];
+
         return view('documents.index', [
             'isForm' => $isForm,
             'formSchema' => $formSchema,
@@ -145,6 +150,7 @@ class DocumentController extends Controller
             'changedFiles' => $changedFiles,
             'pendingCount' => $pendingCount,
             'sidebarDocs' => $sidebarDocs,
+            'docComments' => $docComments,
         ]);
     }
 
@@ -283,6 +289,18 @@ class DocumentController extends Controller
         $raw = File::get($filePath);
         $parsed = DocumentMetadata::parse($raw);
         $meta = $parsed['meta'];
+
+        // Block approval if there are unresolved required changes
+        if ($request->input('meta_status') === 'approved' && $meta['id']) {
+            $commentService = app(CommentService::class);
+            $unresolvedRequired = $commentService->unresolvedRequiredChanges($meta['id']);
+            if ($unresolvedRequired > 0) {
+                $urlPath = preg_replace('/\.md$/', '', $path);
+                $route = $request->input('redirect') === 'edit' ? 'documents.edit' : 'documents.index';
+                return redirect()->route($route, ['path' => $urlPath])
+                    ->withErrors(["Cannot approve: {$unresolvedRequired} unresolved required " . ($unresolvedRequired === 1 ? 'change' : 'changes') . '. Resolve all required changes before approving.']);
+            }
+        }
 
         if ($request->filled('meta_status')) {
             $meta['status'] = $request->input('meta_status');

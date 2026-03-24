@@ -51,6 +51,16 @@
                             <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="text-blue-500 hover:text-blue-700 underline decoration-blue-300 hover:decoration-blue-500">{{ $lastEdit['name'] }}, {{ $lastEdit['date']->diffForHumans() }}</a>
                         </div>
                     @endif
+                    @php
+                        $commentCount = collect($docComments ?? [])->where('resolved', false)->count();
+                        $requiredCount = collect($docComments ?? [])->where('type', 'required_change')->where('resolved', false)->count();
+                    @endphp
+                    @if($commentCount > 0)
+                        <div class="text-gray-400">
+                            <span class="text-gray-500 font-medium">Comments:</span>
+                            <span class="{{ $requiredCount > 0 ? 'text-red-500 font-medium' : '' }}">{{ $commentCount }} open{{ $requiredCount > 0 ? " ({$requiredCount} required)" : '' }}</span>
+                        </div>
+                    @endif
                 </div>
             </div>
 

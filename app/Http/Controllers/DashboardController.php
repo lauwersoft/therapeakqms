@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CommentService;
 use App\Services\DocumentMetadata;
 use App\Services\GitService;
 
@@ -44,6 +45,10 @@ class DashboardController extends Controller
             ];
         }
 
+        // Comments
+        $commentService = app(CommentService::class);
+        $unresolvedComments = $commentService->allUnresolvedCount(auth()->user()->role);
+
         return view('dashboard', [
             'recentCommits' => $recentCommits,
             'totalDocs' => $totalDocs,
@@ -52,6 +57,7 @@ class DashboardController extends Controller
             'inReviewCount' => $inReviewCount,
             'docList' => $docList,
             'pendingCount' => $pendingCount,
+            'unresolvedComments' => $unresolvedComments,
         ]);
     }
 }
