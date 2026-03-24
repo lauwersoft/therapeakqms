@@ -181,90 +181,57 @@
         height: 12px;
     }
 
-    /* Section highlight animation */
-    .section-highlight {
-        background-color: #fef9c3 !important;
-        border-left: 3px solid #f59e0b !important;
-        padding-left: 12px !important;
-        margin-left: -15px !important;
-        transition: background-color 2s ease-out, border-color 2s ease-out;
+    /* Simple heading highlight — no layout shift */
+    @keyframes heading-flash {
+        0% { background-color: #fef3c7; }
+        100% { background-color: transparent; }
     }
-    .section-highlight-fade {
-        background-color: transparent !important;
-        border-left-color: transparent !important;
+    .heading-flash {
+        animation: heading-flash 2s ease-out;
+        border-radius: 4px;
     }
-    /* Card highlight */
-    .card-highlight {
-        box-shadow: 0 0 0 2px #f59e0b !important;
-        transition: box-shadow 2s ease-out;
+    @keyframes card-flash {
+        0% { outline: 2px solid #f59e0b; outline-offset: 0; }
+        100% { outline: 2px solid transparent; outline-offset: 0; }
     }
-    .card-highlight-fade {
-        box-shadow: none !important;
+    .card-flash {
+        animation: card-flash 2s ease-out;
     }
 </style>
 @endpush
 
 @push('scripts')
 <script>
-    // Highlight an entire section (heading + content until next heading)
-    function highlightSection(id) {
-        // Clear any existing highlights
-        document.querySelectorAll('.section-highlight').forEach(function(el) {
-            el.classList.remove('section-highlight');
-        });
-
-        var heading = document.getElementById(id);
-        if (!heading) return;
-
-        // Collect heading + all siblings until next heading of same or higher level
-        var level = parseInt(heading.tagName.charAt(1));
-        var elements = [heading];
-        var next = heading.nextElementSibling;
-        while (next) {
-            if (/^H[1-6]$/.test(next.tagName) && parseInt(next.tagName.charAt(1)) <= level) break;
-            elements.push(next);
-            next = next.nextElementSibling;
-        }
-
-        // Apply highlight
-        elements.forEach(function(el) { el.classList.add('section-highlight'); });
-
-        // Fade out after 2 seconds
-        setTimeout(function() {
-            elements.forEach(function(el) {
-                el.classList.add('section-highlight-fade');
-                setTimeout(function() {
-                    el.classList.remove('section-highlight', 'section-highlight-fade');
-                }, 2000);
-            });
-        }, 1500);
-    }
-
-    // Highlight a card element (comment card, not a section)
-    function highlightCard(el) {
+    // Flash a heading element
+    function flashElement(id) {
+        var el = document.getElementById(id);
         if (!el) return;
-        el.classList.remove('card-highlight', 'card-highlight-fade');
+        el.classList.remove('heading-flash');
         void el.offsetWidth;
-        el.classList.add('card-highlight');
-        setTimeout(function() {
-            el.classList.add('card-highlight-fade');
-            setTimeout(function() {
-                el.classList.remove('card-highlight', 'card-highlight-fade');
-            }, 2000);
-        }, 1500);
+        el.classList.add('heading-flash');
     }
 
-    // Scroll to element smoothly
+    // Flash a card with outline
+    function flashCard(el) {
+        if (!el) return;
+        el.classList.remove('card-flash');
+        void el.offsetWidth;
+        el.classList.add('card-flash');
+    }
+
+    // Scroll + flash
+    function glowElement(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(function() { flashElement(id); }, 400);
+    }
+
     function scrollToElement(id) {
         var el = document.getElementById(id);
         if (!el) return;
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    // Combined: scroll + highlight section
-    function glowElement(id) {
-        scrollToElement(id);
-        setTimeout(function() { highlightSection(id); }, 300);
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(function() { flashElement(id); }, 400);
     }
 
     // Slugify helper (matches Laravel's Str::slug)
@@ -290,19 +257,13 @@
                 badge.className = 'comment-indicator';
                 badge.onclick = function(e) {
                     e.preventDefault();
-                    var target = document.getElementById('comments-section');
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        setTimeout(function() {
-                            var cards = target.querySelectorAll('[data-section]');
-                            cards.forEach(function(card) {
-                                if (card.dataset.section === text) {
-                                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                    setTimeout(function() { highlightCard(card); }, 300);
-                                }
-                            });
-                        }, 500);
-                    }
+                    var cards = document.querySelectorAll('[data-section]');
+                    cards.forEach(function(card) {
+                        if (card.dataset.section === text) {
+                            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            setTimeout(function() { flashCard(card); }, 400);
+                        }
+                    });
                 };
                 badge.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>' + count;
                 heading.appendChild(badge);
