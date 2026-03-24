@@ -154,7 +154,10 @@
                             $itemCommentCount = ($item['doc_id'] && isset($commentSummary)) ? ($commentSummary[$item['doc_id']]['unresolved'] ?? 0) : 0;
                         @endphp
                         @if($itemCommentCount > 0)
-                            <span class="ml-auto shrink-0 w-4 h-4 rounded-full bg-blue-100 text-blue-600 text-[9px] font-bold flex items-center justify-center" title="{{ $itemCommentCount }} {{ Str::plural('comment', $itemCommentCount) }}">{{ $itemCommentCount }}</span>
+                            <span class="ml-auto shrink-0 flex items-center gap-0.5 text-[10px] text-amber-600" title="{{ $itemCommentCount }} {{ Str::plural('comment', $itemCommentCount) }}">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                                <span class="font-medium">{{ $itemCommentCount }}</span>
+                            </span>
                         @elseif($fileStatus)
                             <span class="ml-auto shrink-0 w-2 h-2 rounded-full
                                 {{ in_array($fileStatus, ['new', 'added']) ? 'bg-green-500' : '' }}

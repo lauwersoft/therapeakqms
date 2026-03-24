@@ -739,6 +739,12 @@ class DocumentController extends Controller
         $canEdit = in_array($request->user()->role, [User::ROLE_ADMIN, User::ROLE_EDITOR]);
 
         $pendingCount = max(count($changedFiles), DocumentChange::count());
+        $commentSummary = app(CommentService::class)->summary();
+
+        // Add comment counts to documents
+        foreach ($documents as &$doc) {
+            $doc['comment_count'] = $commentSummary[$doc['doc_id'] ?? '']['unresolved'] ?? 0;
+        }
 
         return view('documents.browse', [
             'documents' => $documents,
