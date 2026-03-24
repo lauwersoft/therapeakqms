@@ -28,14 +28,12 @@
 @if($canComment)
 <div id="comment-fab" class="fixed bottom-6 right-6 z-30 lg:bottom-8 lg:right-8">
     <button onclick="document.getElementById('new-comment-dialog').classList.toggle('hidden')"
-            class="w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 flex items-center justify-center transition-colors">
+            class="w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 flex items-center justify-center transition-colors"
+            title="Add comment">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
     </button>
-    @if($openComments->count() > 0)
-        <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{{ $openComments->count() }}</span>
-    @endif
 </div>
 @endif
 
@@ -52,7 +50,7 @@
         @csrf
         <input type="hidden" name="doc_id" value="{{ $docId }}">
         <div class="space-y-2 mb-3">
-            <select name="section" class="w-full border-gray-200 rounded text-xs py-1.5 focus:ring-blue-500 focus:border-blue-500">
+            <select name="section" onchange="if(this.value){var s=slugify(this.value);glowElement(s);scrollToElement(s);}" class="w-full border-gray-200 rounded text-xs py-1.5 focus:ring-blue-500 focus:border-blue-500">
                 <option value="">General (whole document)</option>
                 @foreach($docSections as $section)
                     <option value="{{ $section }}">{{ Str::limit($section, 50) }}</option>
@@ -110,13 +108,14 @@
             $sectionResolved = collect($sectionGroup)->where('resolved', true);
         @endphp
         <div x-show="{{ $sectionOpen->count() > 0 ? 'true' : 'showResolved' }}"
+             data-section="{{ $section }}"
              class="rounded-lg border overflow-hidden {{ $sectionOpen->where('type', 'required_change')->count() > 0 ? 'border-red-200 bg-red-50/30' : 'border-gray-200 bg-white' }}">
             {{-- Section label --}}
             <div class="px-4 py-2 border-b {{ $sectionOpen->where('type', 'required_change')->count() > 0 ? 'border-red-100 bg-red-50' : 'border-gray-100 bg-gray-50' }} flex items-center gap-2">
                 <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
                 </svg>
-                <a href="#{{ \Illuminate\Support\Str::slug(strip_tags($section)) }}" class="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline">{{ $section }}</a>
+                <a href="#{{ \Illuminate\Support\Str::slug(strip_tags($section)) }}" onclick="glowElement('{{ \Illuminate\Support\Str::slug(strip_tags($section)) }}')" class="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline">{{ $section }}</a>
                 @if($sectionOpen->count() > 0)
                     <span class="text-[10px] px-1.5 py-0.5 rounded-full {{ $sectionOpen->where('type', 'required_change')->count() > 0 ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600' }} font-medium">{{ $sectionOpen->count() }}</span>
                 @endif
@@ -162,7 +161,7 @@
         align-items: center;
         gap: 4px;
         margin-left: 8px;
-        padding: 1px 8px;
+        padding: 2px 8px;
         font-size: 11px;
         font-weight: 600;
         border-radius: 9999px;
@@ -170,34 +169,63 @@
         vertical-align: middle;
         text-decoration: none;
         font-family: system-ui, sans-serif;
-    }
-    .comment-indicator-active {
-        background: #fee2e2;
-        color: #dc2626;
-    }
-    .comment-indicator-normal {
-        background: #dbeafe;
-        color: #2563eb;
+        background: #fef3c7;
+        color: #d97706;
+        transition: all 0.15s;
     }
     .comment-indicator:hover {
-        opacity: 0.8;
+        background: #fde68a;
     }
     .comment-indicator svg {
         width: 12px;
         height: 12px;
+    }
+
+    /* Glow animation for highlighted elements */
+    @keyframes comment-glow {
+        0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5); background-color: rgba(59, 130, 246, 0.08); }
+        50% { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0); background-color: rgba(59, 130, 246, 0.05); }
+        100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); background-color: transparent; }
+    }
+    .comment-glow {
+        animation: comment-glow 1.5s ease-out;
+        border-radius: 6px;
     }
 </style>
 @endpush
 
 @push('scripts')
 <script>
+    // Glow helper — highlights an element by ID
+    function glowElement(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove('comment-glow');
+        void el.offsetWidth; // force reflow to restart animation
+        el.classList.add('comment-glow');
+        setTimeout(function() { el.classList.remove('comment-glow'); }, 2000);
+    }
+
+    // Scroll helper — scrolls to element in the nearest scrollable parent
+    function scrollToElement(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Slugify helper (matches Laravel's Str::slug)
+    function slugify(text) {
+        return text.toString().toLowerCase()
+            .replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-')
+            .replace(/^-+|-+$/g, '').replace(/--+/g, '-');
+    }
+
     // Inject comment indicators into document headings
     document.addEventListener('DOMContentLoaded', function() {
         var dataEl = document.getElementById('comment-data');
         if (!dataEl) return;
         var sectionCounts = JSON.parse(dataEl.dataset.comments || '{}');
 
-        // Find all h2 and h3 in the prose content
         var headings = document.querySelectorAll('.prose h1, .prose h2, .prose h3');
         headings.forEach(function(heading) {
             var text = heading.textContent.trim();
@@ -205,13 +233,32 @@
             if (count > 0) {
                 var badge = document.createElement('a');
                 badge.href = '#comments-section';
-                badge.className = 'comment-indicator ' + (count > 0 ? 'comment-indicator-active' : 'comment-indicator-normal');
+                badge.className = 'comment-indicator';
+                badge.onclick = function(e) {
+                    e.preventDefault();
+                    var target = document.getElementById('comments-section');
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        // Glow the matching comment section card
+                        setTimeout(function() {
+                            var cards = target.querySelectorAll('[data-section]');
+                            cards.forEach(function(card) {
+                                if (card.dataset.section === text) {
+                                    card.classList.remove('comment-glow');
+                                    void card.offsetWidth;
+                                    card.classList.add('comment-glow');
+                                    setTimeout(function() { card.classList.remove('comment-glow'); }, 2000);
+                                }
+                            });
+                        }, 500);
+                    }
+                };
                 badge.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>' + count;
                 heading.appendChild(badge);
             }
         });
 
-        // Add anchor for scrolling
+        // Add anchor for scrolling to comments
         var commentsSection = document.querySelector('[class*="mt-6 space-y-3"]');
         if (commentsSection) {
             commentsSection.id = 'comments-section';
