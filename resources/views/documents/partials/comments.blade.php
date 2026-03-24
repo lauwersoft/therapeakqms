@@ -183,19 +183,19 @@
 
     /* Simple heading highlight — no layout shift */
     @keyframes heading-flash {
-        0% { background-color: #fef3c7; }
+        0% { background-color: rgba(59, 130, 246, 0.15); }
         100% { background-color: transparent; }
     }
     .heading-flash {
-        animation: heading-flash 2s ease-out;
+        animation: heading-flash 2.5s ease-out;
         border-radius: 4px;
     }
     @keyframes card-flash {
-        0% { outline: 2px solid #f59e0b; outline-offset: 0; }
+        0% { outline: 2px solid #3b82f6; outline-offset: 0; }
         100% { outline: 2px solid transparent; outline-offset: 0; }
     }
     .card-flash {
-        animation: card-flash 2s ease-out;
+        animation: card-flash 2.5s ease-out;
     }
 </style>
 @endpush
@@ -219,19 +219,16 @@
         el.classList.add('card-flash');
     }
 
-    // Scroll + flash
+    // Flash immediately, then scroll
     function glowElement(id) {
         var el = document.getElementById(id);
         if (!el) return;
+        flashElement(id);
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(function() { flashElement(id); }, 400);
     }
 
     function scrollToElement(id) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(function() { flashElement(id); }, 400);
+        glowElement(id);
     }
 
     // Slugify helper (matches Laravel's Str::slug)
@@ -260,8 +257,8 @@
                     var cards = document.querySelectorAll('[data-section]');
                     cards.forEach(function(card) {
                         if (card.dataset.section === text) {
+                            flashCard(card);
                             card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            setTimeout(function() { flashCard(card); }, 400);
                         }
                     });
                 };

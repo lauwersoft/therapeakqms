@@ -52,7 +52,7 @@
                     </div>
                     <nav class="px-2 pb-4">
                         @foreach($toc as $idx => $item)
-                            <a href="#{{ $item['id'] }}" @click="sidebarOpen = false; $nextTick(() => highlightRefSection('{{ $item['id'] }}'))"
+                            <a href="#{{ $item['id'] }}" @click="sidebarOpen = false; highlightRefSection('{{ $item['id'] }}')"
                                :id="'toc-' + '{{ $item['id'] }}'"
                                :class="activeSection === '{{ $item['id'] }}' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'"
                                class="block px-2 py-1 text-xs rounded truncate transition-colors">
@@ -112,10 +112,10 @@
             function highlightRefSection(id) {
                 var el = document.getElementById(id);
                 if (!el) return;
-                el.style.transition = 'background-color 2s ease-out';
-                el.style.backgroundColor = '#fef3c7';
+                el.style.transition = 'background-color 2.5s ease-out';
+                el.style.backgroundColor = 'rgba(59, 130, 246, 0.15)';
                 el.style.borderRadius = '4px';
-                setTimeout(function() { el.style.backgroundColor = ''; }, 2000);
+                setTimeout(function() { el.style.backgroundColor = ''; }, 2500);
             }
 
             function refViewer() {
@@ -160,22 +160,19 @@
 
                         // Highlight section if URL has a hash
                         if (window.location.hash) {
-                            var self = this;
-                            setTimeout(function() {
-                                var id = window.location.hash.substring(1);
-                                var el = document.getElementById(id);
-                                // Fuzzy match: if exact ID not found, find element whose ID starts with hash
-                                if (!el) {
-                                    var all = document.querySelectorAll('[id]');
-                                    for (var i = 0; i < all.length; i++) {
-                                        if (all[i].id.startsWith(id)) { el = all[i]; break; }
-                                    }
+                            var id = window.location.hash.substring(1);
+                            var el = document.getElementById(id);
+                            // Fuzzy match
+                            if (!el) {
+                                var all = document.querySelectorAll('[id]');
+                                for (var i = 0; i < all.length; i++) {
+                                    if (all[i].id.startsWith(id)) { el = all[i]; break; }
                                 }
-                                if (el) {
-                                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                    highlightRefSection(el.id);
-                                }
-                            }, 200);
+                            }
+                            if (el) {
+                                el.scrollIntoView({ block: 'start' });
+                                highlightRefSection(el.id);
+                            }
                         }
                     }
                 };
