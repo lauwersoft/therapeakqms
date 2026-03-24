@@ -183,15 +183,21 @@
 
     /* Simple heading highlight — no layout shift */
     .heading-flash {
-        background-color: rgba(59, 130, 246, 0.18);
-        border-radius: 4px;
+        background-color: rgba(59, 130, 246, 0.12);
+        box-shadow: inset 3px 0 0 #3b82f6, 0 0 0 1px rgba(59, 130, 246, 0.1);
+        border-radius: 6px;
+        padding: 6px 10px;
+        margin: -6px -10px;
     }
     .heading-flash-fade {
-        transition: background-color 0.5s ease-out;
+        transition: background-color 0.5s ease-out, box-shadow 0.5s ease-out;
         background-color: transparent;
+        box-shadow: inset 3px 0 0 transparent, 0 0 0 1px transparent;
     }
     .card-flash {
         outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+        border-radius: 8px;
     }
     .card-flash-fade {
         transition: outline-color 0.5s ease-out;

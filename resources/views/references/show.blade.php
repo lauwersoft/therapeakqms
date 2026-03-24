@@ -113,12 +113,21 @@
                 var el = document.getElementById(id);
                 if (!el) return;
                 el.style.transition = 'none';
-                el.style.backgroundColor = 'rgba(59, 130, 246, 0.18)';
-                el.style.borderRadius = '4px';
+                el.style.backgroundColor = 'rgba(59, 130, 246, 0.12)';
+                el.style.boxShadow = 'inset 3px 0 0 #3b82f6, 0 0 0 1px rgba(59, 130, 246, 0.1)';
+                el.style.borderRadius = '6px';
+                el.style.padding = '6px 10px';
+                el.style.margin = '-6px -10px';
                 setTimeout(function() {
-                    el.style.transition = 'background-color 0.5s ease-out';
+                    el.style.transition = 'background-color 0.5s ease-out, box-shadow 0.5s ease-out';
                     el.style.backgroundColor = '';
+                    el.style.boxShadow = '';
                 }, 600);
+                setTimeout(function() {
+                    el.style.padding = '';
+                    el.style.margin = '';
+                    el.style.borderRadius = '';
+                }, 1100);
             }
 
             function refViewer() {
