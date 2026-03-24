@@ -159,7 +159,7 @@
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                                 </svg>
                             </div>
-                            <textarea id="editor" name="content" style="min-height:400px;display:none">{{ $content }}</textarea>
+                            <textarea id="editor" name="content" style="min-height:400px">{{ $content }}</textarea>
                             <div class="flex justify-end gap-2 mt-4">
                                 <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
                                    class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md border border-gray-300">Cancel</a>
