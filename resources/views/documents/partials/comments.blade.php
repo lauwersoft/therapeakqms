@@ -6,135 +6,137 @@
     $unresolvedRequired = collect($comments)->where('type', 'required_change')->where('resolved', false)->count();
     $userRole = auth()->user()->role;
     $canComment = in_array($userRole, [\App\Models\User::ROLE_ADMIN, \App\Models\User::ROLE_EDITOR, \App\Models\User::ROLE_AUDITOR]);
-
-    // Group comments by section
-    $generalComments = collect($comments)->whereNull('section')->values();
-    $sectionComments = collect($comments)->whereNotNull('section')->groupBy('section');
+    $generalComments = collect($comments)->filter(fn($c) => empty($c['section']))->values();
+    $sectionComments = collect($comments)->filter(fn($c) => !empty($c['section']))->groupBy('section');
+    $docSections = [];
+    if (isset($content)) {
+        preg_match_all('/<h[23][^>]*>(.*?)<\/h[23]>/s', $content, $sectionMatches);
+        foreach ($sectionMatches[1] as $s) {
+            $docSections[] = strip_tags($s);
+        }
+    }
 @endphp
 
 @if($docId)
-<div x-data="{ showResolved: false, newCommentOpen: false, newCommentSection: '', replyTo: null, resolveId: null }" class="mt-6 space-y-3">
+{{-- Comment indicators injected into document via JS --}}
+<div id="comment-data" class="hidden"
+     data-comments="{{ json_encode($sectionComments->map(fn($group) => collect($group)->where('resolved', false)->count())->toArray()) }}"
+     data-doc-id="{{ $docId }}">
+</div>
 
-    {{-- Summary bar --}}
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-3 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
-            </svg>
-            <span class="text-sm text-gray-600">
-                @if($openComments->count() > 0)
-                    <span class="font-medium">{{ $openComments->count() }} open</span>
-                    @if($unresolvedRequired > 0)
-                        <span class="text-red-500">({{ $unresolvedRequired }} required {{ Str::plural('change', $unresolvedRequired) }})</span>
-                    @endif
+{{-- Floating new comment button --}}
+@if($canComment)
+<div id="comment-fab" class="fixed bottom-6 right-6 z-30 lg:bottom-8 lg:right-8">
+    <button onclick="document.getElementById('new-comment-dialog').classList.toggle('hidden')"
+            class="w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 flex items-center justify-center transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+        </svg>
+    </button>
+    @if($openComments->count() > 0)
+        <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{{ $openComments->count() }}</span>
+    @endif
+</div>
+@endif
+
+{{-- New comment dialog --}}
+@if($canComment)
+<div id="new-comment-dialog" class="hidden fixed bottom-20 right-6 z-30 lg:bottom-24 lg:right-8 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
+    <div class="px-4 py-2.5 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+        <span class="text-xs font-semibold text-gray-700">New Comment</span>
+        <button onclick="this.closest('#new-comment-dialog').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+    </div>
+    <form method="POST" action="{{ route('comments.store') }}" class="p-4">
+        @csrf
+        <input type="hidden" name="doc_id" value="{{ $docId }}">
+        <div class="space-y-2 mb-3">
+            <select name="section" class="w-full border-gray-200 rounded text-xs py-1.5 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">General (whole document)</option>
+                @foreach($docSections as $section)
+                    <option value="{{ $section }}">{{ Str::limit($section, 50) }}</option>
+                @endforeach
+            </select>
+            <div class="flex gap-2">
+                <select name="type" class="flex-1 border-gray-200 rounded text-xs py-1.5 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="observation">Observation</option>
+                    <option value="required_change">Required Change</option>
+                    <option value="question">Question</option>
+                </select>
+                @if($userRole !== 'auditor')
+                    <select name="visibility" class="flex-1 border-gray-200 rounded text-xs py-1.5 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="internal">Internal</option>
+                        <option value="all">Visible to all</option>
+                    </select>
                 @else
-                    <span class="text-gray-400">No open comments</span>
+                    <input type="hidden" name="visibility" value="all">
                 @endif
-                @if($resolvedComments->count() > 0)
-                    <span class="text-gray-400 ml-1">· {{ $resolvedComments->count() }} resolved</span>
+            </div>
+        </div>
+        <textarea name="content" placeholder="Write your comment..." rows="3"
+                  class="w-full border-gray-200 rounded text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500"></textarea>
+        <div class="flex justify-end mt-2">
+            <button type="submit" class="px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">Add Comment</button>
+        </div>
+    </form>
+</div>
+@endif
+
+{{-- Comments panel below document --}}
+<div x-data="{ showResolved: false, replyTo: null, resolveId: null, activeSection: null }" class="mt-6 space-y-3">
+
+    {{-- Summary --}}
+    @if(count($comments) > 0)
+    <div class="flex items-center justify-between px-1">
+        <div class="flex items-center gap-2">
+            <span class="text-xs font-medium text-gray-500">
+                {{ $openComments->count() }} open {{ Str::plural('comment', $openComments->count()) }}
+                @if($unresolvedRequired > 0)
+                    <span class="text-red-500">({{ $unresolvedRequired }} blocks approval)</span>
                 @endif
             </span>
         </div>
-        <div class="flex items-center gap-2">
-            <button @click="showResolved = !showResolved" class="text-xs text-gray-400 hover:text-gray-600" x-text="showResolved ? 'Hide resolved' : 'Show resolved'"></button>
-            @if($canComment)
-                <button @click="newCommentOpen = !newCommentOpen; newCommentSection = ''" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
-                    Comment
-                </button>
-            @endif
-        </div>
+        @if($resolvedComments->count() > 0)
+            <button @click="showResolved = !showResolved" class="text-xs text-gray-400 hover:text-gray-600" x-text="showResolved ? 'Hide resolved ({{ $resolvedComments->count() }})' : 'Show resolved ({{ $resolvedComments->count() }})'"></button>
+        @endif
     </div>
-
-    {{-- New comment form --}}
-    @if($canComment)
-        <div x-show="newCommentOpen" x-cloak class="bg-white rounded-lg shadow-sm border border-blue-200 overflow-hidden">
-            <div class="px-4 py-2 bg-blue-50 border-b border-blue-100 flex items-center gap-2">
-                <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                </svg>
-                <span class="text-xs font-medium text-blue-700">New comment</span>
-                <span x-show="newCommentSection" x-cloak class="text-xs text-blue-500">on <span x-text="newCommentSection" class="font-medium"></span></span>
-            </div>
-            <form method="POST" action="{{ route('comments.store') }}" class="p-4">
-                @csrf
-                <input type="hidden" name="doc_id" value="{{ $docId }}">
-                <input type="hidden" name="section" x-model="newCommentSection">
-                <div class="flex gap-2 mb-3">
-                    <div class="flex-1">
-                        <select name="section" x-model="newCommentSection" class="w-full border-gray-200 rounded text-xs py-1.5 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">General (whole document)</option>
-                            @php
-                                $docSections = [];
-                                if (isset($content)) {
-                                    preg_match_all('/<h[23][^>]*>(.*?)<\/h[23]>/s', $content, $sectionMatches);
-                                    foreach ($sectionMatches[1] as $s) {
-                                        $docSections[] = strip_tags($s);
-                                    }
-                                }
-                            @endphp
-                            @foreach($docSections as $section)
-                                <option value="{{ $section }}">{{ Str::limit($section, 60) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <select name="type" class="border-gray-200 rounded text-xs py-1.5 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="observation">Observation</option>
-                        <option value="required_change">Required Change</option>
-                        <option value="question">Question</option>
-                    </select>
-                    @if($userRole !== 'auditor')
-                        <select name="visibility" class="border-gray-200 rounded text-xs py-1.5 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="internal">Internal</option>
-                            <option value="all">All</option>
-                        </select>
-                    @else
-                        <input type="hidden" name="visibility" value="all">
-                    @endif
-                </div>
-                <textarea name="content" placeholder="Write your comment..." rows="2"
-                          class="w-full border-gray-200 rounded text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500"></textarea>
-                <div class="flex justify-end gap-2 mt-2">
-                    <button type="button" @click="newCommentOpen = false" class="px-3 py-1.5 text-xs text-gray-500 hover:bg-gray-100 rounded">Cancel</button>
-                    <button type="submit" class="px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">Add Comment</button>
-                </div>
-            </form>
-        </div>
     @endif
 
-    {{-- Section-grouped comments --}}
+    {{-- Section comments --}}
     @foreach($sectionComments as $section => $sectionGroup)
         @php
             $sectionOpen = collect($sectionGroup)->where('resolved', false);
             $sectionResolved = collect($sectionGroup)->where('resolved', true);
         @endphp
-            <div x-show="{{ $sectionOpen->count() > 0 ? 'true' : 'showResolved' }}" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                {{-- Section header --}}
-                <div class="px-4 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
-                    </svg>
-                    <span class="text-xs font-medium text-gray-600">{{ $section }}</span>
-                    @if($sectionOpen->count() > 0)
-                        <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-600 font-medium">{{ $sectionOpen->count() }}</span>
-                    @endif
-                </div>
-                {{-- Comments in this section --}}
-                <div class="divide-y divide-gray-50">
-                    @foreach($sectionGroup as $comment)
-                        <div x-show="{{ !$comment['resolved'] ? 'true' : 'showResolved' }}" class="{{ $comment['resolved'] ? 'opacity-60' : '' }}">
-                            @include('documents.partials.comment-item', ['comment' => $comment, 'docId' => $docId, 'userRole' => $userRole, 'canComment' => $canComment])
-                        </div>
-                    @endforeach
-                </div>
+        <div x-show="{{ $sectionOpen->count() > 0 ? 'true' : 'showResolved' }}"
+             class="rounded-lg border overflow-hidden {{ $sectionOpen->where('type', 'required_change')->count() > 0 ? 'border-red-200 bg-red-50/30' : 'border-gray-200 bg-white' }}">
+            {{-- Section label --}}
+            <div class="px-4 py-2 border-b {{ $sectionOpen->where('type', 'required_change')->count() > 0 ? 'border-red-100 bg-red-50' : 'border-gray-100 bg-gray-50' }} flex items-center gap-2">
+                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+                </svg>
+                <span class="text-xs font-medium text-gray-600">{{ $section }}</span>
+                @if($sectionOpen->count() > 0)
+                    <span class="text-[10px] px-1.5 py-0.5 rounded-full {{ $sectionOpen->where('type', 'required_change')->count() > 0 ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600' }} font-medium">{{ $sectionOpen->count() }}</span>
+                @endif
             </div>
+            <div class="divide-y divide-gray-50">
+                @foreach($sectionGroup as $comment)
+                    <div x-show="{{ !$comment['resolved'] ? 'true' : 'showResolved' }}" class="{{ $comment['resolved'] ? 'opacity-50' : '' }}">
+                        @include('documents.partials.comment-item', ['comment' => $comment, 'docId' => $docId, 'userRole' => $userRole, 'canComment' => $canComment])
+                    </div>
+                @endforeach
+            </div>
+        </div>
     @endforeach
 
-    {{-- General comments (no section) --}}
+    {{-- General comments --}}
     @if($generalComments->count() > 0)
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        @php
+            $generalOpen = $generalComments->where('resolved', false);
+        @endphp
+        <div x-show="{{ $generalOpen->count() > 0 ? 'true' : 'showResolved' }}" class="bg-white rounded-lg border border-gray-200 overflow-hidden">
             <div class="px-4 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
                 <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -143,7 +145,7 @@
             </div>
             <div class="divide-y divide-gray-50">
                 @foreach($generalComments as $comment)
-                    <div x-show="{{ !$comment['resolved'] ? 'true' : 'showResolved' }}" class="{{ $comment['resolved'] ? 'opacity-60' : '' }}">
+                    <div x-show="{{ !$comment['resolved'] ? 'true' : 'showResolved' }}" class="{{ $comment['resolved'] ? 'opacity-50' : '' }}">
                         @include('documents.partials.comment-item', ['comment' => $comment, 'docId' => $docId, 'userRole' => $userRole, 'canComment' => $canComment])
                     </div>
                 @endforeach
@@ -152,4 +154,69 @@
     @endif
 </div>
 
+@push('styles')
+<style>
+    /* Comment indicator badges injected next to headings */
+    .comment-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-left: 8px;
+        padding: 1px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 9999px;
+        cursor: pointer;
+        vertical-align: middle;
+        text-decoration: none;
+        font-family: system-ui, sans-serif;
+    }
+    .comment-indicator-active {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+    .comment-indicator-normal {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+    .comment-indicator:hover {
+        opacity: 0.8;
+    }
+    .comment-indicator svg {
+        width: 12px;
+        height: 12px;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+    // Inject comment indicators into document headings
+    document.addEventListener('DOMContentLoaded', function() {
+        var dataEl = document.getElementById('comment-data');
+        if (!dataEl) return;
+        var sectionCounts = JSON.parse(dataEl.dataset.comments || '{}');
+
+        // Find all h2 and h3 in the prose content
+        var headings = document.querySelectorAll('.prose h1, .prose h2, .prose h3');
+        headings.forEach(function(heading) {
+            var text = heading.textContent.trim();
+            var count = sectionCounts[text] || 0;
+            if (count > 0) {
+                var badge = document.createElement('a');
+                badge.href = '#comments-section';
+                badge.className = 'comment-indicator ' + (count > 0 ? 'comment-indicator-active' : 'comment-indicator-normal');
+                badge.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>' + count;
+                heading.appendChild(badge);
+            }
+        });
+
+        // Add anchor for scrolling
+        var commentsSection = document.querySelector('[class*="mt-6 space-y-3"]');
+        if (commentsSection) {
+            commentsSection.id = 'comments-section';
+        }
+    });
+</script>
+@endpush
 @endif
