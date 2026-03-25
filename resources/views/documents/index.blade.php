@@ -50,14 +50,6 @@
 
             <div class="flex-1 overflow-y-scroll">
 
-            @if(session('success'))
-                <div class="max-w-5xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-700">
-                        {{ session('success') }}
-                    </div>
-                </div>
-            @endif
-
             @if($errors->any())
                 <div class="max-w-5xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
                     <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">

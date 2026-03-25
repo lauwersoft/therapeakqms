@@ -39,6 +39,16 @@
         <div id="toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center gap-2 pointer-events-none"></div>
 
         <script>
+            // Auto-show toast for Laravel session flash messages
+            document.addEventListener('DOMContentLoaded', function() {
+                @if(session('success'))
+                    showToast(@json(session('success')));
+                @endif
+                @if(session('error'))
+                    showToast(@json(session('error')), 'error');
+                @endif
+            });
+
             window.showToast = function(message, type) {
                 type = type || 'success';
                 var container = document.getElementById('toast-container');

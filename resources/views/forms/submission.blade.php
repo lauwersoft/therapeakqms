@@ -20,12 +20,6 @@
 
     <div class="py-8">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            @if(session('success'))
-                <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-700 mb-6">
-                    {{ session('success') }}
-                </div>
-            @endif
-
             <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                 {{-- Submission info --}}
                 <div class="px-6 py-4 border-b border-gray-100">
