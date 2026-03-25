@@ -30,7 +30,7 @@
                  }"
                  x-show="visibleCount > 0">
                 <div x-data="{ open: true, dirDragOver: false }" x-effect="if (sidebarSearch || sidebarTypeFilter || sidebarStatusFilter) open = true">
-                    <div class="group flex items-center">
+                    <div class="group flex items-center gap-0.5">
                         <button @click="open = !open"
                                 @if($canEdit ?? false)
                                     @contextmenu="openDirMenu($event, '{{ $item['path'] }}', '{{ addslashes($item['name']) }}')"
@@ -115,7 +115,7 @@
                     $isItemMarkdown = $item['is_markdown'] ?? true;
                     $linkPath = $isItemMarkdown ? preg_replace('/\.md$/', '', $item['path']) : $item['path'];
                 @endphp
-                <div class="group flex items-center">
+                <div class="group flex items-center gap-0.5">
                     <a href="{{ route('documents.index', ['path' => $linkPath]) }}"
                        @if($canEdit ?? false)
                            @contextmenu="openFileMenu($event, '{{ $item['path'] }}', '{{ addslashes($item['name']) }}')"
