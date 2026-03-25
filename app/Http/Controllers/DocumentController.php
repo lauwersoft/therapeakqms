@@ -87,10 +87,10 @@ class DocumentController extends Controller
                 $html
             );
         } else {
-            // For forms, read metadata from the JSON itself; for other files, use sidecar
-            if (str_ends_with($path, '.form.json')) {
-                $formData = json_decode(File::get($filePath), true);
-                $meta = array_merge(DocumentMetadata::DEFAULTS, array_intersect_key($formData ?? [], DocumentMetadata::DEFAULTS));
+            // For forms/records, read metadata from the JSON itself; for other files, use sidecar
+            if (str_ends_with($path, '.form.json') || str_ends_with($path, '.rec.json')) {
+                $jsonData = json_decode(File::get($filePath), true);
+                $meta = array_merge(DocumentMetadata::DEFAULTS, array_intersect_key($jsonData ?? [], DocumentMetadata::DEFAULTS));
             } else {
                 $meta = DocumentMetadata::readSidecar($filePath) ?? array_merge(DocumentMetadata::DEFAULTS, [
                     'title' => pathinfo($path, PATHINFO_FILENAME),
@@ -101,8 +101,10 @@ class DocumentController extends Controller
 
         // File info for non-markdown files
         $isForm = str_ends_with($path, '.form.json');
+        $isRecord = str_ends_with($path, '.rec.json');
         $formSchema = null;
         $formSubmissions = null;
+        $recordData = null;
 
         if ($isForm) {
             $formSchema = json_decode(File::get($filePath), true);
@@ -113,7 +115,11 @@ class DocumentController extends Controller
                 ->get();
         }
 
-        $fileInfo = (! $isMarkdown && ! $isForm) ? [
+        if ($isRecord) {
+            $recordData = json_decode(File::get($filePath), true);
+        }
+
+        $fileInfo = (! $isMarkdown && ! $isForm && ! $isRecord) ? [
             'size' => File::size($filePath),
             'extension' => strtolower(pathinfo($path, PATHINFO_EXTENSION)),
             'mime' => File::mimeType($filePath),
@@ -144,8 +150,10 @@ class DocumentController extends Controller
 
         return view('documents.index', [
             'isForm' => $isForm,
+            'isRecord' => $isRecord,
             'formSchema' => $formSchema,
             'formSubmissions' => $formSubmissions,
+            'recordData' => $recordData,
             'tree' => $tree,
             'fileHistory' => $fileHistory,
             'content' => $html,

@@ -84,17 +84,66 @@ class FormController extends Controller
             return back()->withErrors(['form_path' => 'Form template not found or invalid.']);
         }
 
+        $formId = $schema['id'] ?? basename($path);
+        $user = $request->user();
+
+        // Save to database (for fast UI queries)
         $submission = FormSubmission::create([
-            'form_id' => $schema['id'] ?? basename($path),
+            'form_id' => $formId,
             'form_path' => $path,
-            'user_id' => $request->user()->id,
+            'user_id' => $user->id,
             'title' => $request->input('title'),
             'data' => $request->input('fields'),
             'status' => 'submitted',
         ]);
 
-        return redirect()->route('forms.submission', $submission)
-            ->with('success', 'Form submitted successfully.');
+        // Save as file (for git tracking and AI access)
+        $recId = DocumentMetadata::nextId('REC', $this->basePath);
+        $recordData = [
+            'id' => $recId,
+            'title' => $request->input('title'),
+            'type' => 'REC',
+            'version' => '1.0',
+            'status' => 'submitted',
+            'author' => $user->name,
+            'form_id' => $formId,
+            'form_path' => $path,
+            'form_title' => $schema['title'] ?? '',
+            'submitted_at' => now()->toIso8601String(),
+            'submission_db_id' => $submission->id,
+            'data' => $request->input('fields'),
+        ];
+
+        // Ensure records directory exists
+        $recordsDir = $this->basePath . '/records';
+        if (! is_dir($recordsDir)) {
+            mkdir($recordsDir, 0775, true);
+        }
+
+        $recordFilename = Str::slug($request->input('title')) . '.rec.json';
+        $recordPath = 'records/' . $recordFilename;
+        $recordFullPath = $this->basePath . '/' . $recordPath;
+
+        // Avoid filename collisions
+        $counter = 1;
+        while (File::exists($recordFullPath)) {
+            $recordFilename = Str::slug($request->input('title')) . '-' . $counter . '.rec.json';
+            $recordPath = 'records/' . $recordFilename;
+            $recordFullPath = $this->basePath . '/' . $recordPath;
+            $counter++;
+        }
+
+        File::put($recordFullPath, json_encode($recordData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+
+        // Log change for git tracking
+        \App\Models\DocumentChange::create([
+            'user_id' => $user->id,
+            'action' => 'create',
+            'path' => $recordPath,
+        ]);
+
+        return redirect()->route('documents.index', ['path' => $recordPath])
+            ->with('success', "Form submitted as {$recId}. Remember to publish when ready.");
     }
 
     /**

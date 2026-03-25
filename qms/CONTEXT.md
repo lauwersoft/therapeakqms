@@ -479,9 +479,34 @@ Write the JSON file directly:
 Save to: `qms/documents/forms/capa-form.form.json`
 
 #### Form Submissions
-- Users fill forms via the UI → submissions stored in `form_submissions` database table
-- Each submission records: form_id, user, title/reference, all field data as JSON, status, timestamp
-- Submissions are shown on the form's view page
+- Users fill forms via the UI → saved as `.rec.json` files in `qms/documents/records/`
+- Each submission gets a REC doc ID (e.g. `REC-001`) and is tracked in git like any document
+- Submissions are also saved to the `form_submissions` database table for fast UI queries
+- The `.rec.json` file contains: id, title, form reference, author, submitted_at, and all field data
+- Claude Code can create `.rec.json` files directly to simulate form submissions
+
+#### Record File Format (`.rec.json`)
+```json
+{
+    "id": "REC-001",
+    "title": "CAPA-2026-001",
+    "type": "REC",
+    "version": "1.0",
+    "status": "submitted",
+    "author": "Sarp Derinsu",
+    "form_id": "FM-001",
+    "form_path": "forms/capa-form.form.json",
+    "form_title": "CAPA Form",
+    "submitted_at": "2026-03-25T12:00:00Z",
+    "data": {
+        "CAPA Number": "CAPA-2026-001",
+        "Date Identified": "2026-03-25",
+        "Severity": "High",
+        "Description of Issue": "..."
+    }
+}
+```
+Save to: `qms/documents/records/capa-2026-001.rec.json`
 
 ---
 

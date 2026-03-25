@@ -267,6 +267,14 @@ class DocumentMetadata
     }
 
     /**
+     * Check if a file is a form record/submission.
+     */
+    public static function isRecord(string $filename): bool
+    {
+        return str_ends_with(strtolower($filename), '.rec.json');
+    }
+
+    /**
      * Check if a file is a markdown document.
      */
     public static function isMarkdown(string $filename): bool
@@ -298,7 +306,7 @@ class DocumentMetadata
                 $content = File::get($file->getPathname());
                 $parsed = self::parse($content);
                 $id = $parsed['meta']['id'] ?? null;
-            } elseif (self::isForm($name)) {
+            } elseif (self::isForm($name) || self::isRecord($name)) {
                 $data = @json_decode(File::get($file->getPathname()), true);
                 $id = is_array($data) ? ($data['id'] ?? null) : null;
             } else {
@@ -356,12 +364,13 @@ class DocumentMetadata
                 $parsed = self::parse($content);
                 $index[$relativePath] = $parsed['meta'];
                 $index[$relativePath]['_is_markdown'] = true;
-            } elseif (self::isForm($name)) {
+            } elseif (self::isForm($name) || self::isRecord($name)) {
                 $data = @json_decode(File::get($file->getPathname()), true);
                 $data = is_array($data) ? $data : [];
                 $index[$relativePath] = array_merge(self::DEFAULTS, array_intersect_key($data, self::DEFAULTS));
                 $index[$relativePath]['_is_markdown'] = false;
-                $index[$relativePath]['_is_form'] = true;
+                $index[$relativePath]['_is_form'] = self::isForm($name);
+                $index[$relativePath]['_is_record'] = self::isRecord($name);
                 $index[$relativePath]['_extension'] = 'form';
             } else {
                 $sidecar = self::readSidecar($file->getPathname());
