@@ -292,7 +292,7 @@
                         @if(collect($documents)->where('type', $key)->count() > 0)
                             <button @click="typeFilter = typeFilter === '{{ $key }}' ? '' : '{{ $key }}'"
                                     class="px-2.5 py-1 text-xs rounded-full transition-colors"
-                                    :class="typeFilter === '{{ $key }}' ? '{{ \App\Services\DocumentMetadata::typeColor($key) }} ring-1 ring-current' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
+                                    :class="typeFilter === '{{ $key }}' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
                                 {{ $key }} <span class="opacity-60">({{ collect($documents)->where('type', $key)->count() }})</span>
                             </button>
                         @endif
