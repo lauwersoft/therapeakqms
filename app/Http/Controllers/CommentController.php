@@ -14,6 +14,14 @@ class CommentController extends Controller
         $this->comments = $comments;
     }
 
+    private function backToComment(string $commentId, string $message)
+    {
+        $url = url()->previous();
+        $url = preg_replace('/#.*$/', '', $url);
+        $url .= '#comment-' . $commentId;
+        return redirect($url)->with('success', $message);
+    }
+
     /**
      * Store a new comment.
      */
@@ -29,7 +37,6 @@ class CommentController extends Controller
 
         $user = $request->user();
 
-        // Auditors can only create 'all' visibility comments
         $visibility = $request->input('visibility');
         if ($user->isAuditor()) {
             $visibility = 'all';
@@ -44,7 +51,7 @@ class CommentController extends Controller
             'content' => $request->input('content'),
         ]);
 
-        return back()->with('success', 'Comment added.');
+        return $this->backToComment($comment['id'], 'Comment added.');
     }
 
     /**
@@ -59,8 +66,9 @@ class CommentController extends Controller
         ]);
 
         $user = $request->user();
+        $commentId = $request->input('comment_id');
 
-        $reply = $this->comments->addReply($request->input('doc_id'), $request->input('comment_id'), [
+        $reply = $this->comments->addReply($request->input('doc_id'), $commentId, [
             'user_id' => $user->id,
             'user_name' => $user->name,
             'content' => $request->input('content'),
@@ -70,7 +78,7 @@ class CommentController extends Controller
             return back()->withErrors(['Comment not found.']);
         }
 
-        return back()->with('success', 'Reply added.');
+        return $this->backToComment($commentId, 'Reply added.');
     }
 
     /**
@@ -85,16 +93,17 @@ class CommentController extends Controller
         ]);
 
         $user = $request->user();
+        $commentId = $request->input('comment_id');
 
         $this->comments->resolveComment(
             $request->input('doc_id'),
-            $request->input('comment_id'),
+            $commentId,
             $user->id,
             $user->name,
             $request->input('note')
         );
 
-        return back()->with('success', 'Comment resolved.');
+        return $this->backToComment($commentId, 'Comment resolved.');
     }
 
     /**
@@ -107,12 +116,14 @@ class CommentController extends Controller
             'comment_id' => 'required|string|max:50',
         ]);
 
+        $commentId = $request->input('comment_id');
+
         $this->comments->unresolveComment(
             $request->input('doc_id'),
-            $request->input('comment_id')
+            $commentId
         );
 
-        return back()->with('success', 'Comment reopened.');
+        return $this->backToComment($commentId, 'Comment reopened.');
     }
 
     /**
@@ -134,7 +145,8 @@ class CommentController extends Controller
             $request->input('comment_id')
         );
 
-        return back()->with('success', 'Comment deleted.');
+        $url = preg_replace('/#.*$/', '', url()->previous()) . '#comments-section';
+        return redirect($url)->with('success', 'Comment deleted.');
     }
 
     /**
@@ -152,12 +164,14 @@ class CommentController extends Controller
             'reply_id' => 'required|string|max:50',
         ]);
 
+        $commentId = $request->input('comment_id');
+
         $this->comments->deleteReply(
             $request->input('doc_id'),
-            $request->input('comment_id'),
+            $commentId,
             $request->input('reply_id')
         );
 
-        return back()->with('success', 'Reply deleted.');
+        return $this->backToComment($commentId, 'Reply deleted.');
     }
 }
