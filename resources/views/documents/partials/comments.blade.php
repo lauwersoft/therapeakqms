@@ -7,7 +7,6 @@
     $userRole = auth()->user()->role;
     $canComment = in_array($userRole, [\App\Models\User::ROLE_ADMIN, \App\Models\User::ROLE_EDITOR, \App\Models\User::ROLE_AUDITOR]);
     $generalComments = collect($comments)->filter(fn($c) => empty($c['section']))->values();
-    $sectionComments = collect($comments)->filter(fn($c) => !empty($c['section']))->groupBy('section');
     $docSections = [];
     if (isset($content)) {
         preg_match_all('/<h[23][^>]*>(.*?)<\/h[23]>/s', $content, $sectionMatches);
@@ -15,6 +14,12 @@
             $docSections[] = strip_tags($s);
         }
     }
+    // Group comments by section, sorted by document order
+    $sectionComments = collect($comments)->filter(fn($c) => !empty($c['section']))->groupBy('section')
+        ->sortBy(function($group, $section) use ($docSections) {
+            $pos = array_search($section, $docSections);
+            return $pos !== false ? $pos : 9999;
+        });
 @endphp
 
 @if($docId)

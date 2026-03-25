@@ -314,7 +314,9 @@ class DocumentMetadata
             }
         }
 
-        return $prefix . '-' . str_pad($highest + 1, 3, '0', STR_PAD_LEFT);
+        $next = $highest + 1;
+        $pad = max(3, strlen((string) $next));
+        return $prefix . '-' . str_pad($next, $pad, '0', STR_PAD_LEFT);
     }
 
     /**
