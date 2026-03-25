@@ -32,7 +32,7 @@
                 <div x-data="{ open: true, dirDragOver: false }" x-effect="if (sidebarSearch || sidebarTypeFilter || sidebarStatusFilter) open = true">
                     <div class="group flex items-center">
                         <button @click="open = !open"
-                                @if($canEdit)
+                                @if($canEdit ?? false)
                                     @contextmenu="openDirMenu($event, '{{ $item['path'] }}', '{{ addslashes($item['name']) }}')"
                                     @dragover.prevent="dirDragOver = true"
                                     @dragleave.prevent="dirDragOver = false"
@@ -49,7 +49,7 @@
                             <span class="truncate">{{ $item['name'] }}</span>
                             <span class="ml-auto text-[10px] text-gray-400 shrink-0" x-text="visibleCount"></span>
                         </button>
-                        @if($canEdit)
+                        @if($canEdit ?? false)
                             <div x-data="{ ddOpen: false }" class="relative shrink-0 opacity-0 group-hover:opacity-100 sm:opacity-100 sm:group-hover:opacity-100 transition-opacity">
                                 <button @click.stop="ddOpen = !ddOpen" class="p-1 rounded hover:bg-gray-200 text-gray-400 hover:text-gray-600">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -117,7 +117,7 @@
                 @endphp
                 <div class="group flex items-center">
                     <a href="{{ route('documents.index', ['path' => $linkPath]) }}"
-                       @if($canEdit)
+                       @if($canEdit ?? false)
                            @contextmenu="openFileMenu($event, '{{ $item['path'] }}', '{{ addslashes($item['name']) }}')"
                            @if($isItemMarkdown)
                                @dblclick.prevent="window.location='{{ route('documents.edit', ['path' => preg_replace('/\.md$/', '', $item['path'])]) }}'"
@@ -125,7 +125,7 @@
                        @endif
                        class="flex items-center flex-1 min-w-0 px-2 py-1.5 text-sm rounded mb-0.5 cursor-pointer
                               {{ $currentPath === $item['path'] ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100' }}">
-                        @if($canEdit)
+                        @if($canEdit ?? false)
                             <svg class="w-3.5 h-3.5 mr-1.5 text-gray-300 cursor-grab shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
                             </svg>
@@ -168,7 +168,7 @@
                             </span>
                         @endif
                     </a>
-                    @if($canEdit)
+                    @if($canEdit ?? false)
                         <div x-data="{ ddOpen: false }" class="relative shrink-0 opacity-0 group-hover:opacity-100 sm:opacity-100 sm:group-hover:opacity-100 transition-opacity">
                             <button @click.stop="ddOpen = !ddOpen" class="p-1 rounded hover:bg-gray-200 text-gray-400 hover:text-gray-600">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

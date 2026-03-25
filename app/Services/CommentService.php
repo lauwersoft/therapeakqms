@@ -187,6 +187,30 @@ class CommentService
     }
 
     /**
+     * Delete a reply from a comment.
+     */
+    public function deleteReply(string $docId, string $commentId, string $replyId): bool
+    {
+        $found = false;
+        $this->withLock($docId, function (&$comments) use ($commentId, $replyId, &$found) {
+            foreach ($comments as &$comment) {
+                if ($comment['id'] === $commentId) {
+                    $original = count($comment['replies'] ?? []);
+                    $comment['replies'] = array_values(array_filter($comment['replies'] ?? [], fn ($r) => $r['id'] !== $replyId));
+                    $found = count($comment['replies']) < $original;
+                    break;
+                }
+            }
+        });
+
+        if ($found) {
+            $this->backgroundPush($docId, 'Deleted reply on ' . $docId);
+        }
+
+        return $found;
+    }
+
+    /**
      * Count unresolved comments of type 'required_change' for a document.
      */
     public function unresolvedRequiredChanges(string $docId): int
@@ -309,7 +333,11 @@ class CommentService
             File::makeDirectory($dir, 0775, true);
         }
 
-        $handle = fopen($filePath, 'c+');
+        try {
+            $handle = fopen($filePath, 'c+');
+        } catch (\Throwable $e) {
+            $handle = false;
+        }
         if (! $handle) {
             return;
         }
