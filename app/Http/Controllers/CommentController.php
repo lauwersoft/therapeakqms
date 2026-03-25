@@ -136,4 +136,28 @@ class CommentController extends Controller
 
         return back()->with('success', 'Comment deleted.');
     }
+
+    /**
+     * Delete a reply (admin only).
+     */
+    public function destroyReply(Request $request)
+    {
+        if (! $request->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'doc_id' => 'required|string|max:20',
+            'comment_id' => 'required|string|max:50',
+            'reply_id' => 'required|string|max:50',
+        ]);
+
+        $this->comments->deleteReply(
+            $request->input('doc_id'),
+            $request->input('comment_id'),
+            $request->input('reply_id')
+        );
+
+        return back()->with('success', 'Reply deleted.');
+    }
 }

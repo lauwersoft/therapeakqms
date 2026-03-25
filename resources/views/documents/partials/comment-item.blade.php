@@ -77,7 +77,21 @@
                                 <span class="text-xs font-semibold text-gray-700">{{ $reply['user_name'] }}</span>
                                 <span class="text-[10px] text-gray-300">{{ \Carbon\Carbon::parse($reply['created_at'])->diffForHumans() }}</span>
                             </div>
-                            <p class="text-sm text-gray-600 mt-0.5 ml-7">{{ $reply['content'] }}</p>
+                            <div class="flex items-center gap-2 ml-7">
+                                <p class="text-sm text-gray-600 mt-0.5 flex-1">{{ $reply['content'] }}</p>
+                                @if(($userRole ?? '') === 'admin')
+                                    <form method="POST" action="{{ route('comments.destroy-reply') }}" class="inline shrink-0" onsubmit="return confirm('Delete this reply?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <input type="hidden" name="doc_id" value="{{ $docId }}">
+                                        <input type="hidden" name="comment_id" value="{{ $comment['id'] }}">
+                                        <input type="hidden" name="reply_id" value="{{ $reply['id'] }}">
+                                        <button type="submit" class="text-[10px] text-gray-300 hover:text-red-500">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
                     @endforeach
                 </div>
