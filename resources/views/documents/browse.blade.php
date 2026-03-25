@@ -284,14 +284,14 @@
             {{-- Filter bar --}}
             <div class="flex flex-wrap items-center gap-2 mb-5">
                 <div class="flex flex-wrap gap-1.5">
-                    <button @click="typeFilter = ''" class="px-2.5 py-1 text-xs rounded-full transition-colors bg-gray-800 text-white"
+                    <button @click="typeFilter = ''" class="px-2.5 py-1 text-xs rounded-full transition-colors"
                             :class="typeFilter === '' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
                         All types
                     </button>
                     @foreach(\App\Services\DocumentMetadata::TYPES as $key => $label)
                         @if(collect($documents)->where('type', $key)->count() > 0)
                             <button @click="typeFilter = typeFilter === '{{ $key }}' ? '' : '{{ $key }}'"
-                                    class="px-2.5 py-1 text-xs rounded-full transition-colors bg-white border border-gray-200 text-gray-600"
+                                    class="px-2.5 py-1 text-xs rounded-full transition-colors"
                                     :class="typeFilter === '{{ $key }}' ? '{{ \App\Services\DocumentMetadata::typeColor($key) }} ring-1 ring-current' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
                                 {{ $key }} <span class="opacity-60">({{ collect($documents)->where('type', $key)->count() }})</span>
                             </button>
@@ -300,27 +300,42 @@
                 </div>
                 <div class="w-px h-5 bg-gray-200"></div>
                 <div class="flex flex-wrap gap-1.5">
-                    <button @click="statusFilter = ''" class="px-2.5 py-1 text-xs rounded-full transition-colors bg-gray-800 text-white"
+                    <button @click="statusFilter = ''" class="px-2.5 py-1 text-xs rounded-full transition-colors"
                             :class="statusFilter === '' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
                         All statuses
                     </button>
                     @foreach(\App\Services\DocumentMetadata::STATUSES as $key => $label)
                         @if(collect($documents)->where('status', $key)->count() > 0)
                             <button @click="statusFilter = statusFilter === '{{ $key }}' ? '' : '{{ $key }}'"
-                                    class="px-2.5 py-1 text-xs rounded-full transition-colors bg-white border border-gray-200 text-gray-600"
+                                    class="px-2.5 py-1 text-xs rounded-full transition-colors"
                                     :class="statusFilter === '{{ $key }}' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
                                 {{ $label }} <span class="opacity-60">({{ collect($documents)->where('status', $key)->count() }})</span>
                             </button>
                         @endif
                     @endforeach
                 </div>
+                <div class="w-px h-5 bg-gray-200"></div>
+                <div class="flex flex-wrap gap-1.5">
+                    <button @click="commentFilter = ''" class="px-2.5 py-1 text-xs rounded-full transition-colors"
+                            :class="commentFilter === '' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
+                        All
+                    </button>
+                    <button @click="commentFilter = commentFilter === 'with' ? '' : 'with'" class="px-2.5 py-1 text-xs rounded-full transition-colors"
+                            :class="commentFilter === 'with' ? 'bg-amber-100 text-amber-700' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
+                        💬 Has comments
+                    </button>
+                    <button @click="commentFilter = commentFilter === 'without' ? '' : 'without'" class="px-2.5 py-1 text-xs rounded-full transition-colors"
+                            :class="commentFilter === 'without' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
+                        No comments
+                    </button>
+                </div>
             </div>
 
             {{-- Results count --}}
             <div class="flex items-center justify-between mb-4">
                 <span class="text-xs text-gray-400" x-text="filteredDocs.length + ' of ' + docs.length + ' documents'"></span>
-                <button x-show="typeFilter || statusFilter || search" x-cloak
-                        @click="typeFilter = ''; statusFilter = ''; search = ''"
+                <button x-show="typeFilter || statusFilter || commentFilter || search" x-cloak
+                        @click="typeFilter = ''; statusFilter = ''; commentFilter = ''; search = ''"
                         class="text-xs text-blue-600 hover:text-blue-800">Clear all filters</button>
             </div>
 
@@ -432,6 +447,7 @@
                     search: '',
                     typeFilter: '',
                     statusFilter: '',
+                    commentFilter: '',
                     docs: docs,
                     uniqueDirs: dirs,
                     ctx: { show: false, type: '', x: 0, y: 0, path: '', urlPath: '', isMarkdown: true, title: '', dir: '' },
@@ -452,6 +468,8 @@
                         return this.docs.filter(d => {
                             if (this.typeFilter && d.type !== this.typeFilter) return false;
                             if (this.statusFilter && d.status !== this.statusFilter) return false;
+                            if (this.commentFilter === 'with' && !(d.comment_count > 0)) return false;
+                            if (this.commentFilter === 'without' && d.comment_count > 0) return false;
                             if (this.search) {
                                 const q = this.search.toLowerCase();
                                 return (d.doc_id && d.doc_id.toLowerCase().includes(q)) ||

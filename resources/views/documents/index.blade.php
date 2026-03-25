@@ -220,12 +220,17 @@
                     droppedFile: null,
                     sidebarTypeFilter: '',
                     sidebarStatusFilter: '',
+                    sidebarCommentFilter: '',
                     sidebarDocs: @json($sidebarDocs),
+                    commentSummary: @json($commentSummary ?? []),
 
                     get sidebarFilteredDocs() {
+                        var cs = this.commentSummary;
                         return this.sidebarDocs.filter(d => {
                             if (this.sidebarTypeFilter && d.type !== this.sidebarTypeFilter) return false;
                             if (this.sidebarStatusFilter && d.status !== this.sidebarStatusFilter) return false;
+                            if (this.sidebarCommentFilter === 'with' && !(d.doc_id && cs[d.doc_id] && cs[d.doc_id].unresolved > 0)) return false;
+                            if (this.sidebarCommentFilter === 'without' && d.doc_id && cs[d.doc_id] && cs[d.doc_id].unresolved > 0) return false;
                             if (this.sidebarSearch) {
                                 const q = this.sidebarSearch.toLowerCase();
                                 return (d.doc_id && d.doc_id.toLowerCase().includes(q)) ||

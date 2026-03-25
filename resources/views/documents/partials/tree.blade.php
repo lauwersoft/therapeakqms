@@ -19,7 +19,7 @@
                  x-data="{
                     children: {{ json_encode($childrenData) }},
                     get visibleCount() {
-                        if (!sidebarSearch && !sidebarTypeFilter && !sidebarStatusFilter) return this.children.length;
+                        if (!sidebarSearch && !sidebarTypeFilter && !sidebarStatusFilter && !sidebarCommentFilter) return this.children.length;
                         return this.children.filter(c => {
                             if (sidebarTypeFilter && c.type !== sidebarTypeFilter) return false;
                             if (sidebarStatusFilter && c.status !== sidebarStatusFilter) return false;
@@ -29,7 +29,7 @@
                     }
                  }"
                  x-show="visibleCount > 0">
-                <div x-data="{ open: true, dirDragOver: false }" x-effect="if (sidebarSearch || sidebarTypeFilter || sidebarStatusFilter) open = true">
+                <div x-data="{ open: true, dirDragOver: false }" x-effect="if (sidebarSearch || sidebarTypeFilter || sidebarStatusFilter || sidebarCommentFilter) open = true">
                     <div class="group flex items-center gap-0.5">
                         <button @click="open = !open"
                                 @if($canEdit ?? false)
@@ -109,7 +109,7 @@
                 $itemDocStatus = $item['doc_status'] ?? '';
             @endphp
             <div class="sortable-item" data-path="{{ $item['path'] }}"
-                 x-show="(!sidebarSearch || '{{ addslashes($searchStr) }}'.includes(sidebarSearch.toLowerCase())) && (!sidebarTypeFilter || sidebarTypeFilter === '{{ $itemDocType }}') && (!sidebarStatusFilter || sidebarStatusFilter === '{{ $itemDocStatus }}')"
+                 x-show="(!sidebarSearch || '{{ addslashes($searchStr) }}'.includes(sidebarSearch.toLowerCase())) && (!sidebarTypeFilter || sidebarTypeFilter === '{{ $itemDocType }}') && (!sidebarStatusFilter || sidebarStatusFilter === '{{ $itemDocStatus }}') && (!sidebarCommentFilter || (sidebarCommentFilter === 'with' ? (commentSummary && commentSummary['{{ $item['doc_id'] ?? '' }}'] && commentSummary['{{ $item['doc_id'] ?? '' }}'].unresolved > 0) : !(commentSummary && commentSummary['{{ $item['doc_id'] ?? '' }}'] && commentSummary['{{ $item['doc_id'] ?? '' }}'].unresolved > 0)))"
             >
                 @php
                     $isItemMarkdown = $item['is_markdown'] ?? true;

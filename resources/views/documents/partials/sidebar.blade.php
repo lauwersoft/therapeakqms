@@ -84,9 +84,14 @@
                     <option value="{{ $status }}">{{ \App\Services\DocumentMetadata::STATUSES[$status] ?? ucfirst($status) }} ({{ collect($sidebarDocs)->where('status', $status)->count() }})</option>
                 @endforeach
             </select>
+            <select x-model="sidebarCommentFilter" class="text-[11px] border-gray-200 rounded-md py-1 pl-2 pr-6 bg-gray-50 focus:ring-blue-500 focus:border-blue-500" style="width: 42px;">
+                <option value="">💬</option>
+                <option value="with">💬 Yes</option>
+                <option value="without">💬 No</option>
+            </select>
         </div>
-        <button x-show="sidebarSearch || sidebarTypeFilter || sidebarStatusFilter" x-cloak
-                @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''"
+        <button x-show="sidebarSearch || sidebarTypeFilter || sidebarStatusFilter || sidebarCommentFilter" x-cloak
+                @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''; sidebarCommentFilter = ''"
                 class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
     </div>
     <nav class="p-3 flex-1 flex flex-col overflow-y-auto">
