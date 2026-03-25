@@ -76,6 +76,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/users/{user}', [\App\Http\Controllers\UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
 
+    // Admin Guide
+    Route::get('/admin/guide', [\App\Http\Controllers\AdminGuideController::class, 'index'])->name('admin.guide');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
