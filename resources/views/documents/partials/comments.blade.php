@@ -341,12 +341,15 @@
                 submitBtn.style.opacity = '0.5';
             }
 
+            var targetCommentId = null;
+
             fetch(action, fetchOptions)
                 .then(function(response) {
                     if (!response.ok) throw new Error('Request failed');
                     return response.json();
                 })
                 .then(function(data) {
+                    targetCommentId = data.comment_id;
                     // Reload the comments partial
                     return fetch(partialUrl, {
                         headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -360,7 +363,6 @@
                     var temp = document.createElement('div');
                     temp.innerHTML = html;
 
-                    // Find the new container inside the response
                     var newContainer = temp.querySelector('#comments-container');
                     if (newContainer) {
                         container.innerHTML = newContainer.innerHTML;
@@ -376,9 +378,19 @@
                     // Re-inject comment indicators into headings
                     reinjectCommentIndicators();
 
-                    // Also close the new comment dialog if open
+                    // Close the new comment dialog if open
                     var dialog = document.getElementById('new-comment-dialog');
                     if (dialog) dialog.classList.add('hidden');
+
+                    // Scroll to and flash the target comment
+                    if (targetCommentId) {
+                        var targetEl = document.getElementById('comment-' + targetCommentId);
+                        if (targetEl) {
+                            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            var card = targetEl.closest('[data-section], .rounded-lg');
+                            if (card) setTimeout(function() { flashCard(card); }, 300);
+                        }
+                    }
                 })
                 .catch(function(err) {
                     // Fallback: submit the form normally
