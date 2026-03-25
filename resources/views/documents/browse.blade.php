@@ -320,13 +320,17 @@
                             :class="commentFilter === '' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
                         All
                     </button>
+                    @php
+                        $browseWithComments = collect($documents)->where('comment_count', '>', 0)->count();
+                        $browseWithoutComments = collect($documents)->where('comment_count', 0)->count();
+                    @endphp
                     <button @click="commentFilter = commentFilter === 'with' ? '' : 'with'" class="px-2.5 py-1 text-xs rounded-full transition-colors"
-                            :class="commentFilter === 'with' ? 'bg-amber-100 text-amber-700' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
-                        💬 Has comments
+                            :class="commentFilter === 'with' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
+                        💬 Has comments <span class="opacity-60">({{ $browseWithComments }})</span>
                     </button>
                     <button @click="commentFilter = commentFilter === 'without' ? '' : 'without'" class="px-2.5 py-1 text-xs rounded-full transition-colors"
                             :class="commentFilter === 'without' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
-                        No comments
+                        No comments <span class="opacity-60">({{ $browseWithoutComments }})</span>
                     </button>
                 </div>
             </div>
