@@ -59,14 +59,10 @@
                 background: white;
                 border-radius: 0.75rem;
                 padding: 2rem;
-                max-width: 95vw;
+                width: 90vw;
                 max-height: 90vh;
                 overflow: auto;
                 cursor: default;
-            }
-            .mermaid-overlay-content svg {
-                max-width: none;
-                height: auto;
             }
         </style>
     </head>
@@ -167,9 +163,8 @@
                 const svg = content.querySelector('svg');
                 if (svg) {
                     svg.removeAttribute('width');
-                    svg.style.width = '100%';
-                    svg.style.height = 'auto';
-                    svg.style.maxHeight = '85vh';
+                    svg.removeAttribute('height');
+                    svg.style.cssText = 'width:100%;height:auto;max-width:none;max-height:85vh;';
                 }
                 overlay.appendChild(content);
                 overlay.addEventListener('click', function(ev) {
