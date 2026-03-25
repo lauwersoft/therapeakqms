@@ -350,6 +350,7 @@
                 })
                 .then(function(data) {
                     targetCommentId = data.comment_id;
+                    if (data.message && window.showToast) showToast(data.message);
                     // Reload the comments partial
                     return fetch(partialUrl, {
                         headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -393,8 +394,8 @@
                     }
                 })
                 .catch(function(err) {
+                    if (window.showToast) showToast('Something went wrong. Retrying...', 'error');
                     // Fallback: submit the form normally
-                    console.error('Comment AJAX failed, falling back to form submit:', err);
                     form.submit();
                 });
         });

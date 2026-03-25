@@ -34,6 +34,42 @@
                 {{ $slot }}
             </main>
         </div>
+
+        {{-- Toast notifications --}}
+        <div id="toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center gap-2 pointer-events-none"></div>
+
+        <script>
+            window.showToast = function(message, type) {
+                type = type || 'success';
+                var container = document.getElementById('toast-container');
+                if (!container) return;
+
+                var toast = document.createElement('div');
+                toast.className = 'pointer-events-auto px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium flex items-center gap-2 transform transition-all duration-300 translate-y-4 opacity-0';
+
+                if (type === 'success') {
+                    toast.className += ' bg-gray-800 text-white';
+                    toast.innerHTML = '<svg class="w-4 h-4 text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>' + message;
+                } else if (type === 'error') {
+                    toast.className += ' bg-red-600 text-white';
+                    toast.innerHTML = '<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' + message;
+                }
+
+                container.appendChild(toast);
+
+                // Animate in
+                requestAnimationFrame(function() {
+                    toast.classList.remove('translate-y-4', 'opacity-0');
+                });
+
+                // Animate out after 2s
+                setTimeout(function() {
+                    toast.classList.add('translate-y-4', 'opacity-0');
+                    setTimeout(function() { toast.remove(); }, 300);
+                }, 2000);
+            };
+        </script>
+
         <script type="module">
             import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
             mermaid.initialize({
