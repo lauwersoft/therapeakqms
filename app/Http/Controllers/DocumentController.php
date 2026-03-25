@@ -293,6 +293,10 @@ class DocumentController extends Controller
             'meta_version' => 'nullable|string|max:20',
             'meta_effective_date' => 'nullable|date',
             'meta_author' => 'nullable|string|max:255',
+            'meta_iso_refs' => 'nullable|array',
+            'meta_iso_refs.*' => 'string|max:50',
+            'meta_mdr_refs' => 'nullable|array',
+            'meta_mdr_refs.*' => 'string|max:100',
             'redirect' => 'nullable|string|in:edit,show',
         ]);
 
@@ -329,6 +333,12 @@ class DocumentController extends Controller
         }
         if ($request->has('meta_author')) {
             $meta['author'] = $request->input('meta_author');
+        }
+        if ($request->has('meta_iso_refs')) {
+            $meta['iso_refs'] = array_filter($request->input('meta_iso_refs', []));
+        }
+        if ($request->has('meta_mdr_refs')) {
+            $meta['mdr_refs'] = array_filter($request->input('meta_mdr_refs', []));
         }
 
         $fileContent = $meta['id'] ? DocumentMetadata::build($meta, $parsed['body']) : $parsed['body'];

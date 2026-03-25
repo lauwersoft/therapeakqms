@@ -82,8 +82,31 @@
     </div>
 
     {{-- Editable properties panel --}}
+    @php
+        // Build suggestion lists from reference files
+        $isoSuggestions = [];
+        $mdrSuggestions = [];
+        $isoFile = base_path('qms/references/iso-13485.md');
+        $mdrFile = base_path('qms/references/eu-mdr.md');
+        if (file_exists($isoFile)) {
+            preg_match_all('/^#{2,4}\s+(\d+\.\d+(?:\.\d+)?)\s+(.*)$/m', file_get_contents($isoFile), $m);
+            foreach ($m[1] as $i => $num) {
+                $isoSuggestions[] = ['value' => $num, 'label' => $num . ' ' . trim($m[2][$i])];
+            }
+        }
+        if (file_exists($mdrFile)) {
+            preg_match_all('/^###\s+(Article\s+\d+)\s+—\s+(.*)$/m', file_get_contents($mdrFile), $m);
+            foreach ($m[1] as $i => $art) {
+                $mdrSuggestions[] = ['value' => $art, 'label' => $art . ' — ' . trim($m[2][$i])];
+            }
+            preg_match_all('/^##\s+(ANNEX\s+[IVXLCDM]+)\s+—\s+(.*)$/m', file_get_contents($mdrFile), $m2);
+            foreach ($m2[1] as $i => $annex) {
+                $mdrSuggestions[] = ['value' => $annex, 'label' => $annex . ' — ' . \Illuminate\Support\Str::limit(trim($m2[2][$i]), 60)];
+            }
+        }
+    @endphp
     <div x-show="showMeta" x-cloak class="px-4 sm:px-6 py-4 border-t border-gray-100 bg-gray-50/50">
-        <form method="POST" action="{{ $metaFormAction }}">
+        <form method="POST" action="{{ $metaFormAction }}" x-data="metaEditor()">
             @csrf
             @method('PUT')
             <input type="hidden" name="path" value="{{ $currentPath }}">
@@ -113,10 +136,134 @@
                            class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>
+
+            {{-- ISO refs tag input --}}
+            <div class="mt-3">
+                <label class="block text-xs font-medium text-gray-500 mb-1">ISO 13485 References</label>
+                <div class="relative">
+                    <div class="flex flex-wrap gap-1.5 p-2 bg-white border border-gray-300 rounded-md min-h-[36px] cursor-text focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500"
+                         @click="$refs.isoInput.focus()">
+                        <template x-for="(tag, i) in isoTags" :key="i">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded-full">
+                                <span x-text="tag"></span>
+                                <button type="button" @click.stop="isoTags.splice(i, 1)" class="text-blue-400 hover:text-blue-700">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </span>
+                        </template>
+                        <input x-ref="isoInput" type="text" x-model="isoSearch" @focus="isoOpen = true" @click.stop
+                               @keydown.enter.prevent="addIsoTag(isoSearch); isoSearch = ''; isoOpen = false"
+                               @keydown.backspace="if (!isoSearch && isoTags.length) isoTags.pop()"
+                               @keydown.escape="isoOpen = false"
+                               placeholder="Type to search clauses..."
+                               class="flex-1 min-w-[120px] text-xs border-0 p-0 focus:ring-0 bg-transparent">
+                    </div>
+                    {{-- Suggestions dropdown --}}
+                    <div x-show="isoOpen && isoFiltered.length > 0" x-cloak @click.outside="isoOpen = false"
+                         class="absolute z-50 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                        <template x-for="item in isoFiltered" :key="item.value">
+                            <button type="button" @click="addIsoTag(item.value); isoSearch = ''; isoOpen = false"
+                                    class="w-full text-left px-3 py-2 text-xs hover:bg-blue-50 flex items-center gap-2 border-b border-gray-50 last:border-0">
+                                <span class="font-mono font-medium text-blue-600" x-text="item.value"></span>
+                                <span class="text-gray-500 truncate" x-text="item.label.replace(item.value + ' ', '')"></span>
+                            </button>
+                        </template>
+                    </div>
+                    {{-- Hidden inputs for form submission --}}
+                    <template x-for="tag in isoTags" :key="tag">
+                        <input type="hidden" name="meta_iso_refs[]" :value="tag">
+                    </template>
+                </div>
+            </div>
+
+            {{-- MDR refs tag input --}}
+            <div class="mt-3">
+                <label class="block text-xs font-medium text-gray-500 mb-1">EU MDR References</label>
+                <div class="relative">
+                    <div class="flex flex-wrap gap-1.5 p-2 bg-white border border-gray-300 rounded-md min-h-[36px] cursor-text focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500"
+                         @click="$refs.mdrInput.focus()">
+                        <template x-for="(tag, i) in mdrTags" :key="i">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 text-xs rounded-full">
+                                <span x-text="tag"></span>
+                                <button type="button" @click.stop="mdrTags.splice(i, 1)" class="text-emerald-400 hover:text-emerald-700">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </span>
+                        </template>
+                        <input x-ref="mdrInput" type="text" x-model="mdrSearch" @focus="mdrOpen = true" @click.stop
+                               @keydown.enter.prevent="addMdrTag(mdrSearch); mdrSearch = ''; mdrOpen = false"
+                               @keydown.backspace="if (!mdrSearch && mdrTags.length) mdrTags.pop()"
+                               @keydown.escape="mdrOpen = false"
+                               placeholder="Type to search articles/annexes..."
+                               class="flex-1 min-w-[120px] text-xs border-0 p-0 focus:ring-0 bg-transparent">
+                    </div>
+                    {{-- Suggestions dropdown --}}
+                    <div x-show="mdrOpen && mdrFiltered.length > 0" x-cloak @click.outside="mdrOpen = false"
+                         class="absolute z-50 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                        <template x-for="item in mdrFiltered" :key="item.value">
+                            <button type="button" @click="addMdrTag(item.value); mdrSearch = ''; mdrOpen = false"
+                                    class="w-full text-left px-3 py-2 text-xs hover:bg-emerald-50 flex items-center gap-2 border-b border-gray-50 last:border-0">
+                                <span class="font-medium text-emerald-600" x-text="item.value"></span>
+                                <span class="text-gray-500 truncate" x-text="item.label.replace(item.value + ' — ', '')"></span>
+                            </button>
+                        </template>
+                    </div>
+                    {{-- Hidden inputs for form submission --}}
+                    <template x-for="tag in mdrTags" :key="tag">
+                        <input type="hidden" name="meta_mdr_refs[]" :value="tag">
+                    </template>
+                </div>
+            </div>
+
             <div class="flex justify-end mt-3">
                 <button type="submit" class="px-3 py-1.5 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700">Save properties</button>
             </div>
         </form>
+
+        <script>
+            function metaEditor() {
+                return {
+                    isoTags: @json($meta['iso_refs'] ?? []),
+                    mdrTags: @json($meta['mdr_refs'] ?? []),
+                    isoSearch: '',
+                    mdrSearch: '',
+                    isoOpen: false,
+                    mdrOpen: false,
+                    isoSuggestions: @json($isoSuggestions),
+                    mdrSuggestions: @json($mdrSuggestions),
+
+                    get isoFiltered() {
+                        var q = this.isoSearch.toLowerCase();
+                        var tags = this.isoTags;
+                        return this.isoSuggestions.filter(function(s) {
+                            if (tags.indexOf(s.value) !== -1) return false;
+                            if (!q) return true;
+                            return s.label.toLowerCase().indexOf(q) !== -1;
+                        }).slice(0, 15);
+                    },
+
+                    get mdrFiltered() {
+                        var q = this.mdrSearch.toLowerCase();
+                        var tags = this.mdrTags;
+                        return this.mdrSuggestions.filter(function(s) {
+                            if (tags.indexOf(s.value) !== -1) return false;
+                            if (!q) return true;
+                            return s.label.toLowerCase().indexOf(q) !== -1;
+                        }).slice(0, 15);
+                    },
+
+                    addIsoTag(val) {
+                        val = val.trim();
+                        if (val && this.isoTags.indexOf(val) === -1) this.isoTags.push(val);
+                    },
+
+                    addMdrTag(val) {
+                        val = val.trim();
+                        if (val && this.mdrTags.indexOf(val) === -1) this.mdrTags.push(val);
+                    },
+                };
+            }
+        </script>
     </div>
 </div>
 @endif
