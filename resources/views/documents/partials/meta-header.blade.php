@@ -188,43 +188,45 @@
                 </div>
 
                 {{-- Two-step picker --}}
-                <div class="flex gap-2">
+                <div class="space-y-2">
                     {{-- Step 1: Select source document --}}
-                    <select x-model="pickerSource" @change="pickerSection = ''; pickerSearch = ''"
-                            class="border-gray-300 rounded-md text-xs py-1.5 focus:ring-blue-500 focus:border-blue-500 w-48">
-                        <option value="">Select reference...</option>
+                    <select x-model="pickerSource" @change="pickerSection = ''; pickerSearch = ''; pickerOpen = false; $nextTick(() => { if ($refs.sectionInput) $refs.sectionInput.focus(); })"
+                            class="w-full border-gray-300 rounded-md text-xs py-1.5 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">1. Select a reference document...</option>
                         @foreach($refSources as $src)
-                            <option value="{{ $src['filename'] }}">{{ \Illuminate\Support\Str::limit($src['title'], 45) }}</option>
+                            <option value="{{ $src['filename'] }}">{{ $src['title'] }}</option>
                         @endforeach
                     </select>
 
                     {{-- Step 2: Search/select section --}}
-                    <div class="flex-1 relative" x-show="pickerSource" x-cloak>
-                        <input type="text" x-model="pickerSearch" x-ref="sectionInput"
-                               @focus="pickerOpen = true" @click.stop
-                               @keydown.enter.prevent="addFromPicker(); pickerSearch = ''; pickerOpen = false"
-                               @keydown.escape="pickerOpen = false"
-                               placeholder="Search sections or type custom..."
-                               class="w-full border-gray-300 rounded-md text-xs py-1.5 focus:ring-blue-500 focus:border-blue-500">
+                    <div x-show="pickerSource" x-cloak class="flex flex-col sm:flex-row gap-2">
+                        <div class="flex-1 relative">
+                            <input type="text" x-model="pickerSearch" x-ref="sectionInput"
+                                   @focus="pickerOpen = true" @click.stop
+                                   @keydown.enter.prevent="addFromPicker(); pickerSearch = ''; pickerOpen = false"
+                                   @keydown.escape="pickerOpen = false"
+                                   placeholder="2. Search sections or type custom..."
+                                   class="w-full border-gray-300 rounded-md text-xs py-1.5 focus:ring-blue-500 focus:border-blue-500">
 
-                        {{-- Section suggestions --}}
-                        <div x-show="pickerOpen && filteredSections.length > 0" x-cloak @click.outside="pickerOpen = false"
-                             class="absolute z-50 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                            <template x-for="section in filteredSections" :key="section">
-                                <button type="button" @click="addRef(pickerSource, section); pickerSearch = ''; pickerOpen = false"
-                                        class="w-full text-left px-3 py-2 text-xs hover:bg-gray-50 border-b border-gray-50 last:border-0 truncate"
-                                        x-text="section">
-                                </button>
-                            </template>
+                            {{-- Section suggestions --}}
+                            <div x-show="pickerOpen && filteredSections.length > 0" x-cloak @click.outside="pickerOpen = false"
+                                 class="absolute z-50 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                                <template x-for="section in filteredSections" :key="section">
+                                    <button type="button" @click="addRef(pickerSource, section); pickerSearch = ''; pickerOpen = false"
+                                            class="w-full text-left px-3 py-2 text-xs hover:bg-gray-50 border-b border-gray-50 last:border-0 truncate"
+                                            x-text="section">
+                                    </button>
+                                </template>
+                            </div>
                         </div>
-                    </div>
 
-                    {{-- Add whole document (no section) --}}
-                    <button type="button" x-show="pickerSource" x-cloak
-                            @click="addRef(pickerSource, ''); pickerSource = ''"
-                            class="px-2.5 py-1.5 text-xs bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 whitespace-nowrap shrink-0">
-                        Add whole doc
-                    </button>
+                        {{-- Add whole document (no section) --}}
+                        <button type="button"
+                                @click="addRef(pickerSource, ''); pickerSource = ''"
+                                class="px-2.5 py-1.5 text-xs bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 whitespace-nowrap shrink-0">
+                            Add whole doc
+                        </button>
+                    </div>
                 </div>
             </div>
 
