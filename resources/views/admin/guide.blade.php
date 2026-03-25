@@ -31,18 +31,53 @@
 
             {{-- Guide Content from qms/ADMIN_GUIDE.md --}}
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-10">
-                <div class="prose prose-sm sm:prose-base max-w-none
+                <div class="admin-guide prose prose-sm sm:prose-base max-w-none
                             text-gray-700 prose-headings:text-gray-800
                             prose-h1:text-xl sm:prose-h1:text-2xl prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-3 prose-h1:mb-6
-                            prose-h2:text-lg sm:prose-h2:text-xl prose-h2:mt-8
-                            prose-h3:text-base prose-h3:mt-6
+                            prose-h2:text-lg sm:prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-100
+                            prose-h3:text-base prose-h3:mt-6 prose-h3:mb-2
                             prose-strong:text-gray-800
                             prose-table:text-sm prose-th:bg-gray-50 prose-th:px-3 prose-th:py-2 prose-td:px-3 prose-td:py-2
                             prose-a:text-blue-600
-                            prose-li:my-0.5">
+                            prose-li:my-1
+                            prose-hr:my-8">
                     {!! $guideHtml !!}
                 </div>
             </div>
+
+            @push('styles')
+            <style>
+                .admin-guide ul.contains-task-list {
+                    list-style: none;
+                    padding-left: 0;
+                }
+                .admin-guide ul.contains-task-list li {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 0.75rem;
+                    padding: 0.75rem 1rem;
+                    margin: 0.5rem 0;
+                    background: #fefce8;
+                    border: 1px solid #fef08a;
+                    border-radius: 0.5rem;
+                }
+                .admin-guide ul.contains-task-list li input[type="checkbox"] {
+                    margin-top: 0.25rem;
+                    accent-color: #2563eb;
+                }
+                .admin-guide h3 + p {
+                    margin-top: 0.25rem;
+                }
+                .admin-guide h3 + p > strong:first-child {
+                    display: inline-block;
+                    font-size: 0.7rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                    color: #6b7280;
+                    margin-right: 0.25rem;
+                }
+            </style>
+            @endpush
 
             <div class="mt-4 text-xs text-gray-400 flex items-center gap-2">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
