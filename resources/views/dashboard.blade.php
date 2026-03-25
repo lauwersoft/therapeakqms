@@ -39,6 +39,9 @@
                                             @endif
                                             <span class="text-sm font-medium text-gray-800 truncate">{{ $rcTitle }}</span>
                                         </div>
+                                        @if($rcPath)
+                                            <span class="text-[10px] text-gray-400 font-mono mt-0.5 block">/{{ $rcPath }}.md</span>
+                                        @endif
                                     </div>
                                     <span class="flex items-center gap-1 text-[10px] text-amber-600 shrink-0">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
@@ -72,6 +75,13 @@
                                                     <span class="text-[10px] text-gray-300">{{ \Carbon\Carbon::parse($rc['created_at'] ?? now())->diffForHumans() }}</span>
                                                 </div>
                                                 <p class="text-xs text-gray-600 mt-0.5 line-clamp-2">{{ $rc['content'] ?? '' }}</p>
+                                                @php $replyCount = count($rc['replies'] ?? []); @endphp
+                                                @if($replyCount > 0)
+                                                    <span class="text-[10px] text-gray-400 mt-0.5 flex items-center gap-1">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                                                        {{ $replyCount }} {{ Str::plural('reply', $replyCount) }}
+                                                    </span>
+                                                @endif
                                             </div>
                                             <svg class="w-3.5 h-3.5 text-gray-300 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                         </a>
