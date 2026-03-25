@@ -97,8 +97,9 @@ class FormController extends Controller
             'status' => 'submitted',
         ]);
 
-        // Save as file (for git tracking and AI access)
-        $recId = DocumentMetadata::nextId('REC', $this->basePath);
+        // Save as file in qms/records/ (separate from documents)
+        $recordsBase = base_path('qms/records');
+        $recId = DocumentMetadata::nextId('REC', $recordsBase);
         $recordData = [
             'id' => $recId,
             'title' => $request->input('title'),
@@ -114,36 +115,40 @@ class FormController extends Controller
             'data' => $request->input('fields'),
         ];
 
-        // Ensure records directory exists
-        $recordsDir = $this->basePath . '/records';
-        if (! is_dir($recordsDir)) {
-            mkdir($recordsDir, 0775, true);
+        if (! is_dir($recordsBase)) {
+            mkdir($recordsBase, 0775, true);
         }
 
         $recordFilename = Str::slug($request->input('title')) . '.rec.json';
-        $recordPath = 'records/' . $recordFilename;
-        $recordFullPath = $this->basePath . '/' . $recordPath;
+        $recordFullPath = $recordsBase . '/' . $recordFilename;
 
-        // Avoid filename collisions
         $counter = 1;
         while (File::exists($recordFullPath)) {
             $recordFilename = Str::slug($request->input('title')) . '-' . $counter . '.rec.json';
-            $recordPath = 'records/' . $recordFilename;
-            $recordFullPath = $this->basePath . '/' . $recordPath;
+            $recordFullPath = $recordsBase . '/' . $recordFilename;
             $counter++;
         }
 
         File::put($recordFullPath, json_encode($recordData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
 
-        // Log change for git tracking
-        \App\Models\DocumentChange::create([
-            'user_id' => $user->id,
-            'action' => 'create',
-            'path' => $recordPath,
-        ]);
+        // Auto-commit to git (records don't go through publish workflow)
+        app()->terminating(function () use ($recId) {
+            $base = base_path();
+            try {
+                \Illuminate\Support\Facades\Process::path($base)->run('git pull --no-rebase 2>/dev/null');
+                \Illuminate\Support\Facades\Process::path($base)->run('git add qms/records/');
+                $diff = \Illuminate\Support\Facades\Process::path($base)->run('git diff --cached --quiet');
+                if (! $diff->successful()) {
+                    \Illuminate\Support\Facades\Process::path($base)->run(['git', 'commit', '--author', 'QMS System <qms@system>', '-m', "Record {$recId} submitted"]);
+                    \Illuminate\Support\Facades\Process::path($base)->run('git push');
+                }
+            } catch (\Throwable $e) {
+                // Silent — file is on disk
+            }
+        });
 
-        return redirect()->route('documents.index', ['path' => $recordPath])
-            ->with('success', "Form submitted as {$recId}. Remember to publish when ready.");
+        return redirect()->route('records.show', $recordFilename)
+            ->with('success', "Form submitted as {$recId}.");
     }
 
     /**

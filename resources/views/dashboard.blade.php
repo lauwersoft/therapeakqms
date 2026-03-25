@@ -222,6 +222,20 @@
                         </div>
                     </a>
 
+                    <a href="{{ route('records.index') }}" class="block bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-center gap-3">
+                            <div class="p-1.5 bg-amber-50 rounded-lg">
+                                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-800">Records</h3>
+                                <p class="text-xs text-gray-400">Form submissions</p>
+                            </div>
+                        </div>
+                    </a>
+
                     <a href="{{ route('references.index') }}" class="block bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
                         <div class="flex items-center gap-3">
                             <div class="p-1.5 bg-emerald-50 rounded-lg">

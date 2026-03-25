@@ -28,6 +28,9 @@
                     <x-nav-link :href="route('documents.history')" :active="request()->routeIs('documents.history') || request()->routeIs('documents.revision')">
                         {{ __('History') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('records.index')" :active="request()->routeIs('records.*')">
+                        {{ __('Records') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('references.index')" :active="request()->routeIs('references.*')">
                         {{ __('References') }}
                     </x-nav-link>
@@ -120,6 +123,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('documents.history')" :active="request()->routeIs('documents.history') || request()->routeIs('documents.revision')">
                 {{ __('History') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('records.index')" :active="request()->routeIs('records.*')">
+                {{ __('Records') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('references.index')" :active="request()->routeIs('references.*')">
                 {{ __('References') }}

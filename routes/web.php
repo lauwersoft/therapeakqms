@@ -59,6 +59,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/qms/comments/reply', [\App\Http\Controllers\CommentController::class, 'destroyReply'])->name('comments.destroy-reply');
     Route::get('/qms/comments/partial/{docId}', [\App\Http\Controllers\CommentController::class, 'partial'])->name('comments.partial');
 
+    // Records
+    Route::get('/records', [\App\Http\Controllers\RecordController::class, 'index'])->name('records.index');
+    Route::get('/records/{filename}', [\App\Http\Controllers\RecordController::class, 'show'])->name('records.show');
+
     // References
     Route::get('/references', [\App\Http\Controllers\ReferenceController::class, 'index'])->name('references.index');
     Route::get('/references/{path}', [\App\Http\Controllers\ReferenceController::class, 'show'])->where('path', '.*')->name('references.show');
