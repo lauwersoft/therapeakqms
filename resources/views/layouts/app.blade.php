@@ -25,6 +25,50 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @stack('styles')
+        <style>
+            .mermaid {
+                cursor: pointer;
+                padding: 1rem;
+                margin: 1rem 0;
+                background: #fafbfc;
+                border: 1px solid #e5e7eb;
+                border-radius: 0.5rem;
+                overflow-x: auto;
+            }
+            .mermaid:hover {
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 1px #3b82f6;
+            }
+            .mermaid svg {
+                max-width: 100%;
+                height: auto;
+                min-height: 200px;
+            }
+            .mermaid-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 9999;
+                background: rgba(0,0,0,0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 2rem;
+                cursor: pointer;
+            }
+            .mermaid-overlay-content {
+                background: white;
+                border-radius: 0.75rem;
+                padding: 2rem;
+                max-width: 95vw;
+                max-height: 90vh;
+                overflow: auto;
+                cursor: default;
+            }
+            .mermaid-overlay-content svg {
+                max-width: none;
+                height: auto;
+            }
+        </style>
     </head>
     <body class="font-sans antialiased text-gray-700 h-screen overflow-hidden">
         <div class="h-screen flex flex-col bg-gray-100">
@@ -95,13 +139,33 @@
             mermaid.initialize({
                 startOnLoad: true,
                 theme: 'neutral',
-                flowchart: { curve: 'basis', padding: 15 },
+                flowchart: { curve: 'basis', padding: 20, nodeSpacing: 30, rankSpacing: 40 },
                 themeVariables: {
                     fontFamily: 'Ubuntu, sans-serif',
                     fontSize: '14px',
                 }
             });
             window.mermaid = mermaid;
+
+            // Make mermaid diagrams expandable on click
+            document.addEventListener('click', function(e) {
+                const mermaidEl = e.target.closest('.mermaid');
+                if (!mermaidEl) return;
+
+                // If already in overlay, close it
+                if (mermaidEl.closest('.mermaid-overlay')) {
+                    mermaidEl.closest('.mermaid-overlay').remove();
+                    return;
+                }
+
+                const overlay = document.createElement('div');
+                overlay.className = 'mermaid-overlay';
+                overlay.innerHTML = '<div class="mermaid-overlay-content">' + mermaidEl.innerHTML + '</div>';
+                overlay.addEventListener('click', function(ev) {
+                    if (ev.target === overlay) overlay.remove();
+                });
+                document.body.appendChild(overlay);
+            });
         </script>
         @stack('scripts')
     </body>
