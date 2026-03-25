@@ -61,6 +61,45 @@ class RecordController extends Controller
         ]);
     }
 
+    public function destroy(Request $request, string $filename)
+    {
+        if (! $request->user()->isAdmin()) {
+            abort(403);
+        }
+
+        if (str_contains($filename, '..')) {
+            abort(403);
+        }
+
+        $filePath = $this->basePath . '/' . $filename;
+        if (! File::exists($filePath)) {
+            abort(404);
+        }
+
+        // Read record ID before deleting
+        $data = @json_decode(File::get($filePath), true);
+        $recId = $data['id'] ?? $filename;
+
+        File::delete($filePath);
+
+        // Auto-commit deletion
+        app()->terminating(function () use ($recId) {
+            $base = base_path();
+            try {
+                \Illuminate\Support\Facades\Process::path($base)->run('git add qms/records/');
+                $diff = \Illuminate\Support\Facades\Process::path($base)->run('git diff --cached --quiet');
+                if (! $diff->successful()) {
+                    \Illuminate\Support\Facades\Process::path($base)->run(['git', 'commit', '--author', 'QMS System <qms@system>', '-m', "Deleted record {$recId}"]);
+                    \Illuminate\Support\Facades\Process::path($base)->run('git push');
+                }
+            } catch (\Throwable $e) {
+                // Silent
+            }
+        });
+
+        return redirect()->route('records.index')->with('success', "Record {$recId} deleted.");
+    }
+
     public function show(Request $request, string $filename)
     {
         if (str_contains($filename, '..')) {

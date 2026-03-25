@@ -112,21 +112,16 @@
                                         <h3 class="text-sm font-semibold text-gray-700 mb-3">Recent submissions</h3>
                                         <div class="space-y-2">
                                             @foreach($formSubmissions as $sub)
-                                                <a href="{{ route('forms.submission', $sub) }}"
+                                                <a href="{{ route('records.show', $sub['filename']) }}"
                                                    class="flex items-center gap-3 p-3 rounded-md border border-gray-100 hover:bg-gray-50 transition-colors">
                                                     <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
-                                                        <span class="text-[10px] font-semibold text-gray-500">{{ strtoupper(substr($sub->user->name, 0, 1)) }}</span>
+                                                        <span class="text-[10px] font-semibold text-gray-500">{{ strtoupper(substr($sub['author'], 0, 1)) }}</span>
                                                     </div>
                                                     <div class="flex-1 min-w-0">
-                                                        <span class="text-sm text-gray-800 block">{{ $sub->title }}</span>
-                                                        <span class="text-xs text-gray-400">{{ $sub->user->name }} · {{ $sub->created_at->diffForHumans() }}</span>
+                                                        <span class="text-sm text-gray-800 block">{{ $sub['title'] }}</span>
+                                                        <span class="text-xs text-gray-400">{{ $sub['author'] }} · {{ $sub['submitted_at'] ? \Carbon\Carbon::parse($sub['submitted_at'])->diffForHumans() : '' }}</span>
                                                     </div>
-                                                    <span class="text-xs font-medium px-1.5 py-0.5 rounded
-                                                        {{ $sub->status === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
-                                                        {{ $sub->status === 'submitted' ? 'bg-blue-100 text-blue-700' : '' }}
-                                                        {{ $sub->status === 'approved' ? 'bg-green-100 text-green-700' : '' }}">
-                                                        {{ ucfirst($sub->status) }}
-                                                    </span>
+                                                    <span class="text-xs font-mono text-gray-400">{{ $sub['id'] }}</span>
                                                 </a>
                                             @endforeach
                                         </div>

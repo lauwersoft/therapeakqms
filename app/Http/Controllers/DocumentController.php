@@ -108,11 +108,30 @@ class DocumentController extends Controller
 
         if ($isForm) {
             $formSchema = json_decode(File::get($filePath), true);
-            $formSubmissions = \App\Models\FormSubmission::where('form_path', $path)
-                ->with('user')
-                ->latest()
-                ->take(10)
-                ->get();
+            // Load submissions from file-based records
+            $formSubmissions = collect();
+            $recordsDir = base_path('qms/records');
+            if (is_dir($recordsDir)) {
+                foreach (File::allFiles($recordsDir) as $recFile) {
+                    if (! str_ends_with($recFile->getFilename(), '.rec.json')) continue;
+                    try {
+                        $recData = json_decode(File::get($recFile->getPathname()), true);
+                        if (is_array($recData) && ($recData['form_path'] ?? '') === $path) {
+                            $formSubmissions->push([
+                                'filename' => $recFile->getFilename(),
+                                'id' => $recData['id'] ?? '',
+                                'title' => $recData['title'] ?? '',
+                                'author' => $recData['author'] ?? '',
+                                'submitted_at' => $recData['submitted_at'] ?? null,
+                                'status' => $recData['status'] ?? 'submitted',
+                            ]);
+                        }
+                    } catch (\Throwable $e) {
+                        continue;
+                    }
+                }
+            }
+            $formSubmissions = $formSubmissions->sortByDesc('submitted_at')->take(10);
         }
 
         if ($isRecord) {

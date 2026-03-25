@@ -47,8 +47,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/forms/update', [\App\Http\Controllers\FormController::class, 'update'])->name('forms.update');
     Route::get('/forms/fill/{path}', [\App\Http\Controllers\FormController::class, 'fill'])->where('path', '.*')->name('forms.fill');
     Route::post('/forms/submit', [\App\Http\Controllers\FormController::class, 'submit'])->name('forms.submit');
-    Route::get('/forms/submission/{submission}', [\App\Http\Controllers\FormController::class, 'submission'])->name('forms.submission');
-    Route::get('/forms/submissions/{formId}', [\App\Http\Controllers\FormController::class, 'submissions'])->name('forms.submissions');
 
     // Comments
     Route::post('/qms/comments', [\App\Http\Controllers\CommentController::class, 'store'])->name('comments.store');
@@ -62,6 +60,7 @@ Route::middleware('auth')->group(function () {
     // Records
     Route::get('/records', [\App\Http\Controllers\RecordController::class, 'index'])->name('records.index');
     Route::get('/records/{filename}', [\App\Http\Controllers\RecordController::class, 'show'])->name('records.show');
+    Route::delete('/records/{filename}', [\App\Http\Controllers\RecordController::class, 'destroy'])->name('records.destroy');
 
     // References
     Route::get('/references', [\App\Http\Controllers\ReferenceController::class, 'index'])->name('references.index');

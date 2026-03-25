@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FormSubmission;
 use App\Models\User;
 use App\Services\DocumentMetadata;
 use Illuminate\Http\Request;
@@ -87,17 +86,7 @@ class FormController extends Controller
         $formId = $schema['id'] ?? basename($path);
         $user = $request->user();
 
-        // Save to database (for fast UI queries)
-        $submission = FormSubmission::create([
-            'form_id' => $formId,
-            'form_path' => $path,
-            'user_id' => $user->id,
-            'title' => $request->input('title'),
-            'data' => $request->input('fields'),
-            'status' => 'submitted',
-        ]);
-
-        // Save as file in qms/records/ (separate from documents)
+        // Save as file in qms/records/
         $recordsBase = base_path('qms/records');
         $recId = DocumentMetadata::nextId('REC', $recordsBase);
         $recordData = [
@@ -111,7 +100,6 @@ class FormController extends Controller
             'form_path' => $path,
             'form_title' => $schema['title'] ?? '',
             'submitted_at' => now()->toIso8601String(),
-            'submission_db_id' => $submission->id,
             'data' => $request->input('fields'),
         ];
 
@@ -151,37 +139,6 @@ class FormController extends Controller
             ->with('success', "Form submitted as {$recId}.");
     }
 
-    /**
-     * View a submission.
-     */
-    public function submission(FormSubmission $submission)
-    {
-        $fullPath = $this->basePath . '/' . $submission->form_path;
-        $schema = $this->readForm($fullPath);
-        $meta = $schema ? $this->formMeta($schema) : null;
-
-        return view('forms.submission', [
-            'submission' => $submission,
-            'schema' => $schema,
-            'meta' => $meta,
-        ]);
-    }
-
-    /**
-     * List all submissions for a form.
-     */
-    public function submissions(Request $request, string $formId)
-    {
-        $submissions = FormSubmission::where('form_id', $formId)
-            ->with('user')
-            ->latest()
-            ->get();
-
-        return view('forms.submissions', [
-            'submissions' => $submissions,
-            'formId' => $formId,
-        ]);
-    }
 
     /**
      * Create a new form template via UI.
