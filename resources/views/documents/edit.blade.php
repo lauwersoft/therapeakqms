@@ -144,12 +144,12 @@
                         </div>
                     @endif
 
+                    @include('documents.partials.meta-header', ['isEditPage' => true])
+
                     <form method="POST" action="{{ route('documents.update') }}">
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="path" value="{{ $currentPath }}">
-
-                        @include('documents.partials.meta-header', ['isEditPage' => true])
 
                         {{-- Editor --}}
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5 {{ $meta['id'] ? 'mt-4' : '' }}">
