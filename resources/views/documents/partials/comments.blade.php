@@ -18,6 +18,8 @@
 @endphp
 
 @if($docId)
+<div id="comments-container" data-doc-id="{{ $docId }}" data-partial-url="{{ route('comments.partial', $docId) }}">
+
 {{-- Comment indicators injected into document via JS --}}
 <div id="comment-data" class="hidden"
      data-comments="{{ json_encode($sectionComments->map(fn($group) => collect($group)->where('resolved', false)->count())->toArray()) }}"
@@ -156,6 +158,8 @@
     @endif
 </div>
 
+</div>{{-- close #comments-container --}}
+
 @push('styles')
 <style>
     /* Comment indicator badges injected next to headings */
@@ -292,6 +296,132 @@
             commentsSection.id = 'comments-section';
         }
     });
+
+    // ===== AJAX COMMENT SYSTEM =====
+    function initCommentAjax() {
+        var container = document.getElementById('comments-container');
+        if (!container) return;
+
+        var docId = container.dataset.docId;
+        var partialUrl = container.dataset.partialUrl;
+        var csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+        container.addEventListener('submit', function(e) {
+            var form = e.target.closest('form');
+            if (!form) return;
+
+            // Only intercept comment-related forms
+            var action = form.getAttribute('action') || '';
+            if (!action.includes('/qms/comments')) return;
+
+            // Handle confirmation dialogs
+            if (form.dataset.confirm && !confirm(form.dataset.confirm)) {
+                return;
+            }
+
+            e.preventDefault();
+
+            var formData = new FormData(form);
+            var method = form.querySelector('input[name="_method"]')?.value || 'POST';
+
+            var fetchOptions = {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                },
+                body: formData,
+            };
+
+            // Disable submit button
+            var submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.5';
+            }
+
+            fetch(action, fetchOptions)
+                .then(function(response) {
+                    if (!response.ok) throw new Error('Request failed');
+                    return response.json();
+                })
+                .then(function(data) {
+                    // Reload the comments partial
+                    return fetch(partialUrl, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                })
+                .then(function(response) {
+                    return response.text();
+                })
+                .then(function(html) {
+                    // Replace comments container content
+                    var temp = document.createElement('div');
+                    temp.innerHTML = html;
+
+                    // Find the new container inside the response
+                    var newContainer = temp.querySelector('#comments-container');
+                    if (newContainer) {
+                        container.innerHTML = newContainer.innerHTML;
+                    } else {
+                        container.innerHTML = html;
+                    }
+
+                    // Re-init Alpine on the new content
+                    if (window.Alpine) {
+                        Alpine.initTree(container);
+                    }
+
+                    // Re-inject comment indicators into headings
+                    reinjectCommentIndicators();
+
+                    // Also close the new comment dialog if open
+                    var dialog = document.getElementById('new-comment-dialog');
+                    if (dialog) dialog.classList.add('hidden');
+                })
+                .catch(function(err) {
+                    // Fallback: submit the form normally
+                    console.error('Comment AJAX failed, falling back to form submit:', err);
+                    form.submit();
+                });
+        });
+    }
+
+    function reinjectCommentIndicators() {
+        // Remove existing indicators
+        document.querySelectorAll('.comment-indicator').forEach(function(el) { el.remove(); });
+
+        var dataEl = document.getElementById('comment-data');
+        if (!dataEl) return;
+        var sectionCounts = JSON.parse(dataEl.dataset.comments || '{}');
+
+        var headings = document.querySelectorAll('.prose h1, .prose h2, .prose h3');
+        headings.forEach(function(heading) {
+            // Strip any existing indicators from text comparison
+            var text = heading.childNodes[0]?.textContent?.trim() || heading.textContent.trim();
+            var count = sectionCounts[text] || 0;
+            if (count > 0) {
+                var badge = document.createElement('a');
+                badge.href = '#comments-section';
+                badge.className = 'comment-indicator';
+                badge.onclick = function(e) {
+                    e.preventDefault();
+                    var cards = document.querySelectorAll('[data-section]');
+                    cards.forEach(function(card) {
+                        if (card.dataset.section === text) {
+                            flashCard(card);
+                            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    });
+                };
+                badge.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>' + count;
+                heading.appendChild(badge);
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', initCommentAjax);
 </script>
 @endpush
 @endif

@@ -14,12 +14,55 @@ class CommentController extends Controller
         $this->comments = $comments;
     }
 
-    private function backToComment(string $commentId, string $message)
+    private function respond(Request $request, string $commentId, string $message)
     {
-        $url = url()->previous();
-        $url = preg_replace('/#.*$/', '', $url);
-        $url .= '#comment-' . $commentId;
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => $message, 'comment_id' => $commentId]);
+        }
+
+        $url = preg_replace('/#.*$/', '', url()->previous()) . '#comment-' . $commentId;
         return redirect($url)->with('success', $message);
+    }
+
+    /**
+     * Return rendered comments HTML partial for a document.
+     */
+    public function partial(Request $request, string $docId)
+    {
+        $commentService = $this->comments;
+        $docComments = $commentService->getVisibleComments($docId, $request->user()->role);
+
+        // We need meta and content for the partial to work
+        // Find the document to get its content for section extraction
+        $basePath = base_path('qms/documents');
+        $docIndex = \App\Services\DocumentMetadata::index($basePath);
+        $meta = ['id' => $docId];
+        $content = '';
+
+        foreach ($docIndex as $path => $m) {
+            if (($m['id'] ?? '') === $docId) {
+                $meta = $m;
+                if (\App\Services\DocumentMetadata::isMarkdown($path)) {
+                    $raw = \Illuminate\Support\Facades\File::get($basePath . '/' . $path);
+                    $parsed = \App\Services\DocumentMetadata::parse($raw);
+
+                    $environment = new \League\CommonMark\Environment\Environment(['html_input' => 'strip', 'allow_unsafe_links' => false]);
+                    $environment->addExtension(new \League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension());
+                    $environment->addExtension(new \League\CommonMark\Extension\Table\TableExtension());
+                    $converter = new \League\CommonMark\MarkdownConverter($environment);
+                    $content = $converter->convert($parsed['body'])->getContent();
+                }
+                break;
+            }
+        }
+
+        $html = view('documents.partials.comments', [
+            'meta' => $meta,
+            'docComments' => $docComments,
+            'content' => $content,
+        ])->render();
+
+        return response($html);
     }
 
     /**
@@ -51,7 +94,7 @@ class CommentController extends Controller
             'content' => $request->input('content'),
         ]);
 
-        return $this->backToComment($comment['id'], 'Comment added.');
+        return $this->respond($request, $comment['id'], 'Comment added.');
     }
 
     /**
@@ -78,7 +121,7 @@ class CommentController extends Controller
             return back()->withErrors(['Comment not found.']);
         }
 
-        return $this->backToComment($commentId, 'Reply added.');
+        return $this->respond($request, $commentId, 'Reply added.');
     }
 
     /**
@@ -103,7 +146,7 @@ class CommentController extends Controller
             $request->input('note')
         );
 
-        return $this->backToComment($commentId, 'Comment resolved.');
+        return $this->respond($request, $commentId, 'Comment resolved.');
     }
 
     /**
@@ -123,7 +166,7 @@ class CommentController extends Controller
             $commentId
         );
 
-        return $this->backToComment($commentId, 'Comment reopened.');
+        return $this->respond($request, $commentId, 'Comment reopened.');
     }
 
     /**
@@ -145,6 +188,9 @@ class CommentController extends Controller
             $request->input('comment_id')
         );
 
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Comment deleted.', 'comment_id' => null]);
+        }
         $url = preg_replace('/#.*$/', '', url()->previous()) . '#comments-section';
         return redirect($url)->with('success', 'Comment deleted.');
     }
@@ -172,6 +218,6 @@ class CommentController extends Controller
             $request->input('reply_id')
         );
 
-        return $this->backToComment($commentId, 'Reply deleted.');
+        return $this->respond($request, $commentId, 'Reply deleted.');
     }
 }

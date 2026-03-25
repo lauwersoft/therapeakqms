@@ -55,6 +55,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/qms/comments/unresolve', [\App\Http\Controllers\CommentController::class, 'unresolve'])->name('comments.unresolve');
     Route::delete('/qms/comments', [\App\Http\Controllers\CommentController::class, 'destroy'])->name('comments.destroy');
     Route::delete('/qms/comments/reply', [\App\Http\Controllers\CommentController::class, 'destroyReply'])->name('comments.destroy-reply');
+    Route::get('/qms/comments/partial/{docId}', [\App\Http\Controllers\CommentController::class, 'partial'])->name('comments.partial');
 
     // References
     Route::get('/references', [\App\Http\Controllers\ReferenceController::class, 'index'])->name('references.index');

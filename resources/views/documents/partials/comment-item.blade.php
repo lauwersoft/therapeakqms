@@ -80,7 +80,7 @@
                             <div class="flex items-center gap-2 ml-7">
                                 <p class="text-sm text-gray-600 mt-0.5 flex-1">{{ $reply['content'] }}</p>
                                 @if(($userRole ?? '') === 'admin')
-                                    <form method="POST" action="{{ route('comments.destroy-reply') }}" class="inline shrink-0" onsubmit="return confirm('Delete this reply?')">
+                                    <form method="POST" action="{{ route('comments.destroy-reply') }}" class="inline shrink-0" data-confirm="Delete this reply?">
                                         @csrf
                                         @method('DELETE')
                                         <input type="hidden" name="doc_id" value="{{ $docId }}">
@@ -131,7 +131,7 @@
                     </form>
                 @endif
                 @if($userRole === 'admin')
-                    <form method="POST" action="{{ route('comments.destroy') }}" class="inline" onsubmit="return confirm('Delete this comment?')">
+                    <form method="POST" action="{{ route('comments.destroy') }}" class="inline" data-confirm="Delete this comment?">
                         @csrf
                         @method('DELETE')
                         <input type="hidden" name="doc_id" value="{{ $docId }}">
