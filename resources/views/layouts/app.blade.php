@@ -61,7 +61,7 @@
                 padding: 2rem;
                 width: 90vw;
                 max-height: 90vh;
-                overflow: auto;
+                overflow: hidden;
                 cursor: default;
             }
         </style>
