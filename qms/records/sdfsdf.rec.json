@@ -1,0 +1,17 @@
+{
+    "id": "REC-001",
+    "title": "sdfsdf",
+    "type": "REC",
+    "version": "1.0",
+    "status": "submitted",
+    "author": "Sarp Derinsu",
+    "form_id": "FM-001",
+    "form_path": "procedures\/some-form.form.json",
+    "form_title": "Some form",
+    "submitted_at": "2026-03-25T02:55:36+00:00",
+    "submission_db_id": 5,
+    "data": {
+        "Bla": "sdf",
+        "Boo": "sdf"
+    }
+}
