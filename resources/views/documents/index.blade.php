@@ -109,7 +109,7 @@
                                 {{-- Recent submissions --}}
                                 @if($formSubmissions && $formSubmissions->isNotEmpty())
                                     <div class="mt-8 pt-6 border-t border-gray-100">
-                                        <h3 class="text-sm font-semibold text-gray-700 mb-3">Recent submissions</h3>
+                                        <h3 class="text-sm font-semibold text-gray-700 mb-3">Submissions <span class="font-normal text-gray-400">({{ $formSubmissions->count() }})</span></h3>
                                         <div class="space-y-2">
                                             @foreach($formSubmissions as $sub)
                                                 <a href="{{ route('records.show', $sub['filename']) }}"
