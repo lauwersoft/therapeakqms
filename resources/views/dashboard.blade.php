@@ -30,7 +30,7 @@
                             @endphp
                             <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                                 {{-- Document header --}}
-                                <a href="{{ $rcPath ? route('documents.index', ['path' => $rcPath]) : '#' }}"
+                                <a href="{{ $rcPath ? route('documents.index', ['path' => $rcPath]) . '#comments-section' : '#' }}"
                                    class="flex items-center gap-3 px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors">
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-center gap-2">
