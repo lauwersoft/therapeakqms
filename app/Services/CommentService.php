@@ -374,7 +374,7 @@ class CommentService
     private function backgroundPush(string $docId, string $message): void
     {
         $base = base_path();
-        $cmd = "cd {$base} && git add qms/comments/ && git commit -m \"{$message}\" --author=\"QMS System <qms@system>\" && git push";
+        $cmd = "cd {$base} && git pull --no-rebase 2>/dev/null; git add qms/comments/ && git commit -m \"{$message}\" --author=\"QMS System <qms@system>\" && git push";
 
         try {
             Process::start($cmd);
