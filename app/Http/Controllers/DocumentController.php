@@ -987,7 +987,7 @@ class DocumentController extends Controller
         return $fullPath;
     }
 
-    private function buildTree(string $directory, string $prefix = '', array $docIndex = []): array
+    public function buildTree(string $directory, string $prefix = '', array $docIndex = []): array
     {
         $items = [];
 

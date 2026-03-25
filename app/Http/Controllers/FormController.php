@@ -220,10 +220,44 @@ class FormController extends Controller
             abort(404, 'Form not found or invalid.');
         }
 
+        // Sidebar data (same as document edit page)
+        $docIndex = DocumentMetadata::index($this->basePath);
+        $git = app(\App\Services\GitService::class);
+        $docController = app(DocumentController::class);
+        $tree = $docController->buildTree($this->basePath, '', $docIndex);
+        $changedFiles = $git->getChangedFiles();
+        $changeLogCount = \App\Models\DocumentChange::count();
+        $pendingCount = max(count($changedFiles), $changeLogCount);
+        $commentSummary = app(\App\Services\CommentService::class)->summary();
+
+        $sidebarDocs = [];
+        foreach ($docIndex as $docPath => $docMeta) {
+            $dir = dirname($docPath);
+            $docType = $docMeta['id'] ? explode('-', $docMeta['id'])[0] : '';
+            $sidebarDocs[] = [
+                'path' => $docPath,
+                'url_path' => preg_replace('/\.md$/', '', $docPath),
+                'doc_id' => $docMeta['id'] ?? null,
+                'title' => $docMeta['title'] ?? ucwords(str_replace(['-', '_'], ' ', pathinfo($docPath, PATHINFO_FILENAME))),
+                'type' => $docType,
+                'status' => $docMeta['status'] ?? 'draft',
+                'directory' => ($dir !== '.' && $dir !== '') ? ucwords(str_replace(['-', '_'], ' ', $dir)) : null,
+                'is_markdown' => $docMeta['_is_markdown'] ?? true,
+            ];
+        }
+
         return view('forms.edit', [
             'schema' => $schema,
             'meta' => $this->formMeta($schema),
             'path' => $path,
+            'currentPath' => $path,
+            'tree' => $tree,
+            'sidebarDocs' => $sidebarDocs,
+            'changedFiles' => $changedFiles,
+            'pendingCount' => $pendingCount,
+            'canEdit' => true,
+            'commentSummary' => $commentSummary,
+            'directories' => $this->getDirectories(),
         ]);
     }
 

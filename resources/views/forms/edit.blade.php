@@ -1,143 +1,173 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Edit Form</h2>
-            <a href="{{ route('documents.index', ['path' => $path]) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-                Back to form
-            </a>
-        </div>
-    </x-slot>
+    @push('styles')
+        <style>
+            .sortable-ghost { opacity: 0.4; }
+            .sortable-drag { opacity: 0.9; }
+        </style>
+    @endpush
 
-    <div x-data="formEditor()" class="py-8">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            @if($errors->any())
-                <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700 mb-6">
-                    @foreach($errors->all() as $error)
-                        <p>{{ $error }}</p>
-                    @endforeach
+    <div x-data="formEditor()" @click="closeMenus()" class="flex h-full overflow-hidden">
+
+        @include('documents.partials.sidebar-actions')
+        @include('documents.partials.sidebar', ['sidebarCanEdit' => $canEdit ?? false])
+
+        {{-- Main Content --}}
+        <main class="flex-1 bg-gray-100 min-w-0 flex flex-col overflow-hidden">
+            {{-- Top bar --}}
+            <div x-data="{ barZ: false }" x-effect="if (sidebarOpen) { barZ = true } else { setTimeout(() => barZ = false, 200) }"
+                 class="bg-white border-b border-gray-200 shadow-sm shrink-0 relative px-4 h-16 flex items-center" :class="barZ ? 'z-0' : 'z-40'">
+                <div class="flex items-center justify-between gap-3 w-full">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <button @click="sidebarOpen = true" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 lg:hidden shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </button>
+                        <span class="text-sm font-semibold text-gray-800">QMS</span>
+                        <span class="text-xs text-gray-400 font-mono truncate">/{{ $path }}</span>
+                    </div>
+                    <a href="{{ route('documents.index', ['path' => $path]) }}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        Back to form
+                    </a>
                 </div>
-            @endif
-
-            {{-- Form info --}}
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4 flex items-center gap-3">
-                <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor('FM') }}">{{ $meta['id'] }}</span>
-                <span class="text-sm text-gray-600">{{ $meta['status'] }}</span>
-                <span class="text-xs text-gray-400 font-mono ml-auto">/{{ $path }}</span>
             </div>
 
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <form method="POST" action="{{ route('forms.update') }}">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" name="path" value="{{ $path }}">
+            <div class="flex-1 overflow-y-scroll">
+                <div class="max-w-5xl mx-auto py-4 px-3 sm:py-6 sm:px-6 lg:px-8">
+                    @if($errors->any())
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700 mb-4">
+                            @foreach($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
 
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Form title</label>
-                        <input type="text" name="title" required x-model="title"
-                               class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                    {{-- Form info --}}
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex items-center gap-3">
+                        <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor('FM') }}">{{ $meta['id'] }}</span>
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium
+                            {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
+                            {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
+                            {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
+                            {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">{{ \App\Services\DocumentMetadata::STATUSES[$meta['status']] ?? ucfirst($meta['status']) }}</span>
+                        @if($meta['version'])
+                            <span class="text-xs text-gray-400">v{{ $meta['version'] }}</span>
+                        @endif
                     </div>
 
-                    <div class="border-t border-gray-100 pt-5">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-sm font-semibold text-gray-700">Fields</h3>
-                            <span class="text-xs text-gray-400" x-text="fields.length + ' ' + (fields.length === 1 ? 'field' : 'fields')"></span>
-                        </div>
+                    {{-- Form editor --}}
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mt-4">
+                        <form method="POST" action="{{ route('forms.update') }}">
+                            @csrf
+                            @method('PUT')
+                            <input type="hidden" name="path" value="{{ $path }}">
 
-                        {{-- Fields list --}}
-                        <div class="space-y-3 mb-4">
-                            <template x-for="(field, index) in fields" :key="index">
-                                <div class="p-3 bg-gray-50 rounded-md border border-gray-200">
-                                    <div class="flex items-start gap-3">
-                                        {{-- Drag handle --}}
-                                        <div class="flex flex-col items-center gap-0.5 pt-2 cursor-grab text-gray-300">
-                                            <span class="text-[10px] font-bold text-gray-400" x-text="index + 1"></span>
-                                        </div>
-                                        <div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                                            <div>
-                                                <label class="block text-[10px] text-gray-400 mb-0.5">Label</label>
-                                                <input type="text" :name="'fields[' + index + '][label]'" x-model="field.label" placeholder="Field label" required
-                                                       class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
-                                            </div>
-                                            <div>
-                                                <label class="block text-[10px] text-gray-400 mb-0.5">Type</label>
-                                                <select :name="'fields[' + index + '][type]'" x-model="field.type"
-                                                        class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
-                                                    <option value="text">Text</option>
-                                                    <option value="textarea">Text area</option>
-                                                    <option value="date">Date</option>
-                                                    <option value="number">Number</option>
-                                                    <option value="email">Email</option>
-                                                    <option value="select">Dropdown</option>
-                                                    <option value="checkbox">Checkbox</option>
-                                                </select>
-                                            </div>
-                                            <div class="flex items-end gap-3">
-                                                <label class="flex items-center gap-1.5 text-xs text-gray-600 pb-2">
-                                                    <input type="hidden" :name="'fields[' + index + '][required]'" value="0">
-                                                    <input type="checkbox" :name="'fields[' + index + '][required]'" value="1" x-model="field.required"
-                                                           class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                                    Required
-                                                </label>
-                                                <div class="flex items-center gap-1 ml-auto pb-1.5">
-                                                    <button type="button" @click="moveField(index, -1)" x-show="index > 0"
-                                                            class="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-200">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
-                                                    </button>
-                                                    <button type="button" @click="moveField(index, 1)" x-show="index < fields.length - 1"
-                                                            class="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-200">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                                                    </button>
-                                                    <button type="button" @click="removeField(index)"
-                                                            class="p-1 text-gray-400 hover:text-red-500 rounded hover:bg-red-50">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                                    </button>
+                            <div class="mb-6">
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Form title</label>
+                                <input type="text" name="title" required x-model="title"
+                                       class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+
+                            <div class="border-t border-gray-100 pt-5">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-sm font-semibold text-gray-700">Fields</h3>
+                                    <span class="text-xs text-gray-400" x-text="fields.length + ' ' + (fields.length === 1 ? 'field' : 'fields')"></span>
+                                </div>
+
+                                <div class="space-y-3 mb-4">
+                                    <template x-for="(field, index) in fields" :key="index">
+                                        <div class="p-3 bg-gray-50 rounded-md border border-gray-200">
+                                            <div class="flex items-start gap-3">
+                                                <div class="flex flex-col items-center gap-0.5 pt-2 text-gray-300">
+                                                    <span class="text-[10px] font-bold text-gray-400" x-text="index + 1"></span>
+                                                </div>
+                                                <div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                                    <div>
+                                                        <label class="block text-[10px] text-gray-400 mb-0.5">Label</label>
+                                                        <input type="text" :name="'fields[' + index + '][label]'" x-model="field.label" placeholder="Field label" required
+                                                               class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-[10px] text-gray-400 mb-0.5">Type</label>
+                                                        <select :name="'fields[' + index + '][type]'" x-model="field.type"
+                                                                class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                                            <option value="text">Text</option>
+                                                            <option value="textarea">Text area</option>
+                                                            <option value="date">Date</option>
+                                                            <option value="number">Number</option>
+                                                            <option value="email">Email</option>
+                                                            <option value="select">Dropdown</option>
+                                                            <option value="checkbox">Checkbox</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="flex items-end gap-3">
+                                                        <label class="flex items-center gap-1.5 text-xs text-gray-600 pb-2">
+                                                            <input type="hidden" :name="'fields[' + index + '][required]'" value="0">
+                                                            <input type="checkbox" :name="'fields[' + index + '][required]'" value="1" x-model="field.required"
+                                                                   class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                                            Required
+                                                        </label>
+                                                        <div class="flex items-center gap-1 ml-auto pb-1.5">
+                                                            <button type="button" @click="moveField(index, -1)" x-show="index > 0"
+                                                                    class="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-200">
+                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+                                                            </button>
+                                                            <button type="button" @click="moveField(index, 1)" x-show="index < fields.length - 1"
+                                                                    class="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-200">
+                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                                            </button>
+                                                            <button type="button" @click="removeField(index)"
+                                                                    class="p-1 text-gray-400 hover:text-red-500 rounded hover:bg-red-50">
+                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <div x-show="field.type === 'select'" x-cloak class="mt-2 ml-8">
+                                                <label class="text-[10px] text-gray-400 mb-0.5 block">Options (comma separated)</label>
+                                                <input type="text" x-model="field.options_text"
+                                                       @input="field.options = field.options_text.split(',').map(s => s.trim()).filter(s => s)"
+                                                       placeholder="e.g. Low, Medium, High, Critical"
+                                                       class="w-full border-gray-300 rounded-md text-xs focus:ring-blue-500 focus:border-blue-500">
+                                                <template x-for="(opt, oi) in (field.options || [])" :key="'o-' + oi">
+                                                    <input type="hidden" :name="'fields[' + index + '][options][' + oi + ']'" :value="opt">
+                                                </template>
+                                            </div>
+                                            <div class="mt-2 ml-8">
+                                                <label class="text-[10px] text-gray-400 mb-0.5 block">Help text (optional)</label>
+                                                <input type="text" :name="'fields[' + index + '][description]'" x-model="field.description"
+                                                       placeholder="Help text shown below the field"
+                                                       class="w-full border-gray-300 rounded-md text-xs focus:ring-blue-500 focus:border-blue-500">
+                                            </div>
                                         </div>
-                                    </div>
-                                    {{-- Options for select fields --}}
-                                    <div x-show="field.type === 'select'" x-cloak class="mt-2 ml-8">
-                                        <label class="text-[10px] text-gray-400 mb-0.5 block">Options (comma separated)</label>
-                                        <input type="text" x-model="field.options_text"
-                                               @input="field.options = field.options_text.split(',').map(s => s.trim()).filter(s => s)"
-                                               placeholder="e.g. Low, Medium, High, Critical"
-                                               class="w-full border-gray-300 rounded-md text-xs focus:ring-blue-500 focus:border-blue-500">
-                                        <template x-for="(opt, oi) in (field.options || [])" :key="'o-' + oi">
-                                            <input type="hidden" :name="'fields[' + index + '][options][' + oi + ']'" :value="opt">
-                                        </template>
-                                    </div>
-                                    {{-- Description --}}
-                                    <div class="mt-2 ml-8">
-                                        <label class="text-[10px] text-gray-400 mb-0.5 block">Help text (optional)</label>
-                                        <input type="text" :name="'fields[' + index + '][description]'" x-model="field.description"
-                                               placeholder="Help text shown below the field"
-                                               class="w-full border-gray-300 rounded-md text-xs focus:ring-blue-500 focus:border-blue-500">
-                                    </div>
+                                    </template>
                                 </div>
-                            </template>
-                        </div>
 
-                        <button type="button" @click="addField()"
-                                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-md border border-blue-200">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            Add field
-                        </button>
-                    </div>
+                                <button type="button" @click="addField()"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-md border border-blue-200">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                    </svg>
+                                    Add field
+                                </button>
+                            </div>
 
-                    <div class="flex items-center justify-between mt-8 pt-5 border-t border-gray-100">
-                        <a href="{{ route('documents.index', ['path' => $path]) }}" class="text-sm text-gray-500 hover:text-gray-700">Cancel</a>
-                        <button type="submit" class="px-5 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
-                            Save Form
-                        </button>
+                            <div class="flex justify-end gap-2 mt-6 pt-4 border-t border-gray-100">
+                                <a href="{{ route('documents.index', ['path' => $path]) }}"
+                                   class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md border border-gray-300">Cancel</a>
+                                <button type="submit"
+                                        class="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Save</button>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
+        </main>
     </div>
 
     @push('scripts')
@@ -145,6 +175,7 @@
             function formEditor() {
                 var existingFields = @json($schema['fields'] ?? []);
                 return {
+                    sidebarOpen: false,
                     title: @json($schema['title'] ?? ''),
                     fields: existingFields.map(function(f) {
                         return {
@@ -156,6 +187,58 @@
                             description: f.description || '',
                         };
                     }),
+
+                    sidebarSearch: '',
+                    sidebarTypeFilter: '',
+                    sidebarStatusFilter: '',
+                    sidebarCommentFilter: '',
+                    sidebarDocs: @json($sidebarDocs),
+                    commentSummary: @json($commentSummary ?? []),
+
+                    // Stubs for sidebar
+                    canEdit: true,
+                    dragOver: false,
+                    droppedFile: null,
+                    fileMenu: { show: false, x: 0, y: 0 },
+                    dirMenu: { show: false, x: 0, y: 0 },
+                    bgMenu: { show: false, x: 0, y: 0 },
+                    modal: { rename: false, move: false, delete: false, renameDir: false, deleteDir: false, quickCreate: false, newDir: false, upload: false },
+                    ctx: { path: '', name: '', dirPath: '', dirName: '', targetDir: '' },
+
+                    closeMenus() { this.fileMenu.show = false; this.dirMenu.show = false; this.bgMenu.show = false; },
+                    openFileMenu(e, path, name) { if (!this.canEdit) return; e.preventDefault(); e.stopPropagation(); this.closeMenus(); this.ctx.path = path; this.ctx.name = name; this.fileMenu = { show: true, x: e.clientX, y: e.clientY }; },
+                    openDirMenu(e, path, name) { if (!this.canEdit) return; e.preventDefault(); e.stopPropagation(); this.closeMenus(); this.ctx.dirPath = path; this.ctx.dirName = name; this.dirMenu = { show: true, x: e.clientX, y: e.clientY }; },
+                    openBgMenu(e) { if (!this.canEdit) return; e.preventDefault(); this.closeMenus(); this.bgMenu = { show: true, x: e.clientX, y: e.clientY }; },
+                    editFile() { this.closeMenus(); window.location = '/qms/edit/' + this.ctx.path.replace('.md', ''); },
+                    showRename() { this.closeMenus(); this.modal.rename = true; this.$nextTick(() => { this.$refs.renameInput.focus(); this.$refs.renameInput.select(); }); },
+                    showMove() { this.closeMenus(); this.modal.move = true; },
+                    showDelete() { this.closeMenus(); this.modal.delete = true; },
+                    showRenameDir() { this.closeMenus(); this.modal.renameDir = true; this.$nextTick(() => { this.$refs.renameDirInput.focus(); this.$refs.renameDirInput.select(); }); },
+                    showDeleteDir() { this.closeMenus(); this.modal.deleteDir = true; },
+                    showQuickCreate(dir) { this.closeMenus(); this.ctx.targetDir = dir; this.modal.quickCreate = true; this.$nextTick(() => this.$refs.quickCreateInput.focus()); },
+                    showNewSubdir(dir) { this.closeMenus(); this.ctx.targetDir = dir; this.modal.newDir = true; this.$nextTick(() => this.$refs.newDirInput.focus()); },
+                    handleDrop(e) { this.dragOver = false; },
+                    handleDropToDir(e, dir) { this.dragOver = false; },
+                    initSortable() {},
+
+                    get sidebarFilteredDocs() {
+                        var cs = this.commentSummary;
+                        return this.sidebarDocs.filter(d => {
+                            if (this.sidebarTypeFilter && d.type !== this.sidebarTypeFilter) return false;
+                            if (this.sidebarStatusFilter && d.status !== this.sidebarStatusFilter) return false;
+                            if (this.sidebarCommentFilter === 'with' && !(d.doc_id && cs[d.doc_id] && cs[d.doc_id].unresolved > 0)) return false;
+                            if (this.sidebarCommentFilter === 'without' && d.doc_id && cs[d.doc_id] && cs[d.doc_id].unresolved > 0) return false;
+                            if (this.sidebarSearch) {
+                                const q = this.sidebarSearch.toLowerCase();
+                                return (d.doc_id && d.doc_id.toLowerCase().includes(q)) ||
+                                       (d.title && d.title.toLowerCase().includes(q)) ||
+                                       (d.type && d.type.toLowerCase().includes(q)) ||
+                                       (d.directory && d.directory.toLowerCase().includes(q));
+                            }
+                            return true;
+                        });
+                    },
+
                     addField() {
                         this.fields.push({ label: '', type: 'text', required: false, options: [], options_text: '', description: '' });
                     },
@@ -170,7 +253,6 @@
                         var temp = this.fields[index];
                         this.fields[index] = this.fields[newIndex];
                         this.fields[newIndex] = temp;
-                        // Force Alpine to re-render
                         this.fields = [...this.fields];
                     },
                 };
