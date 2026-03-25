@@ -14,6 +14,10 @@ Think of it as a rulebook your company follows. The documents describe **what** 
 
 ---
 
+## URGENT: Do Right Now
+
+- [ ] **Turn off OpenRouter data sharing** — Go to openrouter.ai settings, disable "Consent to OpenRouter using your inputs/outputs to improve the product." You are currently sharing patient therapy conversations with OpenRouter. This is a serious data protection issue.
+
 ## Action Items Before April 7
 
 - [ ] **Sign Hetzner DPA** — Go to hetzner.com/legal/data-processing-agreement and sign it. Required for GDPR.
