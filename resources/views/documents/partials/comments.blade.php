@@ -406,9 +406,9 @@
                     if (targetCommentId) {
                         var targetEl = document.getElementById('comment-' + targetCommentId);
                         if (targetEl) {
-                            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             var card = targetEl.closest('[data-section], .rounded-lg');
-                            if (card) setTimeout(function() { flashCard(card); }, 300);
+                            if (card) flashCard(card);
+                            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }
                     }
                 })
