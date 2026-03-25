@@ -160,7 +160,18 @@
 
                 const overlay = document.createElement('div');
                 overlay.className = 'mermaid-overlay';
-                overlay.innerHTML = '<div class="mermaid-overlay-content">' + mermaidEl.innerHTML + '</div>';
+                const content = document.createElement('div');
+                content.className = 'mermaid-overlay-content';
+                content.innerHTML = mermaidEl.innerHTML;
+                // Remove fixed width/height from SVG so it scales
+                const svg = content.querySelector('svg');
+                if (svg) {
+                    svg.removeAttribute('width');
+                    svg.style.width = '100%';
+                    svg.style.height = 'auto';
+                    svg.style.maxHeight = '85vh';
+                }
+                overlay.appendChild(content);
                 overlay.addEventListener('click', function(ev) {
                     if (ev.target === overlay) overlay.remove();
                 });
