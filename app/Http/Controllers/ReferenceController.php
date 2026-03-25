@@ -121,16 +121,24 @@ class ReferenceController extends Controller
             $html
         );
 
-        // Add IDs to h2 and h3 headings for anchor links
+        // Add IDs to h2, h3, and h4 headings for anchor links
         $toc = [];
-        $html = preg_replace_callback('/<(h[23])>(.*?)<\/\1>/s', function ($m) use (&$toc) {
+        $html = preg_replace_callback('/<(h[234])>(.*?)<\/\1>/s', function ($m) use (&$toc) {
             $tag = $m[1];
             $text = strip_tags($m[2]);
             $id = \Illuminate\Support\Str::slug($text);
             if ($tag === 'h2' && strtolower($text) !== 'footnotes') {
                 $toc[] = ['id' => $id, 'title' => $text];
             }
-            return '<' . $tag . ' id="' . $id . '">' . $m[2] . '</' . $tag . '>';
+            // Add a secondary anchor from just the leading number (e.g., "4.2.2 Quality manual" → also anchors as "422")
+            $extra = '';
+            if (preg_match('/^([\d.]+)\s/', $text, $numMatch)) {
+                $numId = \Illuminate\Support\Str::slug($numMatch[1]);
+                if ($numId !== $id) {
+                    $extra = '<a id="' . $numId . '"></a>';
+                }
+            }
+            return $extra . '<' . $tag . ' id="' . $id . '">' . $m[2] . '</' . $tag . '>';
         }, $html);
 
         // File list for sidebar
