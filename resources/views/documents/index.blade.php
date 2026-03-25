@@ -36,6 +36,14 @@
                             </svg>
                             Edit
                         </a>
+                    @elseif($canEdit && $isForm)
+                        <a href="{{ route('forms.edit', $currentPath) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Edit Form
+                        </a>
                     @elseif(!$isMarkdown && !$isForm)
                         <a href="{{ route('documents.download', $currentPath) }}"
                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
@@ -68,7 +76,18 @@
                         @if($isForm && $formSchema)
                             {{-- Form template view --}}
                             <div>
-                                <h2 class="text-lg font-semibold text-gray-800 mb-4">{{ $formSchema['title'] ?? $meta['title'] }}</h2>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="text-lg font-semibold text-gray-800">{{ $formSchema['title'] ?? $meta['title'] }}</h2>
+                                    @if($canEdit)
+                                        <a href="{{ route('forms.edit', $currentPath) }}"
+                                           class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                            Edit Form
+                                        </a>
+                                    @endif
+                                </div>
 
                                 {{-- Form fields preview --}}
                                 <div class="space-y-4 mb-6">

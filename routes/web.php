@@ -43,6 +43,8 @@ Route::middleware('auth')->group(function () {
     // Forms
     Route::get('/forms/create', [\App\Http\Controllers\FormController::class, 'create'])->name('forms.create');
     Route::post('/forms', [\App\Http\Controllers\FormController::class, 'store'])->name('forms.store');
+    Route::get('/forms/edit/{path}', [\App\Http\Controllers\FormController::class, 'edit'])->where('path', '.*')->name('forms.edit');
+    Route::put('/forms/update', [\App\Http\Controllers\FormController::class, 'update'])->name('forms.update');
     Route::get('/forms/fill/{path}', [\App\Http\Controllers\FormController::class, 'fill'])->where('path', '.*')->name('forms.fill');
     Route::post('/forms/submit', [\App\Http\Controllers\FormController::class, 'submit'])->name('forms.submit');
     Route::get('/forms/submission/{submission}', [\App\Http\Controllers\FormController::class, 'submission'])->name('forms.submission');

@@ -200,6 +200,83 @@ class FormController extends Controller
             ->with('success', "Form {$docId} created. Remember to publish when ready.");
     }
 
+    /**
+     * Edit a form template.
+     */
+    public function edit(Request $request, string $path)
+    {
+        if (! in_array($request->user()->role, [User::ROLE_ADMIN, User::ROLE_EDITOR])) {
+            abort(403);
+        }
+
+        if (! str_ends_with($path, '.form.json')) {
+            $path .= '.form.json';
+        }
+
+        $fullPath = $this->basePath . '/' . $path;
+        $schema = $this->readForm($fullPath);
+
+        if (! $schema) {
+            abort(404, 'Form not found or invalid.');
+        }
+
+        return view('forms.edit', [
+            'schema' => $schema,
+            'meta' => $this->formMeta($schema),
+            'path' => $path,
+        ]);
+    }
+
+    /**
+     * Update a form template.
+     */
+    public function update(Request $request)
+    {
+        if (! in_array($request->user()->role, [User::ROLE_ADMIN, User::ROLE_EDITOR])) {
+            abort(403);
+        }
+
+        $request->validate([
+            'path' => 'required|string',
+            'title' => 'required|string|max:255',
+            'fields' => 'required|array|min:1',
+            'fields.*.label' => 'required|string',
+            'fields.*.type' => 'required|in:text,textarea,date,select,checkbox,number,email',
+        ]);
+
+        $path = $request->input('path');
+        if (str_contains($path, '..')) { abort(403); }
+
+        $fullPath = $this->basePath . '/' . $path;
+        $existing = $this->readForm($fullPath);
+
+        if (! $existing) {
+            abort(404);
+        }
+
+        // Preserve id, type, and update the rest
+        $schema = [
+            'id' => $existing['id'],
+            'title' => $request->input('title'),
+            'type' => $existing['type'] ?? 'FM',
+            'version' => $existing['version'] ?? '0.1',
+            'status' => $existing['status'] ?? 'draft',
+            'author' => $existing['author'] ?? $request->user()->name,
+            'fields' => $request->input('fields'),
+        ];
+
+        File::put($fullPath, json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+
+        \App\Models\DocumentChange::create([
+            'user_id' => $request->user()->id,
+            'action' => 'edit',
+            'path' => $path,
+        ]);
+
+        return redirect()->route('documents.index', ['path' => $path])
+            ->with('success', 'Form updated. Remember to publish when ready.');
+    }
+
     private function getDirectories(): array
     {
         $dirs = ['' => '/ (root)'];
