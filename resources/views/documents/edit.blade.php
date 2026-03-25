@@ -419,14 +419,12 @@
 
                     init() {
                         const self = this;
+                        // Clear any stale autosave from localStorage
+                        localStorage.removeItem('smde_{{ $currentPath }}');
+
                         this.editor = new EasyMDE({
                             element: document.getElementById('editor'),
                             spellChecker: false,
-                            autosave: {
-                                enabled: true,
-                                uniqueId: '{{ $currentPath }}',
-                                delay: 5000,
-                            },
                             toolbar: [
                                 {
                                     name: 'heading-1',
