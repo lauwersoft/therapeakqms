@@ -67,7 +67,7 @@
 
             {{-- Replies --}}
             @if(!empty($comment['replies']))
-                <div class="mt-3 ml-1 pl-3 border-l-2 border-gray-100 space-y-2.5">
+                <div class="mt-3 ml-1 pl-3 border-l-2 border-gray-300 space-y-2.5">
                     @foreach($comment['replies'] as $reply)
                         <div>
                             <div class="flex items-center gap-1.5">
