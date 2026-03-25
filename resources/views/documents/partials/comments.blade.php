@@ -114,9 +114,9 @@
         @endphp
         <div x-show="{{ $sectionOpen->count() > 0 ? 'true' : 'showResolved' }}"
              data-section="{{ $section }}"
-             class="rounded-lg border overflow-hidden {{ $sectionOpen->where('type', 'required_change')->count() > 0 ? 'border-red-200 bg-red-50/30' : 'border-gray-200 bg-white' }}">
+             class="rounded-lg border border-gray-200 bg-white overflow-hidden">
             {{-- Section label --}}
-            <div class="px-4 py-2 border-b {{ $sectionOpen->where('type', 'required_change')->count() > 0 ? 'border-red-100 bg-red-50' : 'border-gray-100 bg-gray-50' }} flex items-center gap-2">
+            <div class="px-4 py-2 border-b border-gray-100 bg-gray-50 flex items-center gap-2">
                 <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
                 </svg>
@@ -125,7 +125,7 @@
                     <span class="text-[10px] px-1.5 py-0.5 rounded-full {{ $sectionOpen->where('type', 'required_change')->count() > 0 ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600' }} font-medium">{{ $sectionOpen->count() }}</span>
                 @endif
             </div>
-            <div class="divide-y divide-gray-50">
+            <div class="divide-y divide-gray-100">
                 @foreach($sectionGroup as $comment)
                     <div x-show="{{ !$comment['resolved'] ? 'true' : 'showResolved' }}" class="{{ $comment['resolved'] ? 'opacity-50' : '' }}">
                         @include('documents.partials.comment-item', ['comment' => $comment, 'docId' => $docId, 'userRole' => $userRole, 'canComment' => $canComment])
@@ -147,7 +147,7 @@
                 </svg>
                 <span class="text-xs font-medium text-gray-600">General</span>
             </div>
-            <div class="divide-y divide-gray-50">
+            <div class="divide-y divide-gray-100">
                 @foreach($generalComments as $comment)
                     <div x-show="{{ !$comment['resolved'] ? 'true' : 'showResolved' }}" class="{{ $comment['resolved'] ? 'opacity-50' : '' }}">
                         @include('documents.partials.comment-item', ['comment' => $comment, 'docId' => $docId, 'userRole' => $userRole, 'canComment' => $canComment])
