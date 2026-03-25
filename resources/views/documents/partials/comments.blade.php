@@ -384,6 +384,9 @@
                     // Re-inject comment indicators into headings
                     reinjectCommentIndicators();
 
+                    // Update sidebar comment badge
+                    updateSidebarBadge();
+
                     // Close the new comment dialog if open
                     var dialog = document.getElementById('new-comment-dialog');
                     if (dialog) dialog.classList.add('hidden');
@@ -435,6 +438,55 @@
                 };
                 badge.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>' + count;
                 heading.appendChild(badge);
+            }
+        });
+    }
+
+    function updateSidebarBadge() {
+        var container = document.getElementById('comments-container');
+        if (!container) return;
+        var docId = container.dataset.docId;
+
+        // Count open comments from the refreshed HTML
+        var openCount = container.querySelectorAll('[id^="comment-"]').length;
+        // More accurate: count from the comment-data element
+        var dataEl = container.querySelector('#comment-data');
+        if (dataEl) {
+            var counts = JSON.parse(dataEl.dataset.comments || '{}');
+            openCount = 0;
+            for (var k in counts) openCount += counts[k];
+        }
+
+        // Find the sidebar item for this document and update its badge
+        var sidebarItems = document.querySelectorAll('.sortable-item');
+        sidebarItems.forEach(function(item) {
+            // Check if this item's doc ID matches
+            var idBadge = item.querySelector('[class*="font-mono"]');
+            if (idBadge && idBadge.textContent.trim() === docId) {
+                // Find or create the comment badge
+                var existingBadge = item.querySelector('.sidebar-comment-badge');
+                var link = item.querySelector('a');
+                if (!link) return;
+
+                if (openCount > 0) {
+                    if (existingBadge) {
+                        existingBadge.querySelector('span:last-child').textContent = openCount;
+                    } else {
+                        // Create badge
+                        var badge = document.createElement('span');
+                        badge.className = 'sidebar-comment-badge ml-auto shrink-0 flex items-center gap-0.5 text-[10px] text-amber-600';
+                        badge.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg><span class="font-medium">' + openCount + '</span>';
+                        // Insert before the last child (the arrow or status dot)
+                        var changesDot = link.querySelector('[class*="rounded-full"]');
+                        if (changesDot) {
+                            link.insertBefore(badge, changesDot);
+                        } else {
+                            link.appendChild(badge);
+                        }
+                    }
+                } else if (existingBadge) {
+                    existingBadge.remove();
+                }
             }
         });
     }
