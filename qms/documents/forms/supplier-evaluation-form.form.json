@@ -1,0 +1,62 @@
+{
+    "id": "FM-005",
+    "title": "Supplier Evaluation Form",
+    "type": "FM",
+    "version": "1.0",
+    "status": "approved",
+    "author": "Sarp Derinsu",
+    "fields": [
+        {
+            "label": "Supplier Name",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Products/Services Provided",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Criticality",
+            "type": "select",
+            "required": true,
+            "options": ["Critical", "Non-critical"]
+        },
+        {
+            "label": "Evaluation Date",
+            "type": "date",
+            "required": true
+        },
+        {
+            "label": "Quality System",
+            "type": "select",
+            "required": true,
+            "options": ["ISO certified", "ToS reviewed", "Other"]
+        },
+        {
+            "label": "Performance Rating",
+            "type": "select",
+            "required": true,
+            "options": ["Excellent", "Good", "Acceptable", "Unacceptable"]
+        },
+        {
+            "label": "DPA in Place",
+            "type": "checkbox",
+            "description": "Data Processing Agreement signed and on file"
+        },
+        {
+            "label": "Evaluation Notes",
+            "type": "textarea"
+        },
+        {
+            "label": "Approval Status",
+            "type": "select",
+            "required": true,
+            "options": ["Approved", "Conditionally Approved", "Not Approved"]
+        },
+        {
+            "label": "Next Review Date",
+            "type": "date"
+        }
+    ]
+}

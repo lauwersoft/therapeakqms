@@ -1,0 +1,59 @@
+{
+    "id": "FM-006",
+    "title": "Training Record Form",
+    "type": "FM",
+    "version": "1.0",
+    "status": "approved",
+    "author": "Sarp Derinsu",
+    "fields": [
+        {
+            "label": "Trainee Name",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Training Topic",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Training Date",
+            "type": "date",
+            "required": true
+        },
+        {
+            "label": "Trainer/Source",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Training Method",
+            "type": "select",
+            "required": true,
+            "options": ["Consultant session", "Self-study", "On-the-job", "External course"]
+        },
+        {
+            "label": "Description of Training Content",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Effectiveness Assessment",
+            "type": "select",
+            "required": true,
+            "options": ["Competent", "Needs follow-up"]
+        },
+        {
+            "label": "Assessed By",
+            "type": "text"
+        },
+        {
+            "label": "Assessment Date",
+            "type": "date"
+        },
+        {
+            "label": "Notes",
+            "type": "textarea"
+        }
+    ]
+}

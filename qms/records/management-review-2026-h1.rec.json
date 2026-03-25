@@ -1,0 +1,25 @@
+{
+    "id": "FM-009-REC-001",
+    "title": "Management Review - March 2026 (QMS Establishment)",
+    "type": "REC",
+    "version": "1.0",
+    "status": "submitted",
+    "author": "Sarp Derinsu",
+    "form_id": "FM-009",
+    "submitted_at": "2026-03-20",
+    "data": {
+        "Review Date": "2026-03-20",
+        "Attendees": "Sarp Derinsu, Suzan Slijpen (remote)",
+        "Period Covered": "March 2026 (QMS establishment)",
+        "Audit Results Summary": "No internal audits yet - first audit scheduled March 31 2026.",
+        "Complaint Summary": "Pre-market wellness version: ~1-2 contact messages/day, no safety-related complaints, no adverse events reported.",
+        "CAPA Status Summary": "No open CAPAs. QMS newly established.",
+        "PMS Findings Summary": "Pre-market baseline established from wellness version. No safety signals. Known issue: occasional AI role confusion (monitored via FLAG_SWITCHED_ROLES).",
+        "Process Performance Summary": "QMS platform operational. All 44 documents created and approved. Document control process functional.",
+        "Regulatory Changes Summary": "NB (Scarlet) engagement scheduled April 7 2026. Internal audit March 31 2026. EU MDR requirements mapped to QMS documents.",
+        "Resource Adequacy Assessment": "Adequate",
+        "Improvement Actions": "1. Complete Hetzner DPA (DONE March 25). 2. Prepare for internal audit March 31. 3. Create auditor account for Scarlet. 4. Implement data retention automation (180-day purge). 5. Add FLAG_CRISIS monitoring. 6. Enable crisis protocol in conversation jobs.",
+        "Quality Objectives Review": "Initial quality objectives established in POL-001. Baseline measurement period begins with medical device market entry.",
+        "Next Review Date": "2026-09-20"
+    }
+}

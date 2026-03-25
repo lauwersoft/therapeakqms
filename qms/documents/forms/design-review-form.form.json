@@ -1,0 +1,61 @@
+{
+    "id": "FM-007",
+    "title": "Design Review Form",
+    "type": "FM",
+    "version": "1.0",
+    "status": "approved",
+    "author": "Sarp Derinsu",
+    "fields": [
+        {
+            "label": "Review Title",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Date",
+            "type": "date",
+            "required": true
+        },
+        {
+            "label": "Feature/Change Description",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Design Inputs Reviewed",
+            "type": "checkbox"
+        },
+        {
+            "label": "Risk Assessment Reviewed",
+            "type": "checkbox"
+        },
+        {
+            "label": "Regulatory Impact Assessed",
+            "type": "checkbox"
+        },
+        {
+            "label": "Testing Completed",
+            "type": "checkbox"
+        },
+        {
+            "label": "Review Outcome",
+            "type": "select",
+            "required": true,
+            "options": ["Approved", "Approved with conditions", "Not approved"]
+        },
+        {
+            "label": "Conditions/Actions",
+            "type": "textarea",
+            "description": "Required conditions or follow-up actions, if any"
+        },
+        {
+            "label": "Reviewer",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Notes",
+            "type": "textarea"
+        }
+    ]
+}

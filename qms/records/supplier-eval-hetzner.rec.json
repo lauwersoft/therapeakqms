@@ -1,0 +1,22 @@
+{
+    "id": "FM-005-REC-001",
+    "title": "Supplier Evaluation - Hetzner",
+    "type": "REC",
+    "version": "1.0",
+    "status": "submitted",
+    "author": "Sarp Derinsu",
+    "form_id": "FM-005",
+    "submitted_at": "2026-03-15",
+    "data": {
+        "Supplier Name": "Hetzner",
+        "Products/Services Provided": "Production hosting (VPS, Nuremberg Germany)",
+        "Criticality": "Critical",
+        "Evaluation Date": "2026-03-15",
+        "Quality System": "ISO certified",
+        "Performance Rating": "Excellent",
+        "DPA in Place": true,
+        "Evaluation Notes": "EU-based hosting, TUV audit report Feb 2026, DPA signed March 25 2026, excellent uptime track record. TUV Rheinland audited annually, ISO 27001 practices.",
+        "Approval Status": "Approved",
+        "Next Review Date": "2027-03-15"
+    }
+}

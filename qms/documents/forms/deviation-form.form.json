@@ -1,0 +1,80 @@
+{
+    "id": "FM-002",
+    "title": "Deviation/Nonconformance Form",
+    "type": "FM",
+    "version": "1.0",
+    "status": "approved",
+    "author": "Sarp Derinsu",
+    "fields": [
+        {
+            "label": "Deviation Number",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Date Detected",
+            "type": "date",
+            "required": true
+        },
+        {
+            "label": "Detected By",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Description of Deviation",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Classification",
+            "type": "select",
+            "required": true,
+            "options": ["Minor", "Major", "Critical"]
+        },
+        {
+            "label": "Affected Product/Process",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Immediate Action Taken",
+            "type": "textarea",
+            "description": "Describe any immediate actions taken to address the deviation"
+        },
+        {
+            "label": "Root Cause",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Corrective Action",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Responsible Person",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Target Completion Date",
+            "type": "date",
+            "required": true
+        },
+        {
+            "label": "Disposition",
+            "type": "select",
+            "required": true,
+            "options": ["Use as is", "Rework", "Reject", "Other"]
+        },
+        {
+            "label": "Risk Assessment Updated",
+            "type": "checkbox"
+        },
+        {
+            "label": "Deviation Closed",
+            "type": "checkbox"
+        }
+    ]
+}

@@ -1,0 +1,76 @@
+{
+    "id": "FM-004",
+    "title": "Complaint Form",
+    "type": "FM",
+    "version": "1.0",
+    "status": "approved",
+    "author": "Sarp Derinsu",
+    "fields": [
+        {
+            "label": "Complaint Number",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Date Received",
+            "type": "date",
+            "required": true
+        },
+        {
+            "label": "Source",
+            "type": "select",
+            "required": true,
+            "options": ["Email", "Contact Form", "Other"]
+        },
+        {
+            "label": "Complainant Email",
+            "type": "email"
+        },
+        {
+            "label": "Device Version",
+            "type": "text",
+            "description": "Software version affected by the complaint"
+        },
+        {
+            "label": "Complaint Description",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Health Impact",
+            "type": "select",
+            "required": true,
+            "options": ["None", "Minor", "Serious"]
+        },
+        {
+            "label": "Investigation Findings",
+            "type": "textarea"
+        },
+        {
+            "label": "Root Cause",
+            "type": "textarea"
+        },
+        {
+            "label": "Corrective Action",
+            "type": "textarea"
+        },
+        {
+            "label": "Response Sent to Complainant",
+            "type": "checkbox"
+        },
+        {
+            "label": "Escalated to Vigilance",
+            "type": "checkbox",
+            "description": "Check if this complaint meets vigilance reporting criteria"
+        },
+        {
+            "label": "Linked CAPA Number",
+            "type": "text",
+            "description": "Reference to associated CAPA, if applicable"
+        },
+        {
+            "label": "Complaint Closed",
+            "type": "checkbox"
+        }
+    ]
+}

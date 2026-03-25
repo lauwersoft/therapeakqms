@@ -1,0 +1,73 @@
+{
+    "id": "FM-008",
+    "title": "Internal Audit Checklist",
+    "type": "FM",
+    "version": "1.0",
+    "status": "approved",
+    "author": "Sarp Derinsu",
+    "fields": [
+        {
+            "label": "Audit Date",
+            "type": "date",
+            "required": true
+        },
+        {
+            "label": "Auditor Name",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Audit Scope",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "QMS Process Audited",
+            "type": "select",
+            "required": true,
+            "options": [
+                "Document Control",
+                "Risk Management",
+                "CAPA",
+                "Complaints",
+                "Design",
+                "Purchasing",
+                "PMS",
+                "Training",
+                "Software Lifecycle",
+                "Clinical Evaluation",
+                "Vigilance",
+                "Cybersecurity",
+                "Change Management"
+            ]
+        },
+        {
+            "label": "Finding Type",
+            "type": "select",
+            "required": true,
+            "options": ["Conformity", "Observation", "Minor NC", "Major NC"]
+        },
+        {
+            "label": "Finding Description",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Objective Evidence",
+            "type": "textarea",
+            "description": "Reference to records, documents, or observations supporting the finding"
+        },
+        {
+            "label": "Corrective Action Required",
+            "type": "textarea"
+        },
+        {
+            "label": "Target Completion Date",
+            "type": "date"
+        },
+        {
+            "label": "Notes",
+            "type": "textarea"
+        }
+    ]
+}

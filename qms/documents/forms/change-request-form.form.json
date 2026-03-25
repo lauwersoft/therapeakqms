@@ -1,0 +1,76 @@
+{
+    "id": "FM-003",
+    "title": "Change Request Form",
+    "type": "FM",
+    "version": "1.0",
+    "status": "approved",
+    "author": "Sarp Derinsu",
+    "fields": [
+        {
+            "label": "Change Request Number",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Date",
+            "type": "date",
+            "required": true
+        },
+        {
+            "label": "Requested By",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Change Description",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Reason for Change",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Affected Documents",
+            "type": "textarea",
+            "description": "List all documents, processes, or systems affected by this change"
+        },
+        {
+            "label": "Classification",
+            "type": "select",
+            "required": true,
+            "options": ["Significant", "Non-significant"]
+        },
+        {
+            "label": "Risk Impact Assessment",
+            "type": "textarea",
+            "required": true,
+            "description": "Describe the impact of this change on product risk"
+        },
+        {
+            "label": "Regulatory Impact",
+            "type": "select",
+            "required": true,
+            "options": ["None", "NB notification required", "Technical documentation update"]
+        },
+        {
+            "label": "Approval Status",
+            "type": "select",
+            "required": true,
+            "options": ["Pending", "Approved", "Rejected"]
+        },
+        {
+            "label": "Implementation Date",
+            "type": "date"
+        },
+        {
+            "label": "Verified By",
+            "type": "text"
+        },
+        {
+            "label": "Verification Date",
+            "type": "date"
+        }
+    ]
+}

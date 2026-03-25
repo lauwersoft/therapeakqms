@@ -1,0 +1,76 @@
+{
+    "id": "FM-009",
+    "title": "Management Review Form",
+    "type": "FM",
+    "version": "1.0",
+    "status": "approved",
+    "author": "Sarp Derinsu",
+    "fields": [
+        {
+            "label": "Review Date",
+            "type": "date",
+            "required": true
+        },
+        {
+            "label": "Attendees",
+            "type": "text",
+            "required": true
+        },
+        {
+            "label": "Period Covered",
+            "type": "text",
+            "required": true,
+            "description": "e.g., Q1 2026 or Jan-Mar 2026"
+        },
+        {
+            "label": "Audit Results Summary",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Complaint Summary",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "CAPA Status Summary",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "PMS Findings Summary",
+            "type": "textarea",
+            "required": true
+        },
+        {
+            "label": "Process Performance Summary",
+            "type": "textarea"
+        },
+        {
+            "label": "Regulatory Changes Summary",
+            "type": "textarea",
+            "description": "Any relevant regulatory changes during the review period"
+        },
+        {
+            "label": "Resource Adequacy Assessment",
+            "type": "select",
+            "required": true,
+            "options": ["Adequate", "Needs improvement"]
+        },
+        {
+            "label": "Improvement Actions",
+            "type": "textarea",
+            "description": "Planned improvement actions and responsible persons"
+        },
+        {
+            "label": "Quality Objectives Review",
+            "type": "textarea",
+            "description": "Status of quality objectives and any updates"
+        },
+        {
+            "label": "Next Review Date",
+            "type": "date",
+            "required": true
+        }
+    ]
+}

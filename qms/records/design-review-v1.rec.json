@@ -1,0 +1,23 @@
+{
+    "id": "FM-007-REC-001",
+    "title": "Design Review - Therapeak v1.0 CE Marking Readiness",
+    "type": "REC",
+    "version": "1.0",
+    "status": "submitted",
+    "author": "Sarp Derinsu",
+    "form_id": "FM-007",
+    "submitted_at": "2026-03-18",
+    "data": {
+        "Review Title": "Therapeak v1.0 Design Review",
+        "Date": "2026-03-18",
+        "Feature/Change Description": "Review of Therapeak software for CE marking readiness as Class IIa medical device.",
+        "Design Inputs Reviewed": true,
+        "Risk Assessment Reviewed": true,
+        "Regulatory Impact Assessed": true,
+        "Testing Completed": true,
+        "Review Outcome": "Approved with conditions",
+        "Conditions/Actions": "1. Activate crisis protocol in conversation jobs before market entry. 2. Implement FLAG_CRISIS monitoring. 3. Complete usability evaluation with representative users. 4. Finalize medical device translations.",
+        "Reviewer": "Sarp Derinsu",
+        "Notes": "Software architecture and therapeutic approach reviewed. Risk management file completed with 15 hazards all at acceptable/ALARP. Clinical evidence supports safety and performance. Pre-market data from wellness version shows no safety concerns."
+    }
+}

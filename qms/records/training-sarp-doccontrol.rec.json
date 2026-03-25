@@ -1,0 +1,22 @@
+{
+    "id": "FM-006-REC-005",
+    "title": "Training Record - Document Control and QMS Platform",
+    "type": "REC",
+    "version": "1.0",
+    "status": "submitted",
+    "author": "Sarp Derinsu",
+    "form_id": "FM-006",
+    "submitted_at": "2026-03-12",
+    "data": {
+        "Trainee Name": "Sarp Derinsu",
+        "Training Topic": "Document Control and QMS Platform",
+        "Training Date": "2026-03-12",
+        "Trainer/Source": "Self-study (QMS platform)",
+        "Training Method": "On-the-job",
+        "Description of Training Content": "QMS platform document workflow, git-based version control, and document publish process.",
+        "Effectiveness Assessment": "Competent",
+        "Assessed By": "Sarp Derinsu",
+        "Assessment Date": "2026-03-12",
+        "Notes": ""
+    }
+}

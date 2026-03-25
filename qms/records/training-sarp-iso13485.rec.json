@@ -1,0 +1,22 @@
+{
+    "id": "FM-006-REC-002",
+    "title": "Training Record - ISO 13485:2016 Requirements",
+    "type": "REC",
+    "version": "1.0",
+    "status": "submitted",
+    "author": "Sarp Derinsu",
+    "form_id": "FM-006",
+    "submitted_at": "2026-03-05",
+    "data": {
+        "Trainee Name": "Sarp Derinsu",
+        "Training Topic": "ISO 13485:2016 Requirements",
+        "Training Date": "2026-03-05",
+        "Trainer/Source": "Self-study (reference documents)",
+        "Training Method": "Self-study",
+        "Description of Training Content": "Detailed review of ISO 13485 clauses and their application to Software as a Medical Device (SaMD).",
+        "Effectiveness Assessment": "Competent",
+        "Assessed By": "Sarp Derinsu",
+        "Assessment Date": "2026-03-05",
+        "Notes": ""
+    }
+}
