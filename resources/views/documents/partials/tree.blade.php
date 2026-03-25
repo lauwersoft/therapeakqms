@@ -12,6 +12,7 @@
                         'search' => strtolower(($child['doc_id'] ?? '') . ' ' . $child['name']),
                         'type' => $childType,
                         'status' => $child['doc_status'] ?? '',
+                        'doc_id' => $child['doc_id'] ?? '',
                     ];
                 })->values()->toArray();
             @endphp
@@ -20,10 +21,13 @@
                     children: {{ json_encode($childrenData) }},
                     get visibleCount() {
                         if (!sidebarSearch && !sidebarTypeFilter && !sidebarStatusFilter && !sidebarCommentFilter) return this.children.length;
+                        var cs = typeof commentSummary !== 'undefined' ? commentSummary : {};
                         return this.children.filter(c => {
                             if (sidebarTypeFilter && c.type !== sidebarTypeFilter) return false;
                             if (sidebarStatusFilter && c.status !== sidebarStatusFilter) return false;
                             if (sidebarSearch && !c.search.includes(sidebarSearch.toLowerCase())) return false;
+                            if (sidebarCommentFilter === 'with' && !(c.doc_id && cs[c.doc_id] && cs[c.doc_id].unresolved > 0)) return false;
+                            if (sidebarCommentFilter === 'without' && c.doc_id && cs[c.doc_id] && cs[c.doc_id].unresolved > 0) return false;
                             return true;
                         }).length;
                     }
