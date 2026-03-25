@@ -27,7 +27,7 @@ graph TB
     end
 
     subgraph "Therapeak Infrastructure (Hetzner, Nuremberg, Germany)"
-        subgraph "Main Application (psychology-tool)"
+        subgraph "Therapeak Application"
             WEBAPP["Therapeak Web App<br/>Laravel 10 / Vue 3 / Inertia.js"]
             HORIZON["Laravel Horizon<br/>(Queue Processing)"]
             SOKETI["Soketi<br/>(WebSocket Server)"]
@@ -35,10 +35,6 @@ graph TB
 
         MARIADB[("MariaDB 10<br/>(User Data, Messages,<br/>Sessions, Reports)")]
         REDIS[("Redis<br/>(Queues, Cache,<br/>WebSocket Events)")]
-    end
-
-    subgraph "Backend Microservice"
-        CHATTOOL["chat-tool<br/>(AI Content Generation,<br/>Moderation, Translations)"]
     end
 
     subgraph "AI Providers"
@@ -65,16 +61,14 @@ graph TB
     HORIZON <--> REDIS
     SOKETI <--> REDIS
 
-    WEBAPP -->|"HTTP API<br/>(HMAC-SHA256)"| CHATTOOL
-    CHATTOOL -->|"Webhook"| WEBAPP
 
     WEBAPP -->|"Conversation<br/>Prompts"| OPENROUTER
     OPENROUTER -->|"Multi-Provider<br/>Routing"| CLAUDE
     CLAUDE -->|"AI Responses"| OPENROUTER
     OPENROUTER -->|"AI Responses"| WEBAPP
 
-    CHATTOOL --> OPENAI
-    CHATTOOL --> FALAI
+    WEBAPP --> OPENAI
+    WEBAPP --> FALAI
 
     WEBAPP --> STRIPE
     WEBAPP --> AWSSES
@@ -86,7 +80,7 @@ graph TB
 
     class MARIADB,OPENROUTER,CLAUDE,OPENAI,AWSSES healthData
     class STRIPE,FALAI,S3 nonHealthData
-    class WEBAPP,HORIZON,SOKETI,REDIS,CHATTOOL infrastructure
+    class WEBAPP,HORIZON,SOKETI,REDIS infrastructure
 ```
 
 **Legend:**
@@ -222,17 +216,15 @@ graph LR
         S3["AWS S3<br/>(Images)"]
     end
 
-    subgraph "Boundary Components"
+    subgraph "Application"
         direction TB
         APP["Therapeak Web App"]
-        CT["chat-tool"]
     end
 
     APP --> DB
     APP --> OR
+    APP --> OA
     APP --> SES
-    APP --> CT
-    CT --> OA
     APP --> ST
     APP --> FA
     APP --> S3
@@ -243,7 +235,7 @@ graph LR
 
     class DB,OR,OA,SES health
     class ST,FA,S3 nonHealth
-    class APP,CT boundary
+    class APP boundary
 ```
 
 ## 6. Infrastructure Components
@@ -251,7 +243,6 @@ graph LR
 | Component | Role | Technology |
 |---|---|---|
 | **Therapeak Web App** | Main application serving the user interface and orchestrating all backend operations | PHP 8.2 / Laravel 10 / Vue 3 / Inertia.js |
-| **chat-tool** | Backend microservice for AI content generation, therapist profile creation, content moderation, and translations | Separate application with HTTP API |
 | **MariaDB 10** | Primary data store for all user data, therapy messages, sessions, reports, and surveys | Relational database |
 | **Redis** | Queue broker (for Horizon job processing), cache layer, and WebSocket event transport | In-memory data store |
 | **Laravel Horizon** | Queue worker that processes all asynchronous jobs including conversation jobs, summary generation, report generation, and monitoring jobs | Laravel queue dashboard/manager |

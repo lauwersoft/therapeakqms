@@ -132,7 +132,7 @@ All API keys, database credentials, and sensitive configuration values are store
 
 - All user-facing traffic encrypted via TLS (Let's Encrypt SSL certificates, auto-renewed)
 - API calls to OpenRouter use HTTPS
-- Webhook callbacks from chat-tool use HMAC-SHA256 signed headers for integrity verification
+- Internal webhook callbacks use HMAC-SHA256 signed headers for integrity verification
 - Email delivery via AWS SES uses TLS (note: session summary emails contain therapy content in the email body)
 
 #### 4.2.4 Data Processing Agreements
@@ -159,7 +159,7 @@ All API keys, database credentials, and sensitive configuration values are store
 
 - All AI API calls route through OpenRouter via HTTPS
 - OpenRouter API key stored in `.env` file
-- Webhook responses from chat-tool are verified using HMAC-SHA256 signed headers to prevent tampering
+- Internal webhook responses are verified using HMAC-SHA256 signed headers to prevent tampering
 
 #### 4.3.2 Prompt Injection Mitigation
 

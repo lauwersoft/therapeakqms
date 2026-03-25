@@ -124,12 +124,7 @@ Class IIa under Rule 11 because:
 
 The device comprises two applications within a single codebase:
 
-| Component | Description |
-|---|---|
-| **psychology-tool** | Main user-facing web application — therapy sessions, user management, payments, reports |
-| **chat-tool** | Backend microservice — AI content generation, translations, therapist profile generation, content moderation |
-
-Communication between components: chat-tool exposes an API that psychology-tool calls via HTTP. Asynchronous results are delivered via a webhook system with HMAC-SHA256 signed headers.
+Therapeak is a monolithic Laravel web application that handles all functionality: therapy sessions, user management, payments, reports, AI content generation, therapist profile creation, and content moderation.
 
 ### 10.2 Technology Stack
 
@@ -153,7 +148,7 @@ Communication between components: chat-tool exposes an API that psychology-tool 
 | Therapy chat fallback (level 2) | Claude Sonnet 4, Sonnet 3.7, Opus 4 | OpenRouter model fallback array |
 | Session summaries | GPT-4o | OpenAI |
 | User reports | GPT-4o | OpenAI |
-| Content moderation | GPT-3.5-turbo-0125 | OpenAI (via chat-tool) |
+| Content moderation | GPT-3.5-turbo-0125 | OpenAI |
 | Session quality monitoring | GPT-4o | OpenAI |
 | Therapist avatar images | Flux Pro | Fal.ai |
 
@@ -198,7 +193,7 @@ Communication between components: chat-tool exposes an API that psychology-tool 
 - **Data exchanged:** Image generation prompts and resulting images
 - **Health data:** No
 
-### 11.5 OpenAI API (via chat-tool)
+### 11.5 OpenAI API
 
 - **Purpose:** Content generation, moderation, session summaries, reports, and session quality monitoring
 - **Data exchanged:** Therapy transcripts (for summaries/reports/monitoring), platform content (for moderation)

@@ -46,7 +46,7 @@ This document maintains the current list of approved suppliers for Therapeak B.V
 
 **Anthropic:** Provides the primary therapy AI models (Claude Sonnet 4.5, Claude Sonnet 4.6, and fallback models). API inputs/outputs are not used for training by default. Data retained for up to 30 days for trust and safety monitoring, then deleted.
 
-**OpenAI:** Provides GPT-4o for session summaries, user reports, and session quality monitoring (ChatDebugFlag jobs). Provides GPT-3.5-turbo for content moderation via chat-tool.
+**OpenAI:** Provides GPT-4o for session summaries, user reports, and session quality monitoring (ChatDebugFlag jobs). Provides GPT-3.5-turbo for content moderation of platform content.
 
 **Stripe:** Processes all user subscriptions with per-country pricing tiers. EU data processing is available. Service disruption would prevent user access to paid features.
 

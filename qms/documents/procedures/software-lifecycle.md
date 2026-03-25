@@ -25,9 +25,7 @@ This procedure defines the software lifecycle management process for the Therape
 ## 2. Scope
 
 This procedure applies to:
-- The Therapeak medical device software (device_mode=medical), comprising:
-  - **psychology-tool** — the main user-facing application (Laravel/Vue)
-  - **chat-tool** — the backend AI microservice (content generation, moderation, profiles)
+- The Therapeak medical device software (device_mode=medical) — a monolithic Laravel/Vue web application
 - All software changes, including bug fixes, feature additions, AI model changes, and configuration changes
 - SOUP/OTS (Software of Unknown Provenance / Off-The-Shelf) components used within the device
 
@@ -136,8 +134,8 @@ The Therapeak device relies on external AI models for its core therapeutic funct
 | Claude Sonnet 4.5 | Primary therapy chat | Anthropic via OpenRouter |
 | Claude Sonnet 4.6 | A/B test variant | Anthropic via OpenRouter |
 | Claude Opus 4 / Sonnet 4 / Sonnet 3.7 | Fallback models | Anthropic via OpenRouter |
-| GPT-4o | Session summaries, user reports, session quality monitoring | OpenAI via chat-tool |
-| GPT-3.5-turbo | Content moderation (platform content, not therapy chat) | OpenAI via chat-tool |
+| GPT-4o | Session summaries, user reports, session quality monitoring | OpenAI |
+| GPT-3.5-turbo | Content moderation (platform content, not therapy chat) | OpenAI |
 | Fal.ai (Flux Pro) | AI therapist avatar generation | Fal.ai |
 
 Model changes (switching primary model, adding fallback models, updating prompt templates) are treated as software changes and follow the standard workflow in Section 4.2.

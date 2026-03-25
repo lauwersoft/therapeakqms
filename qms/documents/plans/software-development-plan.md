@@ -22,8 +22,7 @@ This plan defines the software development lifecycle process for the Therapeak A
 
 This plan applies to the development, maintenance, and deployment of the Therapeak medical device software (version 1.0, `DEVICE_MODE=medical`), including:
 
-- The main application (psychology-tool): user-facing therapy sessions, payments, reports, mood tracking
-- The backend microservice (chat-tool): AI content generation, moderation, therapist profiles
+- The Therapeak web application: user-facing therapy sessions, payments, reports, mood tracking, AI content generation, moderation, therapist profiles
 - AI model integration and prompt management
 - All SOUP (Software of Unknown Provenance) components
 
@@ -144,7 +143,7 @@ Therapeak does not use a CI/CD pipeline or a staging environment. This is approp
 | IEC 62304 Activity | Therapeak Approach |
 |---|---|
 | Unit verification | Manual testing of individual functions/components locally. Critical AI-related functions (prompt construction, safety instructions) verified through prompt testing tool. |
-| Integration testing | Manual end-to-end testing in Docker Compose environment (psychology-tool and chat-tool communicating via HTTP/webhooks). |
+| Integration testing | Manual end-to-end testing in Docker Compose environment covering all application modules. |
 | System testing | Full user-flow testing locally: onboarding survey, therapist matching, therapy session, session summary, mood tracking, report generation. |
 | Acceptance testing | Live verification post-deployment confirms system operates correctly in production environment. |
 
@@ -193,7 +192,7 @@ Changes to the primary AI model (e.g., upgrading from Claude Sonnet 4.5 to a new
 | Fallback chain | Claude Opus 4.5, Claude Sonnet 4, Claude 3.7 Sonnet, Claude Opus 4 | OpenRouter |
 | Session summaries | GPT-4o | OpenRouter/OpenAI |
 | User reports | GPT-4o | OpenRouter/OpenAI |
-| Content moderation | GPT-3.5-turbo-0125 | OpenAI (via chat-tool) |
+| Content moderation | GPT-3.5-turbo-0125 | OpenAI |
 | Session quality monitoring | GPT-4o | OpenAI |
 | Image generation | Flux Pro | Fal.ai |
 

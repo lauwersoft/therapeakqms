@@ -24,8 +24,7 @@ This document defines the software requirements for the Therapeak medical device
 
 This specification covers the Therapeak AI therapy platform in its medical device configuration, including:
 
-- The main web application (psychology-tool)
-- The backend microservice (chat-tool)
+- The Therapeak web application
 - All third-party integrations that support the device's intended purpose
 - The AI conversational therapy engine and its supporting subsystems
 
