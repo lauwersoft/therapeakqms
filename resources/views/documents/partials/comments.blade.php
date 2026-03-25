@@ -215,26 +215,37 @@
 
 @push('scripts')
 <script>
-    // Flash a heading: instant on, fade off after 600ms
+    // Flash when visible — waits for element to enter viewport
+    function flashWhenVisible(el, cssClass, fadeCssClass) {
+        if (!el) return;
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    observer.disconnect();
+                    el.classList.remove(cssClass, fadeCssClass);
+                    el.classList.add(cssClass);
+                    setTimeout(function() { el.classList.add(fadeCssClass); }, 600);
+                    setTimeout(function() { el.classList.remove(cssClass, fadeCssClass); }, 1100);
+                }
+            });
+        }, { threshold: 0.3 });
+        observer.observe(el);
+        // Safety: disconnect after 5s in case it never becomes visible
+        setTimeout(function() { observer.disconnect(); }, 5000);
+    }
+
     function flashElement(id) {
         var el = document.getElementById(id);
         if (!el) return;
-        el.classList.remove('heading-flash', 'heading-flash-fade');
-        el.classList.add('heading-flash');
-        setTimeout(function() { el.classList.add('heading-flash-fade'); }, 600);
-        setTimeout(function() { el.classList.remove('heading-flash', 'heading-flash-fade'); }, 1100);
+        flashWhenVisible(el, 'heading-flash', 'heading-flash-fade');
     }
 
-    // Flash a card: instant on, fade off after 600ms
     function flashCard(el) {
         if (!el) return;
-        el.classList.remove('card-flash', 'card-flash-fade');
-        el.classList.add('card-flash');
-        setTimeout(function() { el.classList.add('card-flash-fade'); }, 600);
-        setTimeout(function() { el.classList.remove('card-flash', 'card-flash-fade'); }, 1100);
+        flashWhenVisible(el, 'card-flash', 'card-flash-fade');
     }
 
-    // Flash immediately, then scroll
+    // Scroll then flash when arrived
     function glowElement(id) {
         var el = document.getElementById(id);
         if (!el) return;
