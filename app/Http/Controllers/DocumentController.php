@@ -131,7 +131,7 @@ class DocumentController extends Controller
                     }
                 }
             }
-            $formSubmissions = $formSubmissions->sortByDesc('submitted_at')->take(10);
+            $formSubmissions = $formSubmissions->sortByDesc('submitted_at');
         }
 
         if ($isRecord) {

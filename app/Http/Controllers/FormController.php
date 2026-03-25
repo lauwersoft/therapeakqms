@@ -88,7 +88,25 @@ class FormController extends Controller
 
         // Save as file in qms/records/
         $recordsBase = base_path('qms/records');
-        $recId = DocumentMetadata::nextId('REC', $recordsBase);
+
+        // Generate form-specific record ID: FM-001-REC-001, FM-001-REC-002, etc.
+        $highest = 0;
+        $prefix = $formId . '-REC-';
+        if (is_dir($recordsBase)) {
+            foreach (File::allFiles($recordsBase) as $recFile) {
+                if (! str_ends_with($recFile->getFilename(), '.rec.json')) continue;
+                try {
+                    $recData = @json_decode(File::get($recFile->getPathname()), true);
+                    $existingId = $recData['id'] ?? '';
+                    if (str_starts_with($existingId, $prefix)) {
+                        $num = (int) substr($existingId, strlen($prefix));
+                        if ($num > $highest) $highest = $num;
+                    }
+                } catch (\Throwable $e) {}
+            }
+        }
+        $recId = $prefix . str_pad($highest + 1, 3, '0', STR_PAD_LEFT);
+
         $recordData = [
             'id' => $recId,
             'title' => $request->input('title'),
