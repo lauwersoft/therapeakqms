@@ -374,13 +374,21 @@ class CommentService
     private function backgroundPush(string $docId, string $message): void
     {
         $base = base_path();
-        $cmd = "cd {$base} && git pull --no-rebase 2>/dev/null; git add qms/comments/ && git commit -m \"{$message}\" --author=\"QMS System <qms@system>\" && git push";
 
-        try {
-            Process::start($cmd);
-        } catch (\Throwable $e) {
-            // Silent fail — file is on disk, will be pushed with next commit
-        }
+        // Run after the response is sent to the browser
+        app()->terminating(function () use ($base, $message) {
+            try {
+                Process::path($base)->run('git pull --no-rebase 2>/dev/null');
+                Process::path($base)->run('git add qms/comments/');
+                $diff = Process::path($base)->run('git diff --cached --quiet');
+                if (! $diff->successful()) {
+                    Process::path($base)->run(['git', 'commit', '--author', 'QMS System <qms@system>', '-m', $message]);
+                    Process::path($base)->run('git push');
+                }
+            } catch (\Throwable $e) {
+                // Silent fail — file is on disk, will be pushed with next commit
+            }
+        });
     }
 
     private function filePath(string $docId): string
