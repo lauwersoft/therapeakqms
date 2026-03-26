@@ -30,9 +30,13 @@ class DocumentController extends Controller
         $docIndex = DocumentMetadata::index($this->basePath);
         $tree = $this->buildTree($this->basePath, '', $docIndex);
 
-        // Default to quality manual
+        // Default to first available document
         if (! $path) {
-            $path = 'quality-manual.md';
+            $firstDoc = array_key_first($docIndex);
+            $defaultPath = $firstDoc ? preg_replace('/(\.\w+)+$/', '', $firstDoc) : null;
+            if ($defaultPath) {
+                return redirect()->route('documents.index', ['path' => $defaultPath]);
+            }
         }
 
         // Try to resolve the path — first as-is, then with extensions appended
