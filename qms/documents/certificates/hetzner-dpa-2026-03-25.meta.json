@@ -4,5 +4,8 @@
     "type": "CER",
     "version": "1.0",
     "status": "approved",
-    "author": "Hetzner Online GmbH"
+    "effective_date": "2026-03-25",
+    "author": "Hetzner Online GmbH",
+    "iso_refs": [],
+    "mdr_refs": ["Article 10(9)"]
 }

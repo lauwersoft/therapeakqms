@@ -4,5 +4,8 @@
     "type": "CER",
     "version": "1.0",
     "status": "approved",
-    "author": "TUV Rheinland"
+    "effective_date": "2026-02-19",
+    "author": "TUV Rheinland",
+    "iso_refs": [],
+    "mdr_refs": []
 }
