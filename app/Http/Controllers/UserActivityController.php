@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\TrackUserActivityJob;
 use App\Models\User;
 use App\Models\UserActivity;
-use GeoIp2\Database\Reader;
 use Illuminate\Http\Request;
 
 class UserActivityController extends Controller
@@ -27,6 +27,7 @@ class UserActivityController extends Controller
             'os' => 'nullable|string|max:50',
             'session_uid' => 'nullable|string|max:36',
             'browser_uid' => 'nullable|string|max:36',
+            'timezone' => 'nullable|string|max:50',
             'referrer' => 'nullable|string|max:500',
             'user_agent' => 'nullable|string|max:500',
             'scroll_depth' => 'nullable|integer|min:0|max:100',
@@ -36,36 +37,9 @@ class UserActivityController extends Controller
         $data['user_id'] = $request->user()->id;
         $data['ip'] = $request->ip();
 
-        // Local GeoIP lookup — instant, no API call
-        $geo = $this->geoLookup($data['ip']);
-        $data['country_code'] = $geo['country_code'];
-        $data['asn'] = $geo['asn'];
-
-        UserActivity::create($data);
+        TrackUserActivityJob::dispatch($data);
 
         return response()->json(['ok' => true]);
-    }
-
-    private function geoLookup(string $ip): array
-    {
-        $result = ['country_code' => null, 'asn' => null];
-
-        if (in_array($ip, ['127.0.0.1', '::1'])) {
-            return $result;
-        }
-
-        try {
-            $reader = new Reader(base_path('geoip/GeoLite2-Country.mmdb'));
-            $result['country_code'] = $reader->country($ip)->country->isoCode;
-        } catch (\Throwable $e) {}
-
-        try {
-            $reader = new Reader(base_path('geoip/GeoLite2-ASN.mmdb'));
-            $asn = $reader->asn($ip);
-            $result['asn'] = $asn->autonomousSystemOrganization;
-        } catch (\Throwable $e) {}
-
-        return $result;
     }
 
     public function index(Request $request)
@@ -124,8 +98,8 @@ class UserActivityController extends Controller
         // IP / Location breakdown
         $locations = UserActivity::where('user_id', $user->id)
             ->where('created_at', '>=', now()->subDays($days))
-            ->selectRaw('ip, country_code, asn, count(*) as count, max(created_at) as last_seen')
-            ->groupBy('ip', 'country_code', 'asn')
+            ->selectRaw('ip, country_code, asn_number, asn_org, count(*) as count, max(created_at) as last_seen')
+            ->groupBy('ip', 'country_code', 'asn_number', 'asn_org')
             ->orderByDesc('last_seen')
             ->get();
 

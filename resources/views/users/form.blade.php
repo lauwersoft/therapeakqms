@@ -43,6 +43,13 @@
                         </div>
 
                         <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Organisation <span class="font-normal text-gray-400">— optional</span></label>
+                            <input type="text" name="organisation" value="{{ old('organisation', $user?->organisation) }}"
+                                   class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="e.g. Scarlet, Pander Consultancy">
+                        </div>
+
+                        <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
                             <select name="role" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
                                 @foreach($roles as $role)

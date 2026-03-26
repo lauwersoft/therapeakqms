@@ -136,7 +136,7 @@
                     </div>
                     <div class="divide-y divide-gray-50">
                         @foreach($activeUsers as $activeUser)
-                            <div class="px-5 py-3 flex items-center gap-3">
+                            <a href="{{ route('activity.show', $activeUser) }}" class="block px-5 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors">
                                 <div class="relative">
                                     <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0
                                         {{ $activeUser->role === 'admin' ? 'bg-purple-100' : '' }}
@@ -167,27 +167,55 @@
                                         @endif
                                     </span>
                                 </div>
-                            </div>
+                            </a>
                         @endforeach
                     </div>
                 </div>
             @endif
 
             @if(Auth::user()->isAdmin())
-                <a href="/telescope" class="block bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow mb-8">
-                    <div class="flex items-center gap-3">
-                        <div class="p-1.5 bg-purple-50 rounded-lg">
-                            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+                    <a href="/telescope" class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-center gap-3">
+                            <div class="p-1.5 bg-purple-50 rounded-lg">
+                                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-800">Telescope</h3>
+                                <p class="text-xs text-gray-400">Requests, exceptions, logs</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-800">Telescope</h3>
-                            <p class="text-xs text-gray-400">Monitor requests, exceptions, and logs</p>
+                    </a>
+                    <a href="/horizon" class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-center gap-3">
+                            <div class="p-1.5 bg-teal-50 rounded-lg">
+                                <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-800">Horizon</h3>
+                                <p class="text-xs text-gray-400">Queue workers, jobs</p>
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                    <a href="{{ route('activity.index') }}" class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-center gap-3">
+                            <div class="p-1.5 bg-amber-50 rounded-lg">
+                                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-800">Activity</h3>
+                                <p class="text-xs text-gray-400">User tracking details</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             @endif
 
             {{-- Recent activity --}}

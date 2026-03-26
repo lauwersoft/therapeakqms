@@ -20,8 +20,9 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
             if ($entry->type === 'request') {
                 $uri = $entry->content['uri'] ?? '';
 
-                // Always record login attempts (detect brute force / hacking)
-                if (str_contains($uri, '/login')) {
+                // Record login POST attempts (detect brute force / hacking)
+                $method = $entry->content['method'] ?? '';
+                if (str_contains($uri, '/login') && $method === 'POST') {
                     return true;
                 }
 

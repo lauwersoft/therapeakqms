@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\TrackUserActionJob;
+use App\Models\UserActivity;
 use App\Services\CommentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CommentController extends Controller
 {
@@ -94,6 +97,8 @@ class CommentController extends Controller
             'content' => $request->input('content'),
         ]);
 
+        TrackUserActionJob::dispatch($user->id, UserActivity::TYPE_COMMENT, $request->path(), $request->input('doc_id'), null, Str::limit($request->input('content'), 200), $request->ip());
+
         return $this->respond($request, $comment['id'], 'Comment added.');
     }
 
@@ -121,6 +126,8 @@ class CommentController extends Controller
             return back()->withErrors(['Comment not found.']);
         }
 
+        TrackUserActionJob::dispatch($user->id, UserActivity::TYPE_REPLY, $request->path(), $request->input('doc_id'), null, Str::limit($request->input('content'), 200), $request->ip());
+
         return $this->respond($request, $commentId, 'Reply added.');
     }
 
@@ -146,6 +153,8 @@ class CommentController extends Controller
             $request->input('note')
         );
 
+        TrackUserActionJob::dispatch($user->id, UserActivity::TYPE_RESOLVE_COMMENT, $request->path(), $request->input('doc_id'), null, $request->input('note'), $request->ip());
+
         return $this->respond($request, $commentId, 'Comment resolved.');
     }
 
@@ -165,6 +174,8 @@ class CommentController extends Controller
             $request->input('doc_id'),
             $commentId
         );
+
+        TrackUserActionJob::dispatch($request->user()->id, UserActivity::TYPE_UNRESOLVE_COMMENT, $request->path(), $request->input('doc_id'), null, null, $request->ip());
 
         return $this->respond($request, $commentId, 'Comment reopened.');
     }

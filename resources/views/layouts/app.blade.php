@@ -266,6 +266,7 @@
                         os: getOS(),
                         session_uid: sessionUid,
                         browser_uid: browserUid,
+                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                         referrer: document.referrer || null,
                         user_agent: navigator.userAgent,
                         scroll_depth: maxScroll,

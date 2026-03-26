@@ -41,6 +41,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
+            'organisation' => 'nullable|string|max:100',
             'role' => 'required|in:' . implode(',', User::ROLES),
             'password' => 'nullable|string|min:8',
             'approved' => 'boolean',
@@ -57,6 +58,7 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
+            'organisation' => $request->input('organisation'),
             'role' => $request->input('role'),
             'password' => $password,
             'approved' => $request->boolean('approved'),
@@ -87,6 +89,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+            'organisation' => 'nullable|string|max:100',
             'role' => 'required|in:' . implode(',', User::ROLES),
             'password' => 'nullable|string|min:8',
             'approved' => 'boolean',
@@ -94,6 +97,7 @@ class UserController extends Controller
 
         $user->name = $request->input('name');
         $user->email = $request->input('email');
+        $user->organisation = $request->input('organisation');
         $user->role = $request->input('role');
         $user->approved = $request->boolean('approved');
 

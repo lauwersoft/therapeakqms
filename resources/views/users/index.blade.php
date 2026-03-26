@@ -40,77 +40,81 @@
             @endif
 
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-gray-50 border-b border-gray-200">
-                            <th class="text-left text-xs font-medium text-gray-500 px-5 py-3">Name</th>
-                            <th class="text-left text-xs font-medium text-gray-500 px-5 py-3">Email</th>
-                            <th class="text-left text-xs font-medium text-gray-500 px-5 py-3">Role</th>
-                            <th class="text-left text-xs font-medium text-gray-500 px-5 py-3">Status</th>
-                            <th class="text-left text-xs font-medium text-gray-500 px-5 py-3">Created</th>
-                            <th class="text-right text-xs font-medium text-gray-500 px-5 py-3"></th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach($users as $user)
-                            <tr class="hover:bg-gray-50/50">
-                                <td class="px-5 py-3">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0
-                                            {{ $user->role === 'admin' ? 'bg-purple-100' : ($user->role === 'editor' ? 'bg-blue-100' : 'bg-gray-100') }}">
-                                            <span class="text-xs font-semibold
-                                                {{ $user->role === 'admin' ? 'text-purple-600' : ($user->role === 'editor' ? 'text-blue-600' : 'text-gray-500') }}">
-                                                {{ strtoupper(substr($user->name, 0, 1)) }}
-                                            </span>
-                                        </div>
-                                        <span class="text-sm font-medium text-gray-800">{{ $user->name }}</span>
-                                    </div>
-                                </td>
-                                <td class="px-5 py-3 text-sm text-gray-600">{{ $user->email }}</td>
-                                <td class="px-5 py-3">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
-                                        {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-700' : '' }}
-                                        {{ $user->role === 'editor' ? 'bg-blue-100 text-blue-700' : '' }}
-                                        {{ $user->role === 'auditor' ? 'bg-gray-100 text-gray-600' : '' }}">
-                                        {{ ucfirst($user->role) }}
-                                    </span>
-                                </td>
-                                <td class="px-5 py-3">
-                                    @if($user->approved)
-                                        <span class="inline-flex items-center gap-1 text-xs text-green-600">
-                                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                                            Approved
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1 text-xs text-amber-600">
-                                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.828a1 1 0 101.415-1.414L11 9.586V6z" clip-rule="evenodd"/></svg>
-                                            Pending
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-5 py-3 text-xs text-gray-400">{{ $user->created_at->format('M j, Y') }}</td>
-                                <td class="px-5 py-3 text-right">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <a href="{{ route('users.edit', $user) }}"
-                                           class="text-xs text-gray-500 hover:text-blue-600 px-2 py-1 rounded hover:bg-gray-100">
-                                            Edit
-                                        </a>
-                                        @if($user->id !== auth()->id())
-                                            <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline"
-                                                  onsubmit="return confirm('Delete {{ $user->name }}? This cannot be undone.')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-xs text-gray-500 hover:text-red-600 px-2 py-1 rounded hover:bg-gray-100">
-                                                    Delete
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                @foreach($users as $user)
+                    <div class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
+                        {{-- Avatar --}}
+                        <div class="relative">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0
+                                {{ $user->role === 'admin' ? 'bg-purple-100' : '' }}
+                                {{ $user->role === 'editor' ? 'bg-blue-100' : '' }}
+                                {{ $user->role === 'auditor' ? 'bg-gray-100' : '' }}">
+                                <span class="text-sm font-semibold
+                                    {{ $user->role === 'admin' ? 'text-purple-600' : '' }}
+                                    {{ $user->role === 'editor' ? 'text-blue-600' : '' }}
+                                    {{ $user->role === 'auditor' ? 'text-gray-500' : '' }}">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                            </div>
+                            @if($user->last_active_at?->gt(now()->subMinutes(5)))
+                                <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+                            @endif
+                        </div>
+
+                        {{-- Info --}}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-medium text-gray-800">{{ $user->name }}</span>
+                                <span class="text-[10px] font-medium px-1.5 py-0.5 rounded
+                                    {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-600' : '' }}
+                                    {{ $user->role === 'editor' ? 'bg-blue-100 text-blue-600' : '' }}
+                                    {{ $user->role === 'auditor' ? 'bg-gray-100 text-gray-500' : '' }}">{{ ucfirst($user->role) }}</span>
+                                @if(!$user->approved)
+                                    <span class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-amber-100 text-amber-600">Pending</span>
+                                @endif
+                            </div>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span class="text-xs text-gray-400">{{ $user->email }}</span>
+                                @if($user->organisation)
+                                    <span class="text-[10px] text-gray-300">·</span>
+                                    <span class="text-xs text-gray-400">{{ $user->organisation }}</span>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Last active --}}
+                        <div class="text-right shrink-0 hidden sm:block">
+                            <span class="text-xs {{ $user->last_active_at?->gt(now()->subMinutes(5)) ? 'text-green-600 font-medium' : 'text-gray-400' }}">
+                                @if($user->last_active_at?->gt(now()->subMinutes(5)))
+                                    Online now
+                                @elseif($user->last_active_at)
+                                    {{ $user->last_active_at->diffForHumans() }}
+                                @else
+                                    Never
+                                @endif
+                            </span>
+                        </div>
+
+                        {{-- Actions --}}
+                        <div class="flex items-center gap-1 shrink-0">
+                            @if(auth()->user()->isAdmin() && $user->id !== auth()->id())
+                                <a href="{{ route('activity.show', $user) }}" class="p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" title="Activity">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                                </a>
+                            @endif
+                            <a href="{{ route('users.edit', $user) }}" class="p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" title="Edit">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                            </a>
+                            @if($user->id !== auth()->id())
+                                <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline"
+                                      onsubmit="return confirm('Delete {{ $user->name }}? This cannot be undone.')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-1.5 rounded hover:bg-red-50 text-gray-400 hover:text-red-600" title="Delete">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>

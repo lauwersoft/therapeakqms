@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('user_activities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('type', 30)->default('page_view')->index();
             $table->string('path', 500);
             $table->string('doc_id', 20)->nullable()->index();
             $table->string('doc_title', 255)->nullable();
@@ -23,11 +24,14 @@ return new class extends Migration
             $table->string('user_agent', 500)->nullable();
             $table->unsignedTinyInteger('scroll_depth')->nullable();
             $table->string('page_title', 255)->nullable();
+            $table->text('detail')->nullable();
             $table->string('ip', 45)->nullable();
             $table->char('country_code', 2)->nullable()->index();
-            $table->string('asn', 100)->nullable();
+            $table->unsignedInteger('asn_number')->nullable();
+            $table->string('asn_org', 100)->nullable();
             $table->string('session_uid', 36)->nullable()->index();
             $table->string('browser_uid', 36)->nullable()->index();
+            $table->string('timezone', 50)->nullable();
             $table->string('referrer', 500)->nullable();
             $table->timestamp('created_at')->useCurrent();
 
