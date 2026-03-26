@@ -28,6 +28,9 @@
                     @if($meta['effective_date'])
                         <div class="text-gray-400"><span class="text-gray-500 font-medium">Effective:</span> {{ $meta['effective_date'] }}</div>
                     @endif
+                    @if(isset($formSubmissions))
+                        <div class="text-gray-400"><span class="text-gray-500 font-medium">Submissions:</span> {{ $formSubmissions ? $formSubmissions->count() : 0 }}</div>
+                    @endif
                 </div>
                 {{-- Right column --}}
                 <div class="space-y-1.5">

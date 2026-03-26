@@ -121,10 +121,13 @@
                                                         <span class="text-[10px] font-semibold text-gray-500">{{ strtoupper(substr($sub['author'], 0, 1)) }}</span>
                                                     </div>
                                                     <div class="flex-1 min-w-0">
-                                                        <span class="text-sm text-gray-800 block">{{ $sub['title'] }}</span>
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-xs font-mono font-medium text-gray-500">{{ $sub['id'] }}</span>
+                                                            <span class="text-sm text-gray-800 truncate">{{ $sub['title'] }}</span>
+                                                        </div>
+                                                        <div class="text-[11px] text-gray-400 font-mono mt-0.5">records/{{ $sub['filename'] }}</div>
                                                         <span class="text-xs text-gray-400">{{ $sub['author'] }} · {{ $sub['submitted_at'] ? \Carbon\Carbon::parse($sub['submitted_at'])->diffForHumans() : '' }}</span>
                                                     </div>
-                                                    <span class="text-xs font-mono text-gray-400">{{ $sub['id'] }}</span>
                                                 </a>
                                             @endforeach
                                         </div>
