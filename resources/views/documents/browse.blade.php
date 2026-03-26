@@ -352,11 +352,9 @@
             </div>
 
             {{-- Document list --}}
-            <template x-if="ready && filteredDocs.length > 0">
-                <div>
+            <div x-show="filteredDocs.length > 0">
                     {{-- Root files --}}
-                    <template x-if="filteredDocs.some(d => d.raw_directory === '')">
-                        <div class="mb-5">
+                    <div x-show="filteredDocs.some(d => d.raw_directory === '')" class="mb-5">
                             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                                 <template x-for="doc in filteredDocs.filter(d => d.raw_directory === '')" :key="doc.path">
                                     <a :href="'/qms/' + doc.url_path"
@@ -382,8 +380,7 @@
                                     </a>
                                 </template>
                             </div>
-                        </div>
-                    </template>
+                    </div>
 
                     {{-- Directories --}}
                     <template x-for="dir in uniqueDirs.filter(d => d !== '')" :key="dir">
@@ -425,9 +422,9 @@
                         </div>
                     </template>
                 </div>
-            </template>
+            </div>
 
-            <div x-show="ready && filteredDocs.length === 0" x-cloak class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+            <div x-show="filteredDocs.length === 0" x-cloak class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
                 <p class="text-gray-400">No documents match your filters.</p>
             </div>
 
