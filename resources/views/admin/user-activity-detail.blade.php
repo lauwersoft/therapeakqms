@@ -121,11 +121,12 @@
                                     <div class="flex items-center justify-between gap-3">
                                         <div class="min-w-0 flex-1">
                                             <div class="flex items-center gap-2">
-                                                @if($page->doc_id)
+                                                @if($page->doc_id && $page->doc_id !== 'null')
                                                     <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor(explode('-', $page->doc_id)[0] ?? '') }}">{{ $page->doc_id }}</span>
                                                 @endif
-                                                <span class="text-sm text-gray-700 truncate">{{ $page->doc_title ?: $page->path }}</span>
+                                                <span class="text-sm text-gray-800 truncate">{{ ($page->doc_title && $page->doc_title !== 'null') ? $page->doc_title : ($page->path ?: 'Unknown') }}</span>
                                             </div>
+                                            <div class="text-[11px] text-gray-400 font-mono mt-0.5">{{ $page->path }}</div>
                                         </div>
                                         <div class="flex items-center gap-3 shrink-0 text-xs text-gray-400">
                                             <span>{{ $page->views }} {{ Str::plural('view', $page->views) }}</span>
@@ -256,8 +257,8 @@
                 @else
                     <div class="divide-y divide-gray-50">
                         @foreach($activities as $activity)
-                            <div class="px-5 py-2.5 flex items-center gap-3">
-                                <span class="text-[10px] text-gray-300 shrink-0 w-16 text-right">{{ $activity->created_at->format('M j H:i') }}</span>
+                            <div class="px-5 py-2.5 flex items-start gap-3">
+                                <span class="text-[11px] text-gray-500 shrink-0 w-16 text-right mt-0.5 font-mono">{{ $activity->created_at->format('M j H:i') }}</span>
                                 @php
                                     $typeConfig = match($activity->type) {
                                         'comment' => ['bg-amber-100 text-amber-700', 'Comment'],
@@ -270,24 +271,31 @@
                                         'download' => ['bg-gray-100 text-gray-600', 'Download'],
                                         'form_submit' => ['bg-indigo-100 text-indigo-700', 'Submitted'],
                                         'login' => ['bg-gray-100 text-gray-600', 'Login'],
-                                        default => ['bg-gray-50 text-gray-400', 'Viewed'],
+                                        default => ['bg-blue-50 text-blue-600', 'Viewed'],
                                     };
                                 @endphp
-                                <span class="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 {{ $typeConfig[0] }}">{{ $typeConfig[1] }}</span>
-                                @if($activity->doc_id && $activity->doc_id !== 'null')
-                                    <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded shrink-0 {{ \App\Services\DocumentMetadata::typeColor(explode('-', $activity->doc_id)[0] ?? '') }}">{{ $activity->doc_id }}</span>
-                                @endif
-                                <span class="text-xs text-gray-600 truncate flex-1">{{ ($activity->doc_title && $activity->doc_title !== 'null') ? $activity->doc_title : ($activity->page_title ?: $activity->path) }}</span>
-                                @if($activity->detail)
-                                    <span class="text-[10px] text-gray-400 truncate max-w-[150px] shrink-0" title="{{ $activity->detail }}">{{ Str::limit($activity->detail, 30) }}</span>
-                                @endif
+                                <span class="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 w-16 text-center mt-0.5 {{ $typeConfig[0] }}">{{ $typeConfig[1] }}</span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        @if($activity->doc_id && $activity->doc_id !== 'null')
+                                            <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded shrink-0 {{ \App\Services\DocumentMetadata::typeColor(explode('-', $activity->doc_id)[0] ?? '') }}">{{ $activity->doc_id }}</span>
+                                        @endif
+                                        <span class="text-sm text-gray-800 truncate">{{ ($activity->doc_title && $activity->doc_title !== 'null') ? $activity->doc_title : ($activity->page_title ?: $activity->path) }}</span>
+                                    </div>
+                                    <div class="text-[11px] text-gray-400 font-mono mt-0.5">{{ $activity->path }}</div>
+                                    @if($activity->detail)
+                                        <p class="text-xs text-gray-400 mt-0.5 line-clamp-1">{{ $activity->detail }}</p>
+                                    @endif
+                                    <div class="flex items-center gap-3 mt-0.5 text-[11px] text-gray-400">
                                 @if($activity->type === 'page_view')
-                                    <span class="text-[10px] text-gray-400 shrink-0">{{ $activity->time_spent }}s</span>
+                                    <span>{{ $activity->time_spent }}s</span>
                                     @if($activity->scroll_depth !== null)
-                                        <span class="text-[10px] shrink-0 {{ $activity->scroll_depth >= 90 ? 'text-green-600' : ($activity->scroll_depth >= 50 ? 'text-amber-600' : 'text-red-500') }}">{{ $activity->scroll_depth }}%</span>
+                                        <span class="{{ $activity->scroll_depth >= 90 ? 'text-green-600' : ($activity->scroll_depth >= 50 ? 'text-amber-600' : 'text-red-500') }}">{{ $activity->scroll_depth }}%</span>
                                     @endif
                                 @endif
-                                <span class="text-[10px] text-gray-300 shrink-0">{{ $activity->device }}</span>
+                                @if($activity->device)<span>{{ $activity->device }}</span>@endif
+                                    </div>
+                                </div>
                             </div>
                         @endforeach
                     </div>
