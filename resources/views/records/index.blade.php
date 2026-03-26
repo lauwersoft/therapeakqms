@@ -45,6 +45,7 @@
                                             <span class="text-xs font-mono font-medium text-gray-500">{{ $record['id'] }}</span>
                                             <span class="text-sm font-medium text-gray-800 truncate">{{ $record['title'] }}</span>
                                         </div>
+                                        <div class="text-[11px] text-gray-400 font-mono mt-0.5">records/{{ $record['filename'] }}</div>
                                         <div class="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
                                             <span>{{ $record['author'] }}</span>
                                             @if($record['submitted_at'])
