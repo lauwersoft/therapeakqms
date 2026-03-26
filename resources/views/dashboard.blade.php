@@ -128,7 +128,7 @@
             </div>
 
             @if(Auth::user()->isAdmin())
-                <a href="/telescope" class="block bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                <a href="/telescope" class="block bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow mb-8">
                     <div class="flex items-center gap-3">
                         <div class="p-1.5 bg-purple-50 rounded-lg">
                             <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
