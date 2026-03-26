@@ -130,12 +130,25 @@ class ReferenceController extends Controller
             if ($tag === 'h2' && strtolower($text) !== 'footnotes') {
                 $toc[] = ['id' => $id, 'title' => $text];
             }
-            // Add a secondary anchor from just the leading number (e.g., "4.2.2 Quality manual" → also anchors as "422")
+            // Add secondary anchors from the leading number (e.g., "4.2.2 Quality manual" → "422" and "clause-4-2-2")
             $extra = '';
             if (preg_match('/^([\d.]+)\s/', $text, $numMatch)) {
                 $numId = \Illuminate\Support\Str::slug($numMatch[1]);
+                $clauseId = 'clause-' . str_replace('.', '-', $numMatch[1]);
                 if ($numId !== $id) {
                     $extra = '<a id="' . $numId . '"></a>';
+                }
+                $extra .= '<a id="' . $clauseId . '"></a>';
+            }
+            // Add "article-N" anchor for EU MDR articles (e.g., "Article 10 General obligations" → "article-10")
+            if (preg_match('/^Article\s+(\d+)/i', $text, $artMatch)) {
+                $extra .= '<a id="article-' . $artMatch[1] . '"></a>';
+            }
+            // Add short anchor for Annexes (e.g., "ANNEX I — GENERAL SAFETY..." → "annex-i")
+            if (preg_match('/^ANNEX\s+([IVXLC]+)/i', $text, $annexMatch)) {
+                $shortAnnex = \Illuminate\Support\Str::slug('annex ' . $annexMatch[1]);
+                if ($shortAnnex !== $id) {
+                    $extra .= '<a id="' . $shortAnnex . '"></a>';
                 }
             }
             return $extra . '<' . $tag . ' id="' . $id . '">' . $m[2] . '</' . $tag . '>';

@@ -41,7 +41,12 @@
                     @if(!empty($meta['mdr_refs']))
                         <div class="text-gray-400"><span class="text-gray-500 font-medium">EU MDR:</span>
                             @foreach($meta['mdr_refs'] as $ref)
-                                <a href="{{ route('references.show', 'eu-mdr') }}#{{ \Illuminate\Support\Str::slug($ref) }}" class="text-blue-500 hover:text-blue-700 underline decoration-blue-300 hover:decoration-blue-500">{{ $ref }}</a>{{ !$loop->last ? ', ' : '' }}
+                                @php
+                                    // Strip paragraph references like "(9)" for anchor — articles aren't split by paragraph
+                                    $mdrAnchor = preg_replace('/\([\d]+\)/', '', $ref);
+                                    $mdrAnchor = \Illuminate\Support\Str::slug(trim($mdrAnchor));
+                                @endphp
+                                <a href="{{ route('references.show', 'eu-mdr') }}#{{ $mdrAnchor }}" class="text-blue-500 hover:text-blue-700 underline decoration-blue-300 hover:decoration-blue-500">{{ $ref }}</a>{{ !$loop->last ? ', ' : '' }}
                             @endforeach
                         </div>
                     @endif
