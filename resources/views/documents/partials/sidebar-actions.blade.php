@@ -273,3 +273,46 @@
         </form>
     </div>
 </div>
+
+{{-- Confirm Move Modal --}}
+<div x-show="modal.confirmMove && pendingMove" x-cloak
+     class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="modal.confirmMove = false; pendingMove = null"
+     x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 overflow-hidden" @click.stop>
+        <div class="p-5">
+            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                </svg>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-800 text-center mb-1">Move document</h3>
+            <p class="text-xs text-gray-500 text-center mb-4">
+                Move <span class="font-medium text-gray-700" x-text="pendingMove?.fileName"></span>
+            </p>
+            <div class="flex items-center justify-center gap-3 text-xs mb-1">
+                <span class="px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-600 font-medium">
+                    <svg class="w-3 h-3 inline mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
+                    <span x-text="pendingMove?.fromLabel"></span>
+                </span>
+                <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                <span class="px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 font-medium">
+                    <svg class="w-3 h-3 inline mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
+                    <span x-text="pendingMove?.toLabel"></span>
+                </span>
+            </div>
+        </div>
+        <div class="flex border-t border-gray-100">
+            <button @click="modal.confirmMove = false; pendingMove = null"
+                    class="flex-1 px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 transition-colors font-medium">Cancel</button>
+            <button @click="
+                var f = document.createElement('form');
+                f.method = 'POST';
+                f.action = '{{ route('documents.move') }}';
+                f.innerHTML = '<input type=hidden name=_token value={{ csrf_token() }}><input type=hidden name=path value=' + pendingMove.path + '><input type=hidden name=destination value=' + pendingMove.destination + '>';
+                document.body.appendChild(f);
+                f.submit();
+            " class="flex-1 px-4 py-3 text-sm text-blue-600 hover:bg-blue-50 transition-colors font-medium border-l border-gray-100">Move</button>
+        </div>
+    </div>
+</div>
