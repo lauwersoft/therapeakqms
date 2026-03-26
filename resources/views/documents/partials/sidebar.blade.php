@@ -137,7 +137,8 @@
     <script>
         (function(){
             var n=document.getElementById('sidebar-nav');if(!n)return;
-            var s=sessionStorage.getItem('sidebarScroll');
+            var fromDocs=document.referrer && new URL(document.referrer).pathname.startsWith('/qms/');
+            var s=fromDocs?sessionStorage.getItem('sidebarScroll'):null;
             if(s!==null){n.scrollTop=parseInt(s)}
             else{var a=n.querySelector('[data-active-sidebar-item]');if(a){n.scrollTop=a.offsetTop-n.offsetTop-n.clientHeight/2}}
             var h=document.getElementById('sidebar-hide');if(h)h.remove();
