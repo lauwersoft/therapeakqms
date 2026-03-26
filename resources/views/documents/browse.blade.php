@@ -29,7 +29,7 @@
          @dragleave.self.prevent="dragOver = false"
          @drop.prevent="handleDrop($event)"
          x-init="document.addEventListener('dragleave', (e) => { if (!e.relatedTarget && e.clientX === 0 && e.clientY === 0) dragOver = false; }); document.addEventListener('drop', () => dragOver = false);"
-         class="py-6 relative">
+         class="relative h-full">
 
         @if($canEdit)
             {{-- Single context menu --}}
@@ -247,7 +247,9 @@
             </div>
         @endif
 
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col h-full overflow-hidden">
+        {{-- Fixed top section --}}
+        <div class="shrink-0 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6">
             {{-- Unpublished changes banner --}}
             @if($pendingCount > 0 && $canEdit)
                 <div class="mb-5">
@@ -342,6 +344,11 @@
                         @click="typeFilter = ''; statusFilter = ''; commentFilter = ''; search = ''"
                         class="text-xs text-blue-600 hover:text-blue-800">Clear all filters</button>
             </div>
+        </div>
+
+        {{-- Scrollable document list --}}
+        <div class="flex-1 overflow-y-auto">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
 
             {{-- Loading spinner --}}
             <div x-show="!ready" x-cloak class="flex items-center justify-center py-16">
@@ -435,7 +442,8 @@
                 </div>
             @endif
         </div>
-    </div>
+        </div>
+        </div>
 
     @push('scripts')
         <script>
