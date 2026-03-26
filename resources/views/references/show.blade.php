@@ -112,16 +112,24 @@
             function highlightRefSection(id) {
                 var el = document.getElementById(id);
                 if (!el) return;
+                // If target is a small anchor tag, highlight the next sibling heading instead
+                if (el.tagName === 'A' && el.nextElementSibling && /^H[234]$/i.test(el.nextElementSibling.tagName)) {
+                    el = el.nextElementSibling;
+                }
                 el.style.transition = 'none';
                 el.style.backgroundColor = 'rgba(59, 130, 246, 0.12)';
                 el.style.borderRadius = '4px';
+                el.style.padding = '2px 6px';
+                el.style.margin = '0 -6px';
                 setTimeout(function() {
-                    el.style.transition = 'background-color 0.5s ease-out';
+                    el.style.transition = 'background-color 0.8s ease-out';
                     el.style.backgroundColor = '';
-                }, 600);
+                }, 800);
                 setTimeout(function() {
                     el.style.borderRadius = '';
-                }, 1100);
+                    el.style.padding = '';
+                    el.style.margin = '';
+                }, 1600);
             }
 
             function refViewer() {
