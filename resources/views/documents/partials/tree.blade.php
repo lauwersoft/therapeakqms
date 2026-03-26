@@ -127,6 +127,7 @@
                                @dblclick.prevent="window.location='{{ route('documents.edit', ['path' => preg_replace('/\.md$/', '', $item['path'])]) }}'"
                            @endif
                        @endif
+                       @if($currentPath === $item['path']) data-active-sidebar-item @endif
                        class="flex items-center flex-1 min-w-0 px-2 py-1.5 text-sm rounded mb-0.5 cursor-pointer
                               {{ $currentPath === $item['path'] ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100' }}">
                         @if($canEdit ?? false)

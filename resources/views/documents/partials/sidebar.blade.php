@@ -101,7 +101,10 @@
                 @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''; sidebarCommentFilter = ''"
                 class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
     </div>
-    <nav class="p-3 flex-1 flex flex-col overflow-y-auto">
+    <nav class="p-3 flex-1 flex flex-col overflow-y-auto" x-init="$nextTick(() => {
+        const active = $el.querySelector('[data-active-sidebar-item]');
+        if (active) active.scrollIntoView({ block: 'center' });
+    })">
         <div>
             @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $sidebarCanEdit, 'changedFiles' => $changedFiles, 'commentSummary' => $commentSummary ?? []])
         </div>
