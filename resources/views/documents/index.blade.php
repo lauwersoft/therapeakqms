@@ -398,9 +398,19 @@
                             dragClass: 'sortable-drag',
                             onEnd: (evt) => {
                                 const filePath = evt.item.dataset.path;
+                                const fileName = filePath.split('/').pop();
                                 const newDir = evt.to.dataset.directory || '';
                                 const oldDir = evt.from.dataset.directory || '';
                                 if (newDir === oldDir) return;
+
+                                const fromLabel = oldDir || 'root';
+                                const toLabel = newDir || 'root';
+
+                                if (!confirm(`Move "${fileName}" from ${fromLabel} to ${toLabel}?`)) {
+                                    // Put it back
+                                    evt.from.insertBefore(evt.item, evt.from.children[evt.oldIndex]);
+                                    return;
+                                }
 
                                 const form = document.createElement('form');
                                 form.method = 'POST';
