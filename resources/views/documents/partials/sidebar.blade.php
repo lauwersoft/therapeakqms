@@ -138,24 +138,39 @@
     <script>
         (function(){
             var n=document.getElementById('sidebar-nav');if(!n)return;
-            // 1. Collapse closed directories BEFORE anything else
+            // 1. Find active item
+            var active=n.querySelector('[data-active-sidebar-item]');
+            var fromSidebar=sessionStorage.getItem('sidebarClickNav');
+            var isReload=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0]&&performance.getEntriesByType('navigation')[0].type==='reload';
+            var keepScroll=fromSidebar||isReload;
+            sessionStorage.removeItem('sidebarClickNav');
+
+            // 2. Collapse closed directories, but open the one containing the active item if linking from outside
+            var activeParentId=null;
+            if(active&&!keepScroll){
+                var p=active.closest('[id^="dir-children-"]');
+                if(p)activeParentId=p.id;
+            }
             for(var i=0;i<sessionStorage.length;i++){
                 var k=sessionStorage.key(i);
                 if(k.startsWith('dir_')&&sessionStorage.getItem(k)==='closed'){
-                    var el=document.getElementById('dir-children-'+k.substring(4));
-                    if(el)el.style.display='none';
+                    var elId='dir-children-'+k.substring(4);
+                    if(elId===activeParentId){
+                        // Open this directory — active item is inside
+                        sessionStorage.setItem(k,'open');
+                    }else{
+                        var el=document.getElementById(elId);
+                        if(el)el.style.display='none';
+                    }
                 }
             }
-            // 2. Restore scroll position
-            var fromSidebar=sessionStorage.getItem('sidebarClickNav');
-            var isReload=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0]&&performance.getEntriesByType('navigation')[0].type==='reload';
+
+            // 3. Restore scroll position
             var s=sessionStorage.getItem('sidebarScroll');
-            sessionStorage.removeItem('sidebarClickNav');
-            if(fromSidebar||isReload){
+            if(keepScroll){
                 if(s!==null)n.scrollTop=parseInt(s);
             }else{
-                var a=n.querySelector('[data-active-sidebar-item]');
-                if(a)n.scrollTop=a.offsetTop-n.offsetTop-n.clientHeight/2;
+                if(active)n.scrollTop=active.offsetTop-n.offsetTop-n.clientHeight/2;
             }
             // 3. Save scroll on unload for refresh
             window.addEventListener('beforeunload',function(){sessionStorage.setItem('sidebarScroll',n.scrollTop)});
