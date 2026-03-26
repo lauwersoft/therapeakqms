@@ -731,6 +731,10 @@ class DocumentController extends Controller
             abort(404);
         }
 
+        if (request()->query('inline')) {
+            return response()->file($fullPath);
+        }
+
         return response()->download($fullPath);
     }
 

@@ -140,33 +140,33 @@
                             </div>
                         @elseif($fileInfo)
                             {{-- Non-markdown file view --}}
-                            <div class="text-center py-8">
-                                <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gray-100 mb-4">
-                                    <span class="text-lg font-bold text-gray-500 uppercase">{{ $fileInfo['extension'] }}</span>
-                                </div>
-                                <h3 class="text-lg font-medium text-gray-800 mb-1">{{ $fileInfo['filename'] }}</h3>
-                                <p class="text-sm text-gray-500 mb-6">
-                                    {{ strtoupper($fileInfo['extension']) }} file · {{ number_format($fileInfo['size'] / 1024, 1) }} KB
-                                </p>
-
-                                {{-- Preview for images --}}
-                                @if(str_starts_with($fileInfo['mime'], 'image/'))
-                                    <div class="mb-6 border border-gray-200 rounded-lg overflow-hidden inline-block max-w-full">
-                                        <img src="{{ route('documents.download', $currentPath) }}" alt="{{ $meta['title'] ?? $fileInfo['filename'] }}" class="max-h-96">
-                                    </div>
-                                @endif
-
+                            <div>
                                 {{-- Preview for PDFs --}}
                                 @if($fileInfo['mime'] === 'application/pdf')
-                                    <div class="mb-6 border border-gray-200 rounded-lg overflow-hidden" style="height: 600px;">
-                                        <iframe src="{{ route('documents.download', $currentPath) }}" class="w-full h-full"></iframe>
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden mb-4" style="height: 75vh;">
+                                        <iframe src="{{ route('documents.download', $currentPath) }}?inline=1" class="w-full h-full"></iframe>
+                                    </div>
+                                {{-- Preview for images --}}
+                                @elseif(str_starts_with($fileInfo['mime'], 'image/'))
+                                    <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden inline-block max-w-full">
+                                        <img src="{{ route('documents.download', $currentPath) }}?inline=1" alt="{{ $meta['title'] ?? $fileInfo['filename'] }}" class="max-h-[70vh]">
+                                    </div>
+                                @else
+                                    <div class="text-center py-12">
+                                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gray-100 mb-4">
+                                            <span class="text-lg font-bold text-gray-500 uppercase">{{ $fileInfo['extension'] }}</span>
+                                        </div>
+                                        <h3 class="text-lg font-medium text-gray-800 mb-1">{{ $fileInfo['filename'] }}</h3>
                                     </div>
                                 @endif
 
-                                <div>
+                                <div class="flex items-center justify-between">
+                                    <p class="text-xs text-gray-400">
+                                        {{ strtoupper($fileInfo['extension']) }} · {{ number_format($fileInfo['size'] / 1024, 1) }} KB
+                                    </p>
                                     <a href="{{ route('documents.download', $currentPath) }}"
-                                       class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                         </svg>
                                         Download
