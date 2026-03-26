@@ -1,8 +1,12 @@
 <x-app-layout>
+    @section('page-title', $user->name . ' — Activity')
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">User Activity</h2>
-            <a href="{{ route('activity.index') }}" class="text-sm text-gray-600 hover:text-gray-900">All users</a>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ $user->name }}</h2>
+            <a href="{{ route('activity.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                Back to users
+            </a>
         </div>
     </x-slot>
 
@@ -24,6 +28,11 @@
                                 {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-600' : '' }}
                                 {{ $user->role === 'editor' ? 'bg-blue-100 text-blue-600' : '' }}
                                 {{ $user->role === 'auditor' ? 'bg-gray-100 text-gray-500' : '' }}">{{ ucfirst($user->role) }}</span>
+                            @if($user->approved)
+                                <span class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-green-100 text-green-600">Active</span>
+                            @else
+                                <span class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-red-100 text-red-500">Inactive</span>
+                            @endif
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1 text-xs text-gray-500">
                             <div><span class="text-gray-400">Email:</span> {{ $user->email }}</div>
