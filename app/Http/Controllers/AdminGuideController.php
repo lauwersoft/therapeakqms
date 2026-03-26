@@ -15,7 +15,7 @@ class AdminGuideController extends Controller
 {
     public function index(Request $request)
     {
-        if (! $request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin() && ! $request->user()->isEditor()) {
             abort(403);
         }
 

@@ -34,7 +34,7 @@
                     <x-nav-link :href="route('references.index')" :active="request()->routeIs('references.*')">
                         {{ __('References') }}
                     </x-nav-link>
-                    @if(Auth::user()->isAdmin())
+                    @if(Auth::user()->isAdmin() || Auth::user()->isEditor())
                         <x-nav-link :href="route('admin.guide')" :active="request()->routeIs('admin.guide')">
                             {{ __('Guide') }}
                         </x-nav-link>
@@ -133,7 +133,7 @@
             <x-responsive-nav-link :href="route('references.index')" :active="request()->routeIs('references.*')">
                 {{ __('References') }}
             </x-responsive-nav-link>
-            @if(Auth::user()->isAdmin())
+            @if(Auth::user()->isAdmin() || Auth::user()->isEditor())
                 <x-responsive-nav-link :href="route('admin.guide')" :active="request()->routeIs('admin.guide')">
                     {{ __('Guide') }}
                 </x-responsive-nav-link>

@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">QMS Guide</h2>
-            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-purple-100 text-purple-600">Admin only</span>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-purple-100 text-purple-600">Internal</span>
         </div>
     </x-slot>
 
