@@ -209,7 +209,7 @@ class GitService
         // Fetch more than needed to account for filtered commits
         $fetchLimit = $limit + $offset + 50;
         $result = Process::path($this->base)
-            ->run(['git', 'log', '--no-merges', '--after=2026-03-26', '--format=%H|%an|%ae|%aI|%s', '-' . $fetchLimit, '--', 'qms/documents/']);
+            ->run(['git', 'log', '--no-merges', '--after=2026-03-25', '--format=%H|%an|%ae|%aI|%s', '-' . $fetchLimit, '--', 'qms/documents/']);
 
         $commits = [];
         $skipped = 0;
@@ -404,7 +404,7 @@ class GitService
     public function getHistoryCount(): int
     {
         $result = Process::path($this->base)
-            ->run(['git', 'log', '--no-merges', '--after=2026-03-26', '--oneline', '--', 'qms/documents/']);
+            ->run(['git', 'log', '--no-merges', '--after=2026-03-25', '--oneline', '--', 'qms/documents/']);
 
         if (! $result->successful() || ! trim($result->output())) return 0;
 
@@ -449,7 +449,7 @@ class GitService
     public function getFileHistory(string $path, int $limit = 20): array
     {
         $result = Process::path($this->base)
-            ->run(['git', 'log', '--no-merges', '--format=%H|%an|%ae|%aI|%s', '-' . $limit, '--', 'qms/documents/' . $path]);
+            ->run(['git', 'log', '--no-merges', '--after=2026-03-25', '--format=%H|%an|%ae|%aI|%s', '-' . $limit, '--', 'qms/documents/' . $path]);
 
         $commits = [];
         if ($result->successful() && trim($result->output())) {
