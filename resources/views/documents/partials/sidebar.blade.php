@@ -101,15 +101,18 @@
                 @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''; sidebarCommentFilter = ''"
                 class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
     </div>
-    <nav class="p-3 flex-1 flex flex-col overflow-y-auto" style="opacity:0" x-init="
+    <nav class="p-3 flex-1 flex flex-col overflow-y-auto" x-init="
         const saved = sessionStorage.getItem('sidebarScroll');
         if (saved !== null) {
             $el.scrollTop = parseInt(saved);
         } else {
             const active = $el.querySelector('[data-active-sidebar-item]');
-            if (active) active.scrollIntoView({ block: 'center', behavior: 'instant' });
+            if (active) {
+                const navRect = $el.getBoundingClientRect();
+                const itemRect = active.getBoundingClientRect();
+                $el.scrollTop = active.offsetTop - $el.offsetTop - (navRect.height / 2) + (itemRect.height / 2);
+            }
         }
-        $el.style.opacity = 1;
         $el.addEventListener('click', (e) => {
             if (e.target.closest('a')) sessionStorage.setItem('sidebarScroll', $el.scrollTop);
         });
