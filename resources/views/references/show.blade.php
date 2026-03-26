@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('page-title', $title)
     <div x-data="refViewer()" class="flex h-full overflow-hidden">
         {{-- Mobile overlay --}}
         <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-out duration-200" x-transition:leave="transition-opacity ease-in duration-150"

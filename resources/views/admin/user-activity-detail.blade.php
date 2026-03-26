@@ -261,10 +261,10 @@
                                     };
                                 @endphp
                                 <span class="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 {{ $typeConfig[0] }}">{{ $typeConfig[1] }}</span>
-                                @if($activity->doc_id)
+                                @if($activity->doc_id && $activity->doc_id !== 'null')
                                     <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded shrink-0 {{ \App\Services\DocumentMetadata::typeColor(explode('-', $activity->doc_id)[0] ?? '') }}">{{ $activity->doc_id }}</span>
                                 @endif
-                                <span class="text-xs text-gray-600 truncate flex-1">{{ $activity->doc_title ?: $activity->path }}</span>
+                                <span class="text-xs text-gray-600 truncate flex-1">{{ ($activity->doc_title && $activity->doc_title !== 'null') ? $activity->doc_title : ($activity->page_title ?: $activity->path) }}</span>
                                 @if($activity->detail)
                                     <span class="text-[10px] text-gray-400 truncate max-w-[150px] shrink-0" title="{{ $activity->detail }}">{{ Str::limit($activity->detail, 30) }}</span>
                                 @endif

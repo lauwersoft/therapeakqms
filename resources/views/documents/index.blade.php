@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('page-title', ($meta['id'] ? $meta['id'] . ' — ' : '') . ($meta['title'] ?? 'Documents'))
     @push('styles')
         <style>
             .sortable-ghost { opacity: 0.4; }

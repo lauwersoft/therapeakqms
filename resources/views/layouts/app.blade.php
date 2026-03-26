@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>@hasSection('page-title')@yield('page-title') — {{ config('app.name', 'Laravel') }}@else{{ config('app.name', 'Laravel') }}@endif</title>
 
         <!-- Favicons -->
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -256,8 +256,8 @@
 
                     var data = {
                         path: window.location.pathname,
-                        doc_id: docId ? docId.dataset.docId : null,
-                        doc_title: docTitle ? docTitle.dataset.docTitle : null,
+                        doc_id: docId ? docId.dataset.docId : '',
+                        doc_title: docTitle ? docTitle.dataset.docTitle : '',
                         time_spent: Math.min(seconds, 7200),
                         device: getDeviceType(),
                         viewport_w: window.innerWidth,
@@ -267,7 +267,7 @@
                         session_uid: sessionUid,
                         browser_uid: browserUid,
                         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                        referrer: document.referrer || null,
+                        referrer: document.referrer || '',
                         user_agent: navigator.userAgent,
                         scroll_depth: maxScroll,
                         page_title: document.title,
