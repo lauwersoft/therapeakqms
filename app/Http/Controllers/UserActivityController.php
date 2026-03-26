@@ -123,4 +123,68 @@ class UserActivityController extends Controller
             'days' => $days,
         ]);
     }
+
+    public function log(Request $request, User $user)
+    {
+        if (!$request->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $page = max(1, (int) $request->query('page', 1));
+        $perPage = 50;
+        $typeFilter = $request->query('type', '');
+
+        $query = UserActivity::where('user_id', $user->id)
+            ->when($typeFilter, fn($q) => $q->where('type', $typeFilter))
+            ->orderByDesc('created_at');
+
+        $total = $query->count();
+        $activities = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+        $totalPages = max(1, ceil($total / $perPage));
+
+        return view('admin.user-activity-log', [
+            'user' => $user,
+            'activities' => $activities,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'total' => $total,
+            'typeFilter' => $typeFilter,
+        ]);
+    }
+
+    public function session(Request $request, User $user, string $sessionUid)
+    {
+        if (!$request->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $activities = UserActivity::where('user_id', $user->id)
+            ->where('session_uid', $sessionUid)
+            ->orderBy('created_at')
+            ->get();
+
+        if ($activities->isEmpty()) {
+            abort(404);
+        }
+
+        $first = $activities->first();
+        $last = $activities->last();
+
+        return view('admin.user-activity-session', [
+            'user' => $user,
+            'activities' => $activities,
+            'sessionUid' => $sessionUid,
+            'started' => $first->created_at,
+            'ended' => $last->created_at,
+            'totalPages' => $activities->where('type', 'page_view')->count(),
+            'totalActions' => $activities->where('type', '!=', 'page_view')->count(),
+            'totalTime' => $activities->sum('time_spent'),
+            'device' => $first->device,
+            'browser' => $first->browser,
+            'os' => $first->os,
+            'ip' => $first->ip,
+            'country_code' => $first->country_code,
+            'asn_org' => $first->asn_org,
+        ]);
+    }
 }

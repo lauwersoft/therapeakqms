@@ -90,6 +90,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/activity', [\App\Http\Controllers\UserActivityController::class, 'track'])->name('activity.track');
     Route::get('/admin/activity', [\App\Http\Controllers\UserActivityController::class, 'index'])->name('activity.index');
     Route::get('/admin/activity/{user}', [\App\Http\Controllers\UserActivityController::class, 'show'])->name('activity.show');
+    Route::get('/admin/activity/{user}/log', [\App\Http\Controllers\UserActivityController::class, 'log'])->name('activity.log');
+    Route::get('/admin/activity/{user}/session/{sessionUid}', [\App\Http\Controllers\UserActivityController::class, 'session'])->name('activity.session');
 });
 
 require __DIR__.'/auth.php';

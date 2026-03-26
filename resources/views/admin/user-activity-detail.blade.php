@@ -200,7 +200,7 @@
                     </div>
                     <div class="divide-y divide-gray-50">
                         @foreach($sessions as $session)
-                            <div class="px-5 py-3">
+                            <a href="{{ route('activity.session', [$user, $session->session_uid]) }}" class="block px-5 py-3 hover:bg-gray-50 transition-colors">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-2">
                                         <span class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($session->started)->format('M j H:i') }}</span>
@@ -216,7 +216,7 @@
                                         <span class="text-[10px]">{{ $session->device }} · {{ $session->browser }}</span>
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         @endforeach
                     </div>
                 </div>
@@ -244,8 +244,9 @@
 
             {{-- Recent page views --}}
             <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div class="px-5 py-4 border-b border-gray-100">
+                <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                     <h3 class="font-semibold text-gray-800">Recent Activity</h3>
+                    <a href="{{ route('activity.log', $user) }}" class="text-xs text-blue-600 hover:text-blue-800">View full log</a>
                 </div>
                 @if($activities->isEmpty())
                     <div class="px-5 py-6 text-center text-sm text-gray-400">No activity in this period</div>
