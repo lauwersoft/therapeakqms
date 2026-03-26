@@ -35,11 +35,34 @@ class DocumentController extends Controller
             $path = 'quality-manual.md';
         }
 
-        // Try to resolve the path — first as-is, then with .md appended
+        // Try to resolve the path — first as-is, then with extensions appended
         $filePath = $this->resolvePath($path);
         if (! $filePath && ! str_contains($path, '.')) {
-            $path .= '.md';
-            $filePath = $this->resolvePath($path);
+            // Try common extensions in order of likelihood
+            foreach (['.md', '.form.json'] as $ext) {
+                $filePath = $this->resolvePath($path . $ext);
+                if ($filePath) {
+                    $path .= $ext;
+                    break;
+                }
+            }
+            // Try any file matching the base name (for PDFs, images, etc.)
+            if (! $filePath) {
+                $dir = dirname($this->basePath . '/' . $path);
+                $base = basename($path);
+                if (is_dir($dir)) {
+                    foreach (scandir($dir) as $file) {
+                        if (str_starts_with($file, $base . '.') && $file !== $base) {
+                            $candidate = dirname($path) . '/' . $file;
+                            $filePath = $this->resolvePath($candidate);
+                            if ($filePath) {
+                                $path = $candidate;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         if (! $filePath) {
@@ -167,7 +190,7 @@ class DocumentController extends Controller
             $docType = $docMeta['id'] ? explode('-', $docMeta['id'])[0] : '';
             $sidebarDocs[] = [
                 'path' => $docPath,
-                'url_path' => preg_replace('/\.md$/', '', $docPath),
+                'url_path' => preg_replace('/(\.\w+)+$/', '', $docPath),
                 'doc_id' => $docMeta['id'] ?? null,
                 'title' => $docMeta['title'] ?? $this->formatName(pathinfo($docPath, PATHINFO_FILENAME)),
                 'type' => $docType,
@@ -244,7 +267,7 @@ class DocumentController extends Controller
             $docType = $docMeta['id'] ? explode('-', $docMeta['id'])[0] : '';
             $sidebarDocs[] = [
                 'path' => $docPath,
-                'url_path' => preg_replace('/\.md$/', '', $docPath),
+                'url_path' => preg_replace('/(\.\w+)+$/', '', $docPath),
                 'doc_id' => $docMeta['id'] ?? null,
                 'title' => $docMeta['title'] ?? $this->formatName(pathinfo($docPath, PATHINFO_FILENAME)),
                 'type' => $docType,
@@ -766,7 +789,7 @@ class DocumentController extends Controller
             $changeStatus = isset($changedFiles[$path]) ? $changedFiles[$path]['status'] : null;
             $documents[] = [
                 'path' => $path,
-                'url_path' => preg_replace('/\.md$/', '', $path),
+                'url_path' => preg_replace('/\.(md|form\.json|rec\.json|pdf|png|jpg|jpeg|gif|svg|csv|tsv|xlsx?)$/i', '', $path),
                 'directory' => ($dir !== '.' && $dir !== '') ? ucwords(str_replace(['-', '_', '/'], [' ', ' ', ' / '], $dir)) : 'Root',
                 'raw_directory' => ($dir !== '.' && $dir !== '') ? $dir : '',
                 'doc_id' => $meta['id'] ?? null,

@@ -120,7 +120,7 @@
             >
                 @php
                     $isItemMarkdown = $item['is_markdown'] ?? true;
-                    $linkPath = $isItemMarkdown ? preg_replace('/\.md$/', '', $item['path']) : $item['path'];
+                    $linkPath = preg_replace('/(\.\w+)+$/', '', $item['path']);
                 @endphp
                 <div class="group flex items-center gap-0.5">
                     <a href="{{ route('documents.index', ['path' => $linkPath]) }}"
