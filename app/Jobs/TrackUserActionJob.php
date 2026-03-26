@@ -6,6 +6,7 @@ use App\Models\UserActivity;
 use GeoIp2\Database\Reader;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Cache;
 
 class TrackUserActionJob implements ShouldQueue
 {
@@ -45,6 +46,17 @@ class TrackUserActionJob implements ShouldQueue
                 $data['asn_number'] = $asn->autonomousSystemNumber;
                 $data['asn_org'] = $asn->autonomousSystemOrganization;
             } catch (\Throwable $e) {}
+
+            $data['city'] = Cache::remember('geocity:' . $this->ip, 604800, function () {
+                try {
+                    $response = file_get_contents("http://ip-api.com/json/{$this->ip}?fields=city", false,
+                        stream_context_create(['http' => ['timeout' => 3]]));
+                    $d = json_decode($response, true);
+                    return $d['city'] ?? null;
+                } catch (\Throwable $e) {
+                    return null;
+                }
+            });
         }
 
         UserActivity::create($data);

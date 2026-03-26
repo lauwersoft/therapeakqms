@@ -36,7 +36,7 @@
                     @if($device)<span><span class="text-gray-400">Device:</span> {{ ucfirst($device) }}</span>@endif
                     @if($browser)<span><span class="text-gray-400">Browser:</span> {{ $browser }} / {{ $os }}</span>@endif
                     @if($ip)<span><span class="text-gray-400">IP:</span> <span class="font-mono">{{ $ip }}</span></span>@endif
-                    @if($country_code)<span><span class="text-gray-400">Country:</span> {{ $country_code }}</span>@endif
+                    @if($country_code)<span><span class="text-gray-400">Location:</span> {{ $country_code }}@if($activities->first()->city), {{ $activities->first()->city }}@endif</span>@endif
                     @if($asn_org)<span><span class="text-gray-400">ISP:</span> {{ $asn_org }}</span>@endif
                 </div>
             </div>

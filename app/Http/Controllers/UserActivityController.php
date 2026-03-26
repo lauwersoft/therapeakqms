@@ -48,8 +48,7 @@ class UserActivityController extends Controller
             abort(403);
         }
 
-        $users = User::where('id', '!=', $request->user()->id)
-            ->whereNotNull('last_active_at')
+        $users = User::whereNotNull('last_active_at')
             ->orderByDesc('last_active_at')
             ->get();
 
@@ -98,8 +97,8 @@ class UserActivityController extends Controller
 
         // IP / Location breakdown
         $locations = $base()
-            ->selectRaw('ip, country_code, asn_number, asn_org, count(*) as count, max(created_at) as last_seen')
-            ->groupBy('ip', 'country_code', 'asn_number', 'asn_org')
+            ->selectRaw('ip, country_code, city, asn_number, asn_org, count(*) as count, max(created_at) as last_seen')
+            ->groupBy('ip', 'country_code', 'city', 'asn_number', 'asn_org')
             ->orderByDesc('last_seen')
             ->get();
 

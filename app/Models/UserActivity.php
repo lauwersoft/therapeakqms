@@ -24,7 +24,7 @@ class UserActivity extends Model
     protected $fillable = [
         'user_id', 'type', 'path', 'doc_id', 'doc_title', 'time_spent',
         'device', 'viewport_w', 'viewport_h', 'browser', 'os',
-        'ip', 'country_code', 'asn_number', 'asn_org', 'session_uid', 'browser_uid', 'timezone', 'referrer',
+        'ip', 'country_code', 'city', 'asn_number', 'asn_org', 'session_uid', 'browser_uid', 'timezone', 'referrer',
         'user_agent', 'scroll_depth', 'page_title', 'detail',
     ];
 

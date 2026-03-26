@@ -52,7 +52,7 @@
                             </div>
                             @if($locations->isNotEmpty())
                                 @php $lastLoc = $locations->first(); @endphp
-                                <div><span class="text-gray-400">Last IP:</span> <span class="font-mono">{{ $lastLoc->ip }}</span>@if($lastLoc->country_code) <span class="ml-1 px-1 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px]">{{ $lastLoc->country_code }}</span>@endif</div>
+                                <div><span class="text-gray-400">Last IP:</span> <span class="font-mono">{{ $lastLoc->ip }}</span>@if($lastLoc->country_code) <span class="ml-1 px-1 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px]">{{ $lastLoc->country_code }}</span>@endif @if($lastLoc->city) {{ $lastLoc->city }}@endif</div>
                                 @if($lastLoc->asn_org)
                                     <div><span class="text-gray-400">ISP:</span> {{ $lastLoc->asn_org }}</div>
                                 @endif
@@ -177,6 +177,9 @@
                                     <span class="text-xs font-mono text-gray-500">{{ $loc->ip }}</span>
                                     @if($loc->country_code)
                                         <span class="text-xs px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">{{ $loc->country_code }}</span>
+                                    @endif
+                                    @if($loc->city)
+                                        <span class="text-xs text-gray-600">{{ $loc->city }}</span>
                                     @endif
                                     @if($loc->asn_org)
                                         <span class="text-[10px] text-gray-400">AS{{ $loc->asn_number }} {{ Str::limit($loc->asn_org, 35) }}</span>

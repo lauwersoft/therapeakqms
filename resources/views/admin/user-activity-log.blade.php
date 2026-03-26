@@ -75,9 +75,10 @@
                         @else
                             <div class="divide-y divide-gray-50">
                                 @foreach($activities as $activity)
-                                    <div class="px-5 py-3 hover:bg-gray-50 transition-colors">
-                                        <div class="flex items-start gap-3">
-                                            <span class="text-[10px] text-gray-300 shrink-0 w-24 text-right mt-0.5">{{ $activity->created_at->format('M j, H:i:s') }}</span>
+                                    <a href="{{ $activity->session_uid ? route('activity.session', [$user, $activity->session_uid]) : '#' }}"
+                                       class="block px-4 py-2.5 hover:bg-blue-50/50 transition-colors">
+                                        <div class="flex items-start gap-2">
+                                            <span class="text-[11px] text-gray-500 shrink-0 w-20 text-right mt-0.5 font-mono">{{ $activity->created_at->format('M j H:i') }}</span>
                                             @php
                                                 $typeConfig = match($activity->type) {
                                                     'comment' => ['bg-amber-100 text-amber-700', 'Comment'],
@@ -90,7 +91,7 @@
                                                     'download' => ['bg-gray-100 text-gray-600', 'Download'],
                                                     'form_submit' => ['bg-indigo-100 text-indigo-700', 'Submitted'],
                                                     'login' => ['bg-gray-100 text-gray-600', 'Login'],
-                                                    default => ['bg-gray-50 text-gray-400', 'Viewed'],
+                                                    default => ['bg-blue-50 text-blue-600', 'Viewed'],
                                                 };
                                             @endphp
                                             <span class="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 w-16 text-center {{ $typeConfig[0] }}">{{ $typeConfig[1] }}</span>
@@ -99,29 +100,31 @@
                                                     @if($activity->doc_id && $activity->doc_id !== 'null')
                                                         <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded shrink-0 {{ \App\Services\DocumentMetadata::typeColor(explode('-', $activity->doc_id)[0] ?? '') }}">{{ $activity->doc_id }}</span>
                                                     @endif
-                                                    <span class="text-sm text-gray-700 truncate">{{ ($activity->doc_title && $activity->doc_title !== 'null') ? $activity->doc_title : ($activity->page_title ?: $activity->path) }}</span>
+                                                    <span class="text-sm text-gray-800 truncate">{{ ($activity->doc_title && $activity->doc_title !== 'null') ? $activity->doc_title : ($activity->page_title ?: $activity->path) }}</span>
                                                 </div>
-                                                <div class="text-[10px] text-gray-300 font-mono mt-0.5">{{ $activity->path }}</div>
+                                                <div class="text-[11px] text-gray-400 font-mono mt-0.5">{{ $activity->path }}</div>
                                                 @if($activity->detail)
-                                                    <p class="text-xs text-gray-400 mt-0.5 line-clamp-2">{{ $activity->detail }}</p>
+                                                    <p class="text-xs text-gray-500 mt-0.5 line-clamp-1">{{ $activity->detail }}</p>
                                                 @endif
-                                                <div class="flex items-center gap-3 mt-1 text-[10px] text-gray-300">
+                                                <div class="flex items-center gap-3 mt-1 text-[11px] text-gray-400">
                                                     @if($activity->type === 'page_view')
                                                         <span>{{ $activity->time_spent }}s</span>
                                                         @if($activity->scroll_depth !== null)
-                                                            <span class="{{ $activity->scroll_depth >= 90 ? 'text-green-600' : ($activity->scroll_depth >= 50 ? 'text-amber-600' : 'text-red-500') }}">{{ $activity->scroll_depth }}% read</span>
+                                                            <span class="{{ $activity->scroll_depth >= 90 ? 'text-green-600' : ($activity->scroll_depth >= 50 ? 'text-amber-600' : 'text-red-500') }}">{{ $activity->scroll_depth }}%</span>
                                                         @endif
                                                     @endif
                                                     @if($activity->device)<span>{{ $activity->device }}</span>@endif
                                                     @if($activity->ip)<span class="font-mono">{{ $activity->ip }}</span>@endif
-                                                    @if($activity->country_code)<span class="px-1 py-0.5 rounded bg-blue-50 text-blue-600">{{ $activity->country_code }}</span>@endif
-                                                    @if($activity->session_uid)
-                                                        <a href="{{ route('activity.session', [$user, $activity->session_uid]) }}" class="text-blue-500 hover:text-blue-700" onclick="event.stopPropagation()">Session</a>
+                                                    @if($activity->country_code)
+                                                        <span class="px-1 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px]">{{ $activity->country_code }}</span>
+                                                    @endif
+                                                    @if($activity->city)
+                                                        <span>{{ $activity->city }}</span>
                                                     @endif
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 @endforeach
                             </div>
                         @endif
