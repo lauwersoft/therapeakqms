@@ -1,19 +1,79 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('activity.index') }}" class="text-gray-400 hover:text-gray-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-            </a>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ $user->name }}</h2>
-            <span class="text-xs font-medium px-1.5 py-0.5 rounded
-                {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-600' : '' }}
-                {{ $user->role === 'editor' ? 'bg-blue-100 text-blue-600' : '' }}
-                {{ $user->role === 'auditor' ? 'bg-gray-100 text-gray-500' : '' }}">{{ ucfirst($user->role) }}</span>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">User Activity</h2>
+            <a href="{{ route('activity.index') }}" class="text-sm text-gray-600 hover:text-gray-900">All users</a>
         </div>
     </x-slot>
 
     <div class="py-8">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            {{-- User profile card --}}
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 mb-8">
+                <div class="flex items-start gap-4">
+                    <div class="relative">
+                        <div class="w-14 h-14 rounded-full flex items-center justify-center shrink-0
+                            {{ $user->role === 'admin' ? 'bg-purple-100' : '' }}
+                            {{ $user->role === 'editor' ? 'bg-blue-100' : '' }}
+                            {{ $user->role === 'auditor' ? 'bg-gray-100' : '' }}">
+                            <span class="text-lg font-semibold
+                                {{ $user->role === 'admin' ? 'text-purple-600' : '' }}
+                                {{ $user->role === 'editor' ? 'text-blue-600' : '' }}
+                                {{ $user->role === 'auditor' ? 'text-gray-500' : '' }}">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                        </div>
+                        @if($user->last_active_at?->gt(now()->subMinutes(5)))
+                            <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"></span>
+                        @endif
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-lg font-semibold text-gray-800">{{ $user->name }}</h3>
+                            <span class="text-xs font-medium px-1.5 py-0.5 rounded
+                                {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-600' : '' }}
+                                {{ $user->role === 'editor' ? 'bg-blue-100 text-blue-600' : '' }}
+                                {{ $user->role === 'auditor' ? 'bg-gray-100 text-gray-500' : '' }}">{{ ucfirst($user->role) }}</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1 text-xs text-gray-500">
+                            <div><span class="text-gray-400">Email:</span> {{ $user->email }}</div>
+                            @if($user->organisation)
+                                <div><span class="text-gray-400">Organisation:</span> {{ $user->organisation }}</div>
+                            @endif
+                            <div><span class="text-gray-400">Account created:</span> {{ $user->created_at->format('M j, Y') }}</div>
+                            <div>
+                                <span class="text-gray-400">Status:</span>
+                                @if($user->last_active_at?->gt(now()->subMinutes(5)))
+                                    <span class="text-green-600 font-medium">Online now</span>
+                                @elseif($user->last_active_at)
+                                    Last active {{ $user->last_active_at->diffForHumans() }}
+                                @else
+                                    Never logged in
+                                @endif
+                            </div>
+                            @if($locations->isNotEmpty())
+                                @php $lastLoc = $locations->first(); @endphp
+                                <div><span class="text-gray-400">Last IP:</span> <span class="font-mono">{{ $lastLoc->ip }}</span>@if($lastLoc->country_code) <span class="ml-1 px-1 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px]">{{ $lastLoc->country_code }}</span>@endif</div>
+                                @if($lastLoc->asn_org)
+                                    <div><span class="text-gray-400">ISP:</span> {{ $lastLoc->asn_org }}</div>
+                                @endif
+                            @endif
+                            @if($activities->isNotEmpty())
+                                @php $lastActivity = $activities->first(); @endphp
+                                @if($lastActivity->browser)
+                                    <div><span class="text-gray-400">Browser:</span> {{ $lastActivity->browser }} / {{ $lastActivity->os }}</div>
+                                @endif
+                                @if($lastActivity->device)
+                                    <div><span class="text-gray-400">Device:</span> {{ ucfirst($lastActivity->device) }}@if($lastActivity->viewport_w) ({{ $lastActivity->viewport_w }}x{{ $lastActivity->viewport_h }})@endif</div>
+                                @endif
+                                @if($lastActivity->timezone)
+                                    <div><span class="text-gray-400">Timezone:</span> {{ $lastActivity->timezone }}</div>
+                                @endif
+                            @endif
+                        </div>
+                    </div>
+                    <a href="{{ route('users.edit', $user) }}" class="shrink-0 px-3 py-1.5 text-xs text-gray-500 border border-gray-200 rounded-md hover:bg-gray-50">Edit user</a>
+                </div>
+            </div>
+
             {{-- Time range selector --}}
             <div class="flex items-center gap-2 mb-6">
                 @foreach([7 => '7 days', 30 => '30 days', 90 => '90 days'] as $d => $label)
