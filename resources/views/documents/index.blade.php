@@ -141,8 +141,21 @@
                         @elseif($fileInfo)
                             {{-- Non-markdown file view --}}
                             <div>
+                                {{-- Preview for CSV/TSV --}}
+                                @if($csvData)
+                                    <div class="mb-4 border border-gray-200 rounded-lg overflow-auto" style="max-height: 70vh;">
+                                        <table class="min-w-full text-xs">
+                                            @foreach($csvData as $i => $row)
+                                                <tr class="{{ $i === 0 ? 'bg-gray-50 font-semibold text-gray-700' : ($i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50') }} border-b border-gray-100">
+                                                    @foreach($row as $cell)
+                                                        <{{ $i === 0 ? 'th' : 'td' }} class="px-3 py-2 text-left whitespace-nowrap">{{ $cell }}</{{ $i === 0 ? 'th' : 'td' }}>
+                                                    @endforeach
+                                                </tr>
+                                            @endforeach
+                                        </table>
+                                    </div>
                                 {{-- Preview for PDFs --}}
-                                @if($fileInfo['mime'] === 'application/pdf')
+                                @elseif($fileInfo['mime'] === 'application/pdf')
                                     <div class="border border-gray-200 rounded-lg overflow-hidden mb-4" style="height: 75vh;">
                                         <iframe src="{{ route('documents.download', $currentPath) }}?inline=1" class="w-full h-full"></iframe>
                                     </div>

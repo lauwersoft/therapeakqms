@@ -145,6 +145,21 @@ class DocumentController extends Controller
             'filename' => basename($path),
         ] : null;
 
+        // CSV preview data
+        $csvData = null;
+        if ($fileInfo && in_array($fileInfo['extension'], ['csv', 'tsv'])) {
+            $csvData = [];
+            $delimiter = $fileInfo['extension'] === 'tsv' ? "\t" : ',';
+            if (($handle = fopen($filePath, 'r')) !== false) {
+                $row = 0;
+                while (($data = fgetcsv($handle, 0, $delimiter)) !== false && $row < 200) {
+                    $csvData[] = $data;
+                    $row++;
+                }
+                fclose($handle);
+            }
+        }
+
         // Flat doc list for sidebar search
         $sidebarDocs = [];
         foreach ($docIndex as $docPath => $docMeta) {
@@ -181,6 +196,7 @@ class DocumentController extends Controller
             'currentPath' => $path,
             'isMarkdown' => $isMarkdown,
             'fileInfo' => $fileInfo,
+            'csvData' => $csvData ?? null,
             'canEdit' => $canEdit,
             'directories' => $canEdit ? $this->getDirectories() : [],
             'changedFiles' => $changedFiles,
