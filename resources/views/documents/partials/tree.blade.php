@@ -33,7 +33,8 @@
                     }
                  }"
                  x-show="visibleCount > 0">
-                <div x-data="{ open: true, dirDragOver: false }" x-effect="if (sidebarSearch || sidebarTypeFilter || sidebarStatusFilter || sidebarCommentFilter) open = true">
+                <div data-dir-toggle x-data="{ open: sessionStorage.getItem('dir_{{ Str::slug($item['path']) }}') !== 'closed', dirDragOver: false }"
+                     x-effect="if (sidebarSearch || sidebarTypeFilter || sidebarStatusFilter || sidebarCommentFilter) { open = true } else { sessionStorage.setItem('dir_{{ Str::slug($item['path']) }}', open ? 'open' : 'closed') }">
                     <div class="group flex items-center gap-0.5">
                         <button @click="open = !open"
                                 @if($canEdit ?? false)

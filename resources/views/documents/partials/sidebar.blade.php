@@ -22,6 +22,14 @@
             <span class="text-xs text-gray-400">{{ count($sidebarDocs) }}</span>
         </div>
         <div class="flex items-center gap-1">
+            <button @click="document.querySelectorAll('[data-dir-toggle]').forEach(el => { el.__x.$data.open = false; Object.keys(sessionStorage).filter(k => k.startsWith('dir_')).forEach(k => sessionStorage.setItem(k, 'closed')) })"
+                    class="p-1.5 rounded hover:bg-gray-100 text-gray-400" title="Collapse all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+            </button>
+            <button @click="document.querySelectorAll('[data-dir-toggle]').forEach(el => { el.__x.$data.open = true; Object.keys(sessionStorage).filter(k => k.startsWith('dir_')).forEach(k => sessionStorage.setItem(k, 'open')) })"
+                    class="p-1.5 rounded hover:bg-gray-100 text-gray-400" title="Expand all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            </button>
             @if($sidebarCanEdit)
                 <div x-data="{ addOpen: false }" class="relative">
                     <button @click="addOpen = !addOpen" class="p-1.5 rounded hover:bg-gray-100 text-gray-500" title="New...">
