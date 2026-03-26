@@ -21,7 +21,7 @@ Route::get('/approval-pending', function () {
 
 Route::middleware('auth')->group(function () {
     // QMS document actions (must be before catch-all)
-    Route::get('/qms/browse', [DocumentController::class, 'browse'])->name('documents.browse');
+    Route::get('/qms/browser', [DocumentController::class, 'browse'])->name('documents.browse');
     Route::get('/qms/history', [DocumentController::class, 'history'])->name('documents.history');
     Route::get('/qms/revision/{hash}', [DocumentController::class, 'revision'])->name('documents.revision');
     Route::get('/qms/edit/{path}', [DocumentController::class, 'edit'])->where('path', '.*')->name('documents.edit');
