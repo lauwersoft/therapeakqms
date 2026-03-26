@@ -91,8 +91,8 @@
                                        class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                             </label>
                             <div>
-                                <span class="text-sm font-medium text-gray-700">Approved</span>
-                                <p class="text-xs text-gray-500">User can log in when approved</p>
+                                <span class="text-sm font-medium text-gray-700">Active</span>
+                                <p class="text-xs text-gray-500">Inactive users cannot access the platform</p>
                             </div>
                         </div>
                     </div>

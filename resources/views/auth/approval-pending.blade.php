@@ -1,19 +1,22 @@
 <x-guest-layout>
     <div class="text-center">
-        <div class="mx-auto w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
-            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        <div class="mx-auto w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
             </svg>
         </div>
 
-        <h2 class="text-lg font-semibold text-gray-800 mb-2">Approval Pending</h2>
+        <h2 class="text-lg font-semibold text-gray-800 mb-2">Account Inactive</h2>
 
         <p class="text-sm text-gray-600 mb-6">
-            Your account has been created but is not yet approved. An administrator will review and approve your account shortly.
+            Your account is currently inactive. Please contact an administrator to activate your account.
         </p>
 
-        <p class="text-xs text-gray-400 mb-6">
+        <p class="text-xs text-gray-400 mb-2">
             Logged in as {{ Auth::user()->email }}
+        </p>
+        <p class="text-xs text-gray-400 mb-6">
+            Contact: <a href="mailto:info@therapeak.com" class="text-blue-500 hover:text-blue-700">info@therapeak.com</a>
         </p>
 
         <form method="POST" action="{{ route('logout') }}">

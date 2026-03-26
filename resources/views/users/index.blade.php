@@ -40,8 +40,13 @@
                 </div>
             @endif
 
+            @php
+                $activeUsers = $users->where('approved', true);
+                $inactiveUsers = $users->where('approved', false);
+            @endphp
+
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                @foreach($users as $user)
+                @foreach($activeUsers as $user)
                     <div class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
                         {{-- Avatar --}}
                         <div class="relative">
@@ -60,7 +65,7 @@
                                     {{ $user->role === 'editor' ? 'bg-blue-100 text-blue-600' : '' }}
                                     {{ $user->role === 'auditor' ? 'bg-gray-100 text-gray-500' : '' }}">{{ ucfirst($user->role) }}</span>
                                 @if(!$user->approved)
-                                    <span class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-amber-100 text-amber-600">Pending</span>
+                                    <span class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-red-100 text-red-500">Inactive</span>
                                 @endif
                             </div>
                             <div class="flex items-center gap-2 mt-0.5">
@@ -109,6 +114,49 @@
                     </div>
                 @endforeach
             </div>
+
+            @if($inactiveUsers->isNotEmpty())
+                <h3 class="text-sm font-medium text-gray-400 mt-8 mb-3">Inactive</h3>
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden opacity-60">
+                    @foreach($inactiveUsers as $user)
+                        <div class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
+                            <div class="relative shrink-0">
+                                <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim($user->email))) }}?s=80&d=mp" alt="{{ $user->name }}" class="w-10 h-10 rounded-full grayscale">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-medium text-gray-800">{{ $user->name }}</span>
+                                    <span class="text-[10px] font-medium px-1.5 py-0.5 rounded
+                                        {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-600' : '' }}
+                                        {{ $user->role === 'editor' ? 'bg-blue-100 text-blue-600' : '' }}
+                                        {{ $user->role === 'auditor' ? 'bg-gray-100 text-gray-500' : '' }}">{{ ucfirst($user->role) }}</span>
+                                    <span class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-red-100 text-red-500">Inactive</span>
+                                </div>
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    <span class="text-xs text-gray-400">{{ $user->email }}</span>
+                                    @if($user->organisation)
+                                        <span class="text-[10px] text-gray-300">·</span>
+                                        <span class="text-xs text-gray-400">{{ $user->organisation }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1 shrink-0">
+                                <a href="{{ route('users.edit', $user) }}" class="p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" title="Edit">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                </a>
+                                <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline"
+                                      onsubmit="return confirm('Delete {{ $user->name }}? This cannot be undone.')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-1.5 rounded hover:bg-red-50 text-gray-400 hover:text-red-600" title="Delete">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
         </div>
     </div>
 </x-app-layout>
