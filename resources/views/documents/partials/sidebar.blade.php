@@ -101,12 +101,12 @@
                 @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''; sidebarCommentFilter = ''"
                 class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
         <div class="flex gap-1.5">
-            <button @click="$dispatch('dirs-collapse')" class="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md border border-gray-200 text-[11px] text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16"/></svg>
+            <button @click="$dispatch('dirs-collapse')" class="flex-1 flex items-center justify-center gap-1.5 py-1 rounded-md border border-gray-200 text-[11px] text-gray-500 hover:bg-gray-50 hover:text-gray-700 bg-gray-50">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7V5a2 2 0 012-2h6l2 2h6a2 2 0 012 2v2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12l4 4 4-4"/></svg>
                 Collapse all
             </button>
-            <button @click="$dispatch('dirs-expand')" class="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md border border-gray-200 text-[11px] text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <button @click="$dispatch('dirs-expand')" class="flex-1 flex items-center justify-center gap-1.5 py-1 rounded-md border border-gray-200 text-[11px] text-gray-500 hover:bg-gray-50 hover:text-gray-700 bg-gray-50">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7V5a2 2 0 012-2h6l2 2h6a2 2 0 012 2v2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16l4-4 4 4"/></svg>
                 Expand all
             </button>
         </div>
