@@ -22,14 +22,6 @@
             <span class="text-xs text-gray-400">{{ count($sidebarDocs) }}</span>
         </div>
         <div class="flex items-center gap-1">
-            <button @click="document.querySelectorAll('[data-dir-toggle]').forEach(el => { el.__x.$data.open = false; Object.keys(sessionStorage).filter(k => k.startsWith('dir_')).forEach(k => sessionStorage.setItem(k, 'closed')) })"
-                    class="p-1.5 rounded hover:bg-gray-100 text-gray-400" title="Collapse all">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
-            </button>
-            <button @click="document.querySelectorAll('[data-dir-toggle]').forEach(el => { el.__x.$data.open = true; Object.keys(sessionStorage).filter(k => k.startsWith('dir_')).forEach(k => sessionStorage.setItem(k, 'open')) })"
-                    class="p-1.5 rounded hover:bg-gray-100 text-gray-400" title="Expand all">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            </button>
             @if($sidebarCanEdit)
                 <div x-data="{ addOpen: false }" class="relative">
                     <button @click="addOpen = !addOpen" class="p-1.5 rounded hover:bg-gray-100 text-gray-500" title="New...">
@@ -105,9 +97,21 @@
                 <option value="without">No comments ({{ $withoutComments }})</option>
             </select>
         </div>
-        <button x-show="sidebarSearch || sidebarTypeFilter || sidebarStatusFilter || sidebarCommentFilter" x-cloak
-                @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''; sidebarCommentFilter = ''"
-                class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1">
+                <button @click="$dispatch('dirs-collapse')" class="flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] text-gray-400 hover:text-gray-600 hover:bg-gray-100" title="Collapse all folders">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <svg class="w-3 h-3 -ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <button @click="$dispatch('dirs-expand')" class="flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] text-gray-400 hover:text-gray-600 hover:bg-gray-100" title="Expand all folders">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+                    <svg class="w-3 h-3 -ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+                </button>
+            </div>
+            <button x-show="sidebarSearch || sidebarTypeFilter || sidebarStatusFilter || sidebarCommentFilter" x-cloak
+                    @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''; sidebarCommentFilter = ''"
+                    class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
+        </div>
     </div>
     <style id="sidebar-hide">#sidebar-nav>div{visibility:hidden}</style>
     <nav id="sidebar-nav" class="p-3 flex-1 flex flex-col overflow-y-auto" onclick="if(event.target.closest('a'))sessionStorage.setItem('sidebarScroll',this.scrollTop)">

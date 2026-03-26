@@ -33,8 +33,10 @@
                     }
                  }"
                  x-show="visibleCount > 0">
-                <div data-dir-toggle x-data="{ open: sessionStorage.getItem('dir_{{ Str::slug($item['path']) }}') !== 'closed', dirDragOver: false }"
-                     x-effect="if (sidebarSearch || sidebarTypeFilter || sidebarStatusFilter || sidebarCommentFilter) { open = true } else { sessionStorage.setItem('dir_{{ Str::slug($item['path']) }}', open ? 'open' : 'closed') }">
+                <div x-data="{ open: sessionStorage.getItem('dir_{{ Str::slug($item['path']) }}') !== 'closed', dirDragOver: false }"
+                     x-effect="if (sidebarSearch || sidebarTypeFilter || sidebarStatusFilter || sidebarCommentFilter) { open = true } else { sessionStorage.setItem('dir_{{ Str::slug($item['path']) }}', open ? 'open' : 'closed') }"
+                     @dirs-collapse.window="open = false; sessionStorage.setItem('dir_{{ Str::slug($item['path']) }}', 'closed')"
+                     @dirs-expand.window="open = true; sessionStorage.setItem('dir_{{ Str::slug($item['path']) }}', 'open')">
                     <div class="group flex items-center gap-0.5">
                         <button @click="open = !open"
                                 @if($canEdit ?? false)
