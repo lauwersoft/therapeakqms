@@ -101,7 +101,8 @@
                 @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''; sidebarCommentFilter = ''"
                 class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
     </div>
-    <nav id="sidebar-nav" class="p-3 flex-1 flex flex-col overflow-y-auto" style="color:transparent" onclick="if(event.target.closest('a'))sessionStorage.setItem('sidebarScroll',this.scrollTop)">
+    <style id="sidebar-hide">#sidebar-nav>div{visibility:hidden}</style>
+    <nav id="sidebar-nav" class="p-3 flex-1 flex flex-col overflow-y-auto" onclick="if(event.target.closest('a'))sessionStorage.setItem('sidebarScroll',this.scrollTop)">
         <div>
             @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $sidebarCanEdit, 'changedFiles' => $changedFiles, 'commentSummary' => $commentSummary ?? []])
         </div>
@@ -129,7 +130,7 @@
             var s=sessionStorage.getItem('sidebarScroll');
             if(s!==null){n.scrollTop=parseInt(s)}
             else{var a=n.querySelector('[data-active-sidebar-item]');if(a){n.scrollTop=a.offsetTop-n.offsetTop-n.clientHeight/2}}
-            n.style.color='';
+            var h=document.getElementById('sidebar-hide');if(h)h.remove();
         })();
     </script>
     @if($pendingCount > 0)
