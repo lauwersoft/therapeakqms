@@ -33,14 +33,6 @@
             ::view-transition-new(root) {
                 animation-duration: 0.1s;
             }
-            ::view-transition-old(main-nav),
-            ::view-transition-new(main-nav),
-            ::view-transition-old(sidebar),
-            ::view-transition-new(sidebar),
-            ::view-transition-old(topbar),
-            ::view-transition-new(topbar) {
-                animation: none;
-            }
             .mermaid {
                 cursor: pointer;
                 padding: 1rem;
