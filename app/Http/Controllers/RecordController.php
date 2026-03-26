@@ -45,15 +45,15 @@ class RecordController extends Controller
         $records = $this->allRecords();
         $grouped = collect($records)->groupBy('form_id');
 
-        // Build summary per form, sorted by form ID
+        // Group, sort each group newest first, sort groups by form ID
         $forms = $grouped->map(function ($formRecords, $formId) {
-            $latest = $formRecords->sortByDesc('submitted_at')->first();
+            $sorted = $formRecords->sortByDesc('submitted_at')->values();
             return [
                 'form_id' => $formId,
                 'form_title' => $formRecords->first()['form_title'] ?: $formId ?: 'Unknown',
                 'count' => $formRecords->count(),
-                'latest_at' => $latest['submitted_at'] ?? null,
-                'latest_author' => $latest['author'] ?? '',
+                'records' => $sorted->take(5),
+                'has_more' => $sorted->count() > 5,
             ];
         })->sortBy('form_id')->values();
 
