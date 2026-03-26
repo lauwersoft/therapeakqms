@@ -1,0 +1,8 @@
+[Unit]
+Description=QMS Laravel Scheduler
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/therapeakqms
+ExecStart=/usr/bin/php artisan schedule:run

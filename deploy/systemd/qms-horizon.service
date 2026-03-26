@@ -1,0 +1,19 @@
+[Unit]
+Description=QMS Horizon Queue Worker
+After=network.target redis-server.service
+Requires=redis-server.service
+
+[Service]
+User=www-data
+Group=www-data
+Restart=always
+RestartSec=3
+WorkingDirectory=/var/www/therapeakqms
+ExecStart=/usr/bin/php /var/www/therapeakqms/artisan horizon
+ExecStop=/usr/bin/php /var/www/therapeakqms/artisan horizon:terminate
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=qms-horizon
+
+[Install]
+WantedBy=multi-user.target

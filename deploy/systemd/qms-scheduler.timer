@@ -1,0 +1,9 @@
+[Unit]
+Description=Run QMS Scheduler every minute
+
+[Timer]
+OnCalendar=*:0/1
+Unit=qms-scheduler.service
+
+[Install]
+WantedBy=timers.target
