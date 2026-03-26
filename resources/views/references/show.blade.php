@@ -112,9 +112,11 @@
             function highlightRefSection(id) {
                 var el = document.getElementById(id);
                 if (!el) return;
-                // If target is a small anchor tag, highlight the next sibling heading instead
-                if (el.tagName === 'A' && el.nextElementSibling && /^H[234]$/i.test(el.nextElementSibling.tagName)) {
-                    el = el.nextElementSibling;
+                // If target is a small anchor tag, find the nearest heading sibling
+                if (el.tagName === 'A') {
+                    var sibling = el.nextElementSibling;
+                    while (sibling && sibling.tagName === 'A') sibling = sibling.nextElementSibling;
+                    if (sibling && /^H[234]$/i.test(sibling.tagName)) el = sibling;
                 }
                 el.style.transition = 'none';
                 el.style.backgroundColor = 'rgba(59, 130, 246, 0.15)';
