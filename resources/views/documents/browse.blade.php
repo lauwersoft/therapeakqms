@@ -337,9 +337,21 @@
                 </div>
             </div>
 
-            {{-- Results count --}}
+            {{-- Results count + collapse/expand --}}
             <div class="flex items-center justify-between mb-4">
-                <span class="text-xs text-gray-400" x-text="filteredDocs.length + ' of ' + docs.length + ' documents'"></span>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs text-gray-400" x-text="filteredDocs.length + ' of ' + docs.length + ' documents'"></span>
+                    <div class="flex items-center gap-1.5">
+                        <button @click="collapseAll()" class="flex items-center gap-1 px-2 py-1 rounded border border-gray-200 text-[11px] text-gray-500 hover:text-gray-700 hover:bg-gray-50 bg-white">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7V5a2 2 0 012-2h6l2 2h6a2 2 0 012 2v2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12l4 4 4-4"/></svg>
+                            Collapse
+                        </button>
+                        <button @click="expandAll()" class="flex items-center gap-1 px-2 py-1 rounded border border-gray-200 text-[11px] text-gray-500 hover:text-gray-700 hover:bg-gray-50 bg-white">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7V5a2 2 0 012-2h6l2 2h6a2 2 0 012 2v2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16l4-4 4 4"/></svg>
+                            Expand
+                        </button>
+                    </div>
+                </div>
                 <button x-show="typeFilter || statusFilter || commentFilter || search" x-cloak
                         @click="typeFilter = ''; statusFilter = ''; commentFilter = ''; search = ''"
                         class="text-xs text-blue-600 hover:text-blue-800">Clear all filters</button>
@@ -392,15 +404,17 @@
                     {{-- Directories --}}
                     <template x-for="dir in uniqueDirs.filter(d => d !== '')" :key="dir">
                         <div x-show="filteredDocs.some(d => d.raw_directory === dir)" class="mb-5">
-                            <div class="flex items-center gap-2 mb-2 px-3 py-2 -mx-3 rounded-lg cursor-pointer hover:bg-gray-200/60 transition-colors"
+                            <div class="flex items-center gap-2 mb-2 px-3 py-2 -mx-3 rounded-lg cursor-pointer hover:bg-gray-200/60 transition-colors select-none"
+                                 @click="toggleDir(dir)"
                                  @if($canEdit)
                                      @contextmenu.prevent.stop="openDirCtx($event, dir)"
                                  @endif>
+                                <svg class="w-4 h-4 text-gray-400 transition-transform" :class="isDirOpen(dir) ? 'rotate-90' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                 <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
                                 <span class="text-sm font-medium text-gray-500" x-text="dir.replace(/[-_]/g, ' ').replace(/\//g, ' / ').replace(/\b\w/g, l => l.toUpperCase())"></span>
                                 <span class="text-[11px] text-gray-400" x-text="filteredDocs.filter(d => d.raw_directory === dir).length"></span>
                             </div>
-                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden ml-6">
+                            <div x-show="isDirOpen(dir)" x-collapse class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden ml-6">
                                 <template x-for="doc in filteredDocs.filter(d => d.raw_directory === dir)" :key="doc.path">
                                     <a :href="'/qms/' + doc.url_path"
                                        @if($canEdit)
@@ -460,6 +474,11 @@
                     docs: docs,
                     uniqueDirs: dirs,
                     ctx: { show: false, type: '', x: 0, y: 0, path: '', urlPath: '', isMarkdown: true, title: '', dir: '' },
+                    collapsedDirs: JSON.parse(sessionStorage.getItem('browseDirsCollapsed') || '{}'),
+                    isDirOpen(dir) { return !this.collapsedDirs[dir]; },
+                    toggleDir(dir) { this.collapsedDirs[dir] = !this.collapsedDirs[dir]; sessionStorage.setItem('browseDirsCollapsed', JSON.stringify(this.collapsedDirs)); },
+                    collapseAll() { dirs.filter(d => d !== '').forEach(d => this.collapsedDirs[d] = true); sessionStorage.setItem('browseDirsCollapsed', JSON.stringify(this.collapsedDirs)); },
+                    expandAll() { this.collapsedDirs = {}; sessionStorage.setItem('browseDirsCollapsed', '{}'); },
                     dragOver: false,
                     uploadModal: false,
                     renameModal: false,
