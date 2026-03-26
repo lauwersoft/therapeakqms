@@ -14,24 +14,16 @@ class RecordController extends Controller
         $this->basePath = base_path('qms/records');
     }
 
-    public function index(Request $request)
+    private function allRecords(): array
     {
         $records = [];
-
         if (is_dir($this->basePath)) {
             foreach (File::allFiles($this->basePath) as $file) {
-                if (! str_ends_with($file->getFilename(), '.rec.json')) {
-                    continue;
-                }
-
+                if (!str_ends_with($file->getFilename(), '.rec.json')) continue;
                 try {
                     $data = json_decode(File::get($file->getPathname()), true);
-                    if (! is_array($data)) {
-                        continue;
-                    }
-                } catch (\Throwable $e) {
-                    continue;
-                }
+                    if (!is_array($data)) continue;
+                } catch (\Throwable $e) { continue; }
 
                 $records[] = [
                     'filename' => $file->getFilename(),
@@ -45,19 +37,45 @@ class RecordController extends Controller
                 ];
             }
         }
+        return $records;
+    }
 
-        // Sort newest first
-        usort($records, function ($a, $b) {
-            return strcmp($b['submitted_at'] ?? '', $a['submitted_at'] ?? '');
-        });
-
-        // Group by form
+    public function index(Request $request)
+    {
+        $records = $this->allRecords();
         $grouped = collect($records)->groupBy('form_id');
 
+        // Build summary per form, sorted by form ID
+        $forms = $grouped->map(function ($formRecords, $formId) {
+            $latest = $formRecords->sortByDesc('submitted_at')->first();
+            return [
+                'form_id' => $formId,
+                'form_title' => $formRecords->first()['form_title'] ?: $formId ?: 'Unknown',
+                'count' => $formRecords->count(),
+                'latest_at' => $latest['submitted_at'] ?? null,
+                'latest_author' => $latest['author'] ?? '',
+            ];
+        })->sortBy('form_id')->values();
+
         return view('records.index', [
-            'records' => $records,
-            'grouped' => $grouped,
+            'forms' => $forms,
             'totalRecords' => count($records),
+        ]);
+    }
+
+    public function formRecords(Request $request, string $formId)
+    {
+        $records = collect($this->allRecords())
+            ->where('form_id', $formId)
+            ->sortByDesc('submitted_at')
+            ->values();
+
+        $formTitle = $records->first()['form_title'] ?? $formId;
+
+        return view('records.form-records', [
+            'formId' => $formId,
+            'formTitle' => $formTitle,
+            'records' => $records,
         ]);
     }
 

@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
 
     // Records
     Route::get('/records', [\App\Http\Controllers\RecordController::class, 'index'])->name('records.index');
+    Route::get('/records/form/{formId}', [\App\Http\Controllers\RecordController::class, 'formRecords'])->name('records.form');
     Route::get('/records/{filename}', [\App\Http\Controllers\RecordController::class, 'show'])->name('records.show');
     Route::delete('/records/{filename}', [\App\Http\Controllers\RecordController::class, 'destroy'])->name('records.destroy');
 
