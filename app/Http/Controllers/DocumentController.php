@@ -779,7 +779,7 @@ class DocumentController extends Controller
             return response()->file($fullPath);
         }
 
-        if (auth()->check()) {
+        if (auth()->check() && !auth()->user()->isAdmin()) {
             \App\Jobs\TrackUserActionJob::dispatch(auth()->id(), \App\Models\UserActivity::TYPE_DOWNLOAD, $path, null, basename($path), null, request()->ip());
         }
 
@@ -1003,7 +1003,9 @@ class DocumentController extends Controller
             return back()->withErrors(['publish' => $e->getMessage()]);
         }
 
-        \App\Jobs\TrackUserActionJob::dispatch($request->user()->id, \App\Models\UserActivity::TYPE_PUBLISH, $request->path(), null, null, $request->input('message'), $request->ip());
+        if (!$request->user()->isAdmin()) {
+            \App\Jobs\TrackUserActionJob::dispatch($request->user()->id, \App\Models\UserActivity::TYPE_PUBLISH, $request->path(), null, null, $request->input('message'), $request->ip());
+        }
 
         return redirect()->route('documents.index')
             ->with('success', 'All changes published successfully.');
