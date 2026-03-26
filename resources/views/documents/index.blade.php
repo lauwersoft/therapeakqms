@@ -14,7 +14,7 @@
         @include('documents.partials.sidebar', ['sidebarCanEdit' => $canEdit])
 
         {{-- Main Content --}}
-        <main class="flex-1 bg-gray-100 min-w-0 flex flex-col overflow-hidden">
+        <div class="flex-1 min-w-0 flex flex-col overflow-hidden">
             {{-- Top bar: path + edit --}}
             <div x-data="{ barZ: false }" x-effect="if (sidebarOpen) { barZ = true } else { setTimeout(() => barZ = false, 200) }"
                  class="bg-white border-b border-gray-200 shadow-sm shrink-0 relative px-4 h-16 flex items-center" :class="barZ ? 'z-0' : 'z-40'">
@@ -56,7 +56,7 @@
                 </div>
             </div>
 
-            <div class="flex-1 overflow-y-scroll">
+            <main class="flex-1 overflow-y-scroll bg-gray-100">
 
             @if($errors->any())
                 <div class="max-w-5xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
@@ -223,6 +223,7 @@
             </div>{{-- close inner scroll div --}}
 
         </main>
+        </div>
     </div>
 
     @push('scripts')
