@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('page-title', 'Browse')
+    @section('page-title', 'Browser')
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">

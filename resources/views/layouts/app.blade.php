@@ -230,26 +230,30 @@
                     return 'Other';
                 }
 
-                // Track max scroll depth
-                var maxScroll = 0;
-                var scrollTarget = document.querySelector('.overflow-y-scroll') || document.querySelector('.overflow-y-auto') || document.scrollingElement;
-                function updateScroll() {
-                    if (!scrollTarget) return;
-                    var scrollTop = scrollTarget.scrollTop || 0;
-                    var scrollHeight = scrollTarget.scrollHeight - scrollTarget.clientHeight;
-                    if (scrollHeight > 0) {
-                        var pct = Math.round((scrollTop / scrollHeight) * 100);
-                        if (pct > maxScroll) maxScroll = pct;
+                // Track max scroll depth (only on document pages)
+                var maxScroll = null;
+                var isDocPage = window.location.pathname.startsWith('/qms/') && document.querySelector('[data-doc-id]');
+                if (isDocPage) {
+                    maxScroll = 0;
+                    var scrollTarget = document.querySelector('.overflow-y-scroll') || document.querySelector('.overflow-y-auto') || document.scrollingElement;
+                    function updateScroll() {
+                        if (!scrollTarget) return;
+                        var scrollTop = scrollTarget.scrollTop || 0;
+                        var scrollHeight = scrollTarget.scrollHeight - scrollTarget.clientHeight;
+                        if (scrollHeight > 0) {
+                            var pct = Math.round((scrollTop / scrollHeight) * 100);
+                            if (pct > maxScroll) maxScroll = pct;
+                        }
                     }
+                    if (scrollTarget) scrollTarget.addEventListener('scroll', updateScroll);
                 }
-                if (scrollTarget) scrollTarget.addEventListener('scroll', updateScroll);
 
                 function sendActivity() {
                     if (tracked) return;
                     var seconds = Math.round((Date.now() - startTime) / 1000);
                     if (seconds < 2) return;
                     tracked = true;
-                    updateScroll();
+                    if (isDocPage) updateScroll();
 
                     var docId = document.querySelector('[data-doc-id]');
                     var docTitle = document.querySelector('[data-doc-title]');
@@ -269,7 +273,7 @@
                         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                         referrer: document.referrer || '',
                         user_agent: navigator.userAgent,
-                        scroll_depth: maxScroll,
+                        scroll_depth: maxScroll !== null ? maxScroll : '',
                         page_title: document.title,
                         _token: token
                     };
