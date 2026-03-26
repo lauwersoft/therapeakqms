@@ -144,7 +144,8 @@ class DocumentController extends Controller
                     if (! str_ends_with($recFile->getFilename(), '.rec.json')) continue;
                     try {
                         $recData = json_decode(File::get($recFile->getPathname()), true);
-                        if (is_array($recData) && ($recData['form_path'] ?? '') === $path) {
+                        $formId = $formSchema['id'] ?? '';
+                        if (is_array($recData) && (($recData['form_id'] ?? '') === $formId || ($recData['form_path'] ?? '') === $path)) {
                             $formSubmissions->push([
                                 'filename' => $recFile->getFilename(),
                                 'id' => $recData['id'] ?? '',
