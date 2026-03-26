@@ -288,7 +288,7 @@
                 <div class="flex flex-wrap gap-1.5">
                     <button @click="typeFilter = ''" class="px-2.5 py-1 text-xs rounded-full bg-gray-800 text-white"
                             :class="typeFilter === '' ? 'bg-gray-800 text-white' : '!bg-white border border-gray-200 !text-gray-600 hover:bg-gray-50'">
-                        All types
+                        All
                     </button>
                     @foreach(\App\Services\DocumentMetadata::TYPES as $key => $label)
                         @if(collect($documents)->where('type', $key)->count() > 0)
