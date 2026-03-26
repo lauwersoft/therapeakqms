@@ -82,6 +82,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // User activity tracking
+    Route::post('/api/activity', [\App\Http\Controllers\UserActivityController::class, 'track'])->name('activity.track');
+    Route::get('/admin/activity', [\App\Http\Controllers\UserActivityController::class, 'index'])->name('activity.index');
+    Route::get('/admin/activity/{user}', [\App\Http\Controllers\UserActivityController::class, 'show'])->name('activity.show');
 });
 
 require __DIR__.'/auth.php';

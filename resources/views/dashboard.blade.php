@@ -130,8 +130,9 @@
             {{-- User Activity --}}
             @if(Auth::user()->isAdmin() && $activeUsers->isNotEmpty())
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
-                    <div class="px-5 py-4 border-b border-gray-100">
+                    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                         <h3 class="font-semibold text-gray-800">User Activity</h3>
+                        <a href="{{ route('activity.index') }}" class="text-xs text-blue-600 hover:text-blue-800">View details</a>
                     </div>
                     <div class="divide-y divide-gray-50">
                         @foreach($activeUsers as $activeUser)

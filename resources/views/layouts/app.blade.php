@@ -181,5 +181,107 @@
             });
         </script>
         @stack('scripts')
+        @auth
+        <script>
+            (function(){
+                var startTime = Date.now();
+                var tracked = false;
+                var meta = document.querySelector('meta[name="csrf-token"]');
+                var token = meta ? meta.content : '';
+
+                // Session UID — persists per browser tab
+                var sessionUid = sessionStorage.getItem('_activity_uid');
+                if (!sessionUid) {
+                    sessionUid = crypto.randomUUID ? crypto.randomUUID() : (Math.random().toString(36).substr(2) + Date.now().toString(36));
+                    sessionStorage.setItem('_activity_uid', sessionUid);
+                }
+
+                // Browser UID — persists across visits via cookie (1 year)
+                var browserUid = document.cookie.match('(?:^|; )_buid=([^;]*)');
+                browserUid = browserUid ? browserUid[1] : null;
+                if (!browserUid) {
+                    browserUid = crypto.randomUUID ? crypto.randomUUID() : (Math.random().toString(36).substr(2) + Date.now().toString(36));
+                    document.cookie = '_buid=' + browserUid + ';path=/;max-age=31536000;SameSite=Lax';
+                }
+
+                function getDeviceType() {
+                    var w = window.innerWidth;
+                    if (w < 768) return 'mobile';
+                    if (w < 1024) return 'tablet';
+                    return 'desktop';
+                }
+
+                function getBrowser() {
+                    var ua = navigator.userAgent;
+                    if (ua.includes('Firefox')) return 'Firefox';
+                    if (ua.includes('Edg')) return 'Edge';
+                    if (ua.includes('Chrome')) return 'Chrome';
+                    if (ua.includes('Safari')) return 'Safari';
+                    return 'Other';
+                }
+
+                function getOS() {
+                    var ua = navigator.userAgent;
+                    if (ua.includes('Windows')) return 'Windows';
+                    if (ua.includes('Mac')) return 'macOS';
+                    if (ua.includes('Linux')) return 'Linux';
+                    if (ua.includes('Android')) return 'Android';
+                    if (ua.includes('iPhone') || ua.includes('iPad')) return 'iOS';
+                    return 'Other';
+                }
+
+                // Track max scroll depth
+                var maxScroll = 0;
+                function updateScroll() {
+                    var scrollable = document.querySelector('.overflow-y-scroll') || document.scrollingElement;
+                    if (!scrollable) return;
+                    var scrollTop = scrollable.scrollTop || 0;
+                    var scrollHeight = scrollable.scrollHeight - scrollable.clientHeight;
+                    if (scrollHeight > 0) {
+                        var pct = Math.round((scrollTop / scrollHeight) * 100);
+                        if (pct > maxScroll) maxScroll = pct;
+                    }
+                }
+                document.addEventListener('scroll', updateScroll, true);
+
+                function sendActivity() {
+                    if (tracked) return;
+                    var seconds = Math.round((Date.now() - startTime) / 1000);
+                    if (seconds < 2) return;
+                    tracked = true;
+                    updateScroll();
+
+                    var docId = document.querySelector('[data-doc-id]');
+                    var docTitle = document.querySelector('[data-doc-title]');
+
+                    var data = {
+                        path: window.location.pathname,
+                        doc_id: docId ? docId.dataset.docId : null,
+                        doc_title: docTitle ? docTitle.dataset.docTitle : null,
+                        time_spent: Math.min(seconds, 7200),
+                        device: getDeviceType(),
+                        viewport_w: window.innerWidth,
+                        viewport_h: window.innerHeight,
+                        browser: getBrowser(),
+                        os: getOS(),
+                        session_uid: sessionUid,
+                        browser_uid: browserUid,
+                        referrer: document.referrer || null,
+                        user_agent: navigator.userAgent,
+                        scroll_depth: maxScroll,
+                        page_title: document.title,
+                        _token: token
+                    };
+
+                    navigator.sendBeacon('/api/activity', new URLSearchParams(data));
+                }
+
+                document.addEventListener('visibilitychange', function() {
+                    if (document.visibilityState === 'hidden') sendActivity();
+                });
+                window.addEventListener('beforeunload', sendActivity);
+            })();
+        </script>
+        @endauth
     </body>
 </html>

@@ -26,7 +26,7 @@
                             </svg>
                         </button>
                         @if($meta['id'])
-                            <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
+                            <span data-doc-id="{{ $meta['id'] }}" data-doc-title="{{ $meta['title'] ?? '' }}" class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
                         @endif
                         <span class="text-xs text-gray-400 font-mono truncate">documents/{{ $currentPath }}</span>
                     </div>
