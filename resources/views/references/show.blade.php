@@ -117,19 +117,11 @@
                     el = el.nextElementSibling;
                 }
                 el.style.transition = 'none';
-                el.style.backgroundColor = 'rgba(59, 130, 246, 0.12)';
-                el.style.borderRadius = '4px';
-                el.style.padding = '2px 6px';
-                el.style.margin = '0 -6px';
+                el.style.backgroundColor = 'rgba(59, 130, 246, 0.15)';
                 setTimeout(function() {
-                    el.style.transition = 'background-color 0.8s ease-out';
+                    el.style.transition = 'background-color 1.5s ease-out';
                     el.style.backgroundColor = '';
                 }, 800);
-                setTimeout(function() {
-                    el.style.borderRadius = '';
-                    el.style.padding = '';
-                    el.style.margin = '';
-                }, 1600);
             }
 
             function refViewer() {
