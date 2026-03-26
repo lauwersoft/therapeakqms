@@ -291,8 +291,8 @@
                     @foreach(\App\Services\DocumentMetadata::TYPES as $key => $label)
                         @if(collect($documents)->where('type', $key)->count() > 0)
                             <button @click="typeFilter = typeFilter === '{{ $key }}' ? '' : '{{ $key }}'"
-                                    class="px-2.5 py-1 text-xs rounded-full transition-colors"
-                                    :class="typeFilter === '{{ $key }}' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
+                                    class="px-2.5 py-1 text-xs rounded-full bg-white border border-gray-200 text-gray-600"
+                                    :class="typeFilter === '{{ $key }}' ? '!bg-gray-800 !text-white !border-transparent' : 'hover:bg-gray-50'">
                                 {{ $key }} <span class="opacity-60">({{ collect($documents)->where('type', $key)->count() }})</span>
                             </button>
                         @endif
@@ -307,8 +307,8 @@
                     @foreach(\App\Services\DocumentMetadata::STATUSES as $key => $label)
                         @if(collect($documents)->where('status', $key)->count() > 0)
                             <button @click="statusFilter = statusFilter === '{{ $key }}' ? '' : '{{ $key }}'"
-                                    class="px-2.5 py-1 text-xs rounded-full transition-colors"
-                                    :class="statusFilter === '{{ $key }}' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
+                                    class="px-2.5 py-1 text-xs rounded-full bg-white border border-gray-200 text-gray-600"
+                                    :class="statusFilter === '{{ $key }}' ? '!bg-gray-800 !text-white !border-transparent' : 'hover:bg-gray-50'">
                                 {{ $label }} <span class="opacity-60">({{ collect($documents)->where('status', $key)->count() }})</span>
                             </button>
                         @endif
@@ -316,20 +316,20 @@
                 </div>
                 <div class="w-px h-5 bg-gray-200"></div>
                 <div class="flex flex-wrap gap-1.5">
-                    <button @click="commentFilter = ''" class="px-2.5 py-1 text-xs rounded-full transition-colors"
-                            :class="commentFilter === '' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
+                    <button @click="commentFilter = ''" class="px-2.5 py-1 text-xs rounded-full bg-gray-800 text-white"
+                            :class="commentFilter === '' ? 'bg-gray-800 text-white' : '!bg-white border border-gray-200 !text-gray-600 hover:bg-gray-50'">
                         All
                     </button>
                     @php
                         $browseWithComments = collect($documents)->where('comment_count', '>', 0)->count();
                         $browseWithoutComments = collect($documents)->where('comment_count', 0)->count();
                     @endphp
-                    <button @click="commentFilter = commentFilter === 'with' ? '' : 'with'" class="px-2.5 py-1 text-xs rounded-full transition-colors"
-                            :class="commentFilter === 'with' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
+                    <button @click="commentFilter = commentFilter === 'with' ? '' : 'with'" class="px-2.5 py-1 text-xs rounded-full bg-white border border-gray-200 text-gray-600"
+                            :class="commentFilter === 'with' ? '!bg-gray-800 !text-white !border-transparent' : 'hover:bg-gray-50'">
                         💬 Has comments <span class="opacity-60">({{ $browseWithComments }})</span>
                     </button>
-                    <button @click="commentFilter = commentFilter === 'without' ? '' : 'without'" class="px-2.5 py-1 text-xs rounded-full transition-colors"
-                            :class="commentFilter === 'without' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'">
+                    <button @click="commentFilter = commentFilter === 'without' ? '' : 'without'" class="px-2.5 py-1 text-xs rounded-full bg-white border border-gray-200 text-gray-600"
+                            :class="commentFilter === 'without' ? '!bg-gray-800 !text-white !border-transparent' : 'hover:bg-gray-50'">
                         No comments <span class="opacity-60">({{ $browseWithoutComments }})</span>
                     </button>
                 </div>
