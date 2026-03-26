@@ -72,9 +72,20 @@ class RecordController extends Controller
 
         $formTitle = $records->first()['form_title'] ?? $formId;
 
+        // Find the form document
+        $docIndex = \App\Services\DocumentMetadata::index(base_path('qms/documents'));
+        $formDoc = null;
+        foreach ($docIndex as $docPath => $docMeta) {
+            if (($docMeta['id'] ?? '') === $formId) {
+                $formDoc = array_merge($docMeta, ['path' => $docPath]);
+                break;
+            }
+        }
+
         return view('records.form-records', [
             'formId' => $formId,
             'formTitle' => $formTitle,
+            'formDoc' => $formDoc,
             'records' => $records,
         ]);
     }

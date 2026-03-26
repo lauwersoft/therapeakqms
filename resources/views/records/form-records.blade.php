@@ -3,9 +3,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor('FM') }}">{{ $formId }}</span>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ $formTitle }}</h2>
-                <span class="text-sm text-gray-400">{{ $records->count() }} {{ Str::plural('record', $records->count()) }}</span>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">Records</h2>
             </div>
             <a href="{{ route('records.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
@@ -16,6 +14,43 @@
 
     <div class="py-8">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            {{-- Form info card --}}
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 mb-6">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor('FM') }}">{{ $formId }}</span>
+                            <h3 class="text-lg font-semibold text-gray-800">{{ $formTitle }}</h3>
+                        </div>
+                        @if($formDoc)
+                            <div class="text-[11px] text-gray-400 font-mono mb-2">documents/{{ $formDoc['path'] }}</div>
+                            <div class="flex items-center gap-3 text-xs text-gray-500">
+                                @if($formDoc['version'] ?? null)
+                                    <span>v{{ $formDoc['version'] }}</span>
+                                @endif
+                                @if($formDoc['status'] ?? null)
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium
+                                        {{ $formDoc['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
+                                        {{ $formDoc['status'] === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
+                                        {{ $formDoc['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}">{{ ucfirst($formDoc['status']) }}</span>
+                                @endif
+                                @if($formDoc['author'] ?? null)
+                                    <span>Author: {{ $formDoc['author'] }}</span>
+                                @endif
+                                <span>{{ $records->count() }} {{ Str::plural('submission', $records->count()) }}</span>
+                            </div>
+                        @endif
+                    </div>
+                    @if($formDoc)
+                        <a href="{{ route('documents.index', ['path' => $formDoc['path']]) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                            View form
+                        </a>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Records list --}}
             @if($records->isEmpty())
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
                     <p class="text-gray-400">No submissions for this form yet.</p>
