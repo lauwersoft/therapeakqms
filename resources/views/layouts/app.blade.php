@@ -26,6 +26,13 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @stack('styles')
         <style>
+            @view-transition {
+                navigation: auto;
+            }
+            ::view-transition-old(root),
+            ::view-transition-new(root) {
+                animation-duration: 0.15s;
+            }
             .mermaid {
                 cursor: pointer;
                 padding: 1rem;
