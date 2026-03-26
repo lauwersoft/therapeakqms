@@ -18,6 +18,8 @@
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 @include('profile.partials.update-password-form')
             </div>
+
+            <p class="text-xs text-gray-400 text-center">If you forgot your password or need account assistance, please contact the administrator at <a href="mailto:info@therapeak.com" class="text-blue-500 hover:text-blue-700">info@therapeak.com</a></p>
         </div>
     </div>
 </x-app-layout>
