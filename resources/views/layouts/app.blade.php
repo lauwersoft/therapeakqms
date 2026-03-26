@@ -29,9 +29,15 @@
             @view-transition {
                 navigation: auto;
             }
-            ::view-transition-old(root),
+            ::view-transition-old(root) {
+                animation: none;
+            }
             ::view-transition-new(root) {
-                animation-duration: 0.1s;
+                animation: fade-in 0.08s ease-out;
+            }
+            @keyframes fade-in {
+                from { opacity: 0.6; }
+                to { opacity: 1; }
             }
             .mermaid {
                 cursor: pointer;
