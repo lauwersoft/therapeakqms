@@ -30,10 +30,11 @@ class DocumentController extends Controller
         $docIndex = DocumentMetadata::index($this->basePath);
         $tree = $this->buildTree($this->basePath, '', $docIndex);
 
-        // Default to first available document
+        // Default to first root-level document
         if (! $path) {
-            $firstDoc = array_key_first($docIndex);
-            $defaultPath = $firstDoc ? preg_replace('/(\.\w+)+$/', '', $firstDoc) : null;
+            $rootDoc = collect($docIndex)->filter(fn($meta, $p) => !str_contains($p, '/'))->keys()->first();
+            $rootDoc = $rootDoc ?: array_key_first($docIndex);
+            $defaultPath = $rootDoc ? preg_replace('/(\.\w+)+$/', '', $rootDoc) : null;
             if ($defaultPath) {
                 return redirect()->route('documents.index', ['path' => $defaultPath]);
             }
