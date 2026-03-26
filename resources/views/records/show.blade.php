@@ -36,13 +36,13 @@
                     </div>
                     <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500">
                         @if($record['form_id'] ?? null)
-                            <span class="inline-flex items-center gap-1">
+                            <a href="{{ $record['form_path'] ? route('documents.index', ['path' => $record['form_path']]) : '#' }}" class="inline-flex items-center gap-1 hover:text-blue-600 transition-colors">
                                 <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                                Form: <span class="font-mono font-medium text-gray-700 ml-1">{{ $record['form_id'] }}</span>
+                                Form: <span class="font-mono font-medium text-blue-600 ml-1">{{ $record['form_id'] }}</span>
                                 @if($record['form_title'] ?? null)
                                     <span class="text-gray-400">{{ $record['form_title'] }}</span>
                                 @endif
-                            </span>
+                            </a>
                             <span class="text-gray-300">·</span>
                         @endif
                         @if($record['author'] ?? null)
@@ -58,9 +58,6 @@
                                 {{ \Carbon\Carbon::parse($record['submitted_at'])->format('M j, Y \a\t H:i') }}
                             </span>
                         @endif
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 text-blue-700 ml-auto">
-                            Submitted
-                        </span>
                     </div>
                 </div>
 

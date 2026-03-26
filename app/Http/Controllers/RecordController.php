@@ -121,6 +121,17 @@ class RecordController extends Controller
             abort(404);
         }
 
+        // Resolve form path from form_id if not set
+        if (empty($data['form_path']) && !empty($data['form_id'])) {
+            $docIndex = \App\Services\DocumentMetadata::index(base_path('qms/documents'));
+            foreach ($docIndex as $docPath => $docMeta) {
+                if (($docMeta['id'] ?? '') === $data['form_id']) {
+                    $data['form_path'] = $docPath;
+                    break;
+                }
+            }
+        }
+
         return view('records.show', [
             'record' => $data,
             'filename' => $filename,
