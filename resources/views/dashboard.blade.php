@@ -137,16 +137,8 @@
                     <div class="divide-y divide-gray-50">
                         @foreach($activeUsers as $activeUser)
                             <a href="{{ route('activity.show', $activeUser) }}" class="block px-5 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors">
-                                <div class="relative">
-                                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0
-                                        {{ $activeUser->role === 'admin' ? 'bg-purple-100' : '' }}
-                                        {{ $activeUser->role === 'editor' ? 'bg-blue-100' : '' }}
-                                        {{ $activeUser->role === 'auditor' ? 'bg-gray-100' : '' }}">
-                                        <span class="text-xs font-semibold
-                                            {{ $activeUser->role === 'admin' ? 'text-purple-600' : '' }}
-                                            {{ $activeUser->role === 'editor' ? 'text-blue-600' : '' }}
-                                            {{ $activeUser->role === 'auditor' ? 'text-gray-500' : '' }}">{{ strtoupper(substr($activeUser->name, 0, 1)) }}</span>
-                                    </div>
+                                <div class="relative shrink-0">
+                                    <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim($activeUser->email))) }}?s=64&d=mp" alt="{{ $activeUser->name }}" class="w-8 h-8 rounded-full">
                                     @if($activeUser->last_active_at->gt(now()->subMinutes(5)))
                                         <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></span>
                                     @endif

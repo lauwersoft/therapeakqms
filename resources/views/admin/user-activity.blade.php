@@ -14,15 +14,7 @@
                     @foreach($users as $user)
                         <a href="{{ route('activity.show', $user) }}" class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
                             <div class="relative">
-                                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0
-                                    {{ $user->role === 'admin' ? 'bg-purple-100' : '' }}
-                                    {{ $user->role === 'editor' ? 'bg-blue-100' : '' }}
-                                    {{ $user->role === 'auditor' ? 'bg-gray-100' : '' }}">
-                                    <span class="text-sm font-semibold
-                                        {{ $user->role === 'admin' ? 'text-purple-600' : '' }}
-                                        {{ $user->role === 'editor' ? 'text-blue-600' : '' }}
-                                        {{ $user->role === 'auditor' ? 'text-gray-500' : '' }}">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
-                                </div>
+                                <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim($user->email))) }}?s=80&d=mp" alt="{{ $user->name }}" class="w-10 h-10 rounded-full">
                                 @if($user->last_active_at?->gt(now()->subMinutes(5)))
                                     <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
                                 @endif

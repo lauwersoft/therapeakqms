@@ -232,17 +232,17 @@
 
                 // Track max scroll depth
                 var maxScroll = 0;
+                var scrollTarget = document.querySelector('.overflow-y-scroll') || document.querySelector('.overflow-y-auto') || document.scrollingElement;
                 function updateScroll() {
-                    var scrollable = document.querySelector('.overflow-y-scroll') || document.scrollingElement;
-                    if (!scrollable) return;
-                    var scrollTop = scrollable.scrollTop || 0;
-                    var scrollHeight = scrollable.scrollHeight - scrollable.clientHeight;
+                    if (!scrollTarget) return;
+                    var scrollTop = scrollTarget.scrollTop || 0;
+                    var scrollHeight = scrollTarget.scrollHeight - scrollTarget.clientHeight;
                     if (scrollHeight > 0) {
                         var pct = Math.round((scrollTop / scrollHeight) * 100);
                         if (pct > maxScroll) maxScroll = pct;
                     }
                 }
-                document.addEventListener('scroll', updateScroll, true);
+                if (scrollTarget) scrollTarget.addEventListener('scroll', updateScroll);
 
                 function sendActivity() {
                     if (tracked) return;
