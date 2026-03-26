@@ -2,7 +2,7 @@
     @section('page-title', $user->name . ' — Activity')
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ $user->name }}</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Activity: {{ $user->name }}</h2>
             <a href="{{ route('activity.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 Back to users
@@ -77,7 +77,7 @@
 
             {{-- Time range selector --}}
             <div class="flex items-center gap-2 mb-6">
-                @foreach([7 => '7 days', 30 => '30 days', 90 => '90 days'] as $d => $label)
+                @foreach([7 => '7 days', 30 => '30 days', 90 => '90 days', 0 => 'All time'] as $d => $label)
                     <a href="{{ route('activity.show', [$user, 'days' => $d]) }}"
                        class="px-3 py-1.5 text-xs rounded-full {{ $days == $d ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50' }}">
                         {{ $label }}

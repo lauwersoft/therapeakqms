@@ -64,15 +64,16 @@ class UserActivityController extends Controller
 
         $days = (int) $request->query('days', 30);
 
-        $activities = UserActivity::where('user_id', $user->id)
-            ->where('created_at', '>=', now()->subDays($days))
+        $base = fn() => UserActivity::where('user_id', $user->id)
+            ->when($days > 0, fn($q) => $q->where('created_at', '>=', now()->subDays($days)));
+
+        $activities = $base()
             ->orderByDesc('created_at')
             ->limit(500)
             ->get();
 
         // Most viewed pages
-        $topPages = UserActivity::where('user_id', $user->id)
-            ->where('created_at', '>=', now()->subDays($days))
+        $topPages = $base()
             ->selectRaw('path, doc_id, doc_title, count(*) as views, sum(time_spent) as total_time, max(scroll_depth) as max_scroll, round(avg(scroll_depth)) as avg_scroll')
             ->groupBy('path', 'doc_id', 'doc_title')
             ->orderByDesc('total_time')
@@ -80,32 +81,28 @@ class UserActivityController extends Controller
             ->get();
 
         // Activity by day
-        $dailyActivity = UserActivity::where('user_id', $user->id)
-            ->where('created_at', '>=', now()->subDays($days))
+        $dailyActivity = $base()
             ->selectRaw('DATE(created_at) as date, count(*) as views, sum(time_spent) as total_time')
             ->groupByRaw('DATE(created_at)')
             ->orderByDesc('date')
             ->get();
 
         // Device breakdown
-        $devices = UserActivity::where('user_id', $user->id)
-            ->where('created_at', '>=', now()->subDays($days))
+        $devices = $base()
             ->selectRaw('device, browser, os, count(*) as count')
             ->groupBy('device', 'browser', 'os')
             ->orderByDesc('count')
             ->get();
 
         // IP / Location breakdown
-        $locations = UserActivity::where('user_id', $user->id)
-            ->where('created_at', '>=', now()->subDays($days))
+        $locations = $base()
             ->selectRaw('ip, country_code, asn_number, asn_org, count(*) as count, max(created_at) as last_seen')
             ->groupBy('ip', 'country_code', 'asn_number', 'asn_org')
             ->orderByDesc('last_seen')
             ->get();
 
         // Session breakdown
-        $sessions = UserActivity::where('user_id', $user->id)
-            ->where('created_at', '>=', now()->subDays($days))
+        $sessions = $base()
             ->whereNotNull('session_uid')
             ->selectRaw('session_uid, min(created_at) as started, max(created_at) as ended, count(*) as pages, sum(time_spent) as total_time, device, browser, os, ip, country_code')
             ->groupBy('session_uid', 'device', 'browser', 'os', 'ip', 'country_code')
