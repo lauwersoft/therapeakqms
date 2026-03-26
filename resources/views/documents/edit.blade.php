@@ -124,7 +124,7 @@
                         <span class="text-sm font-semibold text-gray-800">QMS</span>
                         <span class="text-xs text-gray-400 font-mono truncate">/{{ $currentPath }}</span>
                     </div>
-                    <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
+                    <a href="{{ route('documents.index', ['path' => $currentPath]) }}"
                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -161,7 +161,7 @@
                             </div>
                             <textarea id="editor" name="content" style="min-height:400px">{{ $content }}</textarea>
                             <div class="flex justify-end gap-2 mt-4">
-                                <a href="{{ route('documents.index', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
+                                <a href="{{ route('documents.index', ['path' => $currentPath]) }}"
                                    class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md border border-gray-300">Cancel</a>
                                 <button type="submit"
                                         class="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Save</button>
@@ -290,7 +290,7 @@
 
                     editFile() {
                         this.closeMenus();
-                        window.location = '/documents/edit/' + this.ctx.path.replace('.md', '');
+                        window.location = '/documents/edit/' + this.ctx.path;
                     },
 
                     showRename() {

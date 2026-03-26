@@ -34,7 +34,7 @@ class DocumentController extends Controller
         if (! $path) {
             $rootDoc = collect($docIndex)->filter(fn($meta, $p) => !str_contains($p, '/'))->keys()->first();
             $rootDoc = $rootDoc ?: array_key_first($docIndex);
-            $defaultPath = $rootDoc ? preg_replace('/(\.\w+)+$/', '', $rootDoc) : null;
+            $defaultPath = $rootDoc ?: null;
             if ($defaultPath) {
                 return redirect()->route('documents.index', ['path' => $defaultPath]);
             }
@@ -195,7 +195,7 @@ class DocumentController extends Controller
             $docType = $docMeta['id'] ? explode('-', $docMeta['id'])[0] : '';
             $sidebarDocs[] = [
                 'path' => $docPath,
-                'url_path' => preg_replace('/(\.\w+)+$/', '', $docPath),
+                'url_path' => $docPath,
                 'doc_id' => $docMeta['id'] ?? null,
                 'title' => $docMeta['title'] ?? $this->formatName(pathinfo($docPath, PATHINFO_FILENAME)),
                 'type' => $docType,
@@ -272,7 +272,7 @@ class DocumentController extends Controller
             $docType = $docMeta['id'] ? explode('-', $docMeta['id'])[0] : '';
             $sidebarDocs[] = [
                 'path' => $docPath,
-                'url_path' => preg_replace('/(\.\w+)+$/', '', $docPath),
+                'url_path' => $docPath,
                 'doc_id' => $docMeta['id'] ?? null,
                 'title' => $docMeta['title'] ?? $this->formatName(pathinfo($docPath, PATHINFO_FILENAME)),
                 'type' => $docType,
@@ -350,7 +350,7 @@ class DocumentController extends Controller
         File::put($filePath, $fileContent);
         $this->logChange($request->user(), 'edit', $path);
 
-        return redirect()->route('documents.index', ['path' => preg_replace('/\.md$/', '', $path)])
+        return redirect()->route('documents.index', ['path' => $path])
             ->with('success', 'Document saved. Remember to publish when ready.');
     }
 
@@ -386,7 +386,7 @@ class DocumentController extends Controller
             $commentService = app(CommentService::class);
             $unresolvedRequired = $commentService->unresolvedRequiredChanges($meta['id']);
             if ($unresolvedRequired > 0) {
-                $urlPath = preg_replace('/\.md$/', '', $path);
+                $urlPath = $path;
                 $route = $request->input('redirect') === 'edit' ? 'documents.edit' : 'documents.index';
                 return redirect()->route($route, ['path' => $urlPath])
                     ->withErrors(["Cannot approve: {$unresolvedRequired} unresolved required " . ($unresolvedRequired === 1 ? 'change' : 'changes') . '. Resolve all required changes before approving.']);
@@ -416,7 +416,7 @@ class DocumentController extends Controller
         File::put($filePath, $fileContent);
         $this->logChange($request->user(), 'edit', $path, ['fields' => 'properties']);
 
-        $urlPath = preg_replace('/\.md$/', '', $path);
+        $urlPath = $path;
         if ($request->input('redirect') === 'edit') {
             return redirect()->route('documents.edit', ['path' => $urlPath])
                 ->with('success', 'Properties saved.');
@@ -798,7 +798,7 @@ class DocumentController extends Controller
             $changeStatus = isset($changedFiles[$path]) ? $changedFiles[$path]['status'] : null;
             $documents[] = [
                 'path' => $path,
-                'url_path' => preg_replace('/\.(md|form\.json|rec\.json|pdf|png|jpg|jpeg|gif|svg|csv|tsv|xlsx?)$/i', '', $path),
+                'url_path' => $path,
                 'directory' => ($dir !== '.' && $dir !== '') ? ucwords(str_replace(['-', '_', '/'], [' ', ' ', ' / '], $dir)) : 'Root',
                 'raw_directory' => ($dir !== '.' && $dir !== '') ? $dir : '',
                 'doc_id' => $meta['id'] ?? null,
@@ -1170,6 +1170,6 @@ class DocumentController extends Controller
      */
     private function stripMdExtension(string $path): string
     {
-        return preg_replace('/\.md$/', '', $path);
+        return $path;
     }
 }

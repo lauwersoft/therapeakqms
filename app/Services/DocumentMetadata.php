@@ -430,7 +430,7 @@ class DocumentMetadata
      */
     public static function urlPath(string $filePath): string
     {
-        return str_replace('.md', '', $filePath);
+        return $filePath;
     }
 
     /**

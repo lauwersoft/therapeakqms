@@ -43,7 +43,7 @@
                 <template x-if="ctx.type === 'file'">
                     <div>
                         <div class="px-3 py-1.5 text-[10px] font-medium text-gray-400 uppercase tracking-wider">This document</div>
-                        <a :href="ctx.isMarkdown ? ('/documents/edit/' + ctx.path.replace(/\.md$/, '')) : ('/documents/download/' + ctx.path)"
+                        <a :href="ctx.isMarkdown ? ('/documents/edit/' + ctx.path) : ('/documents/download/' + ctx.path)"
                            class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x-bind:d="ctx.isMarkdown ? 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' : 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'"/>

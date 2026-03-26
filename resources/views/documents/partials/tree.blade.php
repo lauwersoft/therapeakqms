@@ -120,14 +120,14 @@
             >
                 @php
                     $isItemMarkdown = $item['is_markdown'] ?? true;
-                    $linkPath = preg_replace('/(\.\w+)+$/', '', $item['path']);
+                    $linkPath = $item['path'];
                 @endphp
                 <div class="group flex items-center gap-0.5">
                     <a href="{{ route('documents.index', ['path' => $linkPath]) }}"
                        @if($canEdit ?? false)
                            @contextmenu="openFileMenu($event, '{{ $item['path'] }}', '{{ addslashes($item['name']) }}')"
                            @if($isItemMarkdown)
-                               @dblclick.prevent="window.location='{{ route('documents.edit', ['path' => preg_replace('/\.md$/', '', $item['path'])]) }}'"
+                               @dblclick.prevent="window.location='{{ route('documents.edit', ['path' => $item['path']]) }}'"
                            @endif
                        @endif
                        @if($currentPath === $item['path']) data-active-sidebar-item @endif
@@ -186,7 +186,7 @@
                             <div x-show="ddOpen" x-cloak @click.outside="ddOpen = false"
                                  class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                                 @if($isItemMarkdown)
-                                    <a href="{{ route('documents.edit', ['path' => preg_replace('/\.md$/', '', $item['path'])]) }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <a href="{{ route('documents.edit', ['path' => $item['path']]) }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                         Edit
                                     </a>
