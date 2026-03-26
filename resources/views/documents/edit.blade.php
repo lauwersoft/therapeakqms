@@ -290,7 +290,7 @@
 
                     editFile() {
                         this.closeMenus();
-                        window.location = '/qms/edit/' + this.ctx.path.replace('.md', '');
+                        window.location = '/documents/edit/' + this.ctx.path.replace('.md', '');
                     },
 
                     showRename() {

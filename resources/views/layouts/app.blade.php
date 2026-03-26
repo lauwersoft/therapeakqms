@@ -232,7 +232,7 @@
 
                 // Track max scroll depth (only on document pages)
                 var maxScroll = null;
-                var isDocPage = window.location.pathname.startsWith('/qms/') && document.querySelector('[data-doc-id]');
+                var isDocPage = window.location.pathname.startsWith('/documents/') && document.querySelector('[data-doc-id]');
                 if (isDocPage) {
                     maxScroll = 0;
                     var scrollTarget = document.querySelector('.overflow-y-scroll') || document.querySelector('.overflow-y-auto') || document.scrollingElement;

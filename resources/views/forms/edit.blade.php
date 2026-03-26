@@ -201,7 +201,7 @@
                     openFileMenu(e, path, name) { if (!this.canEdit) return; e.preventDefault(); e.stopPropagation(); this.closeMenus(); this.ctx.path = path; this.ctx.name = name; this.fileMenu = { show: true, x: e.clientX, y: e.clientY }; },
                     openDirMenu(e, path, name) { if (!this.canEdit) return; e.preventDefault(); e.stopPropagation(); this.closeMenus(); this.ctx.dirPath = path; this.ctx.dirName = name; this.dirMenu = { show: true, x: e.clientX, y: e.clientY }; },
                     openBgMenu(e) { if (!this.canEdit) return; e.preventDefault(); this.closeMenus(); this.bgMenu = { show: true, x: e.clientX, y: e.clientY }; },
-                    editFile() { this.closeMenus(); window.location = '/qms/edit/' + this.ctx.path.replace('.md', ''); },
+                    editFile() { this.closeMenus(); window.location = '/documents/edit/' + this.ctx.path.replace('.md', ''); },
                     showRename() { this.closeMenus(); this.modal.rename = true; this.$nextTick(() => { this.$refs.renameInput?.focus(); this.$refs.renameInput?.select(); }); },
                     showMove() { this.closeMenus(); this.modal.move = true; },
                     showDelete() { this.closeMenus(); this.modal.delete = true; },

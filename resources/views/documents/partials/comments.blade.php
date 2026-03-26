@@ -328,7 +328,7 @@
 
             // Only intercept comment-related forms
             var action = form.getAttribute('action') || '';
-            if (!action.includes('/qms/comments')) return;
+            if (!action.includes('/documents/comments')) return;
 
             // Handle confirmation dialogs
             if (form.dataset.confirm && !confirm(form.dataset.confirm)) {

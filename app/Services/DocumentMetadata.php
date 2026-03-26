@@ -455,7 +455,7 @@ class DocumentMetadata
         return preg_replace_callback('/\[\[([A-Z]+-\d{3,})\]\]/', function ($matches) use ($idMap) {
             $docId = $matches[1];
             if (isset($idMap[$docId])) {
-                $url = '/qms/' . self::urlPath($idMap[$docId]);
+                $url = '/documents/' . self::urlPath($idMap[$docId]);
                 return '<a href="' . e($url) . '" class="text-blue-600 hover:text-blue-800 font-medium">' . e($docId) . '</a>';
             }
             return '<span class="text-red-500" title="Document not found">' . e($docId) . ' (not found)</span>';
