@@ -162,24 +162,28 @@
                     },
 
                     init() {
-                        this.$nextTick(() => this.onScroll());
+                        this.$nextTick(() => {
+                            this.onScroll();
 
-                        // Highlight section if URL has a hash
-                        if (window.location.hash) {
-                            var id = window.location.hash.substring(1);
-                            var el = document.getElementById(id);
-                            // Fuzzy match
-                            if (!el) {
-                                var all = document.querySelectorAll('[id]');
-                                for (var i = 0; i < all.length; i++) {
-                                    if (all[i].id.startsWith(id)) { el = all[i]; break; }
+                            // Scroll to and highlight section if URL has a hash
+                            if (window.location.hash) {
+                                var id = window.location.hash.substring(1);
+                                var el = document.getElementById(id);
+                                // Fuzzy match
+                                if (!el) {
+                                    var all = document.querySelectorAll('[id]');
+                                    for (var i = 0; i < all.length; i++) {
+                                        if (all[i].id.startsWith(id)) { el = all[i]; break; }
+                                    }
+                                }
+                                if (el) {
+                                    var container = this.$refs.content;
+                                    var elTop = el.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
+                                    container.scrollTop = elTop - 20;
+                                    highlightRefSection(el.id);
                                 }
                             }
-                            if (el) {
-                                el.scrollIntoView({ block: 'start' });
-                                highlightRefSection(el.id);
-                            }
-                        }
+                        });
                     }
                 };
             }
