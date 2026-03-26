@@ -112,19 +112,6 @@
         </div>
     </div>
     <style id="sidebar-hide">#sidebar-nav>div{visibility:hidden}</style>
-    <script>
-        // Hide closed directories before paint
-        (function(){
-            for(var i=0;i<sessionStorage.length;i++){
-                var k=sessionStorage.key(i);
-                if(k.startsWith('dir_')&&sessionStorage.getItem(k)==='closed'){
-                    var id='dir-children-'+k.substring(4);
-                    var el=document.getElementById(id);
-                    if(el)el.style.display='none';
-                }
-            }
-        })();
-    </script>
     <nav id="sidebar-nav" class="p-3 flex-1 flex flex-col overflow-y-auto"
          onclick="if(event.target.closest('a'))sessionStorage.setItem('sidebarClickNav','1')">
         <div>
@@ -151,6 +138,15 @@
     <script>
         (function(){
             var n=document.getElementById('sidebar-nav');if(!n)return;
+            // 1. Collapse closed directories BEFORE anything else
+            for(var i=0;i<sessionStorage.length;i++){
+                var k=sessionStorage.key(i);
+                if(k.startsWith('dir_')&&sessionStorage.getItem(k)==='closed'){
+                    var el=document.getElementById('dir-children-'+k.substring(4));
+                    if(el)el.style.display='none';
+                }
+            }
+            // 2. Restore scroll position
             var fromSidebar=sessionStorage.getItem('sidebarClickNav');
             var isReload=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0]&&performance.getEntriesByType('navigation')[0].type==='reload';
             var s=sessionStorage.getItem('sidebarScroll');
@@ -161,7 +157,9 @@
                 var a=n.querySelector('[data-active-sidebar-item]');
                 if(a)n.scrollTop=a.offsetTop-n.offsetTop-n.clientHeight/2;
             }
+            // 3. Save scroll on unload for refresh
             window.addEventListener('beforeunload',function(){sessionStorage.setItem('sidebarScroll',n.scrollTop)});
+            // 4. Show content
             var h=document.getElementById('sidebar-hide');if(h)h.remove();
         })();
     </script>
