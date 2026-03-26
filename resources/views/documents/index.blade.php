@@ -28,7 +28,7 @@
                         @if($meta['id'])
                             <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
                         @endif
-                        <span class="text-xs text-gray-400 font-mono truncate">qms/documents/{{ $currentPath }}</span>
+                        <span class="text-xs text-gray-400 font-mono truncate">documents/{{ $currentPath }}</span>
                     </div>
                     @if($canEdit && $isMarkdown)
                         <a href="{{ route('documents.edit', ['path' => preg_replace('/\.md$/', '', $currentPath)]) }}"
