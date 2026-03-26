@@ -276,7 +276,7 @@
 
 {{-- Confirm Move Modal --}}
 <div x-show="modal.confirmMove && pendingMove" x-cloak
-     class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="modal.confirmMove = false; pendingMove = null"
+     class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="modal.confirmMove = false; setTimeout(() => pendingMove = null, 200)"
      x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
      x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
     <div class="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 overflow-hidden" @click.stop>
@@ -303,7 +303,7 @@
             </div>
         </div>
         <div class="flex border-t border-gray-100">
-            <button @click="modal.confirmMove = false; pendingMove = null"
+            <button @click="modal.confirmMove = false; setTimeout(() => pendingMove = null, 200)"
                     class="flex-1 px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 transition-colors font-medium">Cancel</button>
             <button @click="
                 var f = document.createElement('form');

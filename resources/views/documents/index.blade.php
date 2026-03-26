@@ -407,7 +407,8 @@
                                 // Put it back immediately, let the modal handle the move
                                 evt.from.insertBefore(evt.item, evt.from.children[evt.oldIndex]);
 
-                                this.pendingMove = { path: filePath, destination: newDir, fileName, fromLabel: oldDir || 'Root', toLabel: newDir || 'Root' };
+                                const ucDir = (d) => d ? d.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Root';
+                                this.pendingMove = { path: filePath, destination: newDir, fileName, fromLabel: ucDir(oldDir), toLabel: ucDir(newDir) };
                                 this.modal.confirmMove = true;
                             }
                         });
