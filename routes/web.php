@@ -13,6 +13,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/approval-pending', function () {
+    if (auth()->user()->approved) {
+        return redirect('/dashboard');
+    }
     return view('auth.approval-pending');
 })->middleware('auth')->name('approval.pending');
 
