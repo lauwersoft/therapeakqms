@@ -23,15 +23,16 @@
                 </div>
             @else
                 @foreach($grouped as $formId => $formRecords)
-                    <div class="mb-6">
-                        <div class="flex items-center gap-2 mb-3">
+                    <div class="mb-6" x-data="{ open: {{ $formRecords->count() <= 5 ? 'true' : 'false' }} }">
+                        <div class="flex items-center gap-2 mb-3 cursor-pointer select-none" @click="open = !open">
+                            <svg class="w-4 h-4 text-gray-400 transition-transform" :class="open ? 'rotate-90' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                             @if($formId)
                                 <span class="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor('FM') }}">{{ $formId }}</span>
                             @endif
                             <h3 class="text-sm font-semibold text-gray-700">{{ $formRecords->first()['form_title'] ?: $formId ?: 'Unknown Form' }}</h3>
                             <span class="text-xs text-gray-400">({{ $formRecords->count() }})</span>
                         </div>
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <div x-show="open" x-collapse class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                             @foreach($formRecords as $record)
                                 <a href="{{ route('records.show', $record['filename']) }}"
                                    class="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
