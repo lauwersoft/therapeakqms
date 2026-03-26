@@ -101,12 +101,12 @@
                 @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''; sidebarCommentFilter = ''"
                 class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
         <div class="flex gap-1.5">
-            <button @click="$dispatch('dirs-collapse')" class="flex-1 flex items-center justify-center gap-1.5 py-1 rounded-md border border-gray-200 text-[11px] text-gray-500 hover:bg-gray-50 hover:text-gray-700 bg-gray-50">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7V5a2 2 0 012-2h6l2 2h6a2 2 0 012 2v2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12l4 4 4-4"/></svg>
+            <button @click="$dispatch('dirs-collapse')" class="flex-1 flex items-center justify-center gap-1 text-[11px] border border-gray-200 rounded-md py-1 bg-gray-50 text-gray-500 hover:text-gray-700 hover:bg-gray-100">
+                <svg class="w-3 h-3" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3.5A1.5 1.5 0 012.5 2h3.879a1.5 1.5 0 011.06.44l1.122 1.12A1.5 1.5 0 009.62 4H13.5A1.5 1.5 0 0115 5.5v.5H1v-2.5z"/><path d="M1 7v5.5A1.5 1.5 0 002.5 14h11a1.5 1.5 0 001.5-1.5V7H1zm6 2h2v1.5l1.5-1.5L12 10.5 8 14.5l-4-4L5.5 9 7 10.5V9z"/></svg>
                 Collapse all
             </button>
-            <button @click="$dispatch('dirs-expand')" class="flex-1 flex items-center justify-center gap-1.5 py-1 rounded-md border border-gray-200 text-[11px] text-gray-500 hover:bg-gray-50 hover:text-gray-700 bg-gray-50">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7V5a2 2 0 012-2h6l2 2h6a2 2 0 012 2v2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16l4-4 4 4"/></svg>
+            <button @click="$dispatch('dirs-expand')" class="flex-1 flex items-center justify-center gap-1 text-[11px] border border-gray-200 rounded-md py-1 bg-gray-50 text-gray-500 hover:text-gray-700 hover:bg-gray-100">
+                <svg class="w-3 h-3" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3.5A1.5 1.5 0 012.5 2h3.879a1.5 1.5 0 011.06.44l1.122 1.12A1.5 1.5 0 009.62 4H13.5A1.5 1.5 0 0115 5.5v.5H1v-2.5z"/><path d="M1 7v5.5A1.5 1.5 0 002.5 14h11a1.5 1.5 0 001.5-1.5V7H1zm6 5.5V11L5.5 12.5 4 11l4-4 4 4-1.5 1.5L9 11v1.5H7z"/></svg>
                 Expand all
             </button>
         </div>
