@@ -133,14 +133,24 @@ class UserActivityController extends Controller
         $page = max(1, (int) $request->query('page', 1));
         $perPage = 50;
         $typeFilter = $request->query('type', '');
+        $dateFilter = $request->query('date', '');
 
         $query = UserActivity::where('user_id', $user->id)
             ->when($typeFilter, fn($q) => $q->where('type', $typeFilter))
+            ->when($dateFilter, fn($q) => $q->whereDate('created_at', $dateFilter))
             ->orderByDesc('created_at');
 
         $total = $query->count();
         $activities = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
         $totalPages = max(1, ceil($total / $perPage));
+
+        // Available dates for navigation
+        $activeDates = UserActivity::where('user_id', $user->id)
+            ->selectRaw('DATE(created_at) as date, count(*) as count')
+            ->groupByRaw('DATE(created_at)')
+            ->orderByDesc('date')
+            ->limit(90)
+            ->get();
 
         return view('admin.user-activity-log', [
             'user' => $user,
@@ -149,6 +159,8 @@ class UserActivityController extends Controller
             'totalPages' => $totalPages,
             'total' => $total,
             'typeFilter' => $typeFilter,
+            'dateFilter' => $dateFilter,
+            'activeDates' => $activeDates,
         ]);
     }
 
