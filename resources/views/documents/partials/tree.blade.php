@@ -96,7 +96,7 @@
                             </div>
                         @endif
                     </div>
-                    <div x-show="open" x-cloak class="ml-4">
+                    <div x-show="open" class="ml-4" id="dir-children-{{ Str::slug($item['path']) }}">
                         @include('documents.partials.tree', [
                             'items' => $item['children'],
                             'currentPath' => $currentPath,

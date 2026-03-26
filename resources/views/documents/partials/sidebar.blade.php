@@ -112,7 +112,21 @@
         </div>
     </div>
     <style id="sidebar-hide">#sidebar-nav>div{visibility:hidden}</style>
-    <nav id="sidebar-nav" class="p-3 flex-1 flex flex-col overflow-y-auto" onclick="if(event.target.closest('a'))sessionStorage.setItem('sidebarScroll',this.scrollTop)">
+    <script>
+        // Hide closed directories before paint
+        (function(){
+            for(var i=0;i<sessionStorage.length;i++){
+                var k=sessionStorage.key(i);
+                if(k.startsWith('dir_')&&sessionStorage.getItem(k)==='closed'){
+                    var id='dir-children-'+k.substring(4);
+                    var el=document.getElementById(id);
+                    if(el)el.style.display='none';
+                }
+            }
+        })();
+    </script>
+    <nav id="sidebar-nav" class="p-3 flex-1 flex flex-col overflow-y-auto"
+         onclick="if(event.target.closest('a')){sessionStorage.setItem('sidebarScroll',this.scrollTop);sessionStorage.setItem('sidebarFromClick','1')}">
         <div>
             @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $sidebarCanEdit, 'changedFiles' => $changedFiles, 'commentSummary' => $commentSummary ?? []])
         </div>
@@ -137,10 +151,23 @@
     <script>
         (function(){
             var n=document.getElementById('sidebar-nav');if(!n)return;
+            var fromClick=sessionStorage.getItem('sidebarFromClick');
             var s=sessionStorage.getItem('sidebarScroll');
-            sessionStorage.removeItem('sidebarScroll');
-            if(s!==null){n.scrollTop=parseInt(s)}
-            else{var a=n.querySelector('[data-active-sidebar-item]');if(a){n.scrollTop=a.offsetTop-n.offsetTop-n.clientHeight/2}}
+            sessionStorage.removeItem('sidebarFromClick');
+            if(fromClick&&s!==null){
+                // Clicked sidebar link or refresh — restore exact position
+                n.scrollTop=parseInt(s);
+            }else{
+                // Came from external link — center active item
+                sessionStorage.removeItem('sidebarScroll');
+                var a=n.querySelector('[data-active-sidebar-item]');
+                if(a){n.scrollTop=a.offsetTop-n.offsetTop-n.clientHeight/2}
+            }
+            // Save scroll on refresh/unload
+            window.addEventListener('beforeunload',function(){
+                sessionStorage.setItem('sidebarScroll',n.scrollTop);
+                sessionStorage.setItem('sidebarFromClick','1');
+            });
             var h=document.getElementById('sidebar-hide');if(h)h.remove();
         })();
     </script>
