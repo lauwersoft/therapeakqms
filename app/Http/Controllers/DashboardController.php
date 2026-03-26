@@ -54,6 +54,7 @@ class DashboardController extends Controller
         // Active users (admin only)
         $activeUsers = auth()->user()->isAdmin()
             ? \App\Models\User::whereNotNull('last_active_at')
+                ->where('id', '!=', auth()->id())
                 ->orderByDesc('last_active_at')
                 ->limit(10)
                 ->get(['id', 'name', 'role', 'last_active_at'])
