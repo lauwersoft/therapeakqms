@@ -126,7 +126,7 @@
         })();
     </script>
     <nav id="sidebar-nav" class="p-3 flex-1 flex flex-col overflow-y-auto"
-         onclick="if(event.target.closest('a')){sessionStorage.setItem('sidebarScroll',this.scrollTop);sessionStorage.setItem('sidebarFromClick','1')}">
+         onclick="if(event.target.closest('a'))sessionStorage.setItem('sidebarClickNav','1')">
         <div>
             @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $sidebarCanEdit, 'changedFiles' => $changedFiles, 'commentSummary' => $commentSummary ?? []])
         </div>
@@ -151,23 +151,17 @@
     <script>
         (function(){
             var n=document.getElementById('sidebar-nav');if(!n)return;
-            var fromClick=sessionStorage.getItem('sidebarFromClick');
+            var fromSidebar=sessionStorage.getItem('sidebarClickNav');
+            var isReload=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0]&&performance.getEntriesByType('navigation')[0].type==='reload';
             var s=sessionStorage.getItem('sidebarScroll');
-            sessionStorage.removeItem('sidebarFromClick');
-            if(fromClick&&s!==null){
-                // Clicked sidebar link or refresh — restore exact position
-                n.scrollTop=parseInt(s);
+            sessionStorage.removeItem('sidebarClickNav');
+            if(fromSidebar||isReload){
+                if(s!==null)n.scrollTop=parseInt(s);
             }else{
-                // Came from external link — center active item
-                sessionStorage.removeItem('sidebarScroll');
                 var a=n.querySelector('[data-active-sidebar-item]');
-                if(a){n.scrollTop=a.offsetTop-n.offsetTop-n.clientHeight/2}
+                if(a)n.scrollTop=a.offsetTop-n.offsetTop-n.clientHeight/2;
             }
-            // Save scroll on refresh/unload
-            window.addEventListener('beforeunload',function(){
-                sessionStorage.setItem('sidebarScroll',n.scrollTop);
-                sessionStorage.setItem('sidebarFromClick','1');
-            });
+            window.addEventListener('beforeunload',function(){sessionStorage.setItem('sidebarScroll',n.scrollTop)});
             var h=document.getElementById('sidebar-hide');if(h)h.remove();
         })();
     </script>
