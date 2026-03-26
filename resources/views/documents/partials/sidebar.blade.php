@@ -112,7 +112,7 @@
         </div>
     </div>
     <style id="sidebar-hide">#sidebar-nav>div{visibility:hidden}</style>
-    <nav id="sidebar-nav" class="p-3 flex-1 flex flex-col overflow-y-auto" onclick="if(event.target.closest('a'))sessionStorage.setItem('sidebarScroll',this.scrollTop)">
+    <nav id="sidebar-nav" class="p-3 flex-1 flex flex-col overflow-y-auto" onclick="if(event.target.closest('a'))sessionStorage.setItem('sidebarClicked','1')">
         <div>
             @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $sidebarCanEdit, 'changedFiles' => $changedFiles, 'commentSummary' => $commentSummary ?? []])
         </div>
@@ -137,11 +137,10 @@
     <script>
         (function(){
             var n=document.getElementById('sidebar-nav');if(!n)return;
-            var fromDocs=document.referrer && new URL(document.referrer).pathname.startsWith('/qms/');
-            var s=fromDocs?sessionStorage.getItem('sidebarScroll'):null;
-            if(s!==null){n.scrollTop=parseInt(s)}
-            else{var a=n.querySelector('[data-active-sidebar-item]');if(a){n.scrollTop=a.offsetTop-n.offsetTop-n.clientHeight/2}}
+            var a=n.querySelector('[data-active-sidebar-item]');
+            if(a){n.scrollTop=a.offsetTop-n.offsetTop-n.clientHeight/2}
             var h=document.getElementById('sidebar-hide');if(h)h.remove();
+            sessionStorage.removeItem('sidebarClicked');
         })();
     </script>
     @if($pendingCount > 0)
