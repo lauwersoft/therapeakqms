@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ $meta['title'] ?? $schema['title'] ?? 'Fill Form' }}</h2>
+            <div class="flex items-center gap-3 min-w-0">
                 @if($meta['id'] ?? null)
-                    <span class="text-sm font-mono text-gray-400">{{ $meta['id'] }}</span>
+                    <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 {{ \App\Services\DocumentMetadata::typeColor(explode('-', $meta['id'])[0] ?? '') }}">{{ $meta['id'] }}</span>
                 @endif
+                <span class="text-xs text-gray-400 font-mono truncate">documents/{{ $path }}</span>
             </div>
             <div class="flex items-center gap-2">
                 <a href="{{ route('records.form', $meta['id'] ?? '') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200">
@@ -24,23 +24,31 @@
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             {{-- Form info card --}}
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-                <div class="flex items-center gap-2 mb-1.5">
-                    @if($meta['id'] ?? null)
-                        <span class="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? 'FM') }}">{{ $meta['id'] }}</span>
-                    @endif
-                    <span class="text-sm font-medium text-gray-800">{{ $meta['title'] ?? $schema['title'] ?? 'Form' }}</span>
-                    @if($meta['status'] ?? null)
-                        <span class="text-[10px] font-medium px-1.5 py-0.5 rounded
-                            {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
-                            {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
-                            {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}">{{ ucfirst($meta['status']) }}</span>
-                    @endif
-                </div>
-                <div class="text-[11px] text-gray-400 font-mono mb-1.5">documents/{{ $path }}</div>
-                <div class="flex items-center gap-3 text-xs text-gray-500">
-                    @if($meta['version'] ?? null)<span>v{{ $meta['version'] }}</span>@endif
-                    @if($meta['author'] ?? null)<span>Author: {{ $meta['author'] }}</span>@endif
-                    <span>{{ count($schema['fields'] ?? []) }} {{ Str::plural('field', count($schema['fields'] ?? [])) }}</span>
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1.5">
+                            @if($meta['id'] ?? null)
+                                <span class="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor(explode('-', $meta['id'])[0] ?? '') }}">{{ $meta['id'] }}</span>
+                            @endif
+                            <span class="text-sm font-medium text-gray-800">{{ $meta['title'] ?? $schema['title'] ?? 'Form' }}</span>
+                            @if($meta['status'] ?? null)
+                                <span class="text-[10px] font-medium px-1.5 py-0.5 rounded
+                                    {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
+                                    {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
+                                    {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}">{{ ucfirst($meta['status']) }}</span>
+                            @endif
+                        </div>
+                        <div class="text-[11px] text-gray-400 font-mono mb-1.5">documents/{{ $path }}</div>
+                        <div class="flex items-center gap-3 text-xs text-gray-500">
+                            @if($meta['version'] ?? null)<span>v{{ $meta['version'] }}</span>@endif
+                            @if($meta['author'] ?? null)<span>Author: {{ $meta['author'] }}</span>@endif
+                            <span>{{ count($schema['fields'] ?? []) }} {{ Str::plural('field', count($schema['fields'] ?? [])) }}</span>
+                        </div>
+                    </div>
+                    <a href="{{ route('documents.index', ['path' => $path]) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        View form
+                    </a>
                 </div>
             </div>
 
