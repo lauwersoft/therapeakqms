@@ -101,22 +101,7 @@
                 @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''; sidebarCommentFilter = ''"
                 class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
     </div>
-    <nav class="p-3 flex-1 flex flex-col overflow-y-auto" x-init="
-        const saved = sessionStorage.getItem('sidebarScroll');
-        if (saved !== null) {
-            $el.scrollTop = parseInt(saved);
-        } else {
-            const active = $el.querySelector('[data-active-sidebar-item]');
-            if (active) {
-                const navRect = $el.getBoundingClientRect();
-                const itemRect = active.getBoundingClientRect();
-                $el.scrollTop = active.offsetTop - $el.offsetTop - (navRect.height / 2) + (itemRect.height / 2);
-            }
-        }
-        $el.addEventListener('click', (e) => {
-            if (e.target.closest('a')) sessionStorage.setItem('sidebarScroll', $el.scrollTop);
-        });
-    ">
+    <nav id="sidebar-nav" class="p-3 flex-1 flex flex-col overflow-y-auto" onclick="if(event.target.closest('a'))sessionStorage.setItem('sidebarScroll',this.scrollTop)">
         <div>
             @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $sidebarCanEdit, 'changedFiles' => $changedFiles, 'commentSummary' => $commentSummary ?? []])
         </div>
@@ -138,6 +123,14 @@
             </div>
         @endif
     </nav>
+    <script>
+        (function(){
+            var n=document.getElementById('sidebar-nav');if(!n)return;
+            var s=sessionStorage.getItem('sidebarScroll');
+            if(s!==null){n.scrollTop=parseInt(s)}
+            else{var a=n.querySelector('[data-active-sidebar-item]');if(a){n.scrollTop=a.offsetTop-n.offsetTop-n.clientHeight/2}}
+        })();
+    </script>
     @if($pendingCount > 0)
         <div class="p-3 border-t border-gray-200">
             <a href="{{ route('documents.changes') }}"
