@@ -67,13 +67,15 @@ class UserActivityController extends Controller
         $base = fn() => UserActivity::where('user_id', $user->id)
             ->when($days > 0, fn($q) => $q->where('created_at', '>=', now()->subDays($days)));
 
+        $pageViews = fn() => $base()->where('type', 'page_view');
+
         $activities = $base()
             ->orderByDesc('created_at')
             ->limit(500)
             ->get();
 
-        // Most viewed pages
-        $topPages = $base()
+        // Most viewed pages (page views only)
+        $topPages = $pageViews()
             ->selectRaw('path, doc_id, doc_title, count(*) as views, sum(time_spent) as total_time, max(scroll_depth) as max_scroll, round(avg(scroll_depth)) as avg_scroll')
             ->groupBy('path', 'doc_id', 'doc_title')
             ->orderByDesc('total_time')
@@ -87,8 +89,8 @@ class UserActivityController extends Controller
             ->orderByDesc('date')
             ->get();
 
-        // Device breakdown
-        $devices = $base()
+        // Device breakdown (page views only — server-side actions have no device data)
+        $devices = $pageViews()
             ->selectRaw('device, browser, os, count(*) as count')
             ->groupBy('device', 'browser', 'os')
             ->orderByDesc('count')
