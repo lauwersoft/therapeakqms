@@ -51,7 +51,16 @@ class DashboardController extends Controller
         $recentComments = $commentService->recentUnresolved(5, auth()->user()->role);
         $commentSummaryDashboard = $commentService->summary();
 
+        // Active users (admin only)
+        $activeUsers = auth()->user()->isAdmin()
+            ? \App\Models\User::whereNotNull('last_active_at')
+                ->orderByDesc('last_active_at')
+                ->limit(10)
+                ->get(['id', 'name', 'role', 'last_active_at'])
+            : collect();
+
         return view('dashboard', [
+            'activeUsers' => $activeUsers,
             'recentCommits' => $recentCommits,
             'totalDocs' => $totalDocs,
             'draftCount' => $draftCount,

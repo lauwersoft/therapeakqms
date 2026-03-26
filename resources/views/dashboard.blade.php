@@ -127,6 +127,51 @@
                 </div>
             </div>
 
+            {{-- User Activity --}}
+            @if(Auth::user()->isAdmin() && $activeUsers->isNotEmpty())
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+                    <div class="px-5 py-4 border-b border-gray-100">
+                        <h3 class="font-semibold text-gray-800">User Activity</h3>
+                    </div>
+                    <div class="divide-y divide-gray-50">
+                        @foreach($activeUsers as $activeUser)
+                            <div class="px-5 py-3 flex items-center gap-3">
+                                <div class="relative">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0
+                                        {{ $activeUser->role === 'admin' ? 'bg-purple-100' : '' }}
+                                        {{ $activeUser->role === 'editor' ? 'bg-blue-100' : '' }}
+                                        {{ $activeUser->role === 'auditor' ? 'bg-gray-100' : '' }}">
+                                        <span class="text-xs font-semibold
+                                            {{ $activeUser->role === 'admin' ? 'text-purple-600' : '' }}
+                                            {{ $activeUser->role === 'editor' ? 'text-blue-600' : '' }}
+                                            {{ $activeUser->role === 'auditor' ? 'text-gray-500' : '' }}">{{ strtoupper(substr($activeUser->name, 0, 1)) }}</span>
+                                    </div>
+                                    @if($activeUser->last_active_at->gt(now()->subMinutes(5)))
+                                        <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></span>
+                                    @endif
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-sm font-medium text-gray-800">{{ $activeUser->name }}</span>
+                                        <span class="text-[10px] font-medium px-1 py-0.5 rounded
+                                            {{ $activeUser->role === 'admin' ? 'bg-purple-100 text-purple-600' : '' }}
+                                            {{ $activeUser->role === 'editor' ? 'bg-blue-100 text-blue-600' : '' }}
+                                            {{ $activeUser->role === 'auditor' ? 'bg-gray-100 text-gray-500' : '' }}">{{ ucfirst($activeUser->role) }}</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">
+                                        @if($activeUser->last_active_at->gt(now()->subMinutes(5)))
+                                            Online now
+                                        @else
+                                            Last active {{ $activeUser->last_active_at->diffForHumans() }}
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             @if(Auth::user()->isAdmin())
                 <a href="/telescope" class="block bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow mb-8">
                     <div class="flex items-center gap-3">
