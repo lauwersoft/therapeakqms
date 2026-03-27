@@ -314,7 +314,11 @@
 
                     editFile() {
                         this.closeMenus();
-                        window.location = '/documents/edit/' + this.ctx.path;
+                        if (this.ctx.path.endsWith('.form.json')) {
+                            window.location = '/forms/edit/' + this.ctx.path;
+                        } else {
+                            window.location = '/documents/edit/' + this.ctx.path;
+                        }
                     },
 
                     showRename() {
