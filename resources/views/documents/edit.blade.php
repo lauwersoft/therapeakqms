@@ -252,7 +252,8 @@
                     bgMenu: { show: false, x: 0, y: 0 },
 
                     // Modals
-                    modal: { rename: false, move: false, delete: false, renameDir: false, deleteDir: false, quickCreate: false, newDir: false, upload: false },
+                    modal: { rename: false, move: false, delete: false, renameDir: false, deleteDir: false, quickCreate: false, newDir: false, upload: false, confirmMove: false },
+                    pendingMove: null,
 
                     // Context data
                     ctx: { path: '', name: '', dirPath: '', dirName: '', targetDir: '' },
@@ -372,15 +373,16 @@
                             dragClass: 'sortable-drag',
                             onEnd: (evt) => {
                                 const filePath = evt.item.dataset.path;
+                                const fileName = filePath.split('/').pop().replace(/(\.\w+)+$/, '').replace(/[-_]/g, ' ');
                                 const newDir = evt.to.dataset.directory || '';
                                 const oldDir = evt.from.dataset.directory || '';
                                 if (newDir === oldDir) return;
-                                const form = document.createElement('form');
-                                form.method = 'POST';
-                                form.action = '{{ route("documents.move") }}';
-                                form.innerHTML = '<input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="path" value="' + filePath + '"><input type="hidden" name="destination" value="' + newDir + '">';
-                                document.body.appendChild(form);
-                                form.submit();
+
+                                evt.from.insertBefore(evt.item, evt.from.children[evt.oldIndex]);
+
+                                const ucDir = (d) => d ? d.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Root';
+                                this.pendingMove = { path: filePath, destination: newDir, fileName, fromLabel: ucDir(oldDir), toLabel: ucDir(newDir) };
+                                this.modal.confirmMove = true;
                             }
                         });
                     },
