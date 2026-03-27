@@ -3,16 +3,15 @@
 /**
  * Central function for displaying dates.
  * All date display in views should go through this.
- * Currently shows UTC. In the future, can convert to user's timezone.
+ * Stores in UTC, displays in user's timezone.
  */
 function usertime($date, string $format = null): \Carbon\Carbon|string
 {
     $carbon = \Carbon\Carbon::parse($date ?? now())->setTimezone('UTC');
 
-    // Future: uncomment to enable per-user timezone
-    // if (auth()->check() && auth()->user()->timezone) {
-    //     $carbon = $carbon->setTimezone(auth()->user()->timezone);
-    // }
+    if (auth()->check() && auth()->user()->timezone) {
+        $carbon = $carbon->setTimezone(auth()->user()->timezone);
+    }
 
     return $format ? $carbon->format($format) : $carbon;
 }
