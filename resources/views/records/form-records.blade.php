@@ -3,7 +3,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2 min-w-0">
-                <span class="text-xs text-gray-400 shrink-0">Records:</span>
+                <span class="text-sm font-semibold text-gray-800 shrink-0">Submissions:</span>
                 <span class="text-sm text-gray-800 font-medium truncate">{{ $formTitle }}</span>
                 <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 {{ \App\Services\DocumentMetadata::typeColor('FM') }}">{{ $formId }}</span>
             </div>
@@ -59,7 +59,7 @@
             </div>
 
             {{-- Records list --}}
-            <h3 class="text-sm font-semibold text-gray-700 mb-3">Submissions</h3>
+            <h3 class="text-sm font-semibold text-gray-700 mb-3">Submissions ({{ $records->count() }})</h3>
             @if($records->isEmpty())
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
                     <p class="text-gray-400">No submissions for this form yet.</p>
