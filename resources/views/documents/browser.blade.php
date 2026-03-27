@@ -354,8 +354,10 @@
 
             {{-- Results count + collapse/expand --}}
             <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <span class="text-xs text-gray-400" x-text="filteredDocs.length + ' of ' + docs.length + ' documents'"></span>
+                <span class="text-xs text-gray-400" x-text="filteredDocs.length + ' of ' + docs.length + ' documents'"></span>
+                    <button x-show="typeFilter || statusFilter || commentFilter || search" x-cloak
+                            @click="typeFilter = ''; statusFilter = ''; commentFilter = ''; search = ''"
+                            class="text-xs text-blue-600 hover:text-blue-800">Clear filters</button>
                     <div class="flex items-center gap-1.5">
                         <button @click="collapseAll()" class="flex items-center gap-1 px-2 py-1 rounded border border-gray-200 text-[11px] text-gray-500 hover:text-gray-700 hover:bg-gray-50 bg-white">
                             <svg class="w-3 h-3" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3.5A1.5 1.5 0 012.5 2h3.879a1.5 1.5 0 011.06.44l1.122 1.12A1.5 1.5 0 009.62 4H13.5A1.5 1.5 0 0115 5.5v.5H1v-2.5z"/><path d="M1 7v5.5A1.5 1.5 0 002.5 14h11a1.5 1.5 0 001.5-1.5V7H1zm6 2h2v1.5l1.5-1.5L12 10.5 8 14.5l-4-4L5.5 9 7 10.5V9z"/></svg>
@@ -367,9 +369,6 @@
                         </button>
                     </div>
                 </div>
-                <button x-show="typeFilter || statusFilter || commentFilter || search" x-cloak
-                        @click="typeFilter = ''; statusFilter = ''; commentFilter = ''; search = ''"
-                        class="text-xs text-blue-600 hover:text-blue-800">Clear all filters</button>
             </div>
 
             {{-- Loading spinner --}}
