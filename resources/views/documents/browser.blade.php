@@ -370,6 +370,7 @@
                         </button>
                     </div>
                 </div>
+            </div>
 
             {{-- Loading spinner --}}
             <div x-show="!ready" x-cloak class="flex items-center justify-center py-16">
