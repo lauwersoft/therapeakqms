@@ -248,7 +248,7 @@
             </div>
         @endif
 
-        <div class="flex flex-col h-full overflow-y-auto bg-gray-100">
+        <div class="pb-6">
         <div class="max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6">
             {{-- Unpublished changes banner --}}
             @if($pendingCount > 0 && $canEdit)
@@ -462,7 +462,6 @@
                      @contextmenu.prevent.stop="ctx = { show: true, type: 'bg', x: $event.clientX, y: $event.clientY, path: '', urlPath: '', isMarkdown: false, title: '', dir: '' }">
                 </div>
             @endif
-        </div>
         </div>
 
     @push('scripts')
