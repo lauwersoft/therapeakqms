@@ -37,7 +37,7 @@ class DocumentMetadata
         'FM' => 'bg-purple-100 text-purple-700',
         'TMP' => 'bg-fuchsia-100 text-fuchsia-700',
         'PLN' => 'bg-teal-100 text-teal-700',
-        'REC' => 'bg-blue-100 text-blue-700',
+        'REC' => 'bg-yellow-100 text-yellow-700',
         'RPT' => 'bg-sky-100 text-sky-700',
         'LOG' => 'bg-gray-100 text-gray-600',
         'LST' => 'bg-zinc-100 text-zinc-700',
