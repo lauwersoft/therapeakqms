@@ -44,7 +44,7 @@ class DocumentMetadata
         'SPE' => 'bg-yellow-100 text-yellow-700',
         'DWG' => 'bg-emerald-100 text-emerald-700',
         'AGR' => 'bg-amber-100 text-amber-700',
-        'CER' => 'bg-green-100 text-green-700',
+        'CER' => 'bg-pink-100 text-pink-700',
         'LBL' => 'bg-lime-100 text-lime-700',
         'RA' => 'bg-red-100 text-red-700',
         'CE' => 'bg-rose-100 text-rose-700',
