@@ -28,7 +28,7 @@
                                 <h3 class="text-sm font-semibold text-gray-700">{{ $form['form_title'] }}</h3>
                                 <span class="text-xs text-gray-400">({{ $form['count'] }})</span>
                             </div>
-                            <a href="{{ route('records.form', $form['form_id']) }}" class="text-xs text-blue-600 hover:text-blue-800">View all{{ $form['has_more'] ? ' ' . $form['count'] : '' }}</a>
+                            <a href="{{ route('records.form', $form['form_id']) }}" class="text-xs text-blue-600 hover:text-blue-800">View all</a>
                         </div>
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                             @foreach($form['records'] as $record)
