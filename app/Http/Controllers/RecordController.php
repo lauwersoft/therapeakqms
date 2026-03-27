@@ -45,12 +45,19 @@ class RecordController extends Controller
         $records = $this->allRecords();
         $grouped = collect($records)->groupBy('form_id');
 
+        // Resolve form titles from document index
+        $docIndex = \App\Services\DocumentMetadata::index(base_path('qms/documents'));
+        $formTitles = [];
+        foreach ($docIndex as $docPath => $docMeta) {
+            if (!empty($docMeta['id'])) $formTitles[$docMeta['id']] = $docMeta['title'] ?? $docMeta['id'];
+        }
+
         // Group, sort each group newest first, sort groups by form ID
-        $forms = $grouped->map(function ($formRecords, $formId) {
+        $forms = $grouped->map(function ($formRecords, $formId) use ($formTitles) {
             $sorted = $formRecords->sortByDesc('submitted_at')->values();
             return [
                 'form_id' => $formId,
-                'form_title' => $formRecords->first()['form_title'] ?: $formId ?: 'Unknown',
+                'form_title' => $formTitles[$formId] ?? $formRecords->first()['form_title'] ?: $formId ?: 'Unknown',
                 'count' => $formRecords->count(),
                 'records' => $sorted->take(5),
                 'has_more' => $sorted->count() > 5,
