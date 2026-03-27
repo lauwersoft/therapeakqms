@@ -125,7 +125,7 @@
                                                     </div>
                                                     <div class="flex-1 min-w-0">
                                                         <div class="flex items-center gap-2">
-                                                            <span class="text-xs font-mono font-medium text-gray-500">{{ $sub['id'] }}</span>
+                                                            <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor('REC') }}">{{ $sub['id'] }}</span>
                                                             <span class="text-sm text-gray-800 truncate">{{ $sub['title'] }}</span>
                                                         </div>
                                                         <div class="text-[11px] text-gray-400 font-mono mt-0.5">records/{{ $sub['filename'] }}</div>
