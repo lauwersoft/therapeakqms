@@ -68,7 +68,7 @@
                                 {{ $file['status'] === 'added' ? 'Created' : ($file['status'] === 'deleted' ? 'Removed' : 'Updated') }}
                             </span>
                             @if($file['doc_id'])
-                                <span class="text-xs font-mono px-1 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($file['doc_type'] ?? '') }}">{{ $file['doc_id'] }}</span>
+                                <span class="text-xs font-mono px-1 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor($file['doc_type'] ?? '') }}">{{ $file['doc_id'] }}</span>
                             @endif
                             <span class="text-sm text-gray-700 truncate">
                                 @if($dirLabel)<span class="text-gray-400">{{ $dirLabel }}</span>@endif{{ $file['doc_title'] }}

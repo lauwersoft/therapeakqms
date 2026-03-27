@@ -87,7 +87,7 @@
                                     @endphp
                                     <span class="text-xs font-medium {{ $typeConfig[0] }} px-1.5 py-0.5 rounded">{{ $typeConfig[1] }}</span>
                                     @if($activity->doc_id && $activity->doc_id !== 'null')
-                                        <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor(explode('-', $activity->doc_id)[0] ?? '') }}">{{ $activity->doc_id }}</span>
+                                        <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor(explode('-', $activity->doc_id)[0] ?? '') }}">{{ $activity->doc_id }}</span>
                                     @endif
                                     <span class="text-sm text-gray-700 truncate">{{ ($activity->doc_title && $activity->doc_title !== 'null') ? $activity->doc_title : ($activity->page_title ?: $activity->path) }}</span>
                                 </div>

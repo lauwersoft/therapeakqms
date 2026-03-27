@@ -120,7 +120,7 @@
                                                         <a href="{{ route('documents.index', ['path' => $file['path']]) }}"
                                                            class="text-sm text-gray-700 hover:text-blue-600 hover:underline">
                                                             @if($file['doc_id'])
-                                                                <span class="font-mono text-xs mr-1 px-1 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($file['doc_type'] ?? '') }}">{{ $file['doc_id'] }}</span>
+                                                                <span class="font-mono text-xs mr-1 px-1 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor($file['doc_type'] ?? '') }}">{{ $file['doc_id'] }}</span>
                                                             @endif
                                                             @if($dirLabel)
                                                                 <span class="text-gray-400">{{ $dirLabel }} /</span>

@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3 min-w-0">
                 @if($meta['id'] ?? null)
-                    <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 {{ \App\Services\DocumentMetadata::typeColor(explode('-', $meta['id'])[0] ?? '') }}">{{ $meta['id'] }}</span>
+                    <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor(explode('-', $meta['id'])[0] ?? '') }}">{{ $meta['id'] }}</span>
                 @endif
                 <span class="text-xs text-gray-400 font-mono truncate">documents/{{ $path }}</span>
             </div>
@@ -28,7 +28,7 @@
                     <div>
                         <div class="flex items-center gap-2 mb-1.5">
                             @if($meta['id'] ?? null)
-                                <span class="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor(explode('-', $meta['id'])[0] ?? '') }}">{{ $meta['id'] }}</span>
+                                <span class="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor(explode('-', $meta['id'])[0] ?? '') }}">{{ $meta['id'] }}</span>
                             @endif
                             <span class="text-sm font-medium text-gray-800">{{ $meta['title'] ?? $schema['title'] ?? 'Form' }}</span>
                             @if($meta['status'] ?? null)

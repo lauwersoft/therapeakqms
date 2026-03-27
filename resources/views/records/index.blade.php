@@ -24,7 +24,7 @@
                     <div class="mb-8">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor('FM') }}">{{ $form['form_id'] }}</span>
+                                <span class="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor('FM') }}">{{ $form['form_id'] }}</span>
                                 <h3 class="text-sm font-semibold text-gray-700">{{ $form['form_title'] }}</h3>
                                 <span class="text-xs text-gray-400">({{ $form['count'] }})</span>
                             </div>

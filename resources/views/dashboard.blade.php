@@ -36,7 +36,7 @@
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-center gap-2">
                                             @if($rcType)
-                                                <span class="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($rcType) }}">{{ $rcDocId }}</span>
+                                                <span class="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor($rcType) }}">{{ $rcDocId }}</span>
                                             @endif
                                             <span class="text-sm font-medium text-gray-800 truncate">{{ $rcTitle }}</span>
                                         </div>

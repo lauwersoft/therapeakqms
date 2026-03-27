@@ -3,7 +3,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2 min-w-0">
-                <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 {{ \App\Services\DocumentMetadata::typeColor('FM') }}">{{ $formId }}</span>
+                <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor('FM') }}">{{ $formId }}</span>
                 <span class="font-semibold text-xl text-gray-800 leading-tight truncate">{{ $formTitle }}</span>
             </div>
             <a href="{{ route('records.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
@@ -20,7 +20,7 @@
                 <div class="flex items-start justify-between gap-4">
                     <div>
                         <div class="flex items-center gap-2 mb-2">
-                            <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor('FM') }}">{{ $formId }}</span>
+                            <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor('FM') }}">{{ $formId }}</span>
                             <h3 class="text-lg font-semibold text-gray-800">{{ $formTitle }}</h3>
                         </div>
                         @if($formDoc)
@@ -75,7 +75,7 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor('REC') }}">{{ $record['id'] }}</span>
+                                    <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor('REC') }}">{{ $record['id'] }}</span>
                                     <span class="text-sm font-medium text-gray-800 truncate">{{ $record['title'] }}</span>
                                 </div>
                                 <div class="text-[11px] text-gray-400 font-mono mt-0.5">records/{{ $record['filename'] }}</div>

@@ -27,7 +27,7 @@
                             </svg>
                         </button>
                         @if($meta['id'])
-                            <span data-doc-id="{{ $meta['id'] }}" data-doc-title="{{ $meta['title'] ?? '' }}" class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
+                            <span data-doc-id="{{ $meta['id'] }}" data-doc-title="{{ $meta['title'] ?? '' }}" class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
                         @endif
                         <span class="text-xs text-gray-400 font-mono truncate">documents/{{ $currentPath }}</span>
                     </div>
@@ -125,7 +125,7 @@
                                                     </div>
                                                     <div class="flex-1 min-w-0">
                                                         <div class="flex items-center gap-2">
-                                                            <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor('REC') }}">{{ $sub['id'] }}</span>
+                                                            <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor('REC') }}">{{ $sub['id'] }}</span>
                                                             <span class="text-sm text-gray-800 truncate">{{ $sub['title'] }}</span>
                                                         </div>
                                                         <div class="text-[11px] text-gray-400 font-mono mt-0.5">records/{{ $sub['filename'] }}</div>

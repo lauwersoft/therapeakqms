@@ -12,7 +12,7 @@
                 {{-- Left column --}}
                 <div class="space-y-1.5">
                     <div class="flex items-center gap-2">
-                        <span class="font-mono font-semibold text-sm px-1.5 py-0.5 rounded {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
+                        <span class="font-mono font-semibold text-sm px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
                         <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium
                             {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
                             {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}

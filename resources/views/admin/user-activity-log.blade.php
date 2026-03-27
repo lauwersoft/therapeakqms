@@ -98,7 +98,7 @@
                                             <div class="flex-1 min-w-0">
                                                 <div class="flex items-center gap-2">
                                                     @if($activity->doc_id && $activity->doc_id !== 'null')
-                                                        <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded shrink-0 {{ \App\Services\DocumentMetadata::typeColor(explode('-', $activity->doc_id)[0] ?? '') }}">{{ $activity->doc_id }}</span>
+                                                        <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor(explode('-', $activity->doc_id)[0] ?? '') }}">{{ $activity->doc_id }}</span>
                                                     @endif
                                                     <span class="text-sm text-gray-800 truncate">{{ ($activity->doc_title && $activity->doc_title !== 'null') ? $activity->doc_title : ($activity->page_title ?: $activity->path) }}</span>
                                                 </div>
