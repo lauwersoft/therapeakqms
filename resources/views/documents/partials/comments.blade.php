@@ -250,7 +250,11 @@
         var el = document.getElementById(id);
         if (!el) return;
         flashElement(id);
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        var container = el.closest('.overflow-y-scroll') || document.scrollingElement;
+        if (container) {
+            var top = el.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop - 20;
+            container.scrollTo({ top: top, behavior: 'smooth' });
+        }
     }
 
     function scrollToElement(id) {
