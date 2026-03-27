@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('page-title', 'Edit: ' . ($meta['id'] ?? '') . ' — ' . ($meta['title'] ?? 'Form'))
     @push('styles')
         <style>
             .sortable-ghost { opacity: 0.4; }

@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('page-title', 'Edit: ' . ($meta['id'] ? $meta['id'] . ' — ' : '') . ($meta['title'] ?? 'Document'))
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
         <style>

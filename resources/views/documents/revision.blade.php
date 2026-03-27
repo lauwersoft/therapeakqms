@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('page-title', 'Revision ' . substr($commit['hash'], 0, 7))
     @push('styles')
         <style>
             .diff-line { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.8rem; line-height: 1.5; white-space: pre-wrap; word-break: break-all; }

@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('page-title', 'New Document')
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
     @endpush

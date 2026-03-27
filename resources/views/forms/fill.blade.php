@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('page-title', 'Fill: ' . ($meta['id'] ?? '') . ' — ' . ($meta['title'] ?? 'Form'))
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3 min-w-0">
