@@ -1,7 +1,10 @@
 <x-app-layout>
     @section('page-title', 'References')
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">References</h2>
+        <div class="flex items-center gap-3">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">References</h2>
+            <span class="text-sm text-gray-400">{{ $groups->flatten(1)->count() }} {{ Str::plural('document', $groups->flatten(1)->count()) }}</span>
+        </div>
     </x-slot>
 
     <div class="max-w-5xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
