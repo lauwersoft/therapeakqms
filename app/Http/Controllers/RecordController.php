@@ -70,8 +70,6 @@ class RecordController extends Controller
             ->sortByDesc('submitted_at')
             ->values();
 
-        $formTitle = $records->first()['form_title'] ?? $formId;
-
         // Find the form document
         $docIndex = \App\Services\DocumentMetadata::index(base_path('qms/documents'));
         $formDoc = null;
@@ -81,6 +79,8 @@ class RecordController extends Controller
                 break;
             }
         }
+
+        $formTitle = $formDoc['title'] ?? $records->first()['form_title'] ?? $formId;
 
         return view('records.form-records', [
             'formId' => $formId,
