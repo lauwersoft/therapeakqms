@@ -87,7 +87,7 @@
             @endisset
 
             <!-- Page Content -->
-            <main class="flex-1 overflow-y-auto">
+            <main class="flex-1 overflow-y-auto" style="scrollbar-gutter:stable">
                 {{ $slot }}
             </main>
         </div>
