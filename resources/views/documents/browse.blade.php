@@ -452,8 +452,8 @@
                 </div>
             </div>
 
-            <div x-show="filteredDocs.length === 0" x-cloak class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
-                <p class="text-gray-400">No documents match your filters.</p>
+            <div x-show="filteredDocs.length === 0" x-cloak class="py-12 text-center">
+                <p class="text-sm text-gray-400">No documents match your filters.</p>
             </div>
 
             {{-- Empty space for background right-click --}}
