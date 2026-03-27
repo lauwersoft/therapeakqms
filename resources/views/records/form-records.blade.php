@@ -64,6 +64,7 @@
             </div>
 
             {{-- Records list --}}
+            <h3 class="text-sm font-semibold text-gray-700 mb-3">All submissions for {{ $formTitle }}</h3>
             @if($records->isEmpty())
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
                     <p class="text-gray-400">No submissions for this form yet.</p>
