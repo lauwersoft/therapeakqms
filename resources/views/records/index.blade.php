@@ -4,7 +4,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">Records</h2>
-                <span class="text-sm text-gray-400">{{ $totalRecords }} {{ Str::plural('record', $totalRecords) }}</span>
+                <span class="text-sm text-gray-400">{{ $totalRecords }} {{ Str::plural('submission', $totalRecords) }}</span>
             </div>
         </div>
     </x-slot>
