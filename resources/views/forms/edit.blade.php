@@ -196,14 +196,24 @@
                     fileMenu: { show: false, x: 0, y: 0 },
                     dirMenu: { show: false, x: 0, y: 0 },
                     bgMenu: { show: false, x: 0, y: 0 },
-                    modal: { rename: false, move: false, delete: false, renameDir: false, deleteDir: false, quickCreate: false, newDir: false, upload: false },
+                    modal: { rename: false, move: false, delete: false, renameDir: false, deleteDir: false, quickCreate: false, newDir: false, upload: false, confirmMove: false },
+                    pendingMove: null,
                     ctx: { path: '', name: '', dirPath: '', dirName: '', targetDir: '' },
 
                     closeMenus() { this.fileMenu.show = false; this.dirMenu.show = false; this.bgMenu.show = false; },
                     openFileMenu(e, path, name) { if (!this.canEdit) return; e.preventDefault(); e.stopPropagation(); this.closeMenus(); this.ctx.path = path; this.ctx.name = name; this.fileMenu = { show: true, x: e.clientX, y: e.clientY }; },
                     openDirMenu(e, path, name) { if (!this.canEdit) return; e.preventDefault(); e.stopPropagation(); this.closeMenus(); this.ctx.dirPath = path; this.ctx.dirName = name; this.dirMenu = { show: true, x: e.clientX, y: e.clientY }; },
                     openBgMenu(e) { if (!this.canEdit) return; e.preventDefault(); this.closeMenus(); this.bgMenu = { show: true, x: e.clientX, y: e.clientY }; },
-                    editFile() { this.closeMenus(); window.location = '/documents/edit/' + this.ctx.path; },
+                    editFile() {
+                        this.closeMenus();
+                        sessionStorage.setItem('sidebarScroll', document.getElementById('sidebar-nav')?.scrollTop);
+                        sessionStorage.setItem('sidebarClickNav', '1');
+                        if (this.ctx.path.endsWith('.form.json')) {
+                            window.location = '/forms/edit/' + this.ctx.path;
+                        } else {
+                            window.location = '/documents/edit/' + this.ctx.path;
+                        }
+                    },
                     showRename() { this.closeMenus(); this.modal.rename = true; this.$nextTick(() => { this.$refs.renameInput?.focus(); this.$refs.renameInput?.select(); }); },
                     showMove() { this.closeMenus(); this.modal.move = true; },
                     showDelete() { this.closeMenus(); this.modal.delete = true; },
@@ -211,9 +221,43 @@
                     showDeleteDir() { this.closeMenus(); this.modal.deleteDir = true; },
                     showQuickCreate(dir) { this.closeMenus(); this.ctx.targetDir = dir; this.modal.quickCreate = true; this.$nextTick(() => this.$refs.quickCreateInput?.focus()); },
                     showNewSubdir(dir) { this.closeMenus(); this.ctx.targetDir = dir; this.modal.newDir = true; this.$nextTick(() => this.$refs.newDirInput?.focus()); },
-                    handleDrop(e) { this.dragOver = false; },
-                    handleDropToDir(e, dir) { this.dragOver = false; },
-                    initSortable() {},
+                    handleDrop(e) { this.dragOver = false; this._openUploadWithFile(e.dataTransfer.files, ''); },
+                    handleDropToDir(e, dir) { this.dragOver = false; this._openUploadWithFile(e.dataTransfer.files, dir); },
+                    _openUploadWithFile(files, directory) {
+                        if (!files || files.length === 0) return;
+                        this.droppedFile = files[0];
+                        this.modal.upload = true;
+                        this.$nextTick(() => {
+                            const fileInput = document.querySelector('#upload-file-input');
+                            if (fileInput) { const dt = new DataTransfer(); dt.items.add(this.droppedFile); fileInput.files = dt.files; }
+                            const titleInput = document.querySelector('#upload-title-input');
+                            if (titleInput && !titleInput.value) { const name = this.droppedFile.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '); titleInput.value = name.charAt(0).toUpperCase() + name.slice(1); }
+                            const dirSelect = document.querySelector('#upload-dir-select');
+                            if (dirSelect && directory) { dirSelect.value = directory; }
+                        });
+                    },
+                    initSortable(el, directory) {
+                        if (typeof Sortable === 'undefined') return;
+                        Sortable.create(el, {
+                            group: 'documents',
+                            animation: 150,
+                            fallbackOnBody: true,
+                            swapThreshold: 0.65,
+                            ghostClass: 'sortable-ghost',
+                            dragClass: 'sortable-drag',
+                            onEnd: (evt) => {
+                                const filePath = evt.item.dataset.path;
+                                const fileName = filePath.split('/').pop().replace(/(\.\w+)+$/, '').replace(/[-_]/g, ' ');
+                                const newDir = evt.to.dataset.directory || '';
+                                const oldDir = evt.from.dataset.directory || '';
+                                if (newDir === oldDir) return;
+                                evt.from.insertBefore(evt.item, evt.from.children[evt.oldIndex]);
+                                const ucDir = (d) => d ? d.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Root';
+                                this.pendingMove = { path: filePath, destination: newDir, fileName, fromLabel: ucDir(oldDir), toLabel: ucDir(newDir) };
+                                this.modal.confirmMove = true;
+                            }
+                        });
+                    },
 
                     get sidebarFilteredDocs() {
                         var cs = this.commentSummary;
