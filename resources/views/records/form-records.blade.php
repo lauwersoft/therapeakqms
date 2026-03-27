@@ -3,10 +3,16 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3 min-w-0">
-                <span class="text-sm text-gray-800 font-medium truncate">{{ $formTitle }}</span>
                 <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 {{ \App\Services\DocumentMetadata::typeColor('FM') }}">{{ $formId }}</span>
+                <span class="text-sm text-gray-800 font-medium truncate">{{ $formTitle }}</span>
+                <span class="text-xs text-gray-400 shrink-0">·</span>
+                <span class="text-xs text-gray-400 shrink-0">{{ $records->count() }} {{ Str::plural('submission', $records->count()) }}</span>
+                @if($formDoc)
+                    <span class="text-xs text-gray-300 shrink-0">·</span>
+                    <span class="text-[11px] text-gray-400 font-mono truncate hidden sm:inline">documents/{{ $formDoc['path'] }}</span>
+                @endif
             </div>
-            <a href="{{ route('records.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200">
+            <a href="{{ route('records.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 All records
             </a>
