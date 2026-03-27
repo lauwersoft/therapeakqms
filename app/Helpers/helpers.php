@@ -7,7 +7,7 @@
  */
 function usertime($date, string $format = null): \Carbon\Carbon|string
 {
-    $carbon = \Carbon\Carbon::parse($date ?? now());
+    $carbon = \Carbon\Carbon::parse($date ?? now())->setTimezone('UTC');
 
     // Future: uncomment to enable per-user timezone
     // if (auth()->check() && auth()->user()->timezone) {

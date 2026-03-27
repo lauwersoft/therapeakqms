@@ -93,6 +93,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/activity/{user}', [\App\Http\Controllers\UserActivityController::class, 'show'])->name('activity.show');
     Route::get('/admin/activity/{user}/log', [\App\Http\Controllers\UserActivityController::class, 'log'])->name('activity.log');
     Route::get('/admin/activity/{user}/session/{sessionUid}', [\App\Http\Controllers\UserActivityController::class, 'session'])->name('activity.session');
+    Route::delete('/admin/activity/{user}/clear', [\App\Http\Controllers\UserActivityController::class, 'clear'])->name('activity.clear');
 });
 
 require __DIR__.'/auth.php';

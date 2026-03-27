@@ -199,4 +199,16 @@ class UserActivityController extends Controller
             'asn_org' => $first->asn_org,
         ]);
     }
+
+    public function clear(Request $request, User $user)
+    {
+        if (!$request->user()->isAdmin()) {
+            abort(403);
+        }
+
+        UserActivity::where('user_id', $user->id)->delete();
+
+        return redirect()->route('activity.show', $user)
+            ->with('success', "Activity logs cleared for {$user->name}.");
+    }
 }

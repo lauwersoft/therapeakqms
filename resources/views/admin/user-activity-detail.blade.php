@@ -71,7 +71,14 @@
                             @endif
                         </div>
                     </div>
-                    <a href="{{ route('users.edit', $user) }}" class="shrink-0 px-3 py-1.5 text-xs text-gray-500 border border-gray-200 rounded-md hover:bg-gray-50">Edit user</a>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <form method="POST" action="{{ route('activity.clear', $user) }}" onsubmit="return confirm('Delete all activity logs for {{ $user->name }}? This cannot be undone.')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="px-3 py-1.5 text-xs text-red-500 border border-red-200 rounded-md hover:bg-red-50">Clear activity</button>
+                        </form>
+                        <a href="{{ route('users.edit', $user) }}" class="px-3 py-1.5 text-xs text-gray-500 border border-gray-200 rounded-md hover:bg-gray-50">Edit user</a>
+                    </div>
                 </div>
             </div>
 
