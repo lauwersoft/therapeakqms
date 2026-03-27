@@ -3,7 +3,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">Change History</h2>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">History</h2>
                 <span class="text-sm text-gray-400">{{ $totalCommits }} {{ Str::plural('revision', $totalCommits) }}</span>
             </div>
         </div>
