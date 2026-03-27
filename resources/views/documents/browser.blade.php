@@ -1,5 +1,8 @@
 <x-app-layout>
     @section('page-title', 'Browser')
+    @push('styles')
+        <style>main { scrollbar-gutter: stable; }</style>
+    @endpush
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -30,7 +33,7 @@
          @dragleave.self.prevent="dragOver = false"
          @drop.prevent="handleDrop($event)"
          x-init="document.addEventListener('dragleave', (e) => { if (!e.relatedTarget && e.clientX === 0 && e.clientY === 0) dragOver = false; }); document.addEventListener('drop', () => dragOver = false);"
-         class="relative h-full" style="scrollbar-gutter:stable">
+         class="relative h-full">
 
         @if($canEdit)
             {{-- Single context menu --}}
