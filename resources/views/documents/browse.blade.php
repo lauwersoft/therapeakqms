@@ -385,7 +385,7 @@
                                         <span class="font-mono text-xs shrink-0 px-1.5 py-0.5 rounded font-medium" :class="doc.type_color" x-text="doc.doc_id"></span>
                                         <div class="flex-1 min-w-0">
                                             <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
-                                            <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'/' + doc.path"></span>
+                                            <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'documents/' + doc.path"></span>
                                         </div>
                                         <span class="shrink-0 text-[11px] font-medium px-1.5 py-0.5 rounded"
                                               :class="statusClass(doc.status)" x-text="doc.status_label"></span>
@@ -425,7 +425,7 @@
                                         <span class="font-mono text-xs shrink-0 px-1.5 py-0.5 rounded font-medium" :class="doc.type_color" x-text="doc.doc_id"></span>
                                         <div class="flex-1 min-w-0">
                                             <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
-                                            <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'/' + doc.path"></span>
+                                            <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'documents/' + doc.path"></span>
                                         </div>
                                         <span class="shrink-0 text-[11px] font-medium px-1.5 py-0.5 rounded"
                                               :class="statusClass(doc.status)" x-text="doc.status_label"></span>

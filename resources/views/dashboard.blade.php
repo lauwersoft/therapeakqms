@@ -247,7 +247,7 @@
                                                         @endif
                                                         {{ $file['status'] === 'added' ? 'created' : ($file['status'] === 'deleted' ? 'removed' : 'updated') }}
                                                     </span>
-                                                    <span class="text-[10px] text-gray-400 font-mono truncate">/{{ $file['path'] }}</span>
+                                                    <span class="text-[10px] text-gray-400 font-mono truncate">documents/{{ $file['path'] }}</span>
                                                 </div>
                                             @endforeach
                                         </div>
