@@ -30,25 +30,25 @@ class DocumentMetadata
     ];
 
     const TYPE_COLORS = [
-        'QM' => 'bg-indigo-100 text-indigo-700',
-        'POL' => 'bg-violet-100 text-violet-700',
-        'SOP' => 'bg-blue-100 text-blue-700',
-        'WI' => 'bg-cyan-100 text-cyan-700',
-        'FM' => 'bg-purple-100 text-purple-700',
-        'TMP' => 'bg-fuchsia-100 text-fuchsia-700',
-        'PLN' => 'bg-teal-100 text-teal-700',
-        'REC' => 'bg-orange-100 text-orange-700',
-        'RPT' => 'bg-sky-100 text-sky-700',
-        'LOG' => 'bg-gray-100 text-gray-600',
-        'LST' => 'bg-zinc-100 text-zinc-700',
-        'SPE' => 'bg-yellow-100 text-yellow-700',
-        'DWG' => 'bg-emerald-100 text-emerald-700',
-        'AGR' => 'bg-amber-100 text-amber-700',
-        'CER' => 'bg-pink-100 text-pink-700',
-        'LBL' => 'bg-lime-100 text-lime-700',
-        'RA' => 'bg-red-100 text-red-700',
-        'CE' => 'bg-rose-100 text-rose-700',
-        'MAN' => 'bg-stone-100 text-stone-700',
+        'QM' => 'bg-indigo-100 text-indigo-700',      // deep blue-purple
+        'POL' => 'bg-violet-100 text-violet-700',      // violet
+        'SOP' => 'bg-blue-100 text-blue-700',          // blue
+        'WI' => 'bg-cyan-100 text-cyan-700',           // cyan
+        'FM' => 'bg-purple-100 text-purple-700',       // purple
+        'TMP' => 'bg-fuchsia-100 text-fuchsia-700',   // fuchsia
+        'PLN' => 'bg-teal-100 text-teal-700',          // teal
+        'REC' => 'bg-orange-100 text-orange-700',      // orange
+        'RPT' => 'bg-sky-100 text-sky-700',            // sky blue
+        'LOG' => 'bg-gray-100 text-gray-600',          // gray
+        'LST' => 'bg-zinc-100 text-zinc-700',          // dark gray
+        'SPE' => 'bg-yellow-100 text-yellow-700',      // yellow
+        'DWG' => 'bg-emerald-100 text-emerald-700',    // emerald green
+        'AGR' => 'bg-amber-100 text-amber-700',        // amber
+        'CER' => 'bg-lime-100 text-lime-700',          // lime green
+        'LBL' => 'bg-stone-100 text-stone-600',        // stone/brown
+        'RA' => 'bg-red-100 text-red-700',             // red
+        'CE' => 'bg-rose-100 text-rose-700',           // rose/pink
+        'MAN' => 'bg-pink-100 text-pink-700',          // pink
     ];
 
     const STATUSES = [
