@@ -46,6 +46,7 @@ class UserController extends Controller
             'role' => 'required|in:' . implode(',', User::ROLES),
             'password' => 'nullable|string|min:8',
             'approved' => 'boolean',
+            'track_activity' => 'boolean',
         ]);
 
         $password = $request->input('password');
@@ -61,6 +62,7 @@ class UserController extends Controller
             'email' => $request->input('email'),
             'organisation' => $request->input('organisation'),
             'timezone' => $request->input('timezone'),
+            'track_activity' => $request->boolean('track_activity'),
             'role' => $request->input('role'),
             'password' => $password,
             'approved' => $request->boolean('approved'),
@@ -102,6 +104,7 @@ class UserController extends Controller
         $user->email = $request->input('email');
         $user->organisation = $request->input('organisation');
         $user->timezone = $request->input('timezone');
+        $user->track_activity = $request->boolean('track_activity');
         $user->role = $request->input('role');
         $user->approved = $request->boolean('approved');
 

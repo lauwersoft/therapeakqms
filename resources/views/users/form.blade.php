@@ -104,6 +104,19 @@
                                 <p class="text-xs text-gray-500">Inactive users cannot access the platform</p>
                             </div>
                         </div>
+
+                        <div class="flex items-center gap-3">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="hidden" name="track_activity" value="0">
+                                <input type="checkbox" name="track_activity" value="1"
+                                       {{ old('track_activity', $user?->track_activity ?? true) ? 'checked' : '' }}
+                                       class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            </label>
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Track activity</span>
+                                <p class="text-xs text-gray-500">Record page views, actions, and session details</p>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="flex items-center justify-between mt-8 pt-5 border-t border-gray-100">

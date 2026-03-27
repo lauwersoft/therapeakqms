@@ -11,7 +11,7 @@ class UserActivityController extends Controller
 {
     public function track(Request $request)
     {
-        if (!$request->user() || $request->user()->isAdmin()) {
+        if (!$request->user() || !$request->user()->track_activity) {
             return response()->json(['ok' => true]);
         }
 
@@ -48,8 +48,7 @@ class UserActivityController extends Controller
             abort(403);
         }
 
-        $users = User::where('role', '!=', User::ROLE_ADMIN)
-            ->whereNotNull('last_active_at')
+        $users = User::whereNotNull('last_active_at')
             ->orderByDesc('last_active_at')
             ->get();
 

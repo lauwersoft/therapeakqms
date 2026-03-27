@@ -97,7 +97,7 @@ class CommentController extends Controller
             'content' => $request->input('content'),
         ]);
 
-        if (!$user->isAdmin()) TrackUserActionJob::dispatch($user->id, UserActivity::TYPE_COMMENT, $request->path(), $request->input('doc_id'), null, Str::limit($request->input('content'), 200), $request->ip());
+        if ($user->track_activity) TrackUserActionJob::dispatch($user->id, UserActivity::TYPE_COMMENT, $request->path(), $request->input('doc_id'), null, Str::limit($request->input('content'), 200), $request->ip());
 
         return $this->respond($request, $comment['id'], 'Comment added.');
     }
@@ -126,7 +126,7 @@ class CommentController extends Controller
             return back()->withErrors(['Comment not found.']);
         }
 
-        if (!$user->isAdmin()) TrackUserActionJob::dispatch($user->id, UserActivity::TYPE_REPLY, $request->path(), $request->input('doc_id'), null, Str::limit($request->input('content'), 200), $request->ip());
+        if ($user->track_activity) TrackUserActionJob::dispatch($user->id, UserActivity::TYPE_REPLY, $request->path(), $request->input('doc_id'), null, Str::limit($request->input('content'), 200), $request->ip());
 
         return $this->respond($request, $commentId, 'Reply added.');
     }
@@ -153,7 +153,7 @@ class CommentController extends Controller
             $request->input('note')
         );
 
-        if (!$user->isAdmin()) TrackUserActionJob::dispatch($user->id, UserActivity::TYPE_RESOLVE_COMMENT, $request->path(), $request->input('doc_id'), null, $request->input('note'), $request->ip());
+        if ($user->track_activity) TrackUserActionJob::dispatch($user->id, UserActivity::TYPE_RESOLVE_COMMENT, $request->path(), $request->input('doc_id'), null, $request->input('note'), $request->ip());
 
         return $this->respond($request, $commentId, 'Comment resolved.');
     }
@@ -175,7 +175,7 @@ class CommentController extends Controller
             $commentId
         );
 
-        if (!$request->user()->isAdmin()) TrackUserActionJob::dispatch($request->user()->id, UserActivity::TYPE_UNRESOLVE_COMMENT, $request->path(), $request->input('doc_id'), null, null, $request->ip());
+        if ($request->user()->track_activity) TrackUserActionJob::dispatch($request->user()->id, UserActivity::TYPE_UNRESOLVE_COMMENT, $request->path(), $request->input('doc_id'), null, null, $request->ip());
 
         return $this->respond($request, $commentId, 'Comment reopened.');
     }

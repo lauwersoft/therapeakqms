@@ -44,6 +44,7 @@ class User extends Authenticatable
         'email',
         'organisation',
         'timezone',
+        'track_activity',
         'password',
         'role',
         'approved',
@@ -71,6 +72,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'approved' => 'boolean',
+            'track_activity' => 'boolean',
             'last_active_at' => 'datetime',
         ];
     }

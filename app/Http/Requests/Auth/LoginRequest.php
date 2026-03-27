@@ -52,7 +52,7 @@ class LoginRequest extends FormRequest
 
         RateLimiter::clear($this->throttleKey());
 
-        if (!Auth::user()->isAdmin()) {
+        if (Auth::user()->track_activity) {
             \App\Jobs\TrackUserActionJob::dispatch(Auth::id(), \App\Models\UserActivity::TYPE_LOGIN, '/login', null, null, null, $this->ip());
         }
     }
