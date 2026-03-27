@@ -836,7 +836,7 @@ class DocumentController extends Controller
             $doc['comment_count'] = $commentSummary[$doc['doc_id'] ?? '']['unresolved'] ?? 0;
         }
 
-        return view('documents.browse', [
+        return view('documents.browser', [
             'documents' => $documents,
             'grouped' => $grouped,
             'totalDocs' => count($documents),

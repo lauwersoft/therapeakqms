@@ -30,7 +30,7 @@
          @dragleave.self.prevent="dragOver = false"
          @drop.prevent="handleDrop($event)"
          x-init="document.addEventListener('dragleave', (e) => { if (!e.relatedTarget && e.clientX === 0 && e.clientY === 0) dragOver = false; }); document.addEventListener('drop', () => dragOver = false);"
-         class="relative h-full">
+         class="relative h-full" style="scrollbar-gutter:stable">
 
         @if($canEdit)
             {{-- Single context menu --}}
