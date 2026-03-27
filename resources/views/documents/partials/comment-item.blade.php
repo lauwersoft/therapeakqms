@@ -44,7 +44,7 @@
                 @if(($comment['visibility'] ?? 'internal') === 'internal')
                     <span class="text-[10px] text-gray-400 italic">internal</span>
                 @endif
-                <span class="text-[10px] text-gray-300">{{ \Carbon\Carbon::parse($comment['created_at'])->diffForHumans() }}</span>
+                <span class="text-[10px] text-gray-300">{{ usertime($comment['created_at'])->diffForHumans() }}</span>
             </div>
 
             {{-- Comment text --}}
@@ -75,7 +75,7 @@
                                     <span class="text-[8px] font-bold text-gray-500">{{ strtoupper(substr($reply['user_name'], 0, 1)) }}</span>
                                 </div>
                                 <span class="text-xs font-semibold text-gray-700">{{ $reply['user_name'] }}</span>
-                                <span class="text-[10px] text-gray-300">{{ \Carbon\Carbon::parse($reply['created_at'])->diffForHumans() }}</span>
+                                <span class="text-[10px] text-gray-300">{{ usertime($reply['created_at'])->diffForHumans() }}</span>
                             </div>
                             <div class="flex items-center gap-2 ml-7">
                                 <p class="text-sm text-gray-600 mt-0.5 flex-1">{{ $reply['content'] }}</p>

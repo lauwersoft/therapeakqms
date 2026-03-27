@@ -129,7 +129,7 @@
                                                             <span class="text-sm text-gray-800 truncate">{{ $sub['title'] }}</span>
                                                         </div>
                                                         <div class="text-[11px] text-gray-400 font-mono mt-0.5">records/{{ $sub['filename'] }}</div>
-                                                        <span class="text-xs text-gray-400">{{ $sub['author'] }} · {{ $sub['submitted_at'] ? \Carbon\Carbon::parse($sub['submitted_at'])->diffForHumans() : '' }}</span>
+                                                        <span class="text-xs text-gray-400">{{ $sub['author'] }} · {{ $sub['submitted_at'] ? usertime($sub['submitted_at'])->diffForHumans() : '' }}</span>
                                                     </div>
                                                 </a>
                                             @endforeach
@@ -219,7 +219,7 @@
                                         <span class="text-sm text-gray-700">{{ $commit['message'] }}</span>
                                     </div>
                                     <span class="text-xs text-gray-400 shrink-0">{{ $commit['author'] }}</span>
-                                    <span class="text-xs text-gray-400 shrink-0">{{ $commit['date']->diffForHumans() }}</span>
+                                    <span class="text-xs text-gray-400 shrink-0">{{ usertime($commit['date'])->diffForHumans() }}</span>
                                     <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>

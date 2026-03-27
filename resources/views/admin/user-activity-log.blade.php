@@ -27,7 +27,7 @@
                             @foreach($activeDates as $d)
                                 <a href="{{ route('activity.log', [$user, 'date' => $d->date, 'type' => $typeFilter]) }}"
                                    class="flex items-center justify-between px-3 py-1.5 text-xs {{ $dateFilter === $d->date ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-50' }}">
-                                    <span>{{ \Carbon\Carbon::parse($d->date)->format('M j, Y') }}</span>
+                                    <span>{{ usertime($d->date, 'M j, Y') }}</span>
                                     <span class="text-gray-300">{{ $d->count }}</span>
                                 </a>
                             @endforeach
@@ -43,7 +43,7 @@
                                 class="w-full text-xs border-gray-200 rounded-md py-1.5 bg-white">
                             <option value="">All dates</option>
                             @foreach($activeDates as $d)
-                                <option value="{{ $d->date }}" {{ $dateFilter === $d->date ? 'selected' : '' }}>{{ \Carbon\Carbon::parse($d->date)->format('M j, Y') }} ({{ $d->count }})</option>
+                                <option value="{{ $d->date }}" {{ $dateFilter === $d->date ? 'selected' : '' }}>{{ usertime($d->date, 'M j, Y') }} ({{ $d->count }})</option>
                             @endforeach
                         </select>
                     </div>
@@ -63,7 +63,7 @@
 
                     @if($dateFilter)
                         <div class="flex items-center gap-2 mb-4">
-                            <span class="text-xs text-gray-500">Showing: {{ \Carbon\Carbon::parse($dateFilter)->format('l, M j, Y') }}</span>
+                            <span class="text-xs text-gray-500">Showing: {{ usertime($dateFilter, 'l, M j, Y') }}</span>
                             <a href="{{ route('activity.log', [$user, 'type' => $typeFilter]) }}" class="text-xs text-blue-600 hover:text-blue-800">Clear date</a>
                         </div>
                     @endif
@@ -78,7 +78,7 @@
                                     <a href="{{ $activity->session_uid ? route('activity.session', [$user, $activity->session_uid]) : '#' }}"
                                        class="block px-4 py-2.5 hover:bg-blue-50/50 transition-colors">
                                         <div class="flex items-start gap-2">
-                                            <span class="text-[11px] text-gray-500 shrink-0 w-20 text-right mt-0.5 font-mono">{{ $activity->created_at->format('M j H:i') }}</span>
+                                            <span class="text-[11px] text-gray-500 shrink-0 w-20 text-right mt-0.5 font-mono">{{ usertime($activity->created_at, 'M j H:i') }}</span>
                                             @php
                                                 $typeConfig = match($activity->type) {
                                                     'comment' => ['bg-amber-100 text-amber-700', 'Comment'],

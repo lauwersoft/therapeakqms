@@ -22,11 +22,11 @@
                 @php $lastDate = null; @endphp
                 @foreach($commits as $commit)
                     {{-- Date separator --}}
-                    @if($lastDate !== $commit['date']->format('Y-m-d'))
-                        @php $lastDate = $commit['date']->format('Y-m-d'); @endphp
+                    @if($lastDate !== usertime($commit['date'], 'Y-m-d'))
+                        @php $lastDate = usertime($commit['date'], 'Y-m-d'); @endphp
                         <div class="flex items-center gap-3 {{ !$loop->first ? 'mt-6' : '' }} mb-3">
                             <div class="h-px flex-1 bg-gray-200"></div>
-                            <span class="text-xs font-medium text-gray-400 shrink-0">{{ $commit['date']->format('F j, Y') }}</span>
+                            <span class="text-xs font-medium text-gray-400 shrink-0">{{ usertime($commit['date'], 'F j, Y') }}</span>
                             <div class="h-px flex-1 bg-gray-200"></div>
                         </div>
                     @endif
@@ -63,7 +63,7 @@
                                 </div>
 
                                 <div class="flex items-center gap-3 shrink-0 text-xs text-gray-400">
-                                    <span>{{ $commit['date']->format('H:i') }}</span>
+                                    <span>{{ usertime($commit['date'], 'H:i') }}</span>
                                     <svg class="w-3.5 h-3.5 transition-transform" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>
@@ -77,7 +77,7 @@
                                 </div>
                                 <span class="text-xs text-gray-500">{{ $commit['author'] }}</span>
                                 <span class="text-xs text-gray-300">·</span>
-                                <span class="text-xs text-gray-400">{{ $commit['date']->diffForHumans() }}</span>
+                                <span class="text-xs text-gray-400">{{ usertime($commit['date'])->diffForHumans() }}</span>
                             </div>
                         </div>
 

@@ -39,13 +39,13 @@
                             @if($user->organisation)
                                 <div><span class="text-gray-400">Organisation:</span> {{ $user->organisation }}</div>
                             @endif
-                            <div><span class="text-gray-400">Account created:</span> {{ $user->created_at->format('M j, Y') }}</div>
+                            <div><span class="text-gray-400">Account created:</span> {{ usertime($user->created_at, 'M j, Y') }}</div>
                             <div>
                                 <span class="text-gray-400">Status:</span>
                                 @if($user->last_active_at?->gt(now()->subMinutes(5)))
                                     <span class="text-green-600 font-medium">Online now</span>
                                 @elseif($user->last_active_at)
-                                    Last active {{ $user->last_active_at->diffForHumans() }}
+                                    Last active {{ usertime($user->last_active_at)->diffForHumans() }}
                                 @else
                                     Never logged in
                                 @endif
@@ -188,7 +188,7 @@
                                 </div>
                                 <div class="flex items-center gap-3 shrink-0 text-xs text-gray-400">
                                     <span>{{ $loc->count }}x</span>
-                                    <span>{{ \Carbon\Carbon::parse($loc->last_seen)->diffForHumans() }}</span>
+                                    <span>{{ usertime($loc->last_seen)->diffForHumans() }}</span>
                                 </div>
                             </div>
                         @endforeach
@@ -207,9 +207,9 @@
                             <a href="{{ route('activity.session', [$user, $session->session_uid]) }}" class="block px-5 py-3 hover:bg-gray-50 transition-colors">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-2">
-                                        <span class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($session->started)->format('M j H:i') }}</span>
+                                        <span class="text-xs text-gray-500">{{ usertime($session->started, 'M j H:i') }}</span>
                                         <span class="text-[10px] text-gray-300">-</span>
-                                        <span class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($session->ended)->format('H:i') }}</span>
+                                        <span class="text-xs text-gray-500">{{ usertime($session->ended, 'H:i') }}</span>
                                         @if($session->country_code)
                                             <span class="text-[10px] px-1 py-0.5 rounded bg-blue-50 text-blue-600">{{ $session->country_code }}</span>
                                         @endif
@@ -235,7 +235,7 @@
                     <div class="divide-y divide-gray-50">
                         @foreach($dailyActivity as $day)
                             <div class="px-5 py-3 flex items-center justify-between">
-                                <span class="text-sm text-gray-700">{{ \Carbon\Carbon::parse($day->date)->format('M j, Y') }}</span>
+                                <span class="text-sm text-gray-700">{{ usertime($day->date, 'M j, Y') }}</span>
                                 <div class="flex items-center gap-4 text-xs text-gray-400">
                                     <span>{{ $day->views }} {{ Str::plural('page', $day->views) }}</span>
                                     <span>{{ round($day->total_time / 60) }}m spent</span>
@@ -258,7 +258,7 @@
                     <div class="divide-y divide-gray-50">
                         @foreach($activities as $activity)
                             <div class="px-5 py-2.5 flex items-start gap-3">
-                                <span class="text-[11px] text-gray-500 shrink-0 w-16 text-right mt-0.5 font-mono">{{ $activity->created_at->format('M j H:i') }}</span>
+                                <span class="text-[11px] text-gray-500 shrink-0 w-16 text-right mt-0.5 font-mono">{{ usertime($activity->created_at, 'M j H:i') }}</span>
                                 @php
                                     $typeConfig = match($activity->type) {
                                         'comment' => ['bg-amber-100 text-amber-700', 'Comment'],

@@ -43,6 +43,7 @@ class User extends Authenticatable
         'name',
         'email',
         'organisation',
+        'timezone',
         'password',
         'role',
         'approved',
@@ -87,5 +88,10 @@ class User extends Authenticatable
     public function isAuditor(): bool
     {
         return $this->role === self::ROLE_AUDITOR;
+    }
+
+    public function localTime($date): \Carbon\Carbon
+    {
+        return \Carbon\Carbon::parse($date)->setTimezone($this->timezone ?? 'UTC');
     }
 }

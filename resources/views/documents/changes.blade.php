@@ -348,7 +348,7 @@
                                             <span class="text-gray-400 text-xs">was {{ basename($change->details['old_path']) }}</span>
                                         @endif
                                     </div>
-                                    <span class="text-gray-400 ml-auto shrink-0 text-xs">{{ $change->created_at->diffForHumans() }}</span>
+                                    <span class="text-gray-400 ml-auto shrink-0 text-xs">{{ usertime($change->created_at)->diffForHumans() }}</span>
                                 </div>
                             @endforeach
                         </div>

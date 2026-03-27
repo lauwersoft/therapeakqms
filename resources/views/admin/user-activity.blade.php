@@ -31,7 +31,7 @@
                             </div>
                             <div class="text-right shrink-0">
                                 <span class="text-xs {{ $user->last_active_at?->gt(now()->subMinutes(5)) ? 'text-green-600 font-medium' : 'text-gray-400' }}">
-                                    {{ $user->last_active_at?->gt(now()->subMinutes(5)) ? 'Online now' : ($user->last_active_at ? $user->last_active_at->diffForHumans() : 'Never') }}
+                                    {{ $user->last_active_at?->gt(now()->subMinutes(5)) ? 'Online now' : ($user->last_active_at ? usertime($user->last_active_at)->diffForHumans() : 'Never') }}
                                 </span>
                             </div>
                             <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>

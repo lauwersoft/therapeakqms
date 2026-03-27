@@ -50,6 +50,15 @@
                         </div>
 
                         <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
+                            <select name="timezone" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                                @foreach(timezone_identifiers_list() as $tz)
+                                    <option value="{{ $tz }}" {{ old('timezone', $user?->timezone ?? 'Europe/Amsterdam') === $tz ? 'selected' : '' }}>{{ $tz }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
                             <select name="role" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
                                 @foreach($roles as $role)

@@ -73,7 +73,7 @@
                                                     @if($rc['section'] ?? null)
                                                         <span class="text-[10px] text-gray-400">on {{ Str::limit($rc['section'], 25) }}</span>
                                                     @endif
-                                                    <span class="text-[10px] text-gray-300">{{ \Carbon\Carbon::parse($rc['created_at'] ?? now())->diffForHumans() }}</span>
+                                                    <span class="text-[10px] text-gray-300">{{ usertime($rc['created_at'] ?? now())->diffForHumans() }}</span>
                                                 </div>
                                                 <p class="text-xs text-gray-600 mt-0.5 line-clamp-2">{{ $rc['content'] ?? '' }}</p>
                                                 @php $replyCount = count($rc['replies'] ?? []); @endphp
@@ -156,7 +156,7 @@
                                         @if($activeUser->last_active_at->gt(now()->subMinutes(5)))
                                             Online now
                                         @else
-                                            Last active {{ $activeUser->last_active_at->diffForHumans() }}
+                                            Last active {{ usertime($activeUser->last_active_at)->diffForHumans() }}
                                         @endif
                                     </span>
                                 </div>
@@ -232,7 +232,7 @@
                                         <p class="text-sm text-gray-700">
                                             <span class="font-medium text-gray-800">{{ $commit['author'] }}</span>
                                             <span class="text-gray-400 mx-1">·</span>
-                                            <span class="text-gray-400">{{ $commit['date']->diffForHumans() }}</span>
+                                            <span class="text-gray-400">{{ usertime($commit['date'])->diffForHumans() }}</span>
                                         </p>
                                         <p class="text-sm text-gray-600 mt-0.5">{{ Str::before($commit['message'], "\n") }}</p>
                                         <div class="space-y-1 mt-1.5">

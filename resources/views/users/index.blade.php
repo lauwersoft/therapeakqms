@@ -83,7 +83,7 @@
                                 @if($user->last_active_at?->gt(now()->subMinutes(5)))
                                     Online now
                                 @elseif($user->last_active_at)
-                                    {{ $user->last_active_at->diffForHumans() }}
+                                    {{ usertime($user->last_active_at)->diffForHumans() }}
                                 @else
                                     Never
                                 @endif

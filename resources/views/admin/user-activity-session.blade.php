@@ -17,7 +17,7 @@
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
                     <div>
                         <div class="text-xs text-gray-400 mb-0.5">Started</div>
-                        <div class="text-sm font-medium text-gray-800">{{ $started->format('M j, Y H:i') }}</div>
+                        <div class="text-sm font-medium text-gray-800">{{ usertime($started, 'M j, Y H:i') }}</div>
                     </div>
                     <div>
                         <div class="text-xs text-gray-400 mb-0.5">Duration</div>
@@ -53,7 +53,7 @@
                     @foreach($activities as $activity)
                         <div class="px-5 py-3 relative flex items-start gap-4">
                             {{-- Time --}}
-                            <span class="text-[10px] text-gray-400 shrink-0 w-10 text-right mt-1">{{ $activity->created_at->format('H:i') }}</span>
+                            <span class="text-[10px] text-gray-400 shrink-0 w-10 text-right mt-1">{{ usertime($activity->created_at, 'H:i') }}</span>
 
                             {{-- Dot --}}
                             @php

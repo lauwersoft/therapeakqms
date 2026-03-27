@@ -49,7 +49,7 @@
                                             <span>{{ $record['author'] }}</span>
                                             @if($record['submitted_at'])
                                                 <span>·</span>
-                                                <span>{{ \Carbon\Carbon::parse($record['submitted_at'])->diffForHumans() }}</span>
+                                                <span>{{ usertime($record['submitted_at'])->diffForHumans() }}</span>
                                             @endif
                                         </div>
                                     </div>

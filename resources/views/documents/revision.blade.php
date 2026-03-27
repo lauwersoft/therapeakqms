@@ -9,7 +9,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">Revision {{ $commit['short_hash'] }}</h2>
-                <span class="text-sm text-gray-400">{{ $commit['date']->format('F j, Y \a\t H:i') }}</span>
+                <span class="text-sm text-gray-400">{{ usertime($commit['date'], 'F j, Y \a\t H:i') }}</span>
             </div>
             <a href="{{ route('documents.history') }}" class="text-sm text-gray-500 hover:text-gray-900">Back to History</a>
         </div>
@@ -26,7 +26,7 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="text-sm font-medium text-gray-800">{{ $commit['author'] }}</span>
-                            <span class="text-xs text-gray-400">{{ $commit['date']->diffForHumans() }}</span>
+                            <span class="text-xs text-gray-400">{{ usertime($commit['date'])->diffForHumans() }}</span>
                         </div>
                         <p class="text-sm text-gray-600 mt-1 whitespace-pre-line">{{ $commit['message'] }}</p>
                         <div class="space-y-1 mt-3">

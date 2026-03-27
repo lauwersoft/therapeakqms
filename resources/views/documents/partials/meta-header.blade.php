@@ -56,7 +56,7 @@
                     @if($lastEdit ?? null)
                         <div class="text-gray-400">
                             <span class="text-gray-500 font-medium">Last edit:</span>
-                            <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="text-blue-500 hover:text-blue-700 underline decoration-blue-300 hover:decoration-blue-500">{{ $lastEdit['name'] }}, {{ $lastEdit['date']->diffForHumans() }}</a>
+                            <a href="{{ route('documents.revision', $lastEdit['hash']) }}" class="text-blue-500 hover:text-blue-700 underline decoration-blue-300 hover:decoration-blue-500">{{ $lastEdit['name'] }}, {{ usertime($lastEdit['date'])->diffForHumans() }}</a>
                         </div>
                     @endif
                     @php
