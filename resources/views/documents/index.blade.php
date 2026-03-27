@@ -314,6 +314,8 @@
 
                     editFile() {
                         this.closeMenus();
+                        sessionStorage.setItem('sidebarScroll', document.getElementById('sidebar-nav')?.scrollTop);
+                        sessionStorage.setItem('sidebarClickNav', '1');
                         if (this.ctx.path.endsWith('.form.json')) {
                             window.location = '/forms/edit/' + this.ctx.path;
                         } else {
