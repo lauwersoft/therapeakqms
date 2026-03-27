@@ -355,6 +355,7 @@
             {{-- Results count + collapse/expand --}}
             <div class="flex items-center justify-between mb-4">
                 <span class="text-xs text-gray-400" x-text="filteredDocs.length + ' of ' + docs.length + ' documents'"></span>
+                <div class="flex items-center gap-3">
                     <button x-show="typeFilter || statusFilter || commentFilter || search" x-cloak
                             @click="typeFilter = ''; statusFilter = ''; commentFilter = ''; search = ''"
                             class="text-xs text-blue-600 hover:text-blue-800">Clear filters</button>
