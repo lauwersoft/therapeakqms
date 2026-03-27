@@ -6,17 +6,17 @@
     "status": "submitted",
     "author": "Sarp Derinsu",
     "form_id": "FM-006",
-    "submitted_at": "2026-03-03",
+    "submitted_at": "2026-03-03T14:30:00+01:00",
     "data": {
         "Trainee Name": "Sarp Derinsu",
         "Training Topic": "QMS Overview and ISO 13485 Introduction",
-        "Training Date": "2026-03-03",
+        "Training Date": "2026-03-03T14:30:00+01:00",
         "Trainer/Source": "Suzan Slijpen",
         "Training Method": "Consultant session",
         "Description of Training Content": "Overview of QMS concepts, ISO 13485 requirements, and what the Notified Body expects during certification audits.",
         "Effectiveness Assessment": "Competent",
         "Assessed By": "Suzan Slijpen",
-        "Assessment Date": "2026-03-03",
+        "Assessment Date": "2026-03-03T14:30:00+01:00",
         "Notes": ""
     }
 }

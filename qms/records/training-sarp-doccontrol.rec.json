@@ -6,17 +6,17 @@
     "status": "submitted",
     "author": "Sarp Derinsu",
     "form_id": "FM-006",
-    "submitted_at": "2026-03-12",
+    "submitted_at": "2026-03-12T14:10:00+01:00",
     "data": {
         "Trainee Name": "Sarp Derinsu",
         "Training Topic": "Document Control and QMS Platform",
-        "Training Date": "2026-03-12",
+        "Training Date": "2026-03-12T14:10:00+01:00",
         "Trainer/Source": "Self-study (QMS platform)",
         "Training Method": "On-the-job",
         "Description of Training Content": "QMS platform document workflow, git-based version control, and document publish process.",
         "Effectiveness Assessment": "Competent",
         "Assessed By": "Sarp Derinsu",
-        "Assessment Date": "2026-03-12",
+        "Assessment Date": "2026-03-12T14:10:00+01:00",
         "Notes": ""
     }
 }
