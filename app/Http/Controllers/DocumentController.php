@@ -287,6 +287,26 @@ class DocumentController extends Controller
         $docComments = $parsed['meta']['id'] ? $commentService->getVisibleComments($parsed['meta']['id'], $request->user()->role) : [];
         $commentSummary = $commentService->summary();
 
+        // Form submissions (for meta-header)
+        $formSubmissions = null;
+        if (str_ends_with($path, '.form.json')) {
+            $formSchema = json_decode(File::get($this->basePath . '/' . $path), true);
+            $formSubmissions = collect();
+            $recordsDir = base_path('qms/records');
+            if (is_dir($recordsDir)) {
+                $formId = $formSchema['id'] ?? '';
+                foreach (File::allFiles($recordsDir) as $recFile) {
+                    if (!str_ends_with($recFile->getFilename(), '.rec.json')) continue;
+                    try {
+                        $recData = json_decode(File::get($recFile->getPathname()), true);
+                        if (is_array($recData) && (($recData['form_id'] ?? '') === $formId)) {
+                            $formSubmissions->push($recData);
+                        }
+                    } catch (\Throwable $e) { continue; }
+                }
+            }
+        }
+
         return view('documents.edit', [
             'content' => $parsed['body'],
             'meta' => $parsed['meta'],
@@ -300,6 +320,7 @@ class DocumentController extends Controller
             'pendingCount' => $pendingCount,
             'canEdit' => true,
             'lastEdit' => $lastEdit,
+            'formSubmissions' => $formSubmissions,
             'directories' => $this->getDirectories(),
             'docComments' => $docComments,
             'commentSummary' => $commentSummary,

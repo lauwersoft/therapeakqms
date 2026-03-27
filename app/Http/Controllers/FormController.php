@@ -275,6 +275,24 @@ class FormController extends Controller
             ];
         }
 
+        $git = app(\App\Services\GitService::class);
+        $lastEdit = $git->getLastCommitInfo($path);
+
+        $formSubmissions = collect();
+        $formId = $schema['id'] ?? '';
+        $recordsDir = base_path('qms/records');
+        if ($formId && is_dir($recordsDir)) {
+            foreach (\Illuminate\Support\Facades\File::allFiles($recordsDir) as $recFile) {
+                if (!str_ends_with($recFile->getFilename(), '.rec.json')) continue;
+                try {
+                    $recData = json_decode(\Illuminate\Support\Facades\File::get($recFile->getPathname()), true);
+                    if (is_array($recData) && ($recData['form_id'] ?? '') === $formId) {
+                        $formSubmissions->push($recData);
+                    }
+                } catch (\Throwable $e) {}
+            }
+        }
+
         return view('forms.edit', [
             'schema' => $schema,
             'meta' => $this->formMeta($schema),
@@ -285,6 +303,8 @@ class FormController extends Controller
             'changedFiles' => $changedFiles,
             'pendingCount' => $pendingCount,
             'canEdit' => true,
+            'lastEdit' => $lastEdit,
+            'formSubmissions' => $formSubmissions,
             'commentSummary' => $commentSummary,
             'directories' => $this->getDirectories(),
         ]);
