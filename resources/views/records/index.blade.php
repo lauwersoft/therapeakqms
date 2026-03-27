@@ -28,9 +28,7 @@
                                 <h3 class="text-sm font-semibold text-gray-700">{{ $form['form_title'] }}</h3>
                                 <span class="text-xs text-gray-400">({{ $form['count'] }})</span>
                             </div>
-                            @if($form['has_more'])
-                                <a href="{{ route('records.form', $form['form_id']) }}" class="text-xs text-blue-600 hover:text-blue-800">View all {{ $form['count'] }}</a>
-                            @endif
+                            <a href="{{ route('records.form', $form['form_id']) }}" class="text-xs text-blue-600 hover:text-blue-800">View all{{ $form['has_more'] ? ' ' . $form['count'] : '' }}</a>
                         </div>
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                             @foreach($form['records'] as $record)
@@ -63,7 +61,7 @@
                         </div>
                         @if($form['has_more'])
                             <a href="{{ route('records.form', $form['form_id']) }}" class="block mt-2 text-center text-xs text-blue-600 hover:text-blue-800 py-2">
-                                View all {{ $form['count'] }} submissions →
+                                {{ $form['count'] - 5 }} more {{ Str::plural('submission', $form['count'] - 5) }} →
                             </a>
                         @endif
                     </div>
