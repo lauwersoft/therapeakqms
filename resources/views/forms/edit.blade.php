@@ -23,7 +23,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                             </svg>
                         </button>
-                        <span class="text-sm font-semibold text-gray-800">QMS</span>
+                        @if($meta['id'] ?? null)
+                            <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor(explode('-', $meta['id'])[0] ?? '') }}">{{ $meta['id'] }}</span>
+                        @endif
                         <span class="text-xs text-gray-400 font-mono truncate">documents/{{ $currentPath }}</span>
                     </div>
                     <a href="{{ route('documents.index', ['path' => $currentPath]) }}"
