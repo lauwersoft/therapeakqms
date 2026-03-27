@@ -122,7 +122,7 @@
                             </svg>
                         </button>
                         <span class="text-sm font-semibold text-gray-800">QMS</span>
-                        <span class="text-xs text-gray-400 font-mono truncate">/{{ $currentPath }}</span>
+                        <span class="text-xs text-gray-400 font-mono truncate">documents/{{ $currentPath }}</span>
                     </div>
                     <a href="{{ route('documents.index', ['path' => $currentPath]) }}"
                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200 shrink-0">
