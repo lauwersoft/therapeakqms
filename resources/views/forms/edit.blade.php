@@ -238,6 +238,7 @@
                         });
                     },
                     initSortable(el, directory) {
+                        if (window.innerWidth < 1024) return;
                         if (typeof Sortable === 'undefined') return;
                         Sortable.create(el, {
                             group: 'documents',

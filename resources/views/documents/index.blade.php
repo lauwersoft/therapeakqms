@@ -401,7 +401,7 @@
                     },
 
                     initSortable(el, directory) {
-                        if (!this.canEdit) return;
+                        if (!this.canEdit || window.innerWidth < 1024) return;
                         Sortable.create(el, {
                             group: 'documents',
                             animation: 150,

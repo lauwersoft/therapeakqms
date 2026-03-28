@@ -369,7 +369,7 @@
                     },
 
                     initSortable(el, directory) {
-                        if (!this.canEdit) return;
+                        if (!this.canEdit || window.innerWidth < 1024) return;
                         if (typeof Sortable === 'undefined') return;
                         Sortable.create(el, {
                             group: 'documents',
