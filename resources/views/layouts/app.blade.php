@@ -87,7 +87,7 @@
             @endisset
 
             <!-- Page Content -->
-            <main class="flex-1 lg:overflow-y-auto">
+            <main class="flex-1 lg:overflow-y-auto bg-gray-100">
                 {{ $slot }}
             </main>
         </div>
