@@ -13,8 +13,8 @@
             @else
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     @foreach($users as $user)
-                        <a href="{{ route('activity.show', $user) }}" class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
-                            <div class="relative">
+                        <a href="{{ route('activity.show', $user) }}" class="flex items-start gap-3 px-4 sm:px-5 py-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
+                            <div class="relative shrink-0">
                                 <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim($user->email))) }}?s=80&d=mp" alt="{{ $user->name }}" class="w-10 h-10 rounded-full">
                                 @if($user->last_active_at?->gt(now()->subMinutes(5)))
                                     <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
@@ -23,19 +23,17 @@
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2">
                                     <span class="text-sm font-medium text-gray-800">{{ $user->name }}</span>
-                                    <span class="text-[10px] font-medium px-1.5 py-0.5 rounded
+                                    <span class="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap
                                         {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-600' : '' }}
                                         {{ $user->role === 'editor' ? 'bg-blue-100 text-blue-600' : '' }}
                                         {{ $user->role === 'auditor' ? 'bg-gray-100 text-gray-500' : '' }}">{{ ucfirst($user->role) }}</span>
                                 </div>
-                                <span class="text-xs text-gray-400">{{ $user->email }}</span>
-                            </div>
-                            <div class="text-right shrink-0">
-                                <span class="text-xs {{ $user->last_active_at?->gt(now()->subMinutes(5)) ? 'text-green-600 font-medium' : 'text-gray-400' }}">
+                                <div class="text-xs text-gray-400 truncate">{{ $user->email }}</div>
+                                <div class="text-xs mt-0.5 {{ $user->last_active_at?->gt(now()->subMinutes(5)) ? 'text-green-600 font-medium' : 'text-gray-400' }}">
                                     {{ $user->last_active_at?->gt(now()->subMinutes(5)) ? 'Online now' : ($user->last_active_at ? usertime($user->last_active_at)->diffForHumans() : 'Never') }}
-                                </span>
+                                </div>
                             </div>
-                            <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            <svg class="w-4 h-4 text-gray-300 shrink-0 mt-3 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
                     @endforeach
                 </div>

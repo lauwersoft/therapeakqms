@@ -13,17 +13,17 @@
     <div class="py-8">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             {{-- User profile card --}}
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 mb-8">
-                <div class="flex items-start gap-4">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
+                <div class="flex items-start gap-3 sm:gap-4">
                     <div class="relative shrink-0">
-                        <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim($user->email))) }}?s=112&d=mp" alt="{{ $user->name }}" class="w-14 h-14 rounded-full">
+                        <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim($user->email))) }}?s=112&d=mp" alt="{{ $user->name }}" class="w-10 sm:w-14 h-10 sm:h-14 rounded-full">
                         @if($user->last_active_at?->gt(now()->subMinutes(5)))
-                            <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"></span>
+                            <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
                         @endif
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 mb-1">
-                            <h3 class="text-lg font-semibold text-gray-800">{{ $user->name }}</h3>
+                        <div class="flex items-center gap-2 mb-1 flex-wrap">
+                            <h3 class="text-base sm:text-lg font-semibold text-gray-800">{{ $user->name }}</h3>
                             <span class="text-xs font-medium px-1.5 py-0.5 rounded
                                 {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-600' : '' }}
                                 {{ $user->role === 'editor' ? 'bg-blue-100 text-blue-600' : '' }}
@@ -71,7 +71,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="flex items-center gap-2 shrink-0">
+                    <div class="flex items-center gap-2 shrink-0 hidden sm:flex">
                         <form method="POST" action="{{ route('activity.clear', $user) }}" onsubmit="return confirm('Delete all activity logs for {{ $user->name }}? This cannot be undone.')">
                             @csrf
                             @method('DELETE')
@@ -264,8 +264,8 @@
                 @else
                     <div class="divide-y divide-gray-50">
                         @foreach($activities as $activity)
-                            <div class="px-5 py-2.5 flex items-start gap-3">
-                                <span class="text-[11px] text-gray-500 shrink-0 w-16 text-right mt-0.5 font-mono">{{ usertime($activity->created_at, 'M j H:i') }}</span>
+                            <div class="px-4 sm:px-5 py-2.5 flex items-start gap-2 sm:gap-3">
+                                <span class="text-[10px] sm:text-[11px] text-gray-500 shrink-0 w-12 sm:w-16 text-right mt-0.5 font-mono">{{ usertime($activity->created_at, 'M j H:i') }}</span>
                                 @php
                                     $typeConfig = match($activity->type) {
                                         'comment' => ['bg-amber-100 text-amber-700', 'Comment'],
@@ -281,15 +281,15 @@
                                         default => ['bg-blue-50 text-blue-600', 'Viewed'],
                                     };
                                 @endphp
-                                <span class="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 w-16 text-center mt-0.5 {{ $typeConfig[0] }}">{{ $typeConfig[1] }}</span>
+                                <span class="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap mt-0.5 {{ $typeConfig[0] }}">{{ $typeConfig[1] }}</span>
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2">
                                         @if($activity->doc_id && $activity->doc_id !== 'null')
                                             <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor(explode('-', $activity->doc_id)[0] ?? '') }}">{{ $activity->doc_id }}</span>
                                         @endif
-                                        <span class="text-sm text-gray-800 truncate">{{ ($activity->doc_title && $activity->doc_title !== 'null') ? $activity->doc_title : ($activity->page_title ?: $activity->path) }}</span>
+                                        <span class="text-xs sm:text-sm text-gray-800 truncate">{{ ($activity->doc_title && $activity->doc_title !== 'null') ? $activity->doc_title : ($activity->page_title ?: $activity->path) }}</span>
                                     </div>
-                                    <div class="text-[11px] text-gray-400 font-mono mt-0.5">{{ $activity->path }}</div>
+                                    <div class="text-[10px] sm:text-[11px] text-gray-400 font-mono mt-0.5 truncate">{{ $activity->path }}</div>
                                     @if($activity->detail)
                                         <p class="text-xs text-gray-400 mt-0.5 line-clamp-1">{{ $activity->detail }}</p>
                                     @endif
