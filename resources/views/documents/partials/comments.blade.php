@@ -250,10 +250,15 @@
         var el = document.getElementById(id);
         if (!el) return;
         flashElement(id);
-        var container = el.closest('.overflow-y-scroll') || document.scrollingElement;
-        if (container) {
-            var top = el.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop - 20;
-            container.scrollTo({ top: top, behavior: 'smooth' });
+        var isMobile = window.innerWidth < 1024;
+        if (isMobile) {
+            window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 140 });
+        } else {
+            var container = el.closest('[class*="overflow-y"]') || document.scrollingElement;
+            if (container) {
+                var top = el.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop - 20;
+                container.scrollTo({ top: top });
+            }
         }
     }
 

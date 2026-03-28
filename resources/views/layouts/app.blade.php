@@ -235,7 +235,7 @@
                 var isDocPage = window.location.pathname.startsWith('/documents/') && document.querySelector('[data-doc-id]');
                 if (isDocPage) {
                     maxScroll = 0;
-                    var scrollTarget = document.querySelector('.overflow-y-scroll') || document.querySelector('.overflow-y-auto') || document.scrollingElement;
+                    var scrollTarget = document.querySelector('[class*="overflow-y-scroll"]') || document.querySelector('[class*="overflow-y-auto"]') || document.scrollingElement;
                     function updateScroll() {
                         if (!scrollTarget) return;
                         var scrollTop = scrollTarget.scrollTop || 0;
