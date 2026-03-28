@@ -313,8 +313,8 @@
                 $browseWithoutComments = collect($documents)->where('comment_count', 0)->count();
             @endphp
 
-            {{-- Mobile filters (dropdowns) --}}
-            <div class="lg:hidden grid grid-cols-3 gap-2 mb-5">
+            {{-- Filters (dropdowns) --}}
+            <div class="grid grid-cols-3 gap-2 mb-5">
                 <select x-model="typeFilter" class="text-xs border-gray-200 rounded-md py-1.5 bg-white w-full">
                     <option value="">All types</option>
                     @foreach(\App\Services\DocumentMetadata::TYPES as $key => $label)
@@ -338,67 +338,6 @@
                 </select>
             </div>
 
-            {{-- Desktop filters (buttons) --}}
-            <div class="hidden lg:block bg-white rounded-lg shadow-sm border border-gray-200 p-3 mb-5">
-                <div class="flex flex-wrap items-center gap-3">
-                    {{-- Type filter --}}
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wide mr-1">Type</span>
-                        <button @click="typeFilter = ''" class="px-2 py-0.5 text-[11px] rounded-md bg-gray-800 text-white"
-                                :class="typeFilter === '' ? 'bg-gray-800 text-white' : '!bg-gray-100 !text-gray-600 hover:!bg-gray-200'">
-                            All
-                        </button>
-                        @foreach(\App\Services\DocumentMetadata::TYPES as $key => $label)
-                            @if(collect($documents)->where('type', $key)->count() > 0)
-                                <button @click="typeFilter = typeFilter === '{{ $key }}' ? '' : '{{ $key }}'"
-                                        class="px-2 py-0.5 text-[11px] rounded-md bg-gray-100 text-gray-600"
-                                        :class="typeFilter === '{{ $key }}' ? '!bg-gray-800 !text-white' : 'hover:bg-gray-200'">
-                                    {{ $key }} <span class="opacity-50">{{ collect($documents)->where('type', $key)->count() }}</span>
-                                </button>
-                            @endif
-                        @endforeach
-                    </div>
-
-                    <div class="w-px h-4 bg-gray-200"></div>
-
-                    {{-- Status filter --}}
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wide mr-1">Status</span>
-                        <button @click="statusFilter = ''" class="px-2 py-0.5 text-[11px] rounded-md bg-gray-800 text-white"
-                                :class="statusFilter === '' ? 'bg-gray-800 text-white' : '!bg-gray-100 !text-gray-600 hover:!bg-gray-200'">
-                            All
-                        </button>
-                        @foreach(\App\Services\DocumentMetadata::STATUSES as $key => $label)
-                            @if(collect($documents)->where('status', $key)->count() > 0)
-                                <button @click="statusFilter = statusFilter === '{{ $key }}' ? '' : '{{ $key }}'"
-                                        class="px-2 py-0.5 text-[11px] rounded-md bg-gray-100 text-gray-600"
-                                        :class="statusFilter === '{{ $key }}' ? '!bg-gray-800 !text-white' : 'hover:bg-gray-200'">
-                                    {{ $label }} <span class="opacity-50">{{ collect($documents)->where('status', $key)->count() }}</span>
-                                </button>
-                            @endif
-                        @endforeach
-                    </div>
-
-                    <div class="w-px h-4 bg-gray-200"></div>
-
-                    {{-- Comment filter --}}
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wide mr-1">Comments</span>
-                        <button @click="commentFilter = ''" class="px-2 py-0.5 text-[11px] rounded-md bg-gray-800 text-white"
-                                :class="commentFilter === '' ? 'bg-gray-800 text-white' : '!bg-gray-100 !text-gray-600 hover:!bg-gray-200'">
-                            All
-                        </button>
-                        <button @click="commentFilter = commentFilter === 'with' ? '' : 'with'" class="px-2 py-0.5 text-[11px] rounded-md bg-gray-100 text-gray-600"
-                                :class="commentFilter === 'with' ? '!bg-gray-800 !text-white' : 'hover:bg-gray-200'">
-                            With <span class="opacity-50">{{ $browseWithComments }}</span>
-                        </button>
-                        <button @click="commentFilter = commentFilter === 'without' ? '' : 'without'" class="px-2 py-0.5 text-[11px] rounded-md bg-gray-100 text-gray-600"
-                                :class="commentFilter === 'without' ? '!bg-gray-800 !text-white' : 'hover:bg-gray-200'">
-                            Without <span class="opacity-50">{{ $browseWithoutComments }}</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
 
             {{-- Results count + collapse/expand --}}
             <div class="flex items-center justify-between mb-4">
