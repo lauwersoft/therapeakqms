@@ -59,7 +59,7 @@
                 </div>
             </div>
 
-            <div class="flex-1 overflow-y-scroll">
+            <div class="flex-1 lg:overflow-y-scroll">
 
             @if($errors->any())
                 <div class="max-w-5xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
