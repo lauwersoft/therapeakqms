@@ -5,7 +5,7 @@
 {{-- Mobile overlay --}}
 <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-out duration-200" x-transition:leave="transition-opacity ease-in duration-150"
      @click="sidebarOpen = false"
-     class="fixed inset-0 bg-gray-900/50 z-[60] lg:hidden" style="display:none;" x-cloak></div>
+     class="fixed inset-0 bg-gray-900/50 z-[60] lg:hidden" style="display:none;touch-action:none;" x-cloak></div>
 
 {{-- Sidebar --}}
 <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
