@@ -457,15 +457,12 @@
                                         </div>
                                         {{-- Mobile: two lines --}}
                                         <div class="lg:hidden">
-                                            <div class="flex items-center gap-2 mb-1">
+                                            <div class="flex items-center gap-2">
                                                 <span class="font-mono text-[10px] shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded font-semibold" :class="doc.type_color" x-text="doc.doc_id"></span>
-                                                <span class="text-sm text-gray-800 font-medium" x-text="doc.title"></span>
+                                                <span class="text-sm text-gray-800 font-medium truncate" x-text="doc.title"></span>
+                                                <span class="shrink-0 text-[10px] font-medium px-1 py-0.5 rounded ml-auto" :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                             </div>
-                                            <div class="flex items-center gap-2 text-[11px] flex-wrap">
-                                                <span class="font-medium px-1.5 py-0.5 rounded" :class="statusClass(doc.status)" x-text="doc.status_label"></span>
-                                                <span x-show="doc.version" class="text-gray-400" x-text="'v' + doc.version"></span>
-                                                <span class="text-gray-400 font-mono" x-text="'documents/' + doc.path"></span>
-                                            </div>
+                                            <div class="text-[11px] text-gray-400 font-mono truncate mt-0.5" x-text="'documents/' + doc.path"></div>
                                         </div>
                                     </a>
                                 </template>
@@ -510,15 +507,12 @@
                                         </div>
                                         {{-- Mobile: two lines --}}
                                         <div class="lg:hidden">
-                                            <div class="flex items-center gap-2 mb-1">
+                                            <div class="flex items-center gap-2">
                                                 <span class="font-mono text-[10px] shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded font-semibold" :class="doc.type_color" x-text="doc.doc_id"></span>
-                                                <span class="text-sm text-gray-800 font-medium" x-text="doc.title"></span>
+                                                <span class="text-sm text-gray-800 font-medium truncate" x-text="doc.title"></span>
+                                                <span class="shrink-0 text-[10px] font-medium px-1 py-0.5 rounded ml-auto" :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                             </div>
-                                            <div class="flex items-center gap-2 text-[11px] flex-wrap">
-                                                <span class="font-medium px-1.5 py-0.5 rounded" :class="statusClass(doc.status)" x-text="doc.status_label"></span>
-                                                <span x-show="doc.version" class="text-gray-400" x-text="'v' + doc.version"></span>
-                                                <span class="text-gray-400 font-mono" x-text="'documents/' + doc.path"></span>
-                                            </div>
+                                            <div class="text-[11px] text-gray-400 font-mono truncate mt-0.5" x-text="'documents/' + doc.path"></div>
                                         </div>
                                     </a>
                                 </template>
