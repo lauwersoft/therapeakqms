@@ -12,7 +12,7 @@
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">Revision {{ $commit['short_hash'] }}</h2>
                 <span class="text-sm text-gray-400">{{ usertime($commit['date'], 'F j, Y \a\t H:i') }}</span>
             </div>
-            <a href="{{ route('documents.history') }}" class="text-sm text-gray-500 hover:text-gray-900">Back to History</a>
+            <a href="{{ route('documents.history') }}" class="text-sm text-gray-500 hover:text-gray-900"><span class="hidden sm:inline">Back to History</span><span class="sm:hidden">Back</span></a>
         </div>
     </x-slot>
 

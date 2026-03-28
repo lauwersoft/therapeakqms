@@ -7,7 +7,7 @@
             </h2>
             <a href="{{ route('users.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-gray-200">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                Back to users
+                <span class="hidden sm:inline">Back to users</span><span class="sm:hidden">Back</span>
             </a>
         </div>
     </x-slot>

@@ -9,7 +9,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Unpublished Changes</h2>
-            <a href="{{ route('documents.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Back to Documents</a>
+            <a href="{{ route('documents.index') }}" class="text-sm text-gray-600 hover:text-gray-900"><span class="hidden sm:inline">Back to Documents</span><span class="sm:hidden">Back</span></a>
         </div>
     </x-slot>
 

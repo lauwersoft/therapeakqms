@@ -84,7 +84,7 @@
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                         </svg>
-                        Back to references
+                        <span class="hidden sm:inline">Back to references</span><span class="sm:hidden">Back</span>
                     </a>
                 </div>
             </div>
