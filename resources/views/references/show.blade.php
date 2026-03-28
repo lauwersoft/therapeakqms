@@ -96,7 +96,7 @@
                 </div>
             </div>
 
-            <div class="flex-1 overflow-y-scroll" x-ref="content" @scroll.throttle.100ms="onScroll()">
+            <div class="flex-1 lg:overflow-y-scroll" x-ref="content" @scroll.throttle.100ms="onScroll()">
                 <div class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-10">
                         <div class="prose prose-sm sm:prose-base max-w-none
