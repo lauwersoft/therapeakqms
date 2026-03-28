@@ -332,7 +332,7 @@
                     @endforeach
                 </select>
                 <select x-model="commentFilter" class="flex-1 text-xs border-gray-200 rounded-md py-1.5 bg-white">
-                    <option value="">Comments</option>
+                    <option value="">All comments</option>
                     <option value="with">With ({{ $browseWithComments }})</option>
                     <option value="without">Without ({{ $browseWithoutComments }})</option>
                 </select>
