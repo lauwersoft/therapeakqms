@@ -47,9 +47,9 @@
 
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                 @foreach($activeUsers as $user)
-                    <div class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
+                    <div class="flex items-start gap-3 px-4 sm:px-5 py-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
                         {{-- Avatar --}}
-                        <div class="relative">
+                        <div class="relative shrink-0">
                             <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim($user->email))) }}?s=80&d=mp" alt="{{ $user->name }}" class="w-10 h-10 rounded-full">
                             @if($user->last_active_at?->gt(now()->subMinutes(5)))
                                 <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
@@ -58,26 +58,31 @@
 
                         {{-- Info --}}
                         <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 flex-wrap">
                                 <span class="text-sm font-medium text-gray-800">{{ $user->name }}</span>
-                                <span class="text-[10px] font-medium px-1.5 py-0.5 rounded
+                                <span class="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap
                                     {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-600' : '' }}
                                     {{ $user->role === 'editor' ? 'bg-blue-100 text-blue-600' : '' }}
                                     {{ $user->role === 'auditor' ? 'bg-gray-100 text-gray-500' : '' }}">{{ ucfirst($user->role) }}</span>
                                 @if(!$user->approved)
-                                    <span class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-red-100 text-red-500">Inactive</span>
+                                    <span class="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap bg-red-100 text-red-500">Inactive</span>
                                 @endif
                             </div>
-                            <div class="flex items-center gap-2 mt-0.5">
-                                <span class="text-xs text-gray-400">{{ $user->email }}</span>
-                                @if($user->organisation)
-                                    <span class="text-[10px] text-gray-300">·</span>
-                                    <span class="text-xs text-gray-400">{{ $user->organisation }}</span>
+                            <div class="text-xs text-gray-400 mt-0.5 truncate">
+                                {{ $user->email }}@if($user->organisation) · {{ $user->organisation }}@endif
+                            </div>
+                            <div class="sm:hidden text-xs mt-0.5 {{ $user->last_active_at?->gt(now()->subMinutes(5)) ? 'text-green-600 font-medium' : 'text-gray-400' }}">
+                                @if($user->last_active_at?->gt(now()->subMinutes(5)))
+                                    Online now
+                                @elseif($user->last_active_at)
+                                    {{ usertime($user->last_active_at)->diffForHumans() }}
+                                @else
+                                    Never active
                                 @endif
                             </div>
                         </div>
 
-                        {{-- Last active --}}
+                        {{-- Last active (desktop) --}}
                         <div class="text-right shrink-0 hidden sm:block">
                             <span class="text-xs {{ $user->last_active_at?->gt(now()->subMinutes(5)) ? 'text-green-600 font-medium' : 'text-gray-400' }}">
                                 @if($user->last_active_at?->gt(now()->subMinutes(5)))
