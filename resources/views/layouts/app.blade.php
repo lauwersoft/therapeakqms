@@ -79,7 +79,7 @@
 
             <!-- Page Heading -->
             @isset($header)
-                <header class="bg-white shadow shrink-0 h-16 relative z-10" data-page-title="@yield('page-title')">
+                <header class="bg-white shadow shrink-0 h-16 sticky top-16 z-10" data-page-title="@yield('page-title')">
                     <div class="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center">
                         <div class="w-full">{{ $header }}</div>
                     </div>
