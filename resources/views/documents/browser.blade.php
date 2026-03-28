@@ -438,7 +438,7 @@
                                        @if($canEdit)
                                            @contextmenu.prevent="openFileCtx($event, doc)"
                                        @endif
-                                       class="px-4 sm:px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
+                                       class="block px-4 sm:px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
                                         {{-- Desktop: single line --}}
                                         <div class="hidden lg:flex items-center gap-4">
                                             <span class="font-mono text-xs shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded font-semibold" :class="doc.type_color" x-text="doc.doc_id"></span>
@@ -491,7 +491,7 @@
                                        @if($canEdit)
                                            @contextmenu.prevent="openFileCtx($event, doc)"
                                        @endif
-                                       class="px-4 sm:px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
+                                       class="block px-4 sm:px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
                                         {{-- Desktop: single line --}}
                                         <div class="hidden lg:flex items-center gap-4">
                                             <span class="font-mono text-xs shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded font-semibold" :class="doc.type_color" x-text="doc.doc_id"></span>
