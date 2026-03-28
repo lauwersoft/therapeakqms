@@ -73,7 +73,7 @@
             }
         </style>
     </head>
-    <body class="font-sans antialiased text-gray-700 lg:h-screen lg:overflow-hidden">
+    <body class="font-sans antialiased text-gray-700 min-h-screen bg-gray-100 lg:h-screen lg:overflow-hidden">
         <div class="lg:h-screen flex flex-col bg-gray-100">
             @include('layouts.navigation')
 
