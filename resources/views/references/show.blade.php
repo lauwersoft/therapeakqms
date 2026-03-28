@@ -60,7 +60,7 @@
                 <div class="flex-1 overflow-y-auto overscroll-contain" x-ref="tocContainer">
                     <nav class="px-2 py-2">
                         @foreach($toc as $idx => $item)
-                            <a href="#{{ $item['id'] }}" @click="sidebarOpen = false; highlightRefSection('{{ $item['id'] }}')"
+                            <a href="#{{ $item['id'] }}" @click.prevent="sidebarOpen = false; var el = document.getElementById('{{ $item['id'] }}'); if(el){ if(window.innerWidth<1024){ el.scrollIntoView({block:'start'}); } else { var c=$refs.content; c.scrollTop = el.offsetTop - c.offsetTop - 20; } highlightRefSection('{{ $item['id'] }}'); }"
                                :id="'toc-' + '{{ $item['id'] }}'"
                                :class="activeSection === '{{ $item['id'] }}' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'"
                                class="block px-2 py-1 text-xs rounded truncate transition-colors">
@@ -135,26 +135,43 @@
             }
 
             function refViewer() {
+                var isMobile = window.innerWidth < 1024;
                 return {
                     activeSection: '',
                     sidebarOpen: false,
                     sections: @json(collect($toc)->pluck('id')->values()),
 
-                    onScroll() {
-                        var container = this.$refs.content;
-                        if (!container) return;
-                        var scrollTop = container.scrollTop;
-                        var active = '';
+                    getScrollContainer() {
+                        return isMobile ? document.documentElement : this.$refs.content;
+                    },
 
-                        // If scrolled to the bottom, activate the last section
-                        if (scrollTop + container.clientHeight >= container.scrollHeight - 10) {
+                    getScrollTop() {
+                        return isMobile ? window.scrollY : (this.$refs.content?.scrollTop || 0);
+                    },
+
+                    getScrollHeight() {
+                        var c = this.getScrollContainer();
+                        return isMobile ? document.body.scrollHeight : (c?.scrollHeight || 0);
+                    },
+
+                    getClientHeight() {
+                        return isMobile ? window.innerHeight : (this.$refs.content?.clientHeight || 0);
+                    },
+
+                    onScroll() {
+                        var scrollTop = this.getScrollTop();
+                        var active = '';
+                        var stickyOffset = isMobile ? 150 : 100;
+
+                        if (scrollTop + this.getClientHeight() >= this.getScrollHeight() - 10) {
                             active = this.sections[this.sections.length - 1];
                         } else {
                             for (var i = 0; i < this.sections.length; i++) {
                                 var el = document.getElementById(this.sections[i]);
                                 if (el) {
-                                    var offset = el.offsetTop - container.offsetTop;
-                                    if (offset <= scrollTop + 100) {
+                                    var rect = el.getBoundingClientRect();
+                                    var offset = isMobile ? rect.top + window.scrollY : (el.offsetTop - (this.$refs.content?.offsetTop || 0));
+                                    if (offset <= scrollTop + stickyOffset) {
                                         active = this.sections[i];
                                     }
                                 }
@@ -175,11 +192,15 @@
                         this.$nextTick(() => {
                             this.onScroll();
 
+                            // Listen on window scroll for mobile
+                            if (isMobile) {
+                                window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+                            }
+
                             // Scroll to and highlight section if URL has a hash
                             if (window.location.hash) {
                                 var id = window.location.hash.substring(1);
                                 var el = document.getElementById(id);
-                                // Fuzzy match
                                 if (!el) {
                                     var all = document.querySelectorAll('[id]');
                                     for (var i = 0; i < all.length; i++) {
@@ -187,9 +208,13 @@
                                     }
                                 }
                                 if (el) {
-                                    var container = this.$refs.content;
-                                    var elTop = el.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
-                                    container.scrollTop = elTop - 20;
+                                    if (isMobile) {
+                                        el.scrollIntoView({ block: 'start' });
+                                    } else {
+                                        var container = this.$refs.content;
+                                        var elTop = el.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
+                                        container.scrollTop = elTop - 20;
+                                    }
                                     highlightRefSection(el.id);
                                 }
                             }
