@@ -180,23 +180,25 @@
                     </div>
                     <div class="divide-y divide-gray-50">
                         @foreach($locations as $loc)
-                            <div class="px-5 py-3 flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-xs font-mono text-gray-500">{{ $loc->ip }}</span>
-                                    @if($loc->country_code)
-                                        <span class="text-xs px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">{{ $loc->country_code }}</span>
-                                    @endif
-                                    @if($loc->city)
-                                        <span class="text-xs text-gray-600">{{ $loc->city }}</span>
-                                    @endif
-                                    @if($loc->asn_org)
-                                        <span class="text-[10px] text-gray-400">AS{{ $loc->asn_number }} {{ Str::limit($loc->asn_org, 35) }}</span>
-                                    @endif
+                            <div class="px-4 sm:px-5 py-3">
+                                <div class="flex items-center justify-between mb-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-mono text-gray-600">{{ $loc->ip }}</span>
+                                        @if($loc->country_code)
+                                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 shrink-0">{{ $loc->country_code }}</span>
+                                        @endif
+                                        @if($loc->city)
+                                            <span class="text-xs text-gray-600">{{ $loc->city }}</span>
+                                        @endif
+                                    </div>
+                                    <div class="flex items-center gap-2 shrink-0 text-xs text-gray-400">
+                                        <span>{{ $loc->count }}x</span>
+                                        <span>{{ usertime($loc->last_seen)->diffForHumans() }}</span>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-3 shrink-0 text-xs text-gray-400">
-                                    <span>{{ $loc->count }}x</span>
-                                    <span>{{ usertime($loc->last_seen)->diffForHumans() }}</span>
-                                </div>
+                                @if($loc->asn_org)
+                                    <div class="text-[11px] text-gray-400">AS{{ $loc->asn_number }} · {{ $loc->asn_org }}</div>
+                                @endif
                             </div>
                         @endforeach
                     </div>
