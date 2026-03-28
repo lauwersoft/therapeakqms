@@ -438,22 +438,22 @@
                                        @if($canEdit)
                                            @contextmenu.prevent="openFileCtx($event, doc)"
                                        @endif
-                                       class="flex items-center gap-3 px-4 sm:px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
-                                        <span class="font-mono text-[10px] sm:text-xs shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded font-semibold" :class="doc.type_color" x-text="doc.doc_id"></span>
-                                        <div class="flex-1 min-w-0">
-                                            <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
-                                            <span class="text-[11px] text-gray-400 font-mono block truncate hidden sm:block" x-text="'documents/' + doc.path"></span>
+                                       class="block px-4 sm:px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="font-mono text-[10px] shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded font-semibold" :class="doc.type_color" x-text="doc.doc_id"></span>
+                                            <span class="text-sm text-gray-800 truncate font-medium" x-text="doc.title"></span>
+                                            <span x-show="doc.comment_count > 0" x-cloak class="flex items-center gap-0.5 text-[10px] text-amber-600 shrink-0 ml-auto">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                                                <span class="font-medium" x-text="doc.comment_count"></span>
+                                            </span>
+                                            <span x-show="doc.changed" class="w-2 h-2 rounded-full shrink-0"
+                                                  :class="{'bg-green-500': doc.changed === 'new' || doc.changed === 'added', 'bg-amber-500': doc.changed === 'modified', 'bg-red-500': doc.changed === 'deleted', 'bg-blue-500': doc.changed === 'move' || doc.changed === 'rename'}"></span>
                                         </div>
-                                        <span class="shrink-0 text-[11px] font-medium px-1.5 py-0.5 rounded hidden sm:inline"
-                                              :class="statusClass(doc.status)" x-text="doc.status_label"></span>
-                                        <span x-show="doc.version" class="text-xs text-gray-400 w-10 text-right shrink-0 hidden sm:inline" x-text="'v' + doc.version"></span>
-                                        <span x-show="doc.comment_count > 0" x-cloak class="flex items-center gap-0.5 text-[10px] text-amber-600 shrink-0">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
-                                            <span class="font-medium" x-text="doc.comment_count"></span>
-                                        </span>
-                                        <span x-show="doc.changed" class="w-2 h-2 rounded-full shrink-0"
-                                              :class="{'bg-green-500': doc.changed === 'new' || doc.changed === 'added', 'bg-amber-500': doc.changed === 'modified', 'bg-red-500': doc.changed === 'deleted', 'bg-blue-500': doc.changed === 'move' || doc.changed === 'rename'}"></span>
-                                        <svg class="w-4 h-4 text-gray-300 shrink-0 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                        <div class="flex items-center gap-2 text-[11px]">
+                                            <span class="text-gray-400 font-mono truncate" x-text="'documents/' + doc.path"></span>
+                                            <span class="shrink-0 font-medium px-1.5 py-0.5 rounded" :class="statusClass(doc.status)" x-text="doc.status_label"></span>
+                                            <span x-show="doc.version" class="text-gray-400 shrink-0" x-text="'v' + doc.version"></span>
+                                        </div>
                                     </a>
                                 </template>
                             </div>
