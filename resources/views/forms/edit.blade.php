@@ -7,13 +7,13 @@
         </style>
     @endpush
 
-    <div x-data="formEditor()" @click="closeMenus()" class="flex h-full overflow-hidden">
+    <div x-data="formEditor()" @click="closeMenus()" class="flex lg:h-full lg:overflow-hidden">
 
         @include('documents.partials.sidebar-actions')
         @include('documents.partials.sidebar', ['sidebarCanEdit' => $canEdit ?? false])
 
         {{-- Main Content --}}
-        <main class="flex-1 bg-gray-100 min-w-0 flex flex-col overflow-hidden">
+        <main class="flex-1 bg-gray-100 min-w-0 flex flex-col lg:overflow-hidden">
             {{-- Top bar: same as document show page --}}
             <div x-data="{ barZ: false }" x-effect="if (sidebarOpen) { barZ = true } else { setTimeout(() => barZ = false, 200) }"
                  class="bg-white border-b border-gray-200 shadow-sm shrink-0 sticky top-16 lg:relative lg:top-0 px-4 h-16 flex items-center" :class="barZ ? 'z-0' : 'z-40'">

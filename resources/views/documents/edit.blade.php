@@ -78,7 +78,7 @@
         </style>
     @endpush
 
-    <div x-data="documentEditor()" @click="closeMenus()" class="flex h-full overflow-hidden">
+    <div x-data="documentEditor()" @click="closeMenus()" class="flex lg:h-full lg:overflow-hidden">
         {{-- Document link modal --}}
         <div x-show="linkModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="linkModal = false">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-5" @click.stop>
@@ -111,7 +111,7 @@
         @include('documents.partials.sidebar', ['sidebarCanEdit' => $canEdit])
 
         {{-- Main Content --}}
-        <main class="flex-1 bg-gray-100 min-w-0 flex flex-col overflow-hidden editor-main">
+        <main class="flex-1 bg-gray-100 min-w-0 flex flex-col lg:overflow-hidden editor-main">
             {{-- Top bar --}}
             <div x-data="{ barZ: false }" x-effect="if (sidebarOpen) { barZ = true } else { setTimeout(() => barZ = false, 200) }"
                  class="bg-white border-b border-gray-200 shadow-sm shrink-0 sticky top-16 lg:relative lg:top-0 px-4 h-16 flex items-center editor-topbar" :class="barZ ? 'z-0' : 'z-40'">
