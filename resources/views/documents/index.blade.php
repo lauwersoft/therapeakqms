@@ -9,7 +9,7 @@
 
     <div x-data="documentManager()" @click="closeMenus()"
          x-init="document.addEventListener('dragleave', (e) => { if (!e.relatedTarget && e.clientX === 0 && e.clientY === 0) dragOver = false; }); document.addEventListener('drop', () => dragOver = false);"
-         class="flex h-full relative overflow-hidden">
+         class="flex h-full relative lg:overflow-hidden overflow-auto">
 
         @include('documents.partials.sidebar-actions')
         @include('documents.partials.sidebar', ['sidebarCanEdit' => $canEdit])

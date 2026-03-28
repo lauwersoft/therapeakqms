@@ -138,6 +138,7 @@
     <script>
         (function(){
             var n=document.getElementById('sidebar-nav');if(!n)return;
+            var isMobile=window.innerWidth<1024;
             // 1. Find active item
             var active=n.querySelector('[data-active-sidebar-item]');
             var fromSidebar=sessionStorage.getItem('sidebarClickNav');
@@ -167,13 +168,18 @@
 
             // 3. Restore scroll position
             var s=sessionStorage.getItem('sidebarScroll');
-            if(keepScroll){
-                if(s!==null)n.scrollTop=parseInt(s);
+            if(!isMobile){
+                if(keepScroll){
+                    if(s!==null)n.scrollTop=parseInt(s);
+                }else{
+                    if(active)n.scrollTop=active.offsetTop-n.offsetTop-n.clientHeight/2;
+                }
+                // 3. Save scroll on unload for refresh
+                window.addEventListener('beforeunload',function(){sessionStorage.setItem('sidebarScroll',n.scrollTop)});
             }else{
-                if(active)n.scrollTop=active.offsetTop-n.offsetTop-n.clientHeight/2;
+                // On mobile, just scroll active item into view
+                if(active)active.scrollIntoView({block:'center',behavior:'instant'});
             }
-            // 3. Save scroll on unload for refresh
-            window.addEventListener('beforeunload',function(){sessionStorage.setItem('sidebarScroll',n.scrollTop)});
             // 4. Show content
             var h=document.getElementById('sidebar-hide');if(h)h.remove();
         })();
