@@ -9,13 +9,13 @@
 
     <div x-data="documentManager()" @click="closeMenus()"
          x-init="document.addEventListener('dragleave', (e) => { if (!e.relatedTarget && e.clientX === 0 && e.clientY === 0) dragOver = false; }); document.addEventListener('drop', () => dragOver = false);"
-         class="flex h-full relative lg:overflow-hidden overflow-auto">
+         class="flex lg:h-full relative lg:overflow-hidden">
 
         @include('documents.partials.sidebar-actions')
         @include('documents.partials.sidebar', ['sidebarCanEdit' => $canEdit])
 
         {{-- Main Content --}}
-        <main class="flex-1 bg-gray-100 min-w-0 flex flex-col lg:overflow-hidden overflow-auto">
+        <main class="flex-1 bg-gray-100 min-w-0 flex flex-col lg:overflow-hidden">
             {{-- Top bar: path + edit --}}
             <div x-data="{ barZ: false }" x-effect="if (sidebarOpen) { barZ = true } else { setTimeout(() => barZ = false, 200) }"
                  class="bg-white border-b border-gray-200 shadow-sm shrink-0 relative px-4 h-16 flex items-center" :class="barZ ? 'z-0' : 'z-40'">

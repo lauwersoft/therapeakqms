@@ -13,7 +13,7 @@
            @dragover.prevent="dragOver = true"
            @drop.prevent="handleDrop($event)"
        @endif
-       class="fixed inset-y-0 left-0 top-0 w-80 bg-white border-r border-gray-200 shadow-[2px_0_6px_-2px_rgba(0,0,0,0.06)] overflow-y-auto z-[70]
+       class="fixed inset-y-0 left-0 top-0 w-80 bg-white border-r border-gray-200 shadow-[2px_0_6px_-2px_rgba(0,0,0,0.06)] overflow-y-auto overscroll-contain z-[70]
               -translate-x-full transform transition-transform duration-200 ease-in-out
               lg:relative lg:top-0 lg:z-30 lg:translate-x-0 lg:shrink-0 flex flex-col">
     <div class="px-4 h-16 border-b border-gray-200 flex items-center justify-between shrink-0">
