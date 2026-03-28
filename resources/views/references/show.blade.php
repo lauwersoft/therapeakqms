@@ -14,8 +14,7 @@
             {{-- Sidebar header --}}
             <div class="px-4 h-16 border-b border-gray-200 flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-2">
-                    <h2 class="font-semibold text-gray-800 text-lg">References</h2>
-                    <span class="text-xs text-gray-400">{{ count($files) }}</span>
+                    <h2 class="font-semibold text-gray-800 text-lg">Contents</h2>
                 </div>
                 <button @click="sidebarOpen = false" class="lg:hidden p-1.5 rounded hover:bg-gray-100 text-gray-500">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -24,34 +23,42 @@
                 </button>
             </div>
 
-            {{-- File list --}}
-            <div class="border-b border-gray-200 overflow-y-auto" style="max-height: 55%">
-                <nav class="px-2 pb-2">
-                    @php $currentCategory = ''; @endphp
-                    @foreach($files as $file)
-                        @if($file['category'] !== $currentCategory)
-                            @php $currentCategory = $file['category']; @endphp
-                            <div class="px-2 pt-2 pb-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">{{ $file['category'] }}</div>
-                        @endif
-                        <a href="{{ route('references.show', $file['filename']) }}"
-                           class="flex items-center gap-2 px-2 py-1.5 text-xs rounded mb-0.5
-                                  {{ $path === $file['filename'] ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100' }}">
-                            <svg class="w-3.5 h-3.5 shrink-0 {{ $path === $file['filename'] ? 'text-blue-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {{-- Document selector dropdown --}}
+            <div class="px-3 py-3 border-b border-gray-200 shrink-0">
+                <div x-data="{ refOpen: false }" class="relative">
+                    <button @click="refOpen = !refOpen" class="w-full flex items-center justify-between gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-left hover:bg-gray-100 transition-colors">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                             </svg>
-                            <span class="truncate">{{ $file['title'] }}</span>
-                        </a>
-                    @endforeach
-                </nav>
+                            <span class="truncate font-medium text-gray-700">{{ $title }}</span>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-400 shrink-0 transition-transform" :class="refOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="refOpen" x-cloak @click.outside="refOpen = false"
+                         x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                         class="absolute left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 max-h-72 overflow-y-auto">
+                        @php $currentCategory = ''; @endphp
+                        @foreach($files as $file)
+                            @if($file['category'] !== $currentCategory)
+                                @php $currentCategory = $file['category']; @endphp
+                                <div class="px-3 pt-2 pb-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">{{ $file['category'] }}</div>
+                            @endif
+                            <a href="{{ route('references.show', $file['filename']) }}"
+                               @click="refOpen = false"
+                               class="block px-3 py-1.5 text-xs {{ $path === $file['filename'] ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-50' }}">
+                                {{ $file['title'] }}
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
             </div>
 
             {{-- Table of contents --}}
             @if(count($toc) > 0)
-                <div class="flex-1 overflow-y-auto" x-ref="tocContainer">
-                    <div class="px-4 pt-4 pb-2">
-                        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Contents</h3>
-                    </div>
-                    <nav class="px-2 pb-4">
+                <div class="flex-1 overflow-y-auto overscroll-contain" x-ref="tocContainer">
+                    <nav class="px-2 py-2">
                         @foreach($toc as $idx => $item)
                             <a href="#{{ $item['id'] }}" @click="sidebarOpen = false; highlightRefSection('{{ $item['id'] }}')"
                                :id="'toc-' + '{{ $item['id'] }}'"
