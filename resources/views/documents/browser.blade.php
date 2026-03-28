@@ -10,19 +10,41 @@
                 <span class="text-sm text-gray-400">{{ $totalDocs }} {{ Str::plural('document', $totalDocs) }}</span>
             </div>
             @if($canEdit)
-                <div class="flex items-center gap-1.5 sm:gap-2">
-                    <a href="{{ route('forms.create') }}" class="inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 bg-white border border-gray-300 rounded-md text-xs sm:text-sm text-gray-600 hover:bg-gray-50 whitespace-nowrap">
+                {{-- Desktop buttons --}}
+                <div class="hidden sm:flex items-center gap-2">
+                    <a href="{{ route('forms.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 rounded-md text-sm text-gray-600 hover:bg-gray-50 whitespace-nowrap">
                         <svg class="w-3.5 h-3.5 text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                        <span class="hidden sm:inline">New</span> Form
+                        New Form
                     </a>
-                    <button onclick="document.getElementById('browse-upload-modal-toggle').click()" class="inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 bg-white border border-gray-300 rounded-md text-xs sm:text-sm text-gray-600 hover:bg-gray-50 whitespace-nowrap">
+                    <button onclick="document.getElementById('browse-upload-modal-toggle').click()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 rounded-md text-sm text-gray-600 hover:bg-gray-50 whitespace-nowrap">
                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                         Upload
                     </button>
-                    <button @click="ctx.dir = ''; quickCreateModal = true; $nextTick(() => $refs.browseQuickCreateInput?.focus())" class="inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 bg-blue-600 text-white text-xs sm:text-sm rounded-md hover:bg-blue-700 whitespace-nowrap">
+                    <button @click="ctx.dir = ''; quickCreateModal = true; $nextTick(() => $refs.browseQuickCreateInput?.focus())" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 whitespace-nowrap">
                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                        <span class="hidden sm:inline">New</span> Doc
+                        New Doc
                     </button>
+                </div>
+                {{-- Mobile menu --}}
+                <div class="sm:hidden relative" x-data="{ menuOpen: false }">
+                    <button @click="menuOpen = !menuOpen" class="p-2 rounded-md hover:bg-gray-100 text-gray-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01"/></svg>
+                    </button>
+                    <div x-show="menuOpen" x-cloak @click.outside="menuOpen = false"
+                         class="absolute right-0 mt-1 w-44 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                        <button @click="menuOpen = false; ctx.dir = ''; quickCreateModal = true; $nextTick(() => $refs.browseQuickCreateInput?.focus())" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            New document
+                        </button>
+                        <a href="{{ route('forms.create') }}" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                            New form
+                        </a>
+                        <button @click="menuOpen = false; document.getElementById('browse-upload-modal-toggle').click()" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                            Upload file
+                        </button>
+                    </div>
                 </div>
             @endif
         </div>
