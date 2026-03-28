@@ -33,6 +33,10 @@
             ::view-transition-new(root) {
                 animation-duration: 0.15s;
             }
+            @media (min-width: 1024px) {
+                #app-main { scrollbar-width: none; }
+                #app-main::-webkit-scrollbar { display: none; }
+            }
             .mermaid {
                 cursor: pointer;
                 padding: 1rem;
@@ -87,7 +91,7 @@
             @endisset
 
             <!-- Page Content -->
-            <main class="flex-1 lg:overflow-y-auto">
+            <main id="app-main" class="flex-1 lg:overflow-y-auto">
                 {{ $slot }}
             </main>
         </div>
