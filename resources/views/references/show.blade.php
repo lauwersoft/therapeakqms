@@ -60,7 +60,7 @@
                 <div class="flex-1 overflow-y-auto overscroll-contain" x-ref="tocContainer">
                     <nav class="px-2 py-2">
                         @foreach($toc as $idx => $item)
-                            <a href="#{{ $item['id'] }}" @click.prevent="sidebarOpen = false; var el = document.getElementById('{{ $item['id'] }}'); if(el){ if(window.innerWidth<1024){ el.scrollIntoView({block:'start'}); } else { var c=$refs.content; c.scrollTop = el.offsetTop - c.offsetTop - 20; } highlightRefSection('{{ $item['id'] }}'); }"
+                            <a href="#{{ $item['id'] }}" @click.prevent="sidebarOpen = false; var el = document.getElementById('{{ $item['id'] }}'); if(el){ if(window.innerWidth<1024){ window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 140, behavior:'smooth'}); } else { var c=$refs.content; c.scrollTop = el.offsetTop - c.offsetTop - 20; } highlightRefSection('{{ $item['id'] }}'); }"
                                :id="'toc-' + '{{ $item['id'] }}'"
                                :class="activeSection === '{{ $item['id'] }}' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'"
                                class="block px-2 py-1 text-xs rounded truncate transition-colors">
@@ -209,7 +209,7 @@
                                 }
                                 if (el) {
                                     if (isMobile) {
-                                        el.scrollIntoView({ block: 'start' });
+                                        window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 140 });
                                     } else {
                                         var container = this.$refs.content;
                                         var elTop = el.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
