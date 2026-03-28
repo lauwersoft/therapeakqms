@@ -29,11 +29,11 @@
                 {{-- Record info header --}}
                 <div class="px-4 sm:px-6 py-4 border-b border-gray-100">
                     <div class="sm:flex sm:items-center sm:gap-2 mb-2">
-                        <div class="flex items-center gap-2 mb-1 sm:mb-0">
+                        <div class="flex items-center gap-2 mb-1 sm:mb-0 sm:contents">
                             @if($record['id'] ?? null)
                                 <span class="text-[10px] sm:text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor('REC') }}">{{ $record['id'] }}</span>
                             @endif
-                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 text-blue-700 shrink-0 whitespace-nowrap">Submitted</span>
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 text-blue-700 shrink-0 whitespace-nowrap sm:order-last sm:ml-auto">Submitted</span>
                         </div>
                         <span class="text-sm font-medium text-gray-800 truncate block">{{ $record['title'] ?? '' }}</span>
                     </div>
