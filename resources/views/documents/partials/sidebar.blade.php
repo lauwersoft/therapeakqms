@@ -8,7 +8,7 @@
      class="fixed inset-0 bg-gray-900/50 z-[60] lg:hidden" style="display:none;" x-cloak></div>
 
 {{-- Sidebar --}}
-<aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+<aside x-effect="if(window.innerWidth<1024){document.body.style.overflow=sidebarOpen?'hidden':''}" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
        @if($sidebarCanEdit)
            @dragover.prevent="dragOver = true"
            @drop.prevent="handleDrop($event)"
