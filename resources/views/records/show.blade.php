@@ -28,12 +28,14 @@
             <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                 {{-- Record info header --}}
                 <div class="px-4 sm:px-6 py-4 border-b border-gray-100">
-                    <div class="flex items-center gap-2 mb-2">
-                        @if($record['id'] ?? null)
-                            <span class="text-[10px] sm:text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor('REC') }}">{{ $record['id'] }}</span>
-                        @endif
-                        <span class="text-sm font-medium text-gray-800 truncate">{{ $record['title'] ?? '' }}</span>
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 text-blue-700 shrink-0 whitespace-nowrap ml-auto">Submitted</span>
+                    <div class="sm:flex sm:items-center sm:gap-2 mb-2">
+                        <div class="flex items-center gap-2 mb-1 sm:mb-0">
+                            @if($record['id'] ?? null)
+                                <span class="text-[10px] sm:text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor('REC') }}">{{ $record['id'] }}</span>
+                            @endif
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 text-blue-700 shrink-0 whitespace-nowrap">Submitted</span>
+                        </div>
+                        <span class="text-sm font-medium text-gray-800 truncate block">{{ $record['title'] ?? '' }}</span>
                     </div>
                     <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
                         @if($record['form_id'] ?? null)
