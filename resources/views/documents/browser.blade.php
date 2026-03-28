@@ -286,8 +286,38 @@
                 </div>
             </div>
 
-            {{-- Filter bar --}}
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3 mb-5">
+            @php
+                $browseWithComments = collect($documents)->where('comment_count', '>', 0)->count();
+                $browseWithoutComments = collect($documents)->where('comment_count', 0)->count();
+            @endphp
+
+            {{-- Mobile filters (dropdowns) --}}
+            <div class="lg:hidden flex gap-2 mb-5">
+                <select x-model="typeFilter" class="flex-1 text-xs border-gray-200 rounded-md py-1.5 bg-white">
+                    <option value="">All types</option>
+                    @foreach(\App\Services\DocumentMetadata::TYPES as $key => $label)
+                        @if(collect($documents)->where('type', $key)->count() > 0)
+                            <option value="{{ $key }}">{{ $key }} ({{ collect($documents)->where('type', $key)->count() }})</option>
+                        @endif
+                    @endforeach
+                </select>
+                <select x-model="statusFilter" class="flex-1 text-xs border-gray-200 rounded-md py-1.5 bg-white">
+                    <option value="">All statuses</option>
+                    @foreach(\App\Services\DocumentMetadata::STATUSES as $key => $label)
+                        @if(collect($documents)->where('status', $key)->count() > 0)
+                            <option value="{{ $key }}">{{ $label }} ({{ collect($documents)->where('status', $key)->count() }})</option>
+                        @endif
+                    @endforeach
+                </select>
+                <select x-model="commentFilter" class="flex-1 text-xs border-gray-200 rounded-md py-1.5 bg-white">
+                    <option value="">Comments</option>
+                    <option value="with">With ({{ $browseWithComments }})</option>
+                    <option value="without">Without ({{ $browseWithoutComments }})</option>
+                </select>
+            </div>
+
+            {{-- Desktop filters (buttons) --}}
+            <div class="hidden lg:block bg-white rounded-lg shadow-sm border border-gray-200 p-3 mb-5">
                 <div class="flex flex-wrap items-center gap-3">
                     {{-- Type filter --}}
                     <div class="flex items-center gap-1.5">
@@ -330,10 +360,6 @@
                     <div class="w-px h-4 bg-gray-200"></div>
 
                     {{-- Comment filter --}}
-                    @php
-                        $browseWithComments = collect($documents)->where('comment_count', '>', 0)->count();
-                        $browseWithoutComments = collect($documents)->where('comment_count', 0)->count();
-                    @endphp
                     <div class="flex items-center gap-1.5">
                         <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wide mr-1">Comments</span>
                         <button @click="commentFilter = ''" class="px-2 py-0.5 text-[11px] rounded-md bg-gray-800 text-white"
