@@ -27,37 +27,25 @@
             </div>
             <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                 {{-- Record info header --}}
-                <div class="px-6 py-4 border-b border-gray-100">
+                <div class="px-4 sm:px-6 py-4 border-b border-gray-100">
                     <div class="flex items-center gap-2 mb-2">
                         @if($record['id'] ?? null)
-                            <span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor('REC') }}">{{ $record['id'] }}</span>
+                            <span class="text-[10px] sm:text-xs font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor('REC') }}">{{ $record['id'] }}</span>
                         @endif
-                        <span class="text-sm font-medium text-gray-800">{{ $record['title'] ?? '' }}</span>
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 text-blue-700 ml-auto">Submitted</span>
+                        <span class="text-sm font-medium text-gray-800 truncate">{{ $record['title'] ?? '' }}</span>
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 text-blue-700 shrink-0 whitespace-nowrap ml-auto">Submitted</span>
                     </div>
-                    <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
                         @if($record['form_id'] ?? null)
                             <a href="{{ $record['form_path'] ? route('documents.index', ['path' => $record['form_path']]) : '#' }}" class="inline-flex items-center gap-1 hover:text-blue-600 transition-colors">
-                                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                                Form: <span class="font-mono font-medium text-blue-600 ml-1">{{ $record['form_id'] }}</span>
-                                @if($record['form_title'] ?? null)
-                                    <span class="text-gray-400">{{ $record['form_title'] }}</span>
-                                @endif
+                                Form: <span class="font-mono font-medium text-blue-600">{{ $record['form_id'] }}</span>
                             </a>
-                            <span class="text-gray-300">·</span>
                         @endif
                         @if($record['author'] ?? null)
-                            <span class="inline-flex items-center gap-1">
-                                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                                {{ $record['author'] }}
-                            </span>
-                            <span class="text-gray-300">·</span>
+                            <span>{{ $record['author'] }}</span>
                         @endif
                         @if($record['submitted_at'] ?? null)
-                            <span class="inline-flex items-center gap-1">
-                                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                {{ usertime($record['submitted_at'], 'M j, Y \a\t H:i') }}
-                            </span>
+                            <span>{{ usertime($record['submitted_at'], 'M j, Y H:i') }}</span>
                         @endif
                     </div>
                 </div>
