@@ -73,7 +73,7 @@
             }
         </style>
     </head>
-    <body class="font-sans antialiased text-gray-700 h-screen overflow-hidden">
+    <body class="font-sans antialiased text-gray-700 h-screen lg:overflow-hidden">
         <div class="h-screen flex flex-col bg-gray-100">
             @include('layouts.navigation')
 
@@ -87,7 +87,7 @@
             @endisset
 
             <!-- Page Content -->
-            <main class="flex-1 overflow-y-auto">
+            <main class="flex-1 overflow-y-auto" style="-webkit-overflow-scrolling:touch">
                 {{ $slot }}
             </main>
         </div>
