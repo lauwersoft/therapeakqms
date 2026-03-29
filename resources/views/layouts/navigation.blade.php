@@ -99,12 +99,6 @@
 
     <!-- Responsive Navigation Overlay (starts below the nav bar) -->
     <div x-show="open"
-         x-transition:enter="transition-opacity ease-out duration-[50ms] delay-[50ms]"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition-opacity ease-in duration-100"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
          @click="open = false" class="fixed left-0 right-0 bottom-0 bg-gray-900/50 min-[1150px]:hidden" style="z-index: 45; top: 4rem; display: none;" x-cloak></div>
 
     <!-- Responsive Navigation Menu -->
