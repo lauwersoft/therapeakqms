@@ -32,12 +32,11 @@
             </label>
         </div>
 
-        <div class="flex items-center justify-between mt-4">
-            <span class="text-xs text-gray-400">Contact your administrator to reset your password.</span>
-
-            <x-primary-button class="ms-3">
+        <div class="mt-6">
+            <button type="submit" class="w-full px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors">
                 {{ __('Log in') }}
-            </x-primary-button>
+            </button>
         </div>
+        <p class="text-xs text-gray-400 text-center mt-4">Forgot your password? Contact your administrator.</p>
     </form>
 </x-guest-layout>
