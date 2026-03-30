@@ -146,6 +146,116 @@ These are things the QMS acknowledges honestly and has a plan for. The NB will s
 
 ---
 
+## What to Expect at the NB Audit
+
+### How It Works
+
+Scarlet's audit has two stages:
+
+**Stage 1 (April 7, 2026):** Document review. The auditor reads your QMS documents and checks if everything is in place. They may ask clarifying questions. This is primarily a desk review — they check completeness, not depth.
+
+**Stage 2 (later):** Implementation audit. The auditor verifies you're actually doing what your documents say. They'll ask you to demonstrate processes, show records, and explain your thinking. This is where you need to know your stuff.
+
+### The Golden Rule
+
+**Say what you do, do what you say.** The auditor's job is to check that your documents match reality. If your SOP says "complaints are responded to within 24 hours" then you must actually do that. If you can't, change the SOP to match what you can do.
+
+### Questions the Auditor Will Ask (and Your Answers)
+
+Read these before the audit. The auditor won't ask exactly these words, but the topics will be the same.
+
+---
+
+**"Describe your quality management system."**
+
+Your answer: "Our QMS is built on ISO 13485:2016 and EU MDR 2017/745. It covers all processes from design through post-market surveillance. All documents are managed in our QMS platform with git-based version control for full traceability. I'm the sole operator with support from a regulatory consultant (Suzan Slijpen). The QMS was formally established on March 1, 2026."
+
+---
+
+**"How do you control documents?"**
+
+Your answer: "All documents are created and edited in our QMS platform. Changes go through a review process — editors and auditors can leave comments, and 'required change' comments block approval. When approved, documents are published which creates a git commit — an immutable audit trail. Every change is tracked with who changed what and when." Show them: SOP-001, the History page, the publish workflow.
+
+---
+
+**"Walk me through your complaint handling process."**
+
+Your answer: "Complaints come in via email (info@therapeak.com) or the in-app contact form. I respond within 24 hours — typically within minutes. I evaluate each complaint for safety impact. If there's a potential serious incident, I follow SOP-013 for vigilance reporting. Non-safety complaints are investigated, fixed if needed, and the user is notified. Everything is logged in the Complaint Form (FM-004). If I see a pattern, I open a CAPA." Show them: SOP-004, FM-004.
+
+---
+
+**"How do you handle a serious incident?"**
+
+Your answer: "If I become aware of a serious incident — meaning someone was harmed or could have been harmed — I report it to the competent authority (IGJ in the Netherlands) within 15 days. If there's an imminent public health threat, within 2 days. I use the reporting process in SOP-013. My wife Nisan is trained as an emergency backup if I'm unreachable for more than 24 hours." Show them: SOP-013, the training record for Nisan (FM-006-REC-007).
+
+---
+
+**"How do you manage design changes?"**
+
+Your answer: "Every change is evaluated for safety and regulatory impact using the Change Request Form (FM-003). I classify changes as significant or non-significant. Significant changes — like switching AI models or changing the intended purpose — require a full risk assessment and may require NB notification. Non-significant changes — like bug fixes or UI improvements — are documented and risk-reviewed but follow a lighter process. All changes go through our software lifecycle process (SOP-011) with local testing before deployment." Show them: SOP-017, FM-003, SOP-011.
+
+---
+
+**"How do you validate AI model changes?"**
+
+Your answer: "We have a predetermined change control plan for AI model updates (documented in SOP-017). When switching between Claude versions — for example from Sonnet 4.5 to 4.6 — I test locally using our prompt testing tool, deploy to production, then monitor session quality using our automated flags (FLAG_SWITCHED_ROLES, FLAG_DID_NOT_RESPOND) and manual session review for 7 days. If quality degrades, I can roll back immediately." Show them: SOP-017 (predetermined change control plan section), SOP-011 (AI model management section).
+
+---
+
+**"How do you manage risk?"**
+
+Your answer: "We follow ISO 14971. Our Risk Management File (RA-001) identifies 15 specific hazards for our AI therapy software, from AI role confusion to data breaches. Each hazard is analyzed for severity and probability, controls are applied, and residual risk is evaluated. We use a 5x5 risk matrix with acceptable, ALARP, and unacceptable zones. All residual risks are either acceptable or ALARP with documented justification. We monitor risks through post-market surveillance." Show them: RA-001, PLN-001, SOP-002.
+
+---
+
+**"What clinical evidence do you have?"**
+
+Your answer: "Our Clinical Evaluation Report (CE-001) follows the MDCG 2020-1 three-step pathway for medical device software. We have seven key studies including three RCTs and four meta-analyses covering over 39,000 participants. The evidence shows AI therapy chatbots produce clinically meaningful improvements in depression and anxiety — effect sizes comparable to or exceeding SSRIs. We also have pre-market experience from our wellness version showing no safety concerns. Our benefit-risk analysis concludes benefits outweigh residual risks." Show them: CE-001, PLN-002, PLN-003.
+
+---
+
+**"How do you monitor the device after it's on the market?"**
+
+Your answer: "Our PMS system (SOP-009) collects data from multiple sources: user complaints, Trustpilot reviews, automated session quality monitoring, mood tracking data, and user retention metrics. We do quarterly reviews and produce an annual PMS Report. We also have a PMCF plan (PLN-003) for ongoing clinical data collection. Any safety signals are escalated to CAPA or vigilance." Show them: SOP-009, PLN-004, RPT-001, PLN-003.
+
+---
+
+**"How do you evaluate suppliers?"**
+
+Your answer: "We maintain an Approved Supplier List (LST-001) with all critical and non-critical suppliers. Critical suppliers like Hetzner, OpenRouter, and Anthropic are evaluated annually based on performance, security, and data protection. We signed a DPA with Hetzner and have their TUV audit report. For large cloud providers, we rely on their published security certifications and standard terms of service — which is proportionate for a small company using enterprise services." Show them: LST-001, FM-005, the Hetzner DPA (CER-001) and TUV report (CER-002).
+
+---
+
+**"How do you ensure personnel are competent?"**
+
+Your answer: "Training records are maintained in LOG-001 and individual Training Record Forms (FM-006). I've been trained on QMS fundamentals, ISO 13485, EU MDR, risk management, and complaint handling/vigilance. My wife Nisan has been trained as an emergency vigilance backup. New personnel would be trained before performing any QMS-related activities." Show them: LOG-001, the individual training records.
+
+---
+
+**"You're the only person — how do you maintain objectivity in design reviews?"**
+
+Your answer: "I acknowledge the limitation of a one-person organization — it's documented in the Quality Manual. I maintain objectivity through: structured self-review using the Design Review Form (FM-007) against defined criteria, consultation with my wife Nisan who has a psychology background for therapeutic aspects, and consultation with our regulatory consultant Suzan for regulatory impact. This is proportionate and common for small medical device manufacturers." Show them: QM-001 (section on single-person organization), SOP-007, FM-007.
+
+---
+
+**"What about cybersecurity?"**
+
+Your answer: "Our cybersecurity procedure (SOP-016) is based on MDCG 2019-16 guidance. Our server is hosted at Hetzner in Nuremberg, Germany — EU-based. Access is restricted to SSH only, with 2FA on critical accounts. We maintain a DPA with Hetzner and have their TUV audit report. Database access is localhost-only. We have a vulnerability management process and a security incident response procedure aligned with the 72-hour GDPR breach notification requirement." Show them: SOP-016, CER-001, CER-002.
+
+---
+
+### Tips for the Audit
+
+1. **Be honest.** If you don't know something, say so. "I'll check that and get back to you" is better than guessing.
+2. **Don't volunteer extra information.** Answer the question, then stop. Extra detail opens new lines of questioning.
+3. **Show the platform.** The QMS platform with its git history, comments, and publish workflow is impressive. Let the auditor browse it.
+4. **Know where everything is.** Before the audit, practice navigating to each SOP, form, and record. You should be able to find any document in seconds.
+5. **Reference your SOPs.** When explaining a process, point to the SOP. "As documented in SOP-004, section 4.2..."
+6. **Records matter most.** The auditor wants evidence. Training records, management review records, supplier evaluations — these prove you're using the QMS, not just writing about it.
+7. **Nonconformities are normal.** If the auditor finds issues, that's expected. What matters is how you handle them. "We'll open a CAPA for that" shows you know the process.
+
+---
+
 ## Your QMS at a Glance
 
 | Category | Count | Documents |
