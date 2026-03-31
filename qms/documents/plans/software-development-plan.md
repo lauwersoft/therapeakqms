@@ -192,7 +192,6 @@ Changes to the primary AI model (e.g., upgrading from Claude Sonnet 4.5 to a new
 | Fallback chain | Claude Opus 4.5, Claude Sonnet 4, Claude 3.7 Sonnet, Claude Opus 4 | Anthropic | OpenRouter gateway |
 | Session summaries | GPT-4o | OpenAI | Direct API |
 | User reports | GPT-4o | OpenAI | Direct API |
-| Content moderation | GPT-3.5-turbo-0125 | OpenAI |
 | Session quality monitoring | GPT-4o | OpenAI |
 | Image generation | Flux Pro | Fal.ai |
 

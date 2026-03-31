@@ -46,7 +46,7 @@ This document maintains the current list of approved suppliers for Therapeak B.V
 
 **OpenRouter:** An API gateway that routes requests to Anthropic's models via multiple infrastructure providers (Google Vertex AI, Amazon Bedrock, Anthropic's direct API). OpenRouter does NOT provide AI models — it provides routing and redundancy. If one infrastructure provider is down, OpenRouter routes through another. Data sharing was turned OFF as of 2026-03-25. OpenRouter retains request metadata for billing and may briefly retain prompt/completion text for abuse monitoring.
 
-**OpenAI:** Provides GPT-4o for session summaries, user reports, and session quality monitoring (ChatDebugFlag jobs). Provides GPT-3.5-turbo for content moderation of platform content.
+**OpenAI:** Provides GPT-4o for session summaries, user reports, and session quality monitoring (ChatDebugFlag jobs).
 
 **Stripe:** Processes all user subscriptions with per-country pricing tiers. EU data processing is available. Service disruption would prevent user access to paid features.
 

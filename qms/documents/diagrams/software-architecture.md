@@ -189,7 +189,6 @@ The following table clarifies which external interfaces handle health data and w
 |---|---|---|
 | **OpenRouter / Anthropic Claude** | Yes | Therapy conversation prompts and responses containing user messages, system instructions with survey data and session context |
 | **OpenAI (GPT-4o)** | Yes | Session transcripts for summary generation, report generation, and session quality monitoring |
-| **OpenAI (GPT-3.5-turbo)** | No | Platform content moderation only (reviews, survey replies, article replies) — NOT therapy messages |
 | **AWS SES** | Yes | Session summary emails contain full therapy summary text in the email body |
 | **MariaDB** | Yes | All user data, therapy messages, session summaries, reports, mood ratings, survey responses |
 | **Redis** | Transient | Queue payloads containing therapy messages (transient, not persisted long-term) |

@@ -256,7 +256,7 @@ Additionally, manual session review is performed regularly to identify and addre
 
 #### 5.4.3 Content Moderation
 
-User-generated platform content (reviews, survey replies, article responses) is moderated via automated classification (GPT-3.5-turbo) with binary approve/reject decisions. Therapy conversations themselves are governed by the AI model's built-in safety mechanisms and the extensive therapeutic prompt instructions rather than a separate moderation layer, as the therapeutic prompt engineering and Anthropic's safety training provide appropriate safeguards within the conversational context.
+Therapy conversations are governed by the AI model's built-in safety mechanisms and the extensive therapeutic prompt instructions. The therapeutic prompt engineering and Anthropic's safety training provide appropriate safeguards within the conversational context.
 
 #### 5.4.4 Input Validation and Onboarding
 

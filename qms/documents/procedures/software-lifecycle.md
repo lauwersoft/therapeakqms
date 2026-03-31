@@ -135,7 +135,6 @@ The Therapeak device relies on external AI models for its core therapeutic funct
 | Claude Sonnet 4.6 | A/B test variant | Anthropic via OpenRouter |
 | Claude Opus 4 / Sonnet 4 / Sonnet 3.7 | Fallback models | Anthropic via OpenRouter |
 | GPT-4o | Session summaries, user reports, session quality monitoring | OpenAI |
-| GPT-3.5-turbo | Content moderation (platform content, not therapy chat) | OpenAI |
 | Fal.ai (Flux Pro) | AI therapist avatar generation | Fal.ai |
 
 Model changes (switching primary model, adding fallback models, updating prompt templates) are treated as software changes and follow the standard workflow in Section 4.2.

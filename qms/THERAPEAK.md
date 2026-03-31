@@ -105,9 +105,7 @@ Class IIa under Rule 11 because:
 - **Primary therapy chat:** Claude Sonnet 4.5 via OpenRouter (with reasoning tokens)
 - **AB test variant:** Claude Sonnet 4.6
 - **Fallbacks:** Claude Sonnet 4, Claude Opus 4, Claude 3.7 Sonnet
-- **Content generation (chat-tool):** Claude 3 (Haiku/Sonnet/Opus) + GPT-4/GPT-4o/GPT-3.5
 - **Image generation:** Fal.ai (Flux Pro) for AI therapist avatar photos
-- **Content moderation:** GPT-3.5-turbo-0125 (via chat-tool, binary approve/reject)
 - **Session quality monitoring:** GPT-4o (role confusion detection, non-response detection)
 
 ### System Architecture
@@ -144,13 +142,6 @@ Multiple job classes exist for different models/modes:
 - `GeminiThreeRunConversationJob` — Gemini variant
 - `OpenAiRunConversationJob` — fallback on OpenRouter errors (500, 400, 529, 429)
 
-### Content Moderation System
-- **Service:** GPT-3.5-turbo-0125 via chat-tool (`ModerateMessageJob`)
-- **Scope:** Moderates user-generated content on the PLATFORM (assistant reviews, survey replies, article replies) — NOT therapy chat messages
-- **Therapy conversations are NOT moderated** by this system — they go directly through OpenRouter/Claude with safety handled by the model's built-in safety + prompt instructions
-- **Rules:** Binary approve (1) or reject (0)
-  - Auto-reject: mentions of AI-generated content, offensive language, violence, drugs, weapons
-- **Result delivery:** Webhook notification to psychology-tool with HMAC-SHA256 signed headers
 
 ### Session Quality Monitoring (ChatDebugFlag)
 Two automated monitoring jobs analyze session quality:

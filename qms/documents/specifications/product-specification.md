@@ -148,7 +148,6 @@ Therapeak is a monolithic Laravel web application that handles all functionality
 | Therapy chat fallback (level 2) | Claude Sonnet 4, Sonnet 3.7, Opus 4 | Anthropic | OpenRouter gateway (multi-provider routing) |
 | Session summaries | GPT-4o | OpenAI |
 | User reports | GPT-4o | OpenAI |
-| Content moderation | GPT-3.5-turbo-0125 | OpenAI |
 | Session quality monitoring | GPT-4o | OpenAI |
 | Therapist avatar images | Flux Pro | Fal.ai |
 
