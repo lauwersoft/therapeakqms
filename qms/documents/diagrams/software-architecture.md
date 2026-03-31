@@ -28,7 +28,7 @@ graph TB
 
     subgraph "Therapeak Infrastructure (Hetzner, Nuremberg, Germany)"
         subgraph "Therapeak Application"
-            WEBAPP["Therapeak Web App<br/>Laravel 10 / Vue 3 / Inertia.js"]
+            WEBAPP["Therapeak Web App<br/>Laravel 10 / Vue 3"]
             HORIZON["Laravel Horizon<br/>(Queue Processing)"]
             SOKETI["Soketi<br/>(WebSocket Server)"]
         end
@@ -241,7 +241,7 @@ graph LR
 
 | Component | Role | Technology |
 |---|---|---|
-| **Therapeak Web App** | Main application serving the user interface and orchestrating all backend operations | PHP 8.2 / Laravel 10 / Vue 3 / Inertia.js |
+| **Therapeak Web App** | Main application serving the user interface and orchestrating all backend operations | PHP 8.2 / Laravel 10 / Vue 3 |
 | **MariaDB 10** | Primary data store for all user data, therapy messages, sessions, reports, and surveys | Relational database |
 | **Redis** | Queue broker (for Horizon job processing), cache layer, and WebSocket event transport | In-memory data store |
 | **Laravel Horizon** | Queue worker that processes all asynchronous jobs including conversation jobs, summary generation, report generation, and monitoring jobs | Laravel queue dashboard/manager |

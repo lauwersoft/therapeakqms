@@ -181,9 +181,7 @@ The following SOUP/OTS components are used in the device:
 |-----------|---------|---------|-------------------|
 | Laravel | 10.x | PHP web framework (backend) | High — core application framework |
 | Vue 3 | 3.x | JavaScript framework (frontend) | Medium — user interface |
-| Inertia.js | — | SPA bridge between Laravel and Vue | Medium — page routing |
-| Vuetify 3 | 3.x | UI component library | Low — visual components |
-| Tailwind CSS + DaisyUI | — | CSS framework | Low — styling |
+| Tailwind CSS + DaisyUI | — | CSS framework + component library | Low — styling |
 | Laravel Horizon | — | Queue management dashboard | Medium — job processing visibility |
 | Laravel Telescope | — | Debug and monitoring dashboard | Low — monitoring only |
 | Redis | — | Cache and queue broker | High — message queue processing |

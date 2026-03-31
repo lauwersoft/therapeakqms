@@ -65,8 +65,8 @@ The rigor of each activity is proportionate to the single-developer context with
 | Web server | Nginx (local development) |
 | Backend runtime | PHP 8.2 |
 | Backend framework | Laravel 10 |
-| Frontend framework | Vue 3 + Inertia.js (SPA) |
-| UI libraries | Vuetify 3, Tailwind CSS + DaisyUI |
+| Frontend framework | Vue 3 |
+| UI framework | Tailwind CSS + DaisyUI |
 | Build tool | Vite 4 |
 | Database | MariaDB 10 (containerized) |
 | Cache/Queue | Redis (containerized), Laravel Horizon |
@@ -234,10 +234,7 @@ The following SOUP components are used in the Therapeak medical device:
 |---|---|---|---|
 | Laravel | 10.x | Backend framework (routing, ORM, auth, queues) | Core framework; failure could affect all device functions |
 | Vue 3 | 3.x | Frontend framework (SPA rendering) | UI failure could prevent user interaction |
-| Inertia.js | -- | SPA bridge between Laravel and Vue | Failure could break page navigation |
-| Vuetify 3 | 3.x | UI component library | Visual/interaction issues |
 | Tailwind CSS | -- | Utility CSS framework | Visual styling only |
-| DaisyUI | -- | Tailwind CSS component library | Visual styling only |
 | Laravel Cashier | -- | Stripe subscription management | Billing/subscription issues (non-clinical) |
 | OpenRouter SDK | -- | API gateway client (routes to Anthropic) | Core dependency for therapy chat |
 | Stripe SDK | -- | Payment processing | Billing (non-clinical) |

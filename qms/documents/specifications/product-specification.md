@@ -131,7 +131,7 @@ Therapeak is a monolithic Laravel web application that handles all functionality
 | Layer | Technology |
 |---|---|
 | **Backend** | PHP 8.2, Laravel 10 |
-| **Frontend** | Vue 3 + Inertia.js (SPA), Vuetify 3, Tailwind CSS + DaisyUI |
+| **Frontend** | Vue 3, Tailwind CSS + DaisyUI |
 | **Database** | MariaDB 10 |
 | **Cache / Queue** | Redis, Laravel Horizon |
 | **Real-time** | Soketi (self-hosted Pusher-compatible WebSocket server) |
