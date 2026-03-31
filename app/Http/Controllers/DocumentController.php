@@ -351,7 +351,12 @@ class DocumentController extends Controller
         $parsed = DocumentMetadata::parse($raw);
         $meta = $parsed['meta'];
 
-        // Update metadata fields if provided
+        // If an approved document's body content changed, set to in_review
+        if ($meta['status'] === 'approved' && $request->input('content') !== $parsed['body']) {
+            $meta['status'] = 'in_review';
+        }
+
+        // Update metadata fields if provided (explicit status override takes priority)
         if ($request->filled('meta_status')) {
             $meta['status'] = $request->input('meta_status');
         }
