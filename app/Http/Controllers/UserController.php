@@ -47,6 +47,8 @@ class UserController extends Controller
             'password' => 'nullable|string|min:8',
             'approved' => 'boolean',
             'track_activity' => 'boolean',
+            'notifications' => 'nullable|array',
+            'notifications.*' => 'boolean',
         ]);
 
         $password = $request->input('password');
@@ -57,12 +59,16 @@ class UserController extends Controller
             $generated = true;
         }
 
+        $notifications = collect($request->input('notifications', []))
+            ->map(fn($v) => (bool) $v)->toArray();
+
         $user = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'organisation' => $request->input('organisation'),
             'timezone' => $request->input('timezone'),
             'track_activity' => $request->boolean('track_activity'),
+            'notifications' => $notifications,
             'role' => $request->input('role'),
             'password' => $password,
             'approved' => $request->boolean('approved'),
@@ -98,6 +104,8 @@ class UserController extends Controller
             'role' => 'required|in:' . implode(',', User::ROLES),
             'password' => 'nullable|string|min:8',
             'approved' => 'boolean',
+            'notifications' => 'nullable|array',
+            'notifications.*' => 'boolean',
         ]);
 
         $user->name = $request->input('name');
@@ -105,6 +113,8 @@ class UserController extends Controller
         $user->organisation = $request->input('organisation');
         $user->timezone = $request->input('timezone');
         $user->track_activity = $request->boolean('track_activity');
+        $user->notifications = collect($request->input('notifications', []))
+            ->map(fn($v) => (bool) $v)->toArray();
         $user->role = $request->input('role');
         $user->approved = $request->boolean('approved');
 

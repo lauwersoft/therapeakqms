@@ -151,6 +151,8 @@
                 <form method="POST" action="{{ route('comments.reply') }}">
                     @csrf
                     <input type="hidden" name="doc_id" value="{{ $docId }}">
+                    <input type="hidden" name="doc_path" value="{{ $currentPath ?? '' }}">
+                    <input type="hidden" name="doc_title" value="{{ $meta['title'] ?? $docId }}">
                     <input type="hidden" name="comment_id" value="{{ $comment['id'] }}">
                     <textarea name="content" placeholder="Write a reply..." rows="2"
                               class="w-full border-gray-200 rounded text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 bg-white"></textarea>

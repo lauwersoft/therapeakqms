@@ -1019,6 +1019,20 @@ class DocumentController extends Controller
             'message' => 'required|string|max:500',
         ]);
 
+        // Capture changed files before publishing (for notifications)
+        $changedFiles = $this->git->getChangedFiles();
+        $docIndex = DocumentMetadata::index($this->basePath);
+        $notifyFiles = [];
+        foreach ($changedFiles as $path => $info) {
+            $meta = $docIndex[$path] ?? null;
+            $notifyFiles[] = [
+                'path' => $path,
+                'status' => $info['status'] ?? 'modified',
+                'doc_id' => $meta['id'] ?? null,
+                'doc_title' => $meta['title'] ?? basename($path),
+            ];
+        }
+
         try {
             $this->git->publish($request->user(), $request->input('message'));
         } catch (\RuntimeException $e) {
@@ -1028,6 +1042,14 @@ class DocumentController extends Controller
         if ($request->user()->track_activity) {
             \App\Jobs\TrackUserActionJob::dispatch($request->user()->id, \App\Models\UserActivity::TYPE_PUBLISH, $request->path(), null, null, $request->input('message'), $request->ip());
         }
+
+        // Send publication notifications after response
+        $publisherName = $request->user()->name;
+        app()->terminating(function () use ($publisherName, $notifyFiles) {
+            if (!empty($notifyFiles)) {
+                \App\Services\QmsNotificationService::documentsPublished($publisherName, $notifyFiles);
+            }
+        });
 
         return redirect()->route('documents.index')
             ->with('success', 'All changes published successfully.');

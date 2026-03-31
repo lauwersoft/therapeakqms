@@ -59,6 +59,8 @@
     <form method="POST" action="{{ route('comments.store') }}" class="p-4">
         @csrf
         <input type="hidden" name="doc_id" value="{{ $docId }}">
+        <input type="hidden" name="doc_path" value="{{ $currentPath ?? '' }}">
+        <input type="hidden" name="doc_title" value="{{ $meta['title'] ?? $docId }}">
         <div class="space-y-2 mb-3">
             <select name="section" onchange="if(this.value){var s=slugify(this.value);glowElement(s);scrollToElement(s);}" class="w-full border-gray-200 rounded text-xs py-1.5 focus:ring-blue-500 focus:border-blue-500">
                 <option value="">General (whole document)</option>

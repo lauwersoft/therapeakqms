@@ -39,12 +39,18 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    const NOTIFICATION_DEFAULTS = [
+        'comments' => true,
+        'publications' => true,
+    ];
+
     protected $fillable = [
         'name',
         'email',
         'organisation',
         'timezone',
         'track_activity',
+        'notifications',
         'password',
         'role',
         'approved',
@@ -73,6 +79,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'approved' => 'boolean',
             'track_activity' => 'boolean',
+            'notifications' => 'array',
             'last_active_at' => 'datetime',
         ];
     }
@@ -90,6 +97,12 @@ class User extends Authenticatable
     public function isAuditor(): bool
     {
         return $this->role === self::ROLE_AUDITOR;
+    }
+
+    public function wantsNotification(string $type): bool
+    {
+        $prefs = $this->notifications ?? [];
+        return $prefs[$type] ?? (self::NOTIFICATION_DEFAULTS[$type] ?? false);
     }
 
     public function localTime($date): \Carbon\Carbon

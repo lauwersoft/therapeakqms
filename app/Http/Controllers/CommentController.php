@@ -99,6 +99,17 @@ class CommentController extends Controller
 
         if ($user->track_activity) TrackUserActionJob::dispatch($user->id, UserActivity::TYPE_COMMENT, $request->path(), $request->input('doc_id'), null, Str::limit($request->input('content'), 200), $request->ip());
 
+        // Send email notifications after response
+        $docId = $request->input('doc_id');
+        $commentType = $request->input('type');
+        $commentContent = $request->input('content');
+        $docPath = $request->input('doc_path', '');
+        $docTitle = $request->input('doc_title', $docId);
+        $commenterName = $user->name;
+        app()->terminating(function () use ($docId, $docTitle, $commenterName, $commentType, $commentContent, $docPath) {
+            \App\Services\QmsNotificationService::commentAdded($docId, $docTitle, $commenterName, $commentType, $commentContent, $docPath);
+        });
+
         return $this->respond($request, $comment['id'], 'Comment added.');
     }
 
@@ -127,6 +138,16 @@ class CommentController extends Controller
         }
 
         if ($user->track_activity) TrackUserActionJob::dispatch($user->id, UserActivity::TYPE_REPLY, $request->path(), $request->input('doc_id'), null, Str::limit($request->input('content'), 200), $request->ip());
+
+        // Send email notifications after response
+        $docId = $request->input('doc_id');
+        $replyContent = $request->input('content');
+        $docPath = $request->input('doc_path', '');
+        $docTitle = $request->input('doc_title', $docId);
+        $replierName = $user->name;
+        app()->terminating(function () use ($docId, $docTitle, $replierName, $replyContent, $docPath, $commentId) {
+            \App\Services\QmsNotificationService::replyAdded($docId, $docTitle, $replierName, $replyContent, $docPath, $commentId);
+        });
 
         return $this->respond($request, $commentId, 'Reply added.');
     }

@@ -121,6 +121,34 @@
                                 <p class="text-xs text-gray-500">Record page views, actions, and session details</p>
                             </div>
                         </div>
+
+                        @php
+                            $notifPrefs = old('notifications', $user?->notifications ?? []);
+                            $notifTypes = [
+                                'comments' => ['label' => 'Comments', 'desc' => 'New comments and replies on documents'],
+                                'publications' => ['label' => 'Publications', 'desc' => 'When documents are published or updated'],
+                            ];
+                        @endphp
+                        <div class="border-t border-gray-100 pt-5">
+                            <span class="text-sm font-medium text-gray-700 block mb-3">Email Notifications</span>
+
+                            <div class="space-y-3">
+                                @foreach($notifTypes as $key => $info)
+                                    <div class="flex items-center gap-3">
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="hidden" name="notifications[{{ $key }}]" value="0">
+                                            <input type="checkbox" name="notifications[{{ $key }}]" value="1"
+                                                   {{ ($notifPrefs[$key] ?? \App\Models\User::NOTIFICATION_DEFAULTS[$key] ?? false) ? 'checked' : '' }}
+                                                   class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                        </label>
+                                        <div>
+                                            <span class="text-sm text-gray-700">{{ $info['label'] }}</span>
+                                            <p class="text-xs text-gray-500">{{ $info['desc'] }}</p>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
 
                     <div class="flex items-center justify-between mt-8 pt-5 border-t border-gray-100">
