@@ -190,7 +190,7 @@ The following SOUP/OTS components are used in the device:
 | Redis | — | Cache and queue broker | High — message queue processing |
 | MariaDB | 10.x | Database | High — all data storage |
 | Soketi | — | WebSocket server | Medium — real-time message delivery |
-| OpenRouter SDK | — | AI model API client | High — core AI functionality |
+| OpenRouter SDK | — | API gateway client (routes to Anthropic) | High — core AI functionality |
 | Spatie Media Library | — | File/image management (avatars) | Low — avatar storage |
 | Laravel Sanctum | — | SPA authentication | Medium — security |
 | Laravel Passport | — | Service-to-service auth | Medium — inter-service security |

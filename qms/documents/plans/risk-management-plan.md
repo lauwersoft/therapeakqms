@@ -149,7 +149,7 @@ The primary systematic risk analysis method is FMEA, applied to:
 
 - AI model outputs (therapeutic conversation, session summaries, user reports)
 - Software functions (session management, data processing, authentication)
-- Third-party service dependencies (OpenRouter, Stripe, Hetzner)
+- Third-party service dependencies (Anthropic, OpenRouter, Stripe, Hetzner)
 - User interface interactions (chat interface, mood tracking, report viewing)
 - Data handling (storage, transmission, deletion)
 
@@ -165,9 +165,9 @@ The following AI-specific risk categories shall be systematically analyzed:
 | Role confusion | AI deviates from therapist role | AI responds as the patient, breaks character, discusses its own nature as AI in ways that undermine therapeutic alliance |
 | Inappropriate therapeutic advice | AI provides advice outside intended scope | Suggesting medication changes, providing diagnoses, advising on crisis situations beyond escalation |
 | Data privacy | Unauthorized access to or misuse of health data | Data breach, unintended data retention by third-party AI providers, session data in emails |
-| System availability | Service disruption preventing user access | OpenRouter outage, server downtime, queue processing failure (Horizon) |
+| System availability | Service disruption preventing user access | AI provider outage, server downtime, queue processing failure (Horizon) |
 | Prompt injection | User manipulates AI through adversarial inputs | User attempts to override system prompt, extract instructions, or manipulate AI behavior |
-| Model drift/change | AI behavior changes due to upstream model updates | OpenRouter routes to different model version, Anthropic updates Claude behavior |
+| Model drift/change | AI behavior changes due to upstream model updates | Anthropic updates Claude behavior, infrastructure routing changes |
 | Bias and fairness | AI outputs differ systematically across user populations | Different quality of therapeutic support based on language, cultural background, or condition type |
 
 ## 7. Risk Management File

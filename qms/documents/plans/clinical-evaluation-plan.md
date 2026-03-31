@@ -101,7 +101,7 @@ Limbic Access is identified as the primary equivalent device comparator because 
 | **Clinical:** Intended purpose | AI-based mental health support, IAPT pathway screening/support | AI-based conversational therapy for mild-moderate mental health symptoms | Similar -- both provide AI-driven mental health support |
 | **Clinical:** Target population | Adults with common mental health conditions | Adults 19+ with mild-moderate mental health conditions | Similar |
 | **Clinical:** Target conditions | Anxiety, depression, common mental health disorders | Anxiety, depression, OCD, trauma/stress disorders, impulse control | Overlapping -- Therapeak has broader scope |
-| **Technical:** Technology | AI/NLP-based chatbot software | AI/LLM-based chatbot software (Claude via OpenRouter) | Similar -- both use AI for conversational interaction |
+| **Technical:** Technology | AI/NLP-based chatbot software | AI/LLM-based chatbot software (Anthropic Claude) | Similar — both use AI for conversational interaction |
 | **Technical:** Platform | Web-based and integrated into NHS systems | Web-based (responsive web app) | Similar |
 | **Biological:** Materials in contact | N/A (software only) | N/A (software only) | Equivalent |
 

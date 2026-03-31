@@ -140,12 +140,12 @@ Therapeak is a monolithic Laravel web application that handles all functionality
 
 ### 10.3 AI Models
 
-| Function | Model | Provider |
-|---|---|---|
-| Primary therapy chat | Claude Sonnet 4.5 | OpenRouter (multi-provider routing) |
-| AB test variant | Claude Sonnet 4.6 | OpenRouter |
-| Therapy chat fallback (level 1) | Claude Opus 4.5 | OpenRouter |
-| Therapy chat fallback (level 2) | Claude Sonnet 4, Sonnet 3.7, Opus 4 | OpenRouter model fallback array |
+| Function | Model | Provider | Accessed via |
+|---|---|---|---|
+| Primary therapy chat | Claude Sonnet 4.5 | Anthropic | OpenRouter gateway |
+| AB test variant | Claude Sonnet 4.6 | Anthropic | OpenRouter gateway |
+| Therapy chat fallback (level 1) | Claude Opus 4.5 | Anthropic | OpenRouter gateway |
+| Therapy chat fallback (level 2) | Claude Sonnet 4, Sonnet 3.7, Opus 4 | Anthropic | OpenRouter gateway (multi-provider routing) |
 | Session summaries | GPT-4o | OpenAI |
 | User reports | GPT-4o | OpenAI |
 | Content moderation | GPT-3.5-turbo-0125 | OpenAI |
@@ -165,13 +165,14 @@ Therapeak is a monolithic Laravel web application that handles all functionality
 
 ## 11. External Interfaces
 
-### 11.1 OpenRouter API
+### 11.1 Anthropic Claude (via OpenRouter)
 
-- **Purpose:** AI model gateway for therapy conversations
+- **Purpose:** AI language models powering therapy conversations
+- **Model provider:** Anthropic (Claude Sonnet 4.5, 4.6, Opus, and fallback models)
+- **API gateway:** OpenRouter — routes API requests to Anthropic via multiple infrastructure providers (Vertex AI, Amazon Bedrock, Anthropic API) for high availability
 - **Data exchanged:** Conversation prompts (containing user messages, system instructions, session context) and AI responses
 - **Health data:** Yes — therapy conversation content is transmitted
-- **Data sharing:** Disabled (no third-party training use)
-- **Provider routing:** Vertex AI, Amazon Bedrock, Anthropic API
+- **Data sharing:** Disabled at OpenRouter level (no third-party training use). Anthropic does not use API data for training by default.
 
 ### 11.2 Stripe API
 

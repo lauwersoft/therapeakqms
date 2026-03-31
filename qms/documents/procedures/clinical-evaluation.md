@@ -177,7 +177,7 @@ Technical performance is demonstrated through:
 
 1. **Output accuracy and reliability:** AI response quality monitoring (manual review + automated ChatDebugFlag analysis)
 2. **Safety mechanisms:** Prompt-based safety instructions (160-200+ embedded instructions), role enforcement, crisis redirection to Claude's built-in safety, content restrictions
-3. **System reliability:** 99.9% uptime target, multi-provider AI fallback (OpenRouter routing through Vertex AI, Bedrock, Anthropic), retry logic
+3. **System reliability:** 99.9% uptime target, multi-provider infrastructure redundancy (Vertex AI, Bedrock, Anthropic API via OpenRouter gateway), retry logic
 4. **Verification testing:** Prompt testing via `routes/prompt-testing.php`, manual session review, session quality flag monitoring
 5. **Data from wellness version:** Rates of FLAG_SWITCHED_ROLES and FLAG_DID_NOT_RESPOND events, complaint rates, system error rates
 

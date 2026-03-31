@@ -32,8 +32,8 @@ This document maintains the current list of approved suppliers for Therapeak B.V
 | Supplier | Service | Criticality | Quality System | DPA Status | Approval Status | Last Evaluation | Next Review |
 |----------|---------|-------------|---------------|------------|----------------|----------------|-------------|
 | Hetzner | Dedicated server hosting (production) | Critical | TUV-audited data center; ISO 27001 | Signed (2026-03-25) | Approved | 2026-03-01 | 2027-03-01 |
-| OpenRouter | AI model API gateway / routing | Critical | SOC 2 (review published policies) | Standard DPA reviewed | Approved | 2026-03-01 | 2027-03-01 |
-| Anthropic | AI language models (Claude Sonnet/Opus) | Critical | SOC 2; responsible AI policies | Standard DPA reviewed | Approved | 2026-03-01 | 2027-03-01 |
+| Anthropic | AI model provider (Claude Sonnet/Opus) | Critical | SOC 2; responsible AI policies | Standard DPA reviewed | Approved | 2026-03-01 | 2027-03-01 |
+| OpenRouter | API gateway — routes requests to Anthropic | Critical | SOC 2 (review published policies) | Standard DPA reviewed | Approved | 2026-03-01 | 2027-03-01 |
 | OpenAI | AI models for content generation, session summaries, monitoring | Critical | SOC 2; ISO 27001 | Standard DPA reviewed | Approved | 2026-03-01 | 2027-03-01 |
 | Stripe | Payment processing (subscriptions) | Critical | PCI DSS Level 1; SOC 2; ISO 27001 | Standard DPA accepted | Approved | 2026-03-01 | 2027-03-01 |
 | AWS SES | Transactional email delivery | Critical | SOC 2; ISO 27001; CSA STAR | Standard DPA accepted | Approved | 2026-03-01 | 2027-03-01 |
@@ -42,9 +42,9 @@ This document maintains the current list of approved suppliers for Therapeak B.V
 
 **Hetzner:** All device software and patient data is hosted on Hetzner dedicated server infrastructure in Nuremberg, Germany (EU). The DPA was signed on 2026-03-25 via the Hetzner customer portal and covers personal master data, communication data, and health data (Article 9 GDPR). Hetzner data centers are TUV-audited.
 
-**OpenRouter:** Primary pathway for therapy chat messages to reach AI models. OpenRouter provides multi-provider routing (Vertex AI, Amazon Bedrock, Anthropic API), which significantly improves availability. Data sharing was turned OFF as of 2026-03-25. OpenRouter retains request metadata for billing and may briefly retain prompt/completion text for abuse monitoring.
+**Anthropic:** The AI model provider. Provides Claude Sonnet 4.5, Claude Sonnet 4.6, and fallback models (Opus 4, Sonnet 4, Sonnet 3.7). API inputs/outputs are not used for training by default. Data retained for up to 30 days for trust and safety monitoring, then deleted. Anthropic is the entity responsible for the AI model's behavior, safety training, and capabilities.
 
-**Anthropic:** Provides the primary therapy AI models (Claude Sonnet 4.5, Claude Sonnet 4.6, and fallback models). API inputs/outputs are not used for training by default. Data retained for up to 30 days for trust and safety monitoring, then deleted.
+**OpenRouter:** An API gateway that routes requests to Anthropic's models via multiple infrastructure providers (Google Vertex AI, Amazon Bedrock, Anthropic's direct API). OpenRouter does NOT provide AI models — it provides routing and redundancy. If one infrastructure provider is down, OpenRouter routes through another. Data sharing was turned OFF as of 2026-03-25. OpenRouter retains request metadata for billing and may briefly retain prompt/completion text for abuse monitoring.
 
 **OpenAI:** Provides GPT-4o for session summaries, user reports, and session quality monitoring (ChatDebugFlag jobs). Provides GPT-3.5-turbo for content moderation of platform content.
 

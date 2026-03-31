@@ -24,7 +24,7 @@ This procedure defines how Therapeak B.V. manages cybersecurity throughout the l
 
 This procedure applies to:
 - The Therapeak production infrastructure and application
-- AI model pipeline security (OpenRouter, Anthropic Claude)
+- AI model pipeline security (Anthropic Claude, accessed via OpenRouter gateway)
 - Data protection for health data processed by Therapeak
 - Third-party service security assessment
 - Vulnerability management and security incident response
@@ -78,7 +78,7 @@ flowchart TD
 | SSL/TLS | Let's Encrypt (auto-renewed) | -- |
 | Email | AWS SES (eu-north-1, Stockholm) | EU |
 | File storage | AWS S3 (avatar images only) | EU |
-| AI processing | OpenRouter API (routes to Vertex AI, Bedrock, Anthropic) | Various (data transit) |
+| AI processing | Anthropic Claude, accessed via OpenRouter gateway (routes through Vertex AI, Bedrock, Anthropic API) | Various (data transit) |
 
 #### 4.1.2 Access Control
 
@@ -140,7 +140,7 @@ All API keys, database credentials, and sensitive configuration values are store
 | Processor | DPA Status | Data Processed |
 |-----------|------------|---------------|
 | Hetzner | Signed (March 25, 2026) | All personal and health data |
-| OpenRouter | Data sharing turned OFF (March 25, 2026); review DPA/terms | Conversation data in transit for AI processing |
+| OpenRouter (API gateway) | Data sharing turned OFF (March 25, 2026); review DPA/terms | Conversation data in transit to Anthropic for AI processing |
 | AWS (SES, S3) | AWS DPA accepted | Email addresses, email content, avatar images |
 | Stripe | Stripe DPA accepted | Payment and subscription data |
 

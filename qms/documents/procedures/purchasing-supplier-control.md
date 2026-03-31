@@ -55,8 +55,8 @@ Suppliers are classified based on the impact of their product or service on the 
 | Supplier | Service | Criticality Rationale |
 |----------|---------|----------------------|
 | **Hetzner** | Dedicated server hosting (production) | All device software and patient data hosted on Hetzner infrastructure. Downtime = device unavailable. |
-| **OpenRouter** | AI model API routing | Primary pathway for therapy chat messages to reach AI models. Core device function. |
-| **Anthropic** | AI language models (Claude) | Provides the primary therapy AI model. Model quality directly affects device output. |
+| **Anthropic** | AI language model provider (Claude) | Provides the primary therapy AI models. Model quality directly affects device output. |
+| **OpenRouter** | AI API gateway / routing | Routes API requests to Anthropic via multiple infrastructure providers (Vertex AI, Bedrock, Anthropic API) for high availability. Not an AI provider itself. |
 | **OpenAI** | AI language models (GPT-4o, GPT-3.5) | Provides models for session summaries, reports, content moderation, and fallback therapy. |
 | **Stripe** | Payment processing | Processes all user subscriptions. Service disruption prevents user access. |
 | **AWS SES** | Transactional email delivery | Delivers critical notifications (account verification, password reset, session reports). |

@@ -159,14 +159,14 @@ Switching between Claude model versions (e.g., Claude Sonnet 4.5 to Claude Sonne
 The following AI model changes are covered by this plan:
 
 - Updating to a newer version within the same Claude model family (e.g., Sonnet 4.5 to Sonnet 4.6)
-- Switching between pre-approved fallback models (as documented in the OpenRouter fallback configuration)
+- Switching between pre-approved Anthropic Claude fallback models (as documented in the fallback configuration)
 - Minor parameter adjustments (max tokens, temperature) within pre-defined ranges
 
 #### 4.4.2 Conditions for Predetermined Changes
 
 A predetermined AI model change may proceed without full significant change evaluation IF all of the following conditions are met:
 
-1. The new model is from the same provider (Anthropic Claude via OpenRouter)
+1. The new model is from the same provider (Anthropic Claude)
 2. The same system prompts and therapeutic instructions are used
 3. Initial testing with representative conversation scenarios shows equivalent or better therapeutic quality
 4. No degradation in safety behavior (crisis handling, role enforcement, content restrictions)

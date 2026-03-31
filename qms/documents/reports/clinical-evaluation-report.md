@@ -211,7 +211,7 @@ The clinical association between the type of output Therapeak generates (convers
 
 Therapeak implements therapeutic conversations through a sophisticated AI system architecture:
 
-- **Primary AI model:** Anthropic Claude (Sonnet 4.5 / 4.6) accessed via OpenRouter, a multi-provider AI gateway that routes requests through Vertex AI, Amazon Bedrock, and the Anthropic API for high availability.
+- **Primary AI model:** Anthropic Claude (Sonnet 4.5 / 4.6). Requests are routed via the OpenRouter API gateway, which provides infrastructure-level redundancy by routing through Google Vertex AI, Amazon Bedrock, and the Anthropic API.
 - **Fallback models:** Claude Sonnet 4, Claude Opus 4, Claude 3.7 Sonnet --- ensuring continuous service availability.
 - **Therapeutic prompt engineering:** Each conversation is governed by extensive system prompts containing 160--200+ static therapeutic instructions per conversation job. These instructions encode:
   - Therapeutic principles (empathy, active listening, CBT techniques, motivational interviewing elements)

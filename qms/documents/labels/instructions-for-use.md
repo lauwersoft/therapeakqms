@@ -151,7 +151,7 @@ This information is used to generate a personalized AI therapist matched to your
 - All user data is stored on servers located in **Nuremberg, Germany** (EU), hosted by Hetzner.
 - Data is transmitted securely via SSL/TLS encryption.
 - A Data Processing Agreement is in place with the hosting provider.
-- Therapy conversation data is transmitted to AI providers (Anthropic Claude via OpenRouter) for processing. Data sharing with third parties for training purposes is disabled.
+- Therapy conversation data is transmitted to the AI model provider (Anthropic) for processing. Data sharing with third parties for training purposes is disabled.
 
 ### 8.3 Your Data Rights
 

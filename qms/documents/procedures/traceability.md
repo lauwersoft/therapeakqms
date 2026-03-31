@@ -169,7 +169,7 @@ The complete configuration of a released version includes:
 | Component | Identification Method |
 |-----------|-----------------------|
 | Application source code | Git commit hash + tag |
-| AI model versions | Documented in release notes (e.g., Claude Sonnet 4.5 via OpenRouter) |
+| AI model versions | Documented in release notes (e.g., Anthropic Claude Sonnet 4.5) |
 | System prompt versions | Git-tracked text files (chat_room_instructions.txt, priority_chat_instructions.txt) |
 | Dependencies | composer.lock (PHP), package-lock.json (JavaScript) |
 | Infrastructure configuration | Nginx configuration, server configuration |

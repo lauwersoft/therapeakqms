@@ -149,7 +149,7 @@ Therapeak does not use a CI/CD pipeline or a staging environment. This is approp
 
 ### 7.3 AI Model Testing
 
-Given that Therapeak relies on third-party AI models (Claude via OpenRouter) whose behavior may change with upstream updates, the following AI-specific testing is performed:
+Given that Therapeak relies on third-party AI models (Anthropic Claude, accessed via OpenRouter gateway) whose behavior may change with upstream updates, the following AI-specific testing is performed:
 
 | Test | Description | Frequency |
 |---|---|---|
@@ -168,7 +168,7 @@ AI models used for therapy conversations shall meet the following criteria:
 - Demonstrated capability for empathetic, therapeutically appropriate conversational responses
 - Reliable adherence to system prompt instructions (role enforcement, safety boundaries, content restrictions)
 - Support for multi-language output consistent with the device's supported locales
-- Availability through OpenRouter with multi-provider routing for reliability
+- Availability through multi-provider routing (OpenRouter gateway routes to Vertex AI, Bedrock, Anthropic API) for reliability
 - No training on user data (verified via provider data policies)
 
 ### 8.2 Model Change Process
@@ -185,13 +185,13 @@ Changes to the primary AI model (e.g., upgrading from Claude Sonnet 4.5 to a new
 
 ### 8.3 Current Model Configuration
 
-| Function | Model | Provider |
-|---|---|---|
-| Primary therapy chat | Claude Sonnet 4.5 (with reasoning tokens) | OpenRouter |
-| A/B test variant | Claude Sonnet 4.6 | OpenRouter |
-| Fallback chain | Claude Opus 4.5, Claude Sonnet 4, Claude 3.7 Sonnet, Claude Opus 4 | OpenRouter |
-| Session summaries | GPT-4o | OpenRouter/OpenAI |
-| User reports | GPT-4o | OpenRouter/OpenAI |
+| Function | Model | Provider | Accessed via |
+|---|---|---|---|
+| Primary therapy chat | Claude Sonnet 4.5 (with reasoning tokens) | Anthropic | OpenRouter gateway |
+| A/B test variant | Claude Sonnet 4.6 | Anthropic | OpenRouter gateway |
+| Fallback chain | Claude Opus 4.5, Claude Sonnet 4, Claude 3.7 Sonnet, Claude Opus 4 | Anthropic | OpenRouter gateway |
+| Session summaries | GPT-4o | OpenAI | Direct API |
+| User reports | GPT-4o | OpenAI | Direct API |
 | Content moderation | GPT-3.5-turbo-0125 | OpenAI |
 | Session quality monitoring | GPT-4o | OpenAI |
 | Image generation | Flux Pro | Fal.ai |
@@ -240,7 +240,7 @@ The following SOUP components are used in the Therapeak medical device:
 | Tailwind CSS | -- | Utility CSS framework | Visual styling only |
 | DaisyUI | -- | Tailwind CSS component library | Visual styling only |
 | Laravel Cashier | -- | Stripe subscription management | Billing/subscription issues (non-clinical) |
-| OpenRouter SDK | -- | AI model API gateway client | Core dependency for therapy chat |
+| OpenRouter SDK | -- | API gateway client (routes to Anthropic) | Core dependency for therapy chat |
 | Stripe SDK | -- | Payment processing | Billing (non-clinical) |
 | Laravel Horizon | -- | Queue dashboard and management | Queue processing visibility |
 | Laravel Telescope | -- | Debug/monitoring dashboard | Monitoring capability |

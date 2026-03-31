@@ -52,7 +52,7 @@ The scope encompasses normal use, reasonably foreseeable misuse, and hazardous s
 | Intended purpose | Patient-specific supportive conversational guidance intended to help users self-manage mild to moderate mental health symptoms at home |
 | Target population | Adults aged 19+ with mild to moderate anxiety, depression, OCD, trauma/stress-related disorders, or impulse control disorders |
 | Use environment | Home use, unsupervised, via web browser |
-| Primary AI model | Anthropic Claude (via OpenRouter) |
+| Primary AI model | Anthropic Claude (accessed via OpenRouter API gateway) |
 | IMDRF category | Informs clinical management |
 
 ### 2.2 Related Documents
@@ -374,7 +374,7 @@ The following hazard analysis was conducted using Failure Mode and Effects Analy
 | C-008b | Inherent safety | SSH access restricted to Sarp Derinsu only -- no other users have server access | Server access audit |
 | C-008c | Inherent safety | Data Processing Agreement (DPA) signed with Hetzner (March 25, 2026), covering personal master data, communication data, and health data (Art. 9 GDPR) | DPA documentation |
 | C-008d | Inherent safety | 2FA enabled on GitHub, Hetzner, Stripe, and AWS -- protecting critical infrastructure accounts | Account security audit |
-| C-008e | Inherent safety | OpenRouter data sharing turned OFF (March 25, 2026), minimizing data exposure to third parties | OpenRouter account settings verification |
+| C-008e | Inherent safety | Data sharing at OpenRouter gateway turned OFF (March 25, 2026), minimizing data exposure to third parties | OpenRouter account settings verification |
 | C-008f | Inherent safety | Laravel Sanctum (SPA authentication) and Laravel Passport (service-to-service) provide secure API authentication | Code review of authentication configuration |
 | C-008g | Protection | Telescope live monitoring enables detection of anomalous access patterns | Telescope dashboard review |
 | C-008h | Protection | Cybersecurity management per [[SOP-016]] defines ongoing security monitoring and incident response | Procedure review |
@@ -426,7 +426,7 @@ The following hazard analysis was conducted using Failure Mode and Effects Analy
 |---|---|
 | **Hazard ID** | H-009 |
 | **Hazard** | System unavailability during user crisis |
-| **Cause** | The Therapeak platform becomes unavailable (server outage, OpenRouter outage, database failure, queue processing failure) at the moment a user in distress attempts to use it. User may have no alternative coping mechanism immediately available. |
+| **Cause** | The Therapeak platform becomes unavailable (server outage, AI provider outage, database failure, queue processing failure) at the moment a user in distress attempts to use it. User may have no alternative coping mechanism immediately available. |
 | **Harm** | User in distress cannot access the platform for support. If the user is in crisis and has no other resources, the unavailability could contribute to an adverse outcome. Frustration and loss of trust even for non-crisis users. |
 | **Initial Severity** | S4 (Critical) |
 | **Initial Probability** | P2 (Unlikely) |
@@ -436,8 +436,8 @@ The following hazard analysis was conducted using Failure Mode and Effects Analy
 
 | # | Type | Control Measure | Verification |
 |---|---|---|---|
-| C-009a | Inherent safety | Multi-provider AI fallback strategy: Primary (Claude Sonnet 4.5) with 3 retry attempts, then fallback to Claude Opus 4.5, then OpenRouter's own fallback array (Sonnet 4 -> Sonnet 3.7 -> Opus 4). OpenRouter routes through Vertex AI, Amazon Bedrock, and Anthropic API. | Conversation job code review; fallback configuration audit |
-| C-009b | Inherent safety | 99.9% availability target -- achievable due to multi-provider AI fallback through OpenRouter | Uptime monitoring records |
+| C-009a | Inherent safety | Multi-provider AI fallback strategy: Primary (Anthropic Claude Sonnet 4.5) with 3 retry attempts, then fallback to Claude Opus 4.5, then additional fallback models (Sonnet 4 -> Sonnet 3.7 -> Opus 4). Requests are routed via the OpenRouter gateway through multiple infrastructure providers (Vertex AI, Amazon Bedrock, Anthropic API) for provider-level redundancy. | Conversation job code review; fallback configuration audit |
+| C-009b | Inherent safety | 99.9% availability target — achievable due to multi-provider routing (Vertex AI, Bedrock, Anthropic API via OpenRouter gateway) | Uptime monitoring records |
 | C-009c | Inherent safety | No self-caused outages to date; all historical outages from external services only | Incident history review |
 | C-009d | Protection | Telescope live monitoring shows real-time platform health; Sarp monitors even outside work hours (evenings, weekends) | Telescope dashboard; monitoring schedule |
 | C-009e | Protection | Redis-backed queue processing (Laravel Horizon) with persistent job storage prevents message loss during transient failures | Queue system configuration review |
@@ -459,7 +459,7 @@ The following hazard analysis was conducted using Failure Mode and Effects Analy
 |---|---|
 | **Hazard ID** | H-010 |
 | **Hazard** | AI model change degrades therapeutic quality |
-| **Cause** | An upstream AI model update (Anthropic updates Claude behavior, OpenRouter routes to a different model version) or an intentional model switch (e.g., Sonnet 4.5 to Sonnet 4.6) introduces degraded therapeutic output quality -- less empathetic, less contextually appropriate, more generic, or clinically inappropriate responses. |
+| **Cause** | An upstream AI model update (Anthropic updates Claude behavior) or an intentional model switch (e.g., Sonnet 4.5 to Sonnet 4.6) introduces degraded therapeutic output quality — less empathetic, less contextually appropriate, more generic, or clinically inappropriate responses. |
 | **Harm** | Users receive lower-quality therapeutic support without warning. Possible inappropriate advice (see H-002), role confusion (see H-003), or failure to handle sensitive topics appropriately. Systematic quality degradation affecting all users simultaneously. |
 | **Initial Severity** | S3 (Serious) |
 | **Initial Probability** | P3 (Possible) |
@@ -680,7 +680,7 @@ The risk control measures implemented for Therapeak are consistent with or excee
 - **Prompt engineering:** 160-200+ safety instructions per session exceeds typical industry practice for conversational AI safety.
 - **Model-level safety:** Delegation of crisis handling to Anthropic Claude's built-in safety layer leverages the most advanced commercially available AI safety training.
 - **Automated monitoring:** The `FLAG_SWITCHED_ROLES` and `FLAG_DID_NOT_RESPOND` systems provide population-level quality monitoring that is uncommon in comparable products.
-- **Multi-provider fallback:** The multi-layer AI provider redundancy (OpenRouter routing through Vertex AI, Bedrock, and Anthropic API) provides availability guarantees exceeding single-provider architectures.
+- **Multi-provider fallback:** The multi-layer infrastructure redundancy (requests routed via OpenRouter gateway through Vertex AI, Bedrock, and Anthropic API) provides availability guarantees exceeding single-provider architectures.
 
 ## 7. Benefit-Risk Analysis
 
