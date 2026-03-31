@@ -40,8 +40,8 @@ class User extends Authenticatable
      * @var list<string>
      */
     const NOTIFICATION_DEFAULTS = [
-        'comments' => true,
-        'publications' => true,
+        'comments' => false,
+        'publications' => false,
     ];
 
     protected $fillable = [
