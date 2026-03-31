@@ -136,7 +136,7 @@ Therapeak is a monolithic Laravel web application that handles all functionality
 | **Cache / Queue** | Redis, Laravel Horizon |
 | **Real-time** | Soketi (self-hosted Pusher-compatible WebSocket server) |
 | **Build** | Vite 4 |
-| **Containerization** | Docker Compose (Laravel Sail) for development |
+| **Local web server** | Nginx for development |
 
 ### 10.3 AI Models
 

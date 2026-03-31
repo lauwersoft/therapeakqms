@@ -172,7 +172,7 @@ The complete configuration of a released version includes:
 | AI model versions | Documented in release notes (e.g., Claude Sonnet 4.5 via OpenRouter) |
 | System prompt versions | Git-tracked text files (chat_room_instructions.txt, priority_chat_instructions.txt) |
 | Dependencies | composer.lock (PHP), package-lock.json (JavaScript) |
-| Infrastructure configuration | Docker Compose files, server configuration |
+| Infrastructure configuration | Nginx configuration, server configuration |
 | Database schema | Laravel migration files (git-tracked) |
 
 ## 5. Records

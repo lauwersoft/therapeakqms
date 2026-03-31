@@ -46,7 +46,7 @@ This procedure does not apply to infrastructure software (operating system, web 
 ```mermaid
 flowchart TD
     A[Requirement Identified\nBug / Feature / CAPA] --> B[Evaluate Change\nSafety & Regulatory Impact]
-    B --> C[Local Development\nDocker Environment]
+    B --> C[Local Development\nNginx Environment]
     C --> D[Manual Testing\nFunctional + Regression]
     D --> E[Git Commit\nDescriptive Message]
     E --> F[Deploy to Production\ngit push → git pull]
@@ -69,7 +69,7 @@ flowchart TD
 
 | Environment | Purpose | Details |
 |-------------|---------|---------|
-| Local development | Development and testing | Docker Compose (Laravel Sail) on developer workstation |
+| Local development | Development and testing | Nginx on developer workstation |
 | Production | Live deployment | Hetzner VPS, Nuremberg, Germany |
 
 **There is no staging environment, no CI/CD pipeline, and no automated test suite.** This is documented honestly. Compensating controls are described in Section 4.4.
@@ -87,7 +87,7 @@ Detailed steps:
 
 1. **Identify the change:** Source may be a bug report (user complaint via contact, labelled "Needs-fix"), a feature request, a CAPA action, a regulatory requirement, or a proactive improvement
 2. **Evaluate the change:** Assess whether the change affects device safety or performance. If yes, evaluate per [[SOP-017]] Change Management before implementation
-3. **Local development:** Implement the change in the local Docker environment
+3. **Local development:** Implement the change in the local development environment
 4. **Local testing:** Manually test the change in the local environment. Testing includes:
    - Functional verification (does the change work as intended?)
    - Regression check (does the change break existing functionality in the affected area?)
@@ -115,8 +115,8 @@ The absence of CI/CD, staging environment, and automated tests is mitigated by t
 
 | Missing Control | Compensating Measure | Rationale |
 |----------------|---------------------|-----------|
-| No automated tests | Thorough manual testing in local Docker environment before each deployment | Single developer has complete knowledge of the codebase and can assess impact of changes |
-| No staging environment | Local Docker environment replicates the production stack (same PHP version, MariaDB, Redis, queue workers) | Local environment is functionally equivalent to production |
+| No automated tests | Thorough manual testing in local environment before each deployment | Single developer has complete knowledge of the codebase and can assess impact of changes |
+| No staging environment | Local environment replicates the production stack (same PHP version, MariaDB, Redis, Nginx) | Local environment is functionally equivalent to production |
 | No CI/CD pipeline | Manual deployment via git pull ensures deliberate control over what is deployed and when | Prevents accidental deployments; developer reviews changes at each step |
 | No automated regression tests | Manual regression checks focused on the area of change + post-deployment Telescope monitoring | Telescope provides real-time visibility into errors, allowing rapid rollback |
 | No code review | Self-review before commit + post-deployment verification | Single developer; compensated by Telescope monitoring and user feedback |

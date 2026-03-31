@@ -210,7 +210,7 @@ Training records are maintained per [[SOP-010]] and [[LOG-001]].
 | Component | Detail |
 |-----------|--------|
 | Production server | Hetzner VPS, Nuremberg, Germany (EU) |
-| Development environment | Docker Compose (Laravel Sail), local |
+| Development environment | Nginx, local development environment |
 | Version control | GitHub (private repository) |
 | QMS platform | Laravel web application with git-based document control |
 | Communication | Email, video conferencing, messaging |

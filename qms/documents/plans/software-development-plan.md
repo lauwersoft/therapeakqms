@@ -62,7 +62,7 @@ The rigor of each activity is proportionate to the single-developer context with
 | Component | Tool/Technology |
 |---|---|
 | Operating system | Linux-based development environment |
-| Containerization | Docker Compose (Laravel Sail) |
+| Web server | Nginx (local development) |
 | Backend runtime | PHP 8.2 |
 | Backend framework | Laravel 10 |
 | Frontend framework | Vue 3 + Inertia.js (SPA) |
@@ -120,7 +120,7 @@ Therapeak does not use a CI/CD pipeline or a staging environment. This is approp
 
 | Risk | Compensating Control |
 |---|---|
-| Untested code reaches production | All changes are tested locally in Docker Compose environment before deployment. Manual verification covers functional and visual correctness. |
+| Untested code reaches production | All changes are tested locally in local development environment before deployment. Manual verification covers functional and visual correctness. |
 | Regression not detected | Post-deployment live verification via Telescope monitors for errors and unexpected behavior. Sarp actively monitors after every deployment. |
 | No automated test safety net | Prompt testing tool validates AI output quality for prompt changes. Session quality monitoring (ChatDebugFlags) provides ongoing automated detection of AI quality issues. |
 | No staged rollout | Deployment is a simple git pull; rollback is a git revert + git pull. Single-server architecture means instant rollback capability. |
@@ -132,7 +132,7 @@ Therapeak does not use a CI/CD pipeline or a staging environment. This is approp
 
 | Method | Description | When Applied |
 |---|---|---|
-| Manual local testing | Functional testing in Docker Compose environment, covering user flows, edge cases, and visual verification | Before every deployment |
+| Manual local testing | Functional testing in local development environment, covering user flows, edge cases, and visual verification | Before every deployment |
 | Prompt testing tool | Dedicated tool for testing AI prompt changes, evaluating response quality, safety compliance, and therapeutic appropriateness | When prompts are modified |
 | Live verification (Telescope) | Post-deployment monitoring of requests, errors, and system behavior in production | After every deployment |
 | Session quality monitoring | Automated ChatDebugFlag checks (role confusion, non-response) on production sessions | Continuous (every session) |
@@ -143,7 +143,7 @@ Therapeak does not use a CI/CD pipeline or a staging environment. This is approp
 | IEC 62304 Activity | Therapeak Approach |
 |---|---|
 | Unit verification | Manual testing of individual functions/components locally. Critical AI-related functions (prompt construction, safety instructions) verified through prompt testing tool. |
-| Integration testing | Manual end-to-end testing in Docker Compose environment covering all application modules. |
+| Integration testing | Manual end-to-end testing in local development environment covering all application modules. |
 | System testing | Full user-flow testing locally: onboarding survey, therapist matching, therapy session, session summary, mood tracking, report generation. |
 | Acceptance testing | Live verification post-deployment confirms system operates correctly in production environment. |
 
@@ -200,7 +200,7 @@ Changes to the primary AI model (e.g., upgrading from Claude Sonnet 4.5 to a new
 
 ### 9.1 Standard Deployment
 
-1. **Develop and test locally:** Implement change in Docker Compose environment. Test manually covering affected functionality.
+1. **Develop and test locally:** Implement change in local development environment. Test manually covering affected functionality.
 2. **Commit to main:** Git commit with descriptive message to the main branch.
 3. **Push to GitHub:** `git push` to remote repository.
 4. **Deploy to production:** `git pull` on the production server.
@@ -255,7 +255,7 @@ The following SOUP components are used in the Therapeak medical device:
 
 ### 10.2 SOUP Management
 
-- SOUP versions are tracked in `composer.json` (PHP), `package.json` (JavaScript), and Docker Compose configuration.
+- SOUP versions are tracked in `composer.json` (PHP) and `package.json` (JavaScript).
 - SOUP updates are evaluated for impact on device safety and performance before being applied.
 - Security advisories for SOUP components are monitored through GitHub Dependabot alerts.
 - Critical security patches are applied promptly; feature updates are evaluated and tested before adoption.

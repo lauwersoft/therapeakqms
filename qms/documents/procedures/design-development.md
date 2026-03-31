@@ -55,7 +55,7 @@ As a one-person company, Sarp performs all design and development roles. Design 
 ```mermaid
 flowchart TD
     A[Design Input\nUser Feedback, Requirements,\nRisk Controls] --> B[Design Planning\nObjective, Scope, Risks]
-    B --> C[Local Development\nDocker / Laravel Sail]
+    B --> C[Local Development\nNginx Local Environment]
     C --> D[Testing & Verification\nManual Testing]
     D --> E[Design Review\nFM-007]
     E --> F{Approved?}
@@ -117,7 +117,7 @@ Therapeak follows a lightweight iterative development process appropriate for a 
 
 #### 4.3.1 Local Development
 
-1. Sarp develops the change in a local Docker environment (Laravel Sail)
+1. Sarp develops the change in a local Nginx development environment
 2. Code changes are committed to Git with descriptive commit messages
 3. For AI-related changes: prompt modifications are tested with representative conversation scenarios locally
 

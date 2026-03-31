@@ -99,7 +99,7 @@ Class IIa under Rule 11 because:
 - **Cache/Queue:** Redis, Laravel Horizon
 - **Real-time:** Soketi (self-hosted Pusher-compatible WebSocket)
 - **Build:** Vite 4
-- **Containerization:** Docker Compose (Laravel Sail) for development
+- **Containerization:** Nginx (local development) for development
 
 ### AI Models
 - **Primary therapy chat:** Claude Sonnet 4.5 via OpenRouter (with reasoning tokens)
@@ -517,10 +517,10 @@ Multi-layer redundancy:
 - **Payment methods:** Card, PayPal, Link, SEPA Debit
 
 ## Deployment
-- **Development:** Docker Compose (Laravel Sail)
+- **Development:** Nginx (local development)
 - **Production:** Hetzner VPS, Nuremberg, Germany (self-managed, Sarp does everything)
 - **Deployment process:** git push to main → git pull on production → check it live
-- **Local development environment:** Docker Compose (Laravel Sail) — used for development and testing before deploying
+- **Local development environment:** Nginx (local development) — used for development and testing before deploying
 - **No CI/CD pipeline**
 - **No staging environment** (but local environment serves as testing ground)
 - **No automated testing** (manual testing locally + live verification)
