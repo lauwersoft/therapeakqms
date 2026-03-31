@@ -461,4 +461,118 @@ class DocumentMetadata
             return '<span class="text-red-500" title="Document not found">' . e($docId) . ' (not found)</span>';
         }, $html);
     }
+
+    /**
+     * Auto-link regulatory references (ISO, MDR, MDCG, IEC, Articles, Annexes, Clauses) in rendered HTML.
+     * Skips text already inside <a> tags.
+     */
+    public static function resolveRegulatoryLinks(string $html): string
+    {
+        $linkClass = 'text-blue-600 hover:text-blue-800';
+
+        // Process text that is NOT inside <a> tags or HTML tags
+        return preg_replace_callback('/(<a\b[^>]*>.*?<\/a>)|(<[^>]+>)|([^<]+)/s', function ($m) use ($linkClass) {
+            // Already a link or HTML tag — skip
+            if (!empty($m[1]) || !empty($m[2])) {
+                return $m[0];
+            }
+
+            $text = $m[3];
+
+            // Use placeholders to prevent double-linking.
+            // Each replacement inserts a placeholder, final step restores them.
+            $placeholders = [];
+            $i = 0;
+
+            $placeholder = function ($link) use (&$placeholders, &$i) {
+                $key = "\x00REGLINK" . ($i++) . "\x00";
+                $placeholders[$key] = $link;
+                return $key;
+            };
+
+            // 1. MDCG documents (dynamically from reference files)
+            static $mdcgFiles = null;
+            if ($mdcgFiles === null) {
+                $mdcgFiles = [];
+                foreach (glob(base_path('qms/references/mdcg-*.md')) as $f) {
+                    $mdcgFiles[] = str_replace(['mdcg-', '.md'], '', basename($f));
+                }
+                usort($mdcgFiles, fn($a, $b) => strlen($b) - strlen($a));
+            }
+            foreach ($mdcgFiles as $mdcg) {
+                $escaped = preg_quote($mdcg, '/');
+                $text = preg_replace_callback('/\bMDCG\s+' . $escaped . '\b/', function ($r) use ($mdcg, $linkClass, $placeholder) {
+                    return $placeholder('<a href="/references/mdcg-' . $mdcg . '" class="' . $linkClass . '">' . $r[0] . '</a>');
+                }, $text);
+            }
+
+            // 2. ISO 13485 with clause: "ISO 13485:2016 Clause 4.2.4"
+            $text = preg_replace_callback('/\bISO 13485(?::2016)?\s+Clause\s+([\d.]+)/', function ($r) use ($linkClass, $placeholder) {
+                $anchor = 'clause-' . str_replace('.', '-', $r[1]);
+                return $placeholder('<a href="/references/iso-13485#' . $anchor . '" class="' . $linkClass . '">' . $r[0] . '</a>');
+            }, $text);
+
+            // 3. ISO 13485 bare: "ISO 13485:2016" or "ISO 13485"
+            $text = preg_replace_callback('/\bISO 13485(?::2016)?/', function ($r) use ($linkClass, $placeholder) {
+                return $placeholder('<a href="/references/iso-13485" class="' . $linkClass . '">' . $r[0] . '</a>');
+            }, $text);
+
+            // 4. ISO 14971 with clause
+            $text = preg_replace_callback('/\bISO 14971(?::2019)?\s+Clause\s+([\d.]+)/', function ($r) use ($linkClass, $placeholder) {
+                $anchor = 'clause-' . str_replace('.', '-', $r[1]);
+                return $placeholder('<a href="/references/iso-14971#' . $anchor . '" class="' . $linkClass . '">' . $r[0] . '</a>');
+            }, $text);
+
+            // 5. ISO 14971 bare
+            $text = preg_replace_callback('/\bISO 14971(?::2019)?/', function ($r) use ($linkClass, $placeholder) {
+                return $placeholder('<a href="/references/iso-14971" class="' . $linkClass . '">' . $r[0] . '</a>');
+            }, $text);
+
+            // 6. IEC standards (no reference page — bold only)
+            $text = preg_replace_callback('/\bIEC 62304(?:[:\-]\d+)?(?:\+A1:\d+)?/', function ($r) use ($placeholder) {
+                return $placeholder('<strong>' . $r[0] . '</strong>');
+            }, $text);
+            $text = preg_replace_callback('/\bIEC 62366(?:-1)?(?::\d+)?/', function ($r) use ($placeholder) {
+                return $placeholder('<strong>' . $r[0] . '</strong>');
+            }, $text);
+
+            // 7. "EU MDR 2017/745 Article N(N)"
+            $text = preg_replace_callback('/\bEU MDR(?:\s+2017\/745)?\s+Article\s+(\d+)(?:\(\d+\))?/', function ($r) use ($linkClass, $placeholder) {
+                $anchor = 'article-' . $r[1];
+                return $placeholder('<a href="/references/eu-mdr#' . $anchor . '" class="' . $linkClass . '">' . $r[0] . '</a>');
+            }, $text);
+
+            // 8. "EU MDR 2017/745 Annex XIV Part B" etc
+            $text = preg_replace_callback('/\bEU MDR(?:\s+2017\/745)?\s+Annex\s+([IVXLC]+)\b/', function ($r) use ($linkClass, $placeholder) {
+                $anchor = 'annex-' . strtolower($r[1]);
+                return $placeholder('<a href="/references/eu-mdr#' . $anchor . '" class="' . $linkClass . '">' . $r[0] . '</a>');
+            }, $text);
+
+            // 9. Bare "EU MDR 2017/745" or "EU MDR"
+            $text = preg_replace_callback('/\bEU MDR(?:\s+2017\/745)?/', function ($r) use ($linkClass, $placeholder) {
+                return $placeholder('<a href="/references/eu-mdr" class="' . $linkClass . '">' . $r[0] . '</a>');
+            }, $text);
+
+            // 10. Standalone "Article N(N)" (not already captured by EU MDR pattern)
+            $text = preg_replace_callback('/\bArticle\s+(\d+)(?:\(\d+\))?/', function ($r) use ($linkClass, $placeholder) {
+                $anchor = 'article-' . $r[1];
+                return $placeholder('<a href="/references/eu-mdr#' . $anchor . '" class="' . $linkClass . '">' . $r[0] . '</a>');
+            }, $text);
+
+            // 11. Standalone "Annex I/II/XIV" etc
+            $text = preg_replace_callback('/\bAnnex\s+([IVXLC]+)\b/', function ($r) use ($linkClass, $placeholder) {
+                $anchor = 'annex-' . strtolower($r[1]);
+                return $placeholder('<a href="/references/eu-mdr#' . $anchor . '" class="' . $linkClass . '">' . $r[0] . '</a>');
+            }, $text);
+
+            // 12. Standalone "Clause N.N.N" (ISO 13485 assumed)
+            $text = preg_replace_callback('/\bClause\s+([\d.]+)/', function ($r) use ($linkClass, $placeholder) {
+                $anchor = 'clause-' . str_replace('.', '-', $r[1]);
+                return $placeholder('<a href="/references/iso-13485#' . $anchor . '" class="' . $linkClass . '">' . $r[0] . '</a>');
+            }, $text);
+
+            // Restore placeholders
+            return str_replace(array_keys($placeholders), array_values($placeholders), $text);
+        }, $html);
+    }
 }

@@ -99,6 +99,7 @@ class DocumentController extends Controller
 
             $idMap = DocumentMetadata::idMap($docIndex);
             $html = DocumentMetadata::resolveLinks($html, $idMap);
+            $html = DocumentMetadata::resolveRegulatoryLinks($html);
 
             // Add IDs to headings for comment section linking
             $html = preg_replace_callback('/<(h[123])>(.*?)<\/\1>/s', function ($m) {
