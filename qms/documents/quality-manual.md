@@ -2,6 +2,7 @@
 id: "QM-001"
 title: "Quality Manual"
 type: "QM"
+category: "qms"
 version: "1.0"
 status: "approved"
 effective_date: "2026-03-01"

@@ -2,6 +2,7 @@
     "id": "FM-001",
     "title": "CAPA Form",
     "type": "FM",
+    "category": "qms",
     "version": "1.0",
     "status": "approved",
     "author": "Sarp Derinsu",

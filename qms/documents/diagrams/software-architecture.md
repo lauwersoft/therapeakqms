@@ -2,6 +2,7 @@
 id: "DWG-002"
 title: "Software Architecture Diagram"
 type: "DWG"
+category: "technical"
 version: "1.0"
 status: "approved"
 effective_date: "2026-03-01"

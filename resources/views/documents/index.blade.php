@@ -243,6 +243,7 @@
                     sidebarSearch: '',
                     dragOver: false,
                     droppedFile: null,
+                    sidebarCategoryFilter: '',
                     sidebarTypeFilter: '',
                     sidebarStatusFilter: '',
                     sidebarCommentFilter: '',

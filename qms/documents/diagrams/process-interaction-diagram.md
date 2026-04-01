@@ -2,6 +2,7 @@
 id: "DWG-001"
 title: "Process Interaction Diagram"
 type: "DWG"
+category: "qms"
 version: "1.0"
 status: "approved"
 effective_date: "2026-03-01"

@@ -314,7 +314,13 @@
             @endphp
 
             {{-- Filters (dropdowns) --}}
-            <div class="grid grid-cols-3 gap-2 mb-5">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
+                <select x-model="categoryFilter" class="text-xs border-gray-200 rounded-md py-1.5 bg-white w-full">
+                    <option value="">All categories</option>
+                    @foreach(\App\Services\DocumentMetadata::CATEGORIES as $catKey => $catLabel)
+                        <option value="{{ $catKey }}">{{ $catLabel }} ({{ collect($documents)->where('category', $catKey)->count() }})</option>
+                    @endforeach
+                </select>
                 <select x-model="typeFilter" class="text-xs border-gray-200 rounded-md py-1.5 bg-white w-full">
                     <option value="">All types</option>
                     @foreach(\App\Services\DocumentMetadata::TYPES as $key => $label)
@@ -343,8 +349,8 @@
             <div class="flex items-center justify-between mb-4">
                 <span class="text-xs text-gray-400" x-text="filteredDocs.length + ' of ' + docs.length + ' documents'"></span>
                 <div class="flex items-center gap-3">
-                    <button x-show="typeFilter || statusFilter || commentFilter || search" x-cloak
-                            @click="typeFilter = ''; statusFilter = ''; commentFilter = ''; search = ''"
+                    <button x-show="categoryFilter || typeFilter || statusFilter || commentFilter || search" x-cloak
+                            @click="categoryFilter = ''; typeFilter = ''; statusFilter = ''; commentFilter = ''; search = ''"
                             class="text-xs text-blue-600 hover:text-blue-800">Clear filters</button>
                     <div class="flex items-center gap-1.5">
                         <button @click="collapseAll()" class="flex items-center gap-1 px-2 py-1 rounded border border-gray-200 text-[11px] text-gray-500 hover:text-gray-700 hover:bg-gray-50 bg-white">
@@ -381,6 +387,7 @@
                                         {{-- Desktop: single line --}}
                                         <div class="hidden lg:flex items-center gap-4">
                                             <span class="font-mono text-xs shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded font-semibold" :class="doc.type_color" x-text="doc.doc_id"></span>
+                                            <span x-show="doc.category_label" class="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded" :class="doc.category_color" x-text="doc.category_label"></span>
                                             <div class="flex-1 min-w-0">
                                                 <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
                                                 <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'documents/' + doc.path"></span>
@@ -431,6 +438,7 @@
                                         {{-- Desktop: single line --}}
                                         <div class="hidden lg:flex items-center gap-4">
                                             <span class="font-mono text-xs shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded font-semibold" :class="doc.type_color" x-text="doc.doc_id"></span>
+                                            <span x-show="doc.category_label" class="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded" :class="doc.category_color" x-text="doc.category_label"></span>
                                             <div class="flex-1 min-w-0">
                                                 <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
                                                 <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'documents/' + doc.path"></span>
@@ -482,6 +490,7 @@
                 return {
                     ready: true,
                     search: '',
+                    categoryFilter: '',
                     typeFilter: '',
                     statusFilter: '',
                     commentFilter: '',
@@ -506,6 +515,7 @@
 
                     get filteredDocs() {
                         return this.docs.filter(d => {
+                            if (this.categoryFilter && d.category !== this.categoryFilter) return false;
                             if (this.typeFilter && d.type !== this.typeFilter) return false;
                             if (this.statusFilter && d.status !== this.statusFilter) return false;
                             if (this.commentFilter === 'with' && !(d.comment_count > 0)) return false;

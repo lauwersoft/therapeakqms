@@ -2,6 +2,7 @@
     "id": "CER-001",
     "title": "Hetzner Data Processing Agreement (DPA)",
     "type": "CER",
+    "category": "qms",
     "version": "1.0",
     "status": "approved",
     "effective_date": "2026-03-25",

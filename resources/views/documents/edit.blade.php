@@ -237,6 +237,7 @@
                     docs: @json($docList),
                     editor: null,
                     sidebarSearch: '',
+                    sidebarCategoryFilter: '',
                     sidebarTypeFilter: '',
                     sidebarStatusFilter: '',
                     sidebarCommentFilter: '',

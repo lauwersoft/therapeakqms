@@ -2,6 +2,7 @@
     "id": "FM-003",
     "title": "Change Request Form",
     "type": "FM",
+    "category": "qms",
     "version": "1.0",
     "status": "approved",
     "author": "Sarp Derinsu",

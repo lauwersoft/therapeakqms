@@ -2,6 +2,7 @@
 id: "PLN-006"
 title: "Usability Engineering Plan"
 type: "PLN"
+category: "technical"
 version: "1.0"
 status: "approved"
 effective_date: "2026-03-01"

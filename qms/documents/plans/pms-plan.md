@@ -2,6 +2,7 @@
 id: "PLN-004"
 title: "Post-Market Surveillance Plan"
 type: "PLN"
+category: "technical"
 version: "1.0"
 status: "approved"
 effective_date: "2026-03-01"

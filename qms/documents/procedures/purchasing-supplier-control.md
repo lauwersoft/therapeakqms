@@ -2,6 +2,7 @@
 id: "SOP-008"
 title: "Purchasing and Supplier Control Procedure"
 type: "SOP"
+category: "qms"
 version: "1.0"
 status: "approved"
 effective_date: "2026-03-01"

@@ -2,6 +2,7 @@
 id: "CE-001"
 title: "Clinical Evaluation Report"
 type: "CE"
+category: "technical"
 version: "1.0"
 status: "approved"
 effective_date: "2026-03-01"

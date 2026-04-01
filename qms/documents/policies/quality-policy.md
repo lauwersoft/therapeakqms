@@ -2,6 +2,7 @@
 id: "POL-001"
 title: "Quality Policy"
 type: "POL"
+category: "qms"
 version: "1.0"
 status: "approved"
 effective_date: "2026-03-01"

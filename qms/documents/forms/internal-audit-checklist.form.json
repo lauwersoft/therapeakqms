@@ -2,6 +2,7 @@
     "id": "FM-008",
     "title": "Internal Audit Checklist",
     "type": "FM",
+    "category": "qms",
     "version": "1.0",
     "status": "approved",
     "author": "Sarp Derinsu",

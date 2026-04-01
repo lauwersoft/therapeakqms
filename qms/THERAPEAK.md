@@ -53,7 +53,7 @@ Mild to moderate mental health conditions:
 
 ### Target Patient Population
 - Adults (18+) with mild to moderate mental health issues
-- **Minimum age:** 19+ for trial/payment access — survey age dropdown starts at 12, but if age ≤ 18 is selected, user cannot access free trial or pay. Age 18 is also blocked as a buffer against minors (e.g., a 14-year-old claiming to be 18). Effectively, users must report age 19+ to use the platform.
+- **Minimum age:** Under 18 blocked from purchasing and using the platform entirely (TODO: purchase block not yet fully implemented). Age 18 can purchase but gets no free trial and no conversion tracking. Age 19+ has full access (trial + purchase + conversion tracking). Survey age dropdown starts at 12.
 - Home use environment
 - May be used standalone or as supplement to traditional therapy
 
@@ -109,11 +109,7 @@ Class IIa under Rule 11 because:
 - **Session quality monitoring:** GPT-4o (role confusion detection, non-response detection)
 
 ### System Architecture
-Two applications:
-1. **psychology-tool** (main Therapeak app) — user-facing, therapy sessions, payments
-2. **chat-tool** (backend microservice) — AI content generation, translations, profiles, moderation
-
-Communication: chat-tool exposes an API that psychology-tool calls via HTTP. Webhook system for async results.
+Main application: **psychology-tool** — the Therapeak web app handling therapy sessions, payments, reports, AI content generation, and therapist profiles. A legacy **chat-tool** microservice exists but is being deprecated — its functionality is being moved into the main app. Currently chat-tool is only used for assistant generation from surveys.
 
 ### AI Therapy Flow
 1. User completes trial survey (concerns, age, gender, language)

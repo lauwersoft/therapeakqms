@@ -109,10 +109,18 @@
             @endif
 
             {{-- Stats --}}
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 mb-8">
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                     <div class="text-2xl font-bold text-gray-800">{{ $totalDocs }}</div>
-                    <div class="text-xs text-gray-500 mt-0.5">Total documents</div>
+                    <div class="text-xs text-gray-500 mt-0.5">Total</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm border border-blue-200 p-4">
+                    <div class="text-2xl font-bold text-blue-600">{{ $qmsCount }}</div>
+                    <div class="text-xs text-blue-500 mt-0.5">Quality System</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm border border-amber-200 p-4">
+                    <div class="text-2xl font-bold text-amber-600">{{ $technicalCount }}</div>
+                    <div class="text-xs text-amber-500 mt-0.5">Technical Docs</div>
                 </div>
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                     <div class="text-2xl font-bold text-gray-500">{{ $draftCount }}</div>
@@ -120,7 +128,7 @@
                 </div>
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                     <div class="text-2xl font-bold text-yellow-600">{{ $inReviewCount }}</div>
-                    <div class="text-xs text-gray-500 mt-0.5">In review</div>
+                    <div class="text-xs text-gray-500 mt-0.5">In Review</div>
                 </div>
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                     <div class="text-2xl font-bold text-green-600">{{ $approvedCount }}</div>

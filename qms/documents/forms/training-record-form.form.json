@@ -2,6 +2,7 @@
     "id": "FM-006",
     "title": "Training Record Form",
     "type": "FM",
+    "category": "qms",
     "version": "1.0",
     "status": "approved",
     "author": "Sarp Derinsu",

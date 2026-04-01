@@ -2,6 +2,7 @@
 id: "SOP-015"
 title: "Control of Nonconforming Product Procedure"
 type: "SOP"
+category: "qms"
 version: "1.0"
 status: "approved"
 effective_date: "2026-03-01"

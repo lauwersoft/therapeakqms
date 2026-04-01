@@ -185,6 +185,7 @@
                     }),
 
                     sidebarSearch: '',
+                    sidebarCategoryFilter: '',
                     sidebarTypeFilter: '',
                     sidebarStatusFilter: '',
                     sidebarCommentFilter: '',

@@ -58,10 +58,21 @@ class DocumentMetadata
         'obsolete' => 'Obsolete',
     ];
 
+    const CATEGORIES = [
+        'qms' => 'Quality System',
+        'technical' => 'Technical Documentation',
+    ];
+
+    const CATEGORY_COLORS = [
+        'qms' => 'bg-blue-50 text-blue-600',
+        'technical' => 'bg-amber-50 text-amber-600',
+    ];
+
     const DEFAULTS = [
         'id' => null,
         'title' => null,
         'type' => null,
+        'category' => null,
         'version' => '0.1',
         'status' => 'draft',
         'effective_date' => null,
@@ -69,6 +80,16 @@ class DocumentMetadata
         'iso_refs' => [],
         'mdr_refs' => [],
     ];
+
+    public static function categoryColor(string $category): string
+    {
+        return self::CATEGORY_COLORS[$category] ?? 'bg-gray-50 text-gray-500';
+    }
+
+    public static function categoryLabel(string $category): string
+    {
+        return self::CATEGORIES[$category] ?? ucfirst($category);
+    }
 
     /**
      * Parse frontmatter and content from a markdown file.
@@ -149,7 +170,7 @@ class DocumentMetadata
 
         // Fixed field order for consistent output (clean git diffs)
         $ordered = [];
-        $fieldOrder = ['id', 'title', 'type', 'version', 'status', 'effective_date', 'author', 'iso_refs', 'mdr_refs'];
+        $fieldOrder = ['id', 'title', 'type', 'category', 'version', 'status', 'effective_date', 'author', 'iso_refs', 'mdr_refs'];
 
         foreach ($fieldOrder as $key) {
             if (isset($meta[$key]) && $meta[$key] !== null && $meta[$key] !== '' && $meta[$key] !== []) {

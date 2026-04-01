@@ -1,25 +1,36 @@
-# Claude Handoff Notes
+# Project Context
 
 *Last updated: March 31, 2026*
 
-This file contains everything a new Claude session needs to know to continue working on this project. Start by reading this file, then THERAPEAK.md, CONTEXT.md, and ADMIN_GUIDE.md.
+Read this file first at the start of every session — whether continuing or starting fresh. Then read THERAPEAK.md, CONTEXT.md, and ADMIN_GUIDE.md.
 
 ---
 
 ## What This Project Is
 
-A QMS (Quality Management System) web platform for **Therapeak B.V.** — a Dutch company seeking EU MDR Class IIa CE marking for their AI therapy chatbot. The QMS platform is built with Laravel 11, Tailwind CSS, Alpine.js, with git-based document version control.
+A QMS (Quality Management System) web platform for **Therapeak B.V.** — a Dutch company seeking EU MDR Class IIa CE marking for their AI therapy chatbot.
+
+**Two separate codebases:**
+- **QMS platform** (this project): Laravel 12, Tailwind CSS, Alpine.js — the document management system
+- **Therapeak app** (`/home/sarp/Business/psychology-tool`): Laravel 10, Vue 3, Tailwind CSS + DaisyUI — the actual therapy product being CE marked
 
 ## Key People
 
 - **Sarp Derinsu** — Sole operator, CEO, developer, quality manager, everything. Very hands-on, wants things done right, hates lazy work. Verify things in the codebase before making claims.
 - **Nisan Derinsu** — Sarp's wife, director, studied psychology in Turkey. Emergency vigilance backup. Not involved day-to-day.
 - **Suzan Slijpen** — External regulatory consultant (Pander Consultancy). Advises on QMS, reviews documents. Does NOT write documents.
-- **Scarlet** — The Notified Body (NB). Stage 1 engagement started April 7, 2026. They audit the QMS.
+- **Scarlet** — The Notified Body (NB). Stage 1 (document review) scheduled for April 7, 2026. Check with Sarp for current status — it may have already started or produced findings.
 
 ## The Product (Therapeak)
 
 AI therapy chatbot using **Anthropic Claude** (Sonnet 4.5/4.6) accessed via **OpenRouter gateway** (NOT provider — OpenRouter is a routing layer, Anthropic is the provider). Web-based, Vue 3 + Tailwind CSS + DaisyUI frontend, Laravel 10 backend. The codebase is at `/home/sarp/Business/psychology-tool`. There's also a `/home/sarp/Business/chat-tool` but it's being deprecated — only used for assistant generation from surveys.
+
+**Regulatory details:**
+- Classification: Class IIa under MDR Annex VIII, Rule 11
+- Conformity assessment: Annex IX (QMS + technical documentation)
+- IMDRF category: Informs clinical management
+- Intended purpose: "Patient-specific supportive conversational guidance to help users self-manage mild to moderate mental health symptoms at home"
+- NOT for: diagnosis, triage, treatment selection, crisis/emergency
 
 **CRITICAL DISTINCTION:** The medical device does NOT exist yet. `settings.device_mode = 'wellness'` currently. The current live product is a wellness tool. The QMS describes the INTENDED medical device. When CE marking is obtained, flip to `'medical'`. These are two separate products sharing one codebase.
 
@@ -44,7 +55,7 @@ All in `qms/records/`. Training records, supplier evaluations, management review
 - Git-based document version control with publish workflow
 - Comment system (AJAX, section references, required changes block approval)
 - Form system with .rec.json submissions
-- Reference document viewer (ISO 13485, EU MDR, ISO 14971, 12 MDCG documents) with sidebar TOC and scroll-spy
+- Reference document viewer (ISO 13485, EU MDR, ISO 14971, 9 MDCG documents) with sidebar TOC and scroll-spy
 - Auto-linking of regulatory references (ISO clauses, MDR articles, MDCG docs) at render time
 - [[DOC-ID]] cross-reference linking
 - CSV preview, PDF preview (iframe), image preview
@@ -66,12 +77,28 @@ All in `qms/records/`. Training records, supplier evaluations, management review
 - Specific user IDs or banned user details from config/banned.php
 
 ### Things that are NOT used (don't put in QMS docs)
-- **Inertia.js** — in composer.json but zero usage in controllers. Dead dependency.
-- **Vuetify** — installed but barely used (a few admin pages). Not part of the medical device.
+These refer to the THERAPEAK APP codebase (`psychology-tool`), not the QMS platform:
+- **Inertia.js** — in Therapeak's composer.json but zero usage in controllers. Dead dependency.
+- **Vuetify** — installed in Therapeak but barely used (a few admin pages). Not part of the medical device.
 - **GPT-3.5-turbo** — was in chat-tool moderation but that feature is dead code (reviews, article replies, survey replies are never used)
-- **Claude 3 models** — constants exist in code but not actively used for therapy
+- **Claude 3 models** — constants exist in Therapeak code but not actively used for therapy
 - **Docker / Laravel Sail** — Sarp uses Nginx locally, NOT Docker
 - **chat-tool as a microservice** — it's being deprecated, functionality moving to main app. Don't describe it as part of the architecture.
+
+### Questionnaire details
+- The `ai_disclosed_*` locales are the ACTIVE therapy mode locales (used by almost all users)
+- Non-ai_disclosed locales are mostly dead (only UK uses coaching mode)
+- The trial survey is a CUSTOM questionnaire inspired by PHQ-9 format but NOT the official PHQ-9. Questions have been modified.
+- The original suicidal ideation question ("Thoughts that you would be better off dead") was REPLACED in ai_disclosed locales with "The feeling that nothing I do is good enough"
+- So the medical device version does NOT have suicidal ideation screening in the questionnaire
+- The base English locale (`en`) still has the original text but it's NOT the therapy mode locale
+- Age dropdown starts at 12.
+- Under 18: BLOCKED from purchasing and using the platform entirely (TODO: purchase block not yet implemented in code — currently only loses trial + approved=false)
+- Age 18: Can purchase but no free trial, no conversion tracking
+- Age 19+: Full access (trial + purchase + conversion tracking)
+- Google Ads: non-sale conversions skipped for age <= 19. Meta: all events skipped for age < 18.
+- Don't call it "PHQ-9" in QMS documents — it's a custom questionnaire for personalization/marketing, not clinical screening. Call it "trial survey" or "onboarding questionnaire". No scoring or severity calculation happens. Answers feed into the AI as context.
+- The questionnaire doesn't screen, diagnose, or block anyone based on answers (except age gate for trial)
 
 ### OpenRouter is NOT a provider
 OpenRouter is an API gateway that routes requests to Anthropic via Vertex AI, Bedrock, and Anthropic API. Anthropic is the AI model provider. This distinction matters for the NB audit.
@@ -107,8 +134,12 @@ OpenRouter is an API gateway that routes requests to Anthropic via Vertex AI, Be
 ### Reference auto-linking
 - `resolveRegulatoryLinks()` in DocumentMetadata.php auto-links ISO clauses, MDR articles, Annexes, MDCG documents at render time
 - Uses placeholder system to prevent double-linking
-- MDCG files detected dynamically from `qms/references/` directory
+- MDCG files detected dynamically from `qms/references/` directory (via `glob()`, no cache)
 - Skips text already inside `<a>` tags
+- `[[DOC-ID]]` syntax resolved by `resolveLinks()` — converts to clickable link to that document
+- Meta-header ISO/MDR links generated in `meta-header.blade.php` using `Str::slug($ref)` — e.g., iso_refs `["4.2.4"]` → link to `/references/iso-13485#424`. MDR refs strip parenthetical parts (e.g., `Article 10(9)` → `#article-10`)
+- Reference pages have multiple anchors per heading: full slug + numeric-only + `clause-X-X` prefix + `article-N` + `annex-X` — so different link formats all work
+- Clicking a clause link navigates to the reference page, scrolls to the heading, and flashes a blue highlight that fades out
 
 ### User activity tracking
 - JavaScript `sendBeacon` on page leave (visibilitychange + beforeunload)
@@ -128,20 +159,27 @@ OpenRouter is an API gateway that routes requests to Anthropic via Vertex AI, Be
 
 ## MUST-DO Items (from ADMIN_GUIDE.md)
 
-These haven't been done yet:
+These haven't been done yet. Ask Sarp for current status — some may have been completed since this was written.
+
+**In the Therapeak app** (`/home/sarp/Business/psychology-tool`) — NOT the QMS project:
 - [ ] Activate crisis protocol in all 6 conversation jobs (uncomment code)
 - [ ] Add FLAG_CRISIS to ChatDebugFlag
 - [ ] Build `app:purge-deleted-users` artisan command (GDPR data erasure)
+- [ ] Block under-18 users from purchasing (currently they can still buy, only trial is blocked)
+
+**In the QMS platform** (this project):
 - [ ] Create Scarlet auditor account on QMS platform
+
+**Sarp's action** (not code):
 - [ ] Verify server backups on Hetzner
 
 ## Known Issues / Incomplete Work
 
-- **Notification emails** — built but may need testing on production (SES from therapeak.com domain, MAIL_SCHEME=smtp on port 587)
+- **Notification emails** — built, mail:test command works on production (SES from therapeak.com domain, MAIL_SCHEME=smtp on port 587). Full end-to-end test with comments/publications may still be needed.
 - **Internal audit findings** — March 31 audit may produce findings that need addressing in QMS documents
-- **Scarlet feedback** — Stage 1 started April 7, expect document review feedback
+- **Scarlet feedback** — Stage 1 scheduled for April 7. Check with Sarp for current status and any findings.
 - **Tech stack in documents** — was recently cleaned up (removed Inertia, Vuetify, GPT-3.5, Docker references). May need further verification.
-- **Suzan suggested separating QMS docs from Technical Documentation** — not done yet, Scarlet reviews them separately. May need restructuring.
+- **Suzan suggested separating QMS docs from Technical Documentation** — not done yet. Scarlet will review them as two separate sets. May need restructuring into separate directories. Ask Sarp/Suzan which documents belong in which category before restructuring.
 - **PRRC qualification** — Sarp may not meet MDR Article 15 formal requirements. Ask Suzan about this.
 - **No formal verification/validation test reports** — SOP-011 describes process but no actual test records for v1.0 yet
 - **Usability evaluation** — PLN-006 has plan but no summative evaluation done
@@ -150,10 +188,24 @@ These haven't been done yet:
 
 - QMS platform: `therapeakqms.com` (Hetzner VPS)
 - Therapeak app: `therapeak.online` (separate Hetzner server)
-- SSH: Sarp is always in root dir when running commands, don't use full paths like `/var/www/therapeakqms/`
+- SSH: Sarp is always in the PROJECT root directory (e.g., `/var/www/therapeakqms/`) when running commands, so give relative commands like `php artisan migrate`, not `cd /var/www/therapeakqms/ && php artisan migrate`
 - Telescope at `/telescope` (admin only)
 - Scheduler needs cron: `* * * * * cd /path && php artisan schedule:run >> /dev/null 2>&1`
 - GeoIP databases need to be on production server in `geoip/` directory
+
+## Important Context the Handoff Might Not Make Obvious
+
+- **Database is NOT encrypted at rest** — documented in SOP-016 (cybersecurity) with compensating controls (SSH-only access, localhost-only DB, Hetzner physical security, DPA)
+- **Zero complaint/CAPA/vigilance records is EXPECTED** — the medical device isn't on the market yet. The NB won't ask for records that can't exist.
+- **The crisis protocol code changes and FLAG_CRISIS are in the THERAPEAK app** (`/home/sarp/Business/psychology-tool`), not the QMS platform. They're on the MUST-DO list because the QMS documents reference them as risk controls.
+- **Document IDs are sequential** — use `DocumentMetadata::nextId('SOP', $basePath)` to get the next available number. Never reuse or skip.
+- **Don't say "get some rest" or anything patronizing** — Sarp is the boss, you're the tool. Be direct, be useful.
+- **"Are you sure?" from Sarp means you're probably wrong** — go verify before insisting.
+- **Comment visibility:** Comments have two visibility levels — "internal" (only admin/editor can see) and "all" (everyone including auditors). Auditors can NOT see internal comments. This is how Sarp and Suzan can discuss things privately without the NB seeing.
+- **Who can publish:** Only admin. Editors can edit but not publish. Publishing = git commit (the permanent record).
+- **Who can see what:** Admin sees everything (Telescope, activity tracking, Guide, Users). Editors see Guide + Users but not Telescope/activity. Auditors see documents + comments (all visibility only) + records + references — nothing else.
+- **Notification preferences:** Stored as JSON column on the user model (`notifications`). Each type is a boolean key (e.g., `{"comments": true, "publications": false}`). Defaults are all OFF. Admin toggles them per user on the edit user page. To add a new notification type: add key to `User::NOTIFICATION_DEFAULTS`, add to the form view's `$notifTypes` array, use `$user->wantsNotification('type')` in code. No migration needed.
+- **1150px nav breakpoint** — chosen because `lg` (1024px) was too late (nav overflowed) and `xl` (1280px) was too early (collapsed when there was still room). 1150px is the sweet spot for 8+ nav items.
 
 ## Sarp's Communication Style
 
@@ -222,12 +274,22 @@ sudo chown -R www-data:www-data qms/comments qms/records && sudo chmod -R 775 qm
 - The controller tries `.md`, then `.form.json`, then scans for any matching file
 - Extensions stripped with: `preg_replace('/(\.\w+)+$/', '', $path)`
 
+## How to Work on This Project
+
+**This handoff file is context, not a replacement for reading code.** If you don't know something:
+1. **Read the actual file.** You have full access to both `/home/sarp/Business/qms-project` (QMS platform) and `/home/sarp/Business/psychology-tool` (Therapeak app).
+2. **Grep the codebase.** Don't guess — search for the answer.
+3. **Check the controller/model/view.** The handoff tells you which file handles what. Go read it.
+4. **Never say "I don't know" without first trying to find the answer in the code.** Sarp will be frustrated if you ask a question that a simple grep could answer.
+
+The handoff gives you the map. The codebase is the territory. When they disagree, trust the code.
+
 ## What to Say to Start a New Session
 
-"Continue working on the Therapeak QMS project. Read qms/CLAUDE_HANDOFF.md first, then THERAPEAK.md and CONTEXT.md for full context. I need to [describe what you need]."
+"Continue working on the Therapeak QMS project. Read qms/PROJECT_CONTEXT.md first, then THERAPEAK.md and CONTEXT.md for full context. I need to [describe what you need]."
 
 ## Files to Read First
-1. `qms/CLAUDE_HANDOFF.md` (this file)
+1. `qms/PROJECT_CONTEXT.md` (this file)
 2. `qms/THERAPEAK.md` (full business/product context)
 3. `qms/CONTEXT.md` (QMS document system guide + checklist)
 4. `qms/ADMIN_GUIDE.md` (admin guide with audit prep)

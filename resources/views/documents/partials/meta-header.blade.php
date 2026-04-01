@@ -21,6 +21,9 @@
                         @if($meta['version'])
                             <span class="text-gray-400">v{{ $meta['version'] }}</span>
                         @endif
+                        @if($meta['category'] ?? null)
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium border {{ \App\Services\DocumentMetadata::categoryColor($meta['category']) }}">{{ \App\Services\DocumentMetadata::categoryLabel($meta['category']) }}</span>
+                        @endif
                     </div>
                     @if($meta['author'])
                         <div class="text-gray-400"><span class="text-gray-500 font-medium">Author:</span> {{ $meta['author'] }}</div>
@@ -155,6 +158,15 @@
                     <select name="meta_status" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
                         @foreach(\App\Services\DocumentMetadata::STATUSES as $key => $label)
                             <option value="{{ $key }}" {{ $meta['status'] === $key ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Category</label>
+                    <select name="meta_category" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">— None —</option>
+                        @foreach(\App\Services\DocumentMetadata::CATEGORIES as $key => $label)
+                            <option value="{{ $key }}" {{ ($meta['category'] ?? '') === $key ? 'selected' : '' }}>{{ $label }}</option>
                         @endforeach
                     </select>
                 </div>

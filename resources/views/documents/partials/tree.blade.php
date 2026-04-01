@@ -11,6 +11,7 @@
                     return [
                         'search' => strtolower(($child['doc_id'] ?? '') . ' ' . $child['name']),
                         'type' => $childType,
+                        'category' => $child['doc_category'] ?? '',
                         'status' => $child['doc_status'] ?? '',
                         'doc_id' => $child['doc_id'] ?? '',
                     ];
@@ -20,9 +21,10 @@
                  x-data="{
                     children: {{ json_encode($childrenData) }},
                     get visibleCount() {
-                        if (!sidebarSearch && !sidebarTypeFilter && !sidebarStatusFilter && !sidebarCommentFilter) return this.children.length;
+                        if (!sidebarSearch && !sidebarCategoryFilter && !sidebarTypeFilter && !sidebarStatusFilter && !sidebarCommentFilter) return this.children.length;
                         var cs = typeof commentSummary !== 'undefined' ? commentSummary : {};
                         return this.children.filter(c => {
+                            if (sidebarCategoryFilter && c.category !== sidebarCategoryFilter) return false;
                             if (sidebarTypeFilter && c.type !== sidebarTypeFilter) return false;
                             if (sidebarStatusFilter && c.status !== sidebarStatusFilter) return false;
                             if (sidebarSearch && !c.search.includes(sidebarSearch.toLowerCase())) return false;
@@ -34,7 +36,7 @@
                  }"
                  x-show="visibleCount > 0">
                 <div x-data="{ open: sessionStorage.getItem('dir_{{ Str::slug($item['path']) }}') !== 'closed', dirDragOver: false }"
-                     x-effect="if (sidebarSearch || sidebarTypeFilter || sidebarStatusFilter || sidebarCommentFilter) { open = true } else { sessionStorage.setItem('dir_{{ Str::slug($item['path']) }}', open ? 'open' : 'closed') }"
+                     x-effect="if (sidebarSearch || sidebarCategoryFilter || sidebarTypeFilter || sidebarStatusFilter || sidebarCommentFilter) { open = true } else { sessionStorage.setItem('dir_{{ Str::slug($item['path']) }}', open ? 'open' : 'closed') }"
                      @dirs-collapse.window="open = false; sessionStorage.setItem('dir_{{ Str::slug($item['path']) }}', 'closed')"
                      @dirs-expand.window="open = true; sessionStorage.setItem('dir_{{ Str::slug($item['path']) }}', 'open')">
                     <div class="group flex items-center gap-0.5">
@@ -113,10 +115,11 @@
                 $fileStatus = isset($changedFiles[$item['path']]) ? $changedFiles[$item['path']]['status'] : null;
                 $searchStr = strtolower(($item['doc_id'] ?? '') . ' ' . $item['name']);
                 $itemDocType = $item['doc_id'] ? explode('-', $item['doc_id'])[0] : '';
+                $itemDocCategory = $item['doc_category'] ?? '';
                 $itemDocStatus = $item['doc_status'] ?? '';
             @endphp
             <div class="sortable-item" data-path="{{ $item['path'] }}"
-                 x-show="(!sidebarSearch || '{{ addslashes($searchStr) }}'.includes(sidebarSearch.toLowerCase())) && (!sidebarTypeFilter || sidebarTypeFilter === '{{ $itemDocType }}') && (!sidebarStatusFilter || sidebarStatusFilter === '{{ $itemDocStatus }}') && (!sidebarCommentFilter || (sidebarCommentFilter === 'with' ? (commentSummary && commentSummary['{{ $item['doc_id'] ?? '' }}'] && commentSummary['{{ $item['doc_id'] ?? '' }}'].unresolved > 0) : !(commentSummary && commentSummary['{{ $item['doc_id'] ?? '' }}'] && commentSummary['{{ $item['doc_id'] ?? '' }}'].unresolved > 0)))"
+                 x-show="(!sidebarSearch || '{{ addslashes($searchStr) }}'.includes(sidebarSearch.toLowerCase())) && (!sidebarCategoryFilter || sidebarCategoryFilter === '{{ $itemDocCategory }}') && (!sidebarTypeFilter || sidebarTypeFilter === '{{ $itemDocType }}') && (!sidebarStatusFilter || sidebarStatusFilter === '{{ $itemDocStatus }}') && (!sidebarCommentFilter || (sidebarCommentFilter === 'with' ? (commentSummary && commentSummary['{{ $item['doc_id'] ?? '' }}'] && commentSummary['{{ $item['doc_id'] ?? '' }}'].unresolved > 0) : !(commentSummary && commentSummary['{{ $item['doc_id'] ?? '' }}'] && commentSummary['{{ $item['doc_id'] ?? '' }}'].unresolved > 0)))"
             >
                 @php
                     $isItemMarkdown = $item['is_markdown'] ?? true;
@@ -155,7 +158,7 @@
                         <span class="min-w-0 flex-1">
                             <span class="truncate block leading-tight">{{ $item['name'] }}</span>
                             @if($item['doc_id'] ?? null)
-                                <span class="text-[10px] font-mono block leading-tight"><span class="px-1 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor($itemDocType) }}">{{ $item['doc_id'] }}</span>@if($item['doc_status'] ?? null) <span class="text-gray-400">· {{ ucfirst($item['doc_status'] === 'in_review' ? 'In Review' : $item['doc_status']) }}</span>@endif</span>
+                                <span class="text-[10px] font-mono block leading-tight"><span class="px-1 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor($itemDocType) }}">{{ $item['doc_id'] }}</span>@if($item['doc_category'] ?? null)<span class="px-1 py-0.5 rounded text-[9px] font-sans font-medium {{ \App\Services\DocumentMetadata::categoryColor($item['doc_category']) }}">{{ \App\Services\DocumentMetadata::categoryLabel($item['doc_category']) }}</span>@endif @if($item['doc_status'] ?? null) <span class="text-gray-400">· {{ ucfirst($item['doc_status'] === 'in_review' ? 'In Review' : $item['doc_status']) }}</span>@endif</span>
                             @endif
                         </span>
                         @php

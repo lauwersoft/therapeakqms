@@ -21,7 +21,6 @@ These are things that **cannot** stay as they are. Without these changes, you wi
 - [ ] **Activate crisis protocol in all conversation jobs** — Uncomment the crisis protocol in all 6 conversation job files (OpenRouterSonnetFourFiveRunConversationJob, OpenRouterSonnetFourSixRunConversationJob, their COACH variants, OpusFourFive, GeminiThree). This is documented in the risk management file as a required control measure.
 - [ ] **Add FLAG_CRISIS to ChatDebugFlag** — Create a new flag type for crisis detection. When the AI provides a crisis response (suicide hotline referral, etc.), log it. This is needed for post-market surveillance — you need to know when crisis situations occur.
 - [ ] **Implement data deletion command** — Create `app:purge-deleted-users` artisan command that permanently deletes all data for users soft-deleted more than 180 days ago. Schedule it daily. For explicit GDPR requests, run it manually within 30 days. Your privacy policy promises deletion rights — you need to deliver.
-- [ ] **Set device_mode config** — Already done (`settings.device_mode = 'wellness'`). When ready to launch as medical device, flip to `'medical'`.
 - [ ] **Create Scarlet auditor account** — Create a user with "auditor" role on the QMS platform for Scarlet before April 7.
 - [ ] **Verify server backups** — Check Hetzner panel: are backups enabled? If not, enable them. You need to be able to answer "yes" when the auditor asks about backups.
 

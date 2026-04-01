@@ -2,6 +2,7 @@
 id: "PLN-003"
 title: "Post-Market Clinical Follow-up Plan"
 type: "PLN"
+category: "technical"
 version: "1.0"
 status: "approved"
 effective_date: "2026-03-01"

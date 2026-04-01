@@ -2,6 +2,7 @@
 id: "SPE-002"
 title: "Product Specification"
 type: "SPE"
+category: "technical"
 version: "1.0"
 status: "approved"
 effective_date: "2026-03-01"

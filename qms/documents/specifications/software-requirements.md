@@ -2,6 +2,7 @@
 id: "SPE-001"
 title: "Software Requirements Specification"
 type: "SPE"
+category: "technical"
 version: "1.0"
 status: "approved"
 effective_date: "2026-03-01"
@@ -45,8 +46,8 @@ This document does not cover the wellness product variant (`DEVICE_MODE=wellness
 | ID | Requirement | Rationale |
 |---|---|---|
 | FR-010 | The system shall present a two-part onboarding questionnaire (17 initial questions + 3 finalization questions) before granting access to therapy. | Collect baseline clinical and preference data for therapist matching and session context. |
-| FR-011 | The questionnaire shall include a PHQ-9-style screening instrument (8 items) using the standard response scale: Not at all / Several days / More than half the days / Nearly every day. | Screen for depression severity to inform AI therapy context. |
-| FR-012 | The PHQ-9-style screening shall replace the original suicidal ideation item (item 9) with "The feeling that nothing I do is good enough" in the medical device configuration. | Avoid direct suicidal ideation screening in a non-crisis-equipped system. |
+| FR-011 | The questionnaire shall include a depression screening questionnaire (inspired by PHQ-9 format) (8 items) using the standard response scale: Not at all / Several days / More than half the days / Nearly every day. | Screen for depression severity to inform AI therapy context. |
+| FR-012 | The depression screening shall replace the original suicidal ideation item (item 9) with "The feeling that nothing I do is good enough" in the medical device configuration. | Avoid direct suicidal ideation screening in a non-crisis-equipped system. |
 | FR-013 | The system shall collect: gender, age, relationship status, previous therapy experience, reasons for seeking therapy, functional impairment, anxiety/panic/phobia screening, therapist expectations, therapist preferences, focus areas, and a free-text "what brings you here" field. | Enable comprehensive therapist matching and personalized session context. |
 | FR-014 | The system shall implement an age gate that prevents users who report an age of 18 or below from accessing the free trial or making a payment. The minimum effective age for platform access shall be 19+. | Protect minors from unsupervised AI therapy. Age 18 is blocked as a buffer against minors misreporting their age. |
 | FR-015 | The age dropdown shall display ages 12-100, but selection of any age 18 or below shall block trial and payment access. | Allow age collection for data purposes while enforcing the age gate. |

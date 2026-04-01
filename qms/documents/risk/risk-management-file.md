@@ -2,6 +2,7 @@
 id: "RA-001"
 title: "Risk Management File"
 type: "RA"
+category: "technical"
 version: "1.0"
 status: "approved"
 effective_date: "2026-03-01"

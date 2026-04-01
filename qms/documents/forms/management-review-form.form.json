@@ -2,6 +2,7 @@
     "id": "FM-009",
     "title": "Management Review Form",
     "type": "FM",
+    "category": "qms",
     "version": "1.0",
     "status": "approved",
     "author": "Sarp Derinsu",

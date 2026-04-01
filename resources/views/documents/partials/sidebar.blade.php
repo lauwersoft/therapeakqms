@@ -71,6 +71,14 @@
             $existingTypes = collect($sidebarDocs)->pluck('type')->filter()->unique()->sort()->values();
             $existingStatuses = collect($sidebarDocs)->pluck('status')->filter()->unique()->sort()->values();
         @endphp
+        <div>
+            <select x-model="sidebarCategoryFilter" class="w-full text-[11px] border-gray-200 rounded-md py-1 pl-2 pr-6 bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">All categories</option>
+                @foreach(\App\Services\DocumentMetadata::CATEGORIES as $catKey => $catLabel)
+                    <option value="{{ $catKey }}">{{ $catLabel }} ({{ collect($sidebarDocs)->where('category', $catKey)->count() }})</option>
+                @endforeach
+            </select>
+        </div>
         <div class="flex gap-1.5">
             <select x-model="sidebarTypeFilter" class="flex-1 text-[11px] border-gray-200 rounded-md py-1 pl-2 pr-6 bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
                 <option value="">All types</option>
@@ -97,8 +105,8 @@
                 <option value="without">No comments ({{ $withoutComments }})</option>
             </select>
         </div>
-        <button x-show="sidebarSearch || sidebarTypeFilter || sidebarStatusFilter || sidebarCommentFilter" x-cloak
-                @click="sidebarSearch = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''; sidebarCommentFilter = ''"
+        <button x-show="sidebarSearch || sidebarCategoryFilter || sidebarTypeFilter || sidebarStatusFilter || sidebarCommentFilter" x-cloak
+                @click="sidebarSearch = ''; sidebarCategoryFilter = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''; sidebarCommentFilter = ''"
                 class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
         <div class="flex gap-1.5">
             <button @click="$dispatch('dirs-collapse')" class="flex-1 flex items-center justify-center gap-1 text-[11px] border border-gray-200 rounded-md py-1 bg-gray-50 text-gray-500 hover:text-gray-700 hover:bg-gray-100">

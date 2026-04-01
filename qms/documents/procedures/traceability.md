@@ -2,6 +2,7 @@
 id: "SOP-014"
 title: "Product Identification and Traceability Procedure"
 type: "SOP"
+category: "qms"
 version: "1.0"
 status: "approved"
 effective_date: "2026-03-01"
