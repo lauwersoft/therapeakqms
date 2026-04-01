@@ -25,8 +25,7 @@ These tasks must be completed before or as part of the CE marking submission.
 - [ ] **Activate crisis protocol in all conversation jobs** — Uncomment crisis protocol in all 6 conversation job files. Documented in RA-001 as required control.
 - [ ] **Add FLAG_CRISIS to ChatDebugFlag** — New flag type for crisis detection. Needed for PMS.
 - [ ] **Implement `app:purge-deleted-users`** — Artisan command to permanently delete data for users soft-deleted >180 days ago. Schedule daily. For GDPR requests, run manually.
-- [ ] **Create Scarlet auditor account** — "auditor" role on QMS platform.
-- [ ] **Verify server backups** — Check Hetzner panel, enable if needed.
+- [x] ~~**Verify server backups**~~ — Confirmed: Hetzner automatic daily backups enabled, 7 rolling daily backups retained.
 - [ ] **Run software verification tests** — Open TST-001 (test procedures) and RPT-006 (execution report) side by side. Go through each of the 23 tests, follow the steps, mark pass/fail in RPT-006. That's it.
 - [ ] **Run software validation** — Execute validation activities from TRC-001 Matrix 4 (VAL-001 to VAL-041). Document in a validation report.
 - [ ] **Create medical device translations** — The `lang_backup` files need to be activated for `DEVICE_MODE=medical`.
