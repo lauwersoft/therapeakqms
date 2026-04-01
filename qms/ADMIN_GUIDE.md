@@ -25,6 +25,7 @@ These tasks must be completed before or as part of the CE marking submission.
 - [ ] **Activate crisis protocol in all conversation jobs** — Uncomment crisis protocol in all 6 conversation job files. Documented in RA-001 as required control.
 - [ ] **Add FLAG_CRISIS to ChatDebugFlag** — New flag type for crisis detection. Needed for PMS.
 - [ ] **Implement `app:purge-deleted-users`** — Artisan command to permanently delete data for users soft-deleted >180 days ago. Schedule daily. For GDPR requests, run manually.
+- [ ] **Study the QMS and log training** — Read through this admin guide, the key SOPs (SOP-002, SOP-003, SOP-004, SOP-009, SOP-013, SOP-017), and the audit Q&A in Part 4. You need to be able to explain your own processes to Scarlet. When done, fill in a training record (FM-006) to prove you did it.
 - [x] ~~**Verify server backups**~~ — Confirmed: Hetzner automatic daily backups enabled, 7 rolling daily backups retained.
 - [ ] **Run software verification tests** — Open TST-001 (test procedures) and RPT-006 (execution report) side by side. Go through each of the 23 tests, follow the steps, mark pass/fail in RPT-006. That's it.
 - [ ] **Run software validation** — Execute validation activities from TRC-001 Matrix 4 (VAL-001 to VAL-041). Document in a validation report.
