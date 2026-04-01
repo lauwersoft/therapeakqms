@@ -201,7 +201,7 @@ class DocumentController extends Controller
                 'doc_id' => $docMeta['id'] ?? null,
                 'title' => $docMeta['title'] ?? $this->formatName(pathinfo($docPath, PATHINFO_FILENAME)),
                 'type' => $docType,
-                'category' => $docMeta['category'] ?? null,
+                'category' => DocumentMetadata::normalizeCategory($docMeta['category'] ?? []),
                 'status' => $docMeta['status'] ?? 'draft',
                 'directory' => ($dir !== '.' && $dir !== '') ? ucwords(str_replace(['-', '_'], ' ', $dir)) : null,
                 'is_markdown' => $docMeta['_is_markdown'] ?? true,
@@ -279,7 +279,7 @@ class DocumentController extends Controller
                 'doc_id' => $docMeta['id'] ?? null,
                 'title' => $docMeta['title'] ?? $this->formatName(pathinfo($docPath, PATHINFO_FILENAME)),
                 'type' => $docType,
-                'category' => $docMeta['category'] ?? null,
+                'category' => DocumentMetadata::normalizeCategory($docMeta['category'] ?? []),
                 'status' => $docMeta['status'] ?? 'draft',
                 'directory' => ($dir !== '.' && $dir !== '') ? ucwords(str_replace(['-', '_'], ' ', $dir)) : null,
                 'is_markdown' => $docMeta['_is_markdown'] ?? true,
@@ -338,7 +338,8 @@ class DocumentController extends Controller
             'path' => 'required|string',
             'content' => 'required|string',
             'meta_status' => 'nullable|string|in:' . implode(',', array_keys(DocumentMetadata::STATUSES)),
-            'meta_category' => 'nullable|string|in:' . implode(',', array_keys(DocumentMetadata::CATEGORIES)),
+            'meta_category' => 'nullable|array',
+            'meta_category.*' => 'string|in:' . implode(',', array_keys(DocumentMetadata::CATEGORIES)),
             'meta_version' => 'nullable|string|max:20',
             'meta_effective_date' => 'nullable|date',
             'meta_author' => 'nullable|string|max:255',
@@ -365,7 +366,7 @@ class DocumentController extends Controller
             $meta['status'] = $request->input('meta_status');
         }
         if ($request->has('meta_category')) {
-            $meta['category'] = $request->input('meta_category') ?: null;
+            $meta['category'] = array_values(array_filter($request->input('meta_category', [])));
         }
         if ($request->filled('meta_version')) {
             $meta['version'] = $request->input('meta_version');
@@ -395,7 +396,8 @@ class DocumentController extends Controller
         $request->validate([
             'path' => 'required|string',
             'meta_status' => 'nullable|string|in:' . implode(',', array_keys(DocumentMetadata::STATUSES)),
-            'meta_category' => 'nullable|string|in:' . implode(',', array_keys(DocumentMetadata::CATEGORIES)),
+            'meta_category' => 'nullable|array',
+            'meta_category.*' => 'string|in:' . implode(',', array_keys(DocumentMetadata::CATEGORIES)),
             'meta_version' => 'nullable|string|max:20',
             'meta_effective_date' => 'nullable|date',
             'meta_author' => 'nullable|string|max:255',
@@ -432,7 +434,7 @@ class DocumentController extends Controller
             $meta['status'] = $request->input('meta_status');
         }
         if ($request->has('meta_category')) {
-            $meta['category'] = $request->input('meta_category') ?: null;
+            $meta['category'] = array_values(array_filter($request->input('meta_category', [])));
         }
         if ($request->filled('meta_version')) {
             $meta['version'] = $request->input('meta_version');
@@ -845,8 +847,8 @@ class DocumentController extends Controller
                 'type_label' => isset($meta['type']) ? (DocumentMetadata::TYPES[$meta['type']] ?? $meta['type']) : null,
                 'type_color' => isset($meta['type']) ? DocumentMetadata::typeColor($meta['type']) : 'bg-gray-100 text-gray-600',
                 'category' => $meta['category'] ?? null,
-                'category_label' => isset($meta['category']) ? DocumentMetadata::categoryLabel($meta['category']) : null,
-                'category_color' => isset($meta['category']) ? DocumentMetadata::categoryColor($meta['category']) : '',
+                'category_labels' => collect(DocumentMetadata::normalizeCategory($meta['category'] ?? []))->map(fn($c) => DocumentMetadata::categoryLabel($c))->values()->toArray(),
+                'category_colors' => collect(DocumentMetadata::normalizeCategory($meta['category'] ?? []))->map(fn($c) => DocumentMetadata::categoryColor($c))->values()->toArray(),
                 'status' => $meta['status'] ?? 'draft',
                 'status_label' => DocumentMetadata::STATUSES[$meta['status'] ?? 'draft'] ?? 'Draft',
                 'version' => $meta['version'] ?? null,

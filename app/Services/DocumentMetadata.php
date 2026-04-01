@@ -72,7 +72,7 @@ class DocumentMetadata
         'id' => null,
         'title' => null,
         'type' => null,
-        'category' => null,
+        'category' => [],
         'version' => '0.1',
         'status' => 'draft',
         'effective_date' => null,
@@ -89,6 +89,25 @@ class DocumentMetadata
     public static function categoryLabel(string $category): string
     {
         return self::CATEGORIES[$category] ?? ucfirst($category);
+    }
+
+    /**
+     * Normalize category field — accepts string or array, always returns array.
+     */
+    public static function normalizeCategory($value): array
+    {
+        if (is_array($value)) return array_values(array_filter($value));
+        if (is_string($value) && $value !== '') return [$value];
+        return [];
+    }
+
+    /**
+     * Check if a document has a specific category.
+     */
+    public static function hasCategory($meta, string $category): bool
+    {
+        $cats = self::normalizeCategory($meta['category'] ?? []);
+        return in_array($category, $cats);
     }
 
     /**

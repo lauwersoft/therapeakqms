@@ -387,7 +387,9 @@
                                         {{-- Desktop: single line --}}
                                         <div class="hidden lg:flex items-center gap-4">
                                             <span class="font-mono text-xs shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded font-semibold" :class="doc.type_color" x-text="doc.doc_id"></span>
-                                            <span x-show="doc.category_label" class="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded" :class="doc.category_color" x-text="doc.category_label"></span>
+                                            <template x-for="(lbl, idx) in (doc.category_labels || [])" :key="idx">
+                                                <span class="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded" :class="doc.category_colors[idx]" x-text="lbl"></span>
+                                            </template>
                                             <div class="flex-1 min-w-0">
                                                 <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
                                                 <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'documents/' + doc.path"></span>
@@ -409,7 +411,9 @@
                                                 <span class="shrink-0 text-[10px] font-medium px-1 py-0.5 rounded ml-auto" :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                             </div>
                                             <div class="flex items-center gap-1.5 mt-0.5">
-                                                <span x-show="doc.category_label" class="shrink-0 text-[9px] font-medium px-1 py-0.5 rounded" :class="doc.category_color" x-text="doc.category === 'qms' ? 'QMS' : 'Tech'"></span>
+                                                <template x-for="(cat, idx) in (doc.category || [])" :key="idx">
+                                                    <span class="shrink-0 text-[9px] font-medium px-1 py-0.5 rounded" :class="doc.category_colors[idx]" x-text="cat === 'qms' ? 'QMS' : 'Tech'"></span>
+                                                </template>
                                                 <span class="text-[11px] text-gray-400 font-mono truncate" x-text="'documents/' + doc.path"></span>
                                             </div>
                                         </div>
@@ -441,7 +445,9 @@
                                         {{-- Desktop: single line --}}
                                         <div class="hidden lg:flex items-center gap-4">
                                             <span class="font-mono text-xs shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded font-semibold" :class="doc.type_color" x-text="doc.doc_id"></span>
-                                            <span x-show="doc.category_label" class="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded" :class="doc.category_color" x-text="doc.category_label"></span>
+                                            <template x-for="(lbl, idx) in (doc.category_labels || [])" :key="idx">
+                                                <span class="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded" :class="doc.category_colors[idx]" x-text="lbl"></span>
+                                            </template>
                                             <div class="flex-1 min-w-0">
                                                 <span class="text-sm text-gray-800 block truncate" x-text="doc.title"></span>
                                                 <span class="text-[11px] text-gray-400 font-mono block truncate" x-text="'documents/' + doc.path"></span>
@@ -463,7 +469,9 @@
                                                 <span class="shrink-0 text-[10px] font-medium px-1 py-0.5 rounded ml-auto" :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                             </div>
                                             <div class="flex items-center gap-1.5 mt-0.5">
-                                                <span x-show="doc.category_label" class="shrink-0 text-[9px] font-medium px-1 py-0.5 rounded" :class="doc.category_color" x-text="doc.category === 'qms' ? 'QMS' : 'Tech'"></span>
+                                                <template x-for="(cat, idx) in (doc.category || [])" :key="idx">
+                                                    <span class="shrink-0 text-[9px] font-medium px-1 py-0.5 rounded" :class="doc.category_colors[idx]" x-text="cat === 'qms' ? 'QMS' : 'Tech'"></span>
+                                                </template>
                                                 <span class="text-[11px] text-gray-400 font-mono truncate" x-text="'documents/' + doc.path"></span>
                                             </div>
                                         </div>
@@ -521,7 +529,7 @@
 
                     get filteredDocs() {
                         return this.docs.filter(d => {
-                            if (this.categoryFilter && d.category !== this.categoryFilter) return false;
+                            if (this.categoryFilter && !(Array.isArray(d.category) ? d.category.includes(this.categoryFilter) : d.category === this.categoryFilter)) return false;
                             if (this.typeFilter && d.type !== this.typeFilter) return false;
                             if (this.statusFilter && d.status !== this.statusFilter) return false;
                             if (this.commentFilter === 'with' && !(d.comment_count > 0)) return false;

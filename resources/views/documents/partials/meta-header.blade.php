@@ -21,9 +21,9 @@
                         @if($meta['version'])
                             <span class="text-gray-400">v{{ $meta['version'] }}</span>
                         @endif
-                        @if($meta['category'] ?? null)
-                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium border {{ \App\Services\DocumentMetadata::categoryColor($meta['category']) }}">{{ \App\Services\DocumentMetadata::categoryLabel($meta['category']) }}</span>
-                        @endif
+                        @foreach(\App\Services\DocumentMetadata::normalizeCategory($meta['category'] ?? []) as $cat)
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium {{ \App\Services\DocumentMetadata::categoryColor($cat) }}">{{ \App\Services\DocumentMetadata::categoryLabel($cat) }}</span>
+                        @endforeach
                     </div>
                     @if($meta['author'])
                         <div class="text-gray-400"><span class="text-gray-500 font-medium">Author:</span> {{ $meta['author'] }}</div>
@@ -163,12 +163,17 @@
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-500 mb-1">Category</label>
-                    <select name="meta_category" class="w-full border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">— None —</option>
+                    @php $currentCats = \App\Services\DocumentMetadata::normalizeCategory($meta['category'] ?? []); @endphp
+                    <div class="flex flex-wrap gap-2">
                         @foreach(\App\Services\DocumentMetadata::CATEGORIES as $key => $label)
-                            <option value="{{ $key }}" {{ ($meta['category'] ?? '') === $key ? 'selected' : '' }}>{{ $label }}</option>
+                            <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" name="meta_category[]" value="{{ $key }}"
+                                       {{ in_array($key, $currentCats) ? 'checked' : '' }}
+                                       class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">{{ $label }}</span>
+                            </label>
                         @endforeach
-                    </select>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-500 mb-1">Version</label>

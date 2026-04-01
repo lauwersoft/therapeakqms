@@ -75,7 +75,7 @@
             <select x-model="sidebarCategoryFilter" class="w-full text-[11px] border-gray-200 rounded-md py-1 pl-2 pr-6 bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
                 <option value="">All categories</option>
                 @foreach(\App\Services\DocumentMetadata::CATEGORIES as $catKey => $catLabel)
-                    <option value="{{ $catKey }}">{{ $catLabel }} ({{ collect($sidebarDocs)->where('category', $catKey)->count() }})</option>
+                    <option value="{{ $catKey }}">{{ $catLabel }} ({{ collect($sidebarDocs)->filter(fn($d) => is_array($d['category'] ?? null) ? in_array($catKey, $d['category']) : ($d['category'] ?? '') === $catKey)->count() }})</option>
                 @endforeach
             </select>
         </div>

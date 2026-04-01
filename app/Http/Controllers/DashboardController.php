@@ -32,8 +32,8 @@ class DashboardController extends Controller
         $draftCount = count(array_filter($docIndex, fn ($m) => ($m['status'] ?? '') === 'draft'));
         $approvedCount = count(array_filter($docIndex, fn ($m) => ($m['status'] ?? '') === 'approved'));
         $inReviewCount = count(array_filter($docIndex, fn ($m) => ($m['status'] ?? '') === 'in_review'));
-        $qmsCount = count(array_filter($docIndex, fn ($m) => ($m['category'] ?? '') === 'qms'));
-        $technicalCount = count(array_filter($docIndex, fn ($m) => ($m['category'] ?? '') === 'technical'));
+        $qmsCount = count(array_filter($docIndex, fn ($m) => DocumentMetadata::hasCategory($m, 'qms')));
+        $technicalCount = count(array_filter($docIndex, fn ($m) => DocumentMetadata::hasCategory($m, 'technical')));
 
         // Doc list for search
         $docList = [];
