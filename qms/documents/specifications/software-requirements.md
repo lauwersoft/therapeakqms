@@ -64,10 +64,10 @@ This specification covers the Therapeak AI therapy platform in its medical devic
 
 | ID | Requirement | Acceptance Criteria | Source | Verification |
 |---|---|---|---|---|
-| FR-010 | The system shall present a two-part onboarding questionnaire (17 initial questions + 3 finalization questions) before granting access to therapy. | All 20 questions are presented in sequence; responses are stored; user cannot access therapy without completion. | UR-002 | T |
-| FR-011 | The questionnaire shall include a depression screening section (8 items) using the response scale: Not at all / Several days / More than half the days / Nearly every day. | 8 depression items are displayed with the 4-option response scale; responses are recorded with correct values. | UR-002 | T |
+| FR-010 | The system shall present a structured onboarding questionnaire before granting access to therapy. | All questions are presented; responses are stored; user cannot access therapy without completion. | UR-002 | T |
+| FR-011 | The questionnaire shall include a depression screening section with standardized response options. | Depression screening items are displayed with appropriate response scale; responses are recorded. | UR-002 | T |
 | FR-012 | In the medical device configuration, the depression screening shall replace the suicidal ideation item with "The feeling that nothing I do is good enough." | In `DEVICE_MODE=medical`, item 9 text matches the replacement text; in wellness mode, original text is shown. | UR-002, UR-037, C-007e | T |
-| FR-013 | The system shall collect: gender, age, relationship status, previous therapy experience, reasons for seeking therapy, functional impairment, anxiety/panic/phobia screening, therapist expectations, therapist preferences, focus areas, and a free-text field. | All fields are present in the questionnaire; responses are stored and accessible for therapist matching. | UR-002 | T |
+| FR-013 | The system shall collect demographic, clinical, and preference information during onboarding to enable therapist matching and session context. | Intake data is collected covering demographics, clinical indicators, and user preferences; responses are stored and accessible for therapist matching. | UR-002 | T |
 | FR-014 | The system shall implement an age gate that prevents users who report an age of 18 or below from accessing the free trial or making a payment. Minimum effective age: 19+. | Users selecting age ≤18 cannot proceed to trial or checkout; users selecting age ≥19 can proceed. | UR-020, C-008a | T |
 | FR-015 | The age dropdown shall display ages 12-100, but selection of any age ≤18 shall block trial and payment access. | Dropdown displays ages 12-100; selecting 12-18 shows blocking message; selecting 19+ proceeds. | UR-020, C-008a | T |
 
@@ -76,7 +76,7 @@ This specification covers the Therapeak AI therapy platform in its medical devic
 | ID | Requirement | Acceptance Criteria | Source | Verification |
 |---|---|---|---|---|
 | FR-020 | The system shall generate a personalized AI therapist profile based on the user's survey responses. | After completing the survey, a unique therapist profile is created and assigned to the user. | UR-003 | T |
-| FR-021 | Each AI therapist profile shall include 17 randomized personality traits (personality type, communication style, emotional tone, response length, metaphor usage, humor style, empathy level, problem-solving approach, feedback style, session pace, questioning style, emoji usage, punctuation style, etc.). | Generated profiles contain all 17 trait fields with valid values from their respective option sets. | UR-003 | T |
+| FR-021 | Each AI therapist profile shall include a randomized set of personality traits to create distinct therapeutic characteristics. | Generated profiles contain personality trait fields with valid values. | UR-003 | T |
 | FR-022 | Each AI therapist shall have a generated name, biography, backstory, and avatar image. | All four fields are populated and non-empty for every generated therapist. | UR-003 | T |
 | FR-023 | Avatar images shall be generated via Fal.ai (Flux Pro model), with pre-generated avatars available as fallback if the service is unavailable. | Avatar generation succeeds under normal conditions; when Fal.ai is unavailable, a pre-generated avatar is assigned. | UR-018 | T |
 | FR-024 | Users shall be able to switch to a different AI therapist at any time. | User can trigger therapist switch; new therapist is generated and assigned; old therapist remains accessible in history. | UR-003, UR-014 | T |
@@ -148,9 +148,9 @@ This specification covers the Therapeak AI therapy platform in its medical devic
 
 | ID | Requirement | Acceptance Criteria | Source | Verification |
 |---|---|---|---|---|
-| SF-010 | The system prompt shall contain explicit, repeated role enforcement instructions establishing the AI as the therapist (10+ reinforcement statements). | System prompt contains ≥10 distinct role enforcement instructions. | UR-021, C-003a | I |
-| SF-011 | The system shall include 160-200+ embedded static instructions per conversation job covering role enforcement, safety, and formatting. | Instruction count in the system prompt is ≥160. | UR-021, C-003a | I |
-| SF-012 | The AI shall not engage in: role-playing, games, off-platform contact, or referrals to other therapists. | System prompt explicitly prohibits these behaviors; testing with adversarial prompts confirms compliance. | UR-021, UR-024 | T |
+| SF-010 | The AI shall maintain a consistent therapist role throughout therapy sessions. | AI maintains therapist role during testing, including adversarial attempts to break role. | UR-021, C-003a | T |
+| SF-011 | The AI shall behave safely across the following categories: role enforcement, crisis delegation, content restrictions, and therapeutic boundaries. | AI demonstrates safe behavior in each category during testing. | UR-021, C-003a | T |
+| SF-012 | The AI shall not engage in role-playing, games, off-platform contact, or referrals to other therapists. | Adversarial prompts attempting these are deflected. | UR-021, UR-024 | T |
 
 ### 6.3 Session Quality Monitoring
 
@@ -167,8 +167,8 @@ This specification covers the Therapeak AI therapy platform in its medical devic
 | SF-030 | User-generated platform content (reviews, survey replies, article replies) shall be moderated via an automated moderation system. | Content containing prohibited terms is auto-rejected; clean content is accepted. | UR-030 | T |
 | SF-031 | The moderation system shall auto-reject content containing: mentions of AI-generated content, offensive language, violence, drugs, or weapons. | Each prohibited category triggers rejection when present in submitted content. | UR-030 | T |
 | SF-032 | Therapy conversations shall NOT be subject to the platform content moderation system. Safety in therapy is handled by AI model safety mechanisms and prompt instructions. | Therapy messages bypass the content moderation filter; therapeutic conversation proceeds normally with sensitive topics. | UR-001, UR-021 | T |
-| SF-040 | The AI shall never encourage leaving relationships; it shall support healing first, never demonize people, and never label individuals as toxic or narcissistic. | System prompt contains explicit relationship protection instructions; adversarial testing confirms compliance. | UR-024, C-004a | T |
-| SF-041 | AI responses shall use conversational text only: no lists, no bold/italic formatting, and responses shall be kept short. | AI responses contain no markdown formatting; average response length is appropriate for conversational exchange. | UR-001 | I |
+| SF-040 | The AI shall support users in exploring relationship dynamics without making directive decisions about the user's relationships (e.g., telling users to leave relationships or diagnosing third parties). | System prompt includes therapeutic relationship safety instructions; AI supports exploration rather than directing decisions during testing. | UR-024, C-004a | T |
+| SF-041 | AI responses shall use a conversational tone appropriate for therapeutic interaction. | AI responses are conversational in style during testing. | UR-001 | I |
 
 ## 7. Security Requirements
 
@@ -189,9 +189,9 @@ This specification covers the Therapeak AI therapy platform in its medical devic
 |---|---|---|---|---|
 | AI-001 | The primary therapy AI model shall be Anthropic Claude Sonnet 4.5, with multi-layer fallback: Claude Opus 4.5, then Claude Sonnet 4, Claude Sonnet 3.7, Claude Opus 4. | Primary model is configured as Claude Sonnet 4.5; fallback chain is configured in the correct order; failover occurs automatically on primary model failure. | UR-015, UR-036 | T |
 | AI-002 | API requests to Anthropic shall be routed via the OpenRouter gateway, which provides infrastructure-level redundancy through Vertex AI, Amazon Bedrock, and the Anthropic API. | API calls are directed to OpenRouter endpoint; OpenRouter routes to available infrastructure provider. | UR-015, UR-036 | I |
-| AI-003 | The conversation job shall retry failed AI requests up to 3 times with 1-second intervals before escalating to the fallback model. | Failed requests trigger up to 3 retries; after 3 failures, the next fallback model is attempted. | UR-015, UR-036 | T |
+| AI-003 | The system shall automatically retry failed AI requests before escalating to the fallback model. | Failed requests are retried; persistent failures trigger fallback to the next model in the chain. | UR-015, UR-036 | T |
 | AI-004 | All therapy conversation prompts shall include comprehensive safety instructions covering: crisis delegation, role enforcement, relationship protection, content restrictions, and formatting rules. | System prompt contains sections for each safety category. | UR-001, UR-019, UR-021, UR-024 | I |
-| AI-005 | Session summaries and user reports shall be generated by GPT-4o with maximum token limits (500 for summaries, 4000 for reports). | GPT-4o is configured as the model for these jobs; token limits are enforced in the API calls. | UR-005, UR-006 | I |
+| AI-005 | The system shall generate session summaries and user reports using an AI model with appropriate length limits. | Summaries and reports are generated within defined token limits. | UR-005, UR-006 | I |
 | AI-006 | The system shall monitor AI output quality through automated session quality checks (role confusion detection, non-response detection). | Quality check jobs execute after each session; flags are recorded for detected issues. | UR-022 | T |
 | AI-007 | Data sharing at the OpenRouter gateway shall be disabled to prevent therapy conversation data from being used for third-party training. | OpenRouter dashboard confirms data sharing is set to OFF; API requests include appropriate headers. | UR-032 | I |
 

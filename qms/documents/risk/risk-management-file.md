@@ -141,7 +141,7 @@ The following hazard analysis was conducted using Failure Mode and Effects Analy
 
 | # | Type | Control Measure | Verification |
 |---|---|---|---|
-| C-001a | Inherent safety | 160-200+ static safety instructions embedded in every conversation job, including explicit prohibitions against validating harmful behavior | Review of prompt templates; tested during local prompt testing |
+| C-001a | Inherent safety | comprehensive static safety instructions embedded in every conversation job, including explicit prohibitions against validating harmful behavior | Review of prompt templates; tested during local prompt testing |
 | C-001b | Inherent safety | Anthropic Claude's built-in safety layer refuses to validate or encourage self-harm at the model level, independent of Therapeak's prompts | Anthropic's published safety evaluations; observed behavior in pre-market sessions |
 | C-001c | Inherent safety | Role enforcement ("You are the THERAPIST") repeated 10+ times per conversation job with reinforcement language, preventing the model from abandoning its therapeutic stance | Review of conversation job source code |
 | C-001d | Protection | `FLAG_SWITCHED_ROLES` monitoring (GPT-4o) detects sessions where AI deviates from therapist role, enabling post-hoc review | ChatDebugFlag system operational verification |
@@ -154,7 +154,7 @@ The following hazard analysis was conducted using Failure Mode and Effects Analy
 | **Residual Severity** | S5 (Catastrophic) |
 | **Residual Probability** | P1 (Rare) |
 | **Residual Risk Level** | **ALARP** |
-| **Justification** | The combination of Claude's built-in safety layer (which independently refuses to validate self-harm), 160-200+ prompt-level safety instructions, role enforcement, and post-session monitoring makes validation of self-harm extremely unlikely. The residual risk is accepted on the basis of benefit-risk analysis (Section 5). Further reduction would require restricting the device's therapeutic scope in a way that would eliminate its clinical benefit for the target population. |
+| **Justification** | The combination of Claude's built-in safety layer (which independently refuses to validate self-harm), comprehensive prompt-level safety instructions, role enforcement, and post-session monitoring makes validation of self-harm extremely unlikely. The residual risk is accepted on the basis of benefit-risk analysis (Section 5). Further reduction would require restricting the device's therapeutic scope in a way that would eliminate its clinical benefit for the target population. |
 
 ---
 
@@ -238,9 +238,9 @@ The following hazard analysis was conducted using Failure Mode and Effects Analy
 
 | # | Type | Control Measure | Verification |
 |---|---|---|---|
-| C-015a | Inherent safety | Relationship protection instructions embedded in prompts: never encourage leaving relationships, always try to heal first, never demonize people, never label individuals as toxic/narcissistic | Prompt template review |
+| C-015a | Inherent safety | Therapeutic relationship safety instructions embedded in prompts guide the AI to support users in exploring relationship dynamics without making directive decisions about the user's relationships | Prompt template review |
 | C-015b | Inherent safety | Claude's built-in safety training includes nuanced handling of interpersonal situations, avoiding reinforcement of abusive patterns | Anthropic's published safety approach; observed behavior |
-| C-015c | Inherent safety | 160-200+ therapeutic instructions guide the AI toward evidence-based therapeutic approaches that include appropriate boundary-setting and accountability | Conversation job code review |
+| C-015c | Inherent safety | comprehensive therapeutic instructions guide the AI toward evidence-based therapeutic approaches that include appropriate boundary-setting and accountability | Conversation job code review |
 | C-015d | Protection | Manual session review catches patterns where the AI fails to appropriately challenge harmful behavior | Session review logs |
 | C-015e | Protection | Post-market surveillance via [[SOP-009]] tracks complaints and feedback related to AI advice quality | PMS records |
 | C-015f | Information | IFU states that Therapeak provides informational guidance only and does not replace professional therapeutic judgment | IFU review |
@@ -504,7 +504,7 @@ The following hazard analysis was conducted using Failure Mode and Effects Analy
 
 | # | Type | Control Measure | Verification |
 |---|---|---|---|
-| C-011a | Inherent safety | 160-200+ static instructions per conversation job create a robust system prompt context that is difficult to override through user input | Prompt template review; adversarial testing during prompt testing |
+| C-011a | Inherent safety | comprehensive static instructions per conversation job create a robust system prompt context that is difficult to override through user input | Prompt template review; adversarial testing during prompt testing |
 | C-011b | Inherent safety | Role enforcement repeated 10+ times with reinforcement language provides redundancy against partial prompt override | Conversation job code review |
 | C-011c | Inherent safety | Anthropic Claude's built-in prompt injection resistance -- Claude is trained to maintain system prompt instructions even under adversarial pressure | Anthropic's published safety evaluations |
 | C-011d | Inherent safety | Behavioral guardrails prohibit off-topic behavior, role-playing, and meta-discussion of AI nature, limiting the attack surface for prompt injection | Prompt template review |
@@ -516,7 +516,7 @@ The following hazard analysis was conducted using Failure Mode and Effects Analy
 | **Residual Severity** | S3 (Serious) |
 | **Residual Probability** | P2 (Unlikely) |
 | **Residual Risk Level** | **ALARP** |
-| **Justification** | The extensive system prompt (160-200+ instructions), redundant role enforcement, and Claude's built-in injection resistance make successful prompt injection unlikely. Even if partial override occurs, the automated monitoring flags behavioral deviations. Residual severity is Serious (reduced from Critical) because Claude's safety layer operates independently of the system prompt, meaning core safety behaviors (crisis handling, refusal to generate harmful content) are maintained even under injection. Accepted via benefit-risk analysis (Section 5). |
+| **Justification** | The extensive system prompt (comprehensive instructions), redundant role enforcement, and Claude's built-in injection resistance make successful prompt injection unlikely. Even if partial override occurs, the automated monitoring flags behavioral deviations. Residual severity is Serious (reduced from Critical) because Claude's safety layer operates independently of the system prompt, meaning core safety behaviors (crisis handling, refusal to generate harmful content) are maintained even under injection. Accepted via benefit-risk analysis (Section 5). |
 
 ---
 
@@ -678,7 +678,7 @@ No identified hazard interactions create an unacceptable cumulative risk.
 
 The risk control measures implemented for Therapeak are consistent with or exceed the state of the art for AI-based mental health SaMD:
 
-- **Prompt engineering:** 160-200+ safety instructions per session exceeds typical industry practice for conversational AI safety.
+- **Prompt engineering:** comprehensive safety instructions per session exceeds typical industry practice for conversational AI safety.
 - **Model-level safety:** Delegation of crisis handling to Anthropic Claude's built-in safety layer leverages the most advanced commercially available AI safety training.
 - **Automated monitoring:** The `FLAG_SWITCHED_ROLES` and `FLAG_DID_NOT_RESPOND` systems provide population-level quality monitoring that is uncommon in comparable products.
 - **Multi-provider fallback:** The multi-layer infrastructure redundancy (requests routed via OpenRouter gateway through Vertex AI, Bedrock, and Anthropic API) provides availability guarantees exceeding single-provider architectures.
@@ -704,7 +704,7 @@ For each ALARP residual risk, the benefit-risk balance is evaluated:
 
 | Hazard | Residual Risk | Benefit-Risk Justification |
 |---|---|---|
-| H-001 (AI validates self-harm) | S5/P1 ALARP | The benefit of accessible mental health support for the target population (mild to moderate symptoms) outweighs the extremely rare risk of self-harm validation, given the multiple safety layers (Claude's built-in safety, 160-200+ prompt instructions, monitoring). Restricting the device to eliminate this risk would remove all therapeutic benefit. |
+| H-001 (AI validates self-harm) | S5/P1 ALARP | The benefit of accessible mental health support for the target population (mild to moderate symptoms) outweighs the extremely rare risk of self-harm validation, given the multiple safety layers (Claude's built-in safety, comprehensive prompt instructions, monitoring). Restricting the device to eliminate this risk would remove all therapeutic benefit. |
 | H-002 (Inappropriate advice) | S3/P2 ALARP | The benefit of personalized therapeutic guidance for users who may not access traditional therapy outweighs the unlikely risk of inappropriate advice, particularly given the IFU statements that all guidance is informational and user-discretionary. |
 | H-005 (Diagnostic misinterpretation) | S3/P2 ALARP | The benefit of clinical-style reports that help users understand their symptoms and share information with healthcare professionals outweighs the risk of misinterpretation, given the multiple disclaimers embedded in reports and the IFU. |
 | H-006 (Over-dependency) | S3/P2 ALARP | The benefit of accessible, affordable mental health support outweighs the risk of over-dependency, given daily session time caps, IFU guidance on complementary use, and the reality that many users in the target population have no alternative support. |
