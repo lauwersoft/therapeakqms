@@ -329,17 +329,7 @@ This document defines the verification test specifications for the Therapeak med
 
 ## 10. Test Execution Tracking
 
-Test execution results will be documented in a separate Software Verification Test Execution Report, which will record for each test specification:
-
-- Test execution ID
-- Test specification executed
-- Executor and date
-- Software version under test
-- Whether execution followed planned procedure
-- Any deviations from test specification
-- Anomalies discovered
-- Pass/fail result
-- Conclusion
+Test execution results are documented in [[RPT-006]] Software Verification Test Execution Report.
 
 ## 11. Change History
 
@@ -349,6 +339,7 @@ Test execution results will be documented in a separate Software Verification Te
 
 ## 12. References
 
+- [[RPT-006]] Software Verification Test Execution Report
 - [[SPE-001]] Software Requirements Specification
 - [[SPE-003]] Use Requirements Specification
 - [[PLN-005]] Software Development Plan
