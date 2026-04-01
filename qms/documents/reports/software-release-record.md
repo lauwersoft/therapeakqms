@@ -73,9 +73,9 @@ This record documents the release decision for Therapeak medical device software
 |---|---|---|
 | Verification test specifications defined | Complete | [[TST-001]] |
 | All software requirements traced to test specifications | Complete | [[TRC-001]] Matrix 2 |
-| Verification tests executed | **PENDING** | *Test execution report to be created* |
-| All verification tests passed | **PENDING** | *Awaiting test execution* |
-| Anomalies resolved or documented | **PENDING** | *Awaiting test execution* |
+| Verification tests executed | **PENDING** | [[RPT-006]] — fill in results |
+| All verification tests passed | **PENDING** | [[RPT-006]] — awaiting execution |
+| Anomalies resolved or documented | **PENDING** | [[RPT-006]] — awaiting execution |
 
 ### 3.5 Validation
 

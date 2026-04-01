@@ -101,7 +101,7 @@ This section maps Scarlet's expected documentation categories to our specific do
 | Software requirements | Software Requirements Specification | [[SPE-001]] |
 | Software architecture and design | Software Development Plan (architecture sections) | [[PLN-005]] |
 | AI model design | Software Development Plan (AI sections), Product Specification | [[PLN-005]], [[SPE-002]] |
-| Software verification test specs and execution reports | Software Verification Test Specifications | [[TST-001]] |
+| Software verification test specs and execution reports | Software Verification Test Specifications + Execution Report | [[TST-001]], [[RPT-006]] |
 | Software release | Software Release Record | [[RPT-005]] |
 | Validation reports | Software Validation Report | [[RPT-003]] |
 

@@ -27,7 +27,7 @@ These tasks must be completed before or as part of the CE marking submission.
 - [ ] **Implement `app:purge-deleted-users`** — Artisan command to permanently delete data for users soft-deleted >180 days ago. Schedule daily. For GDPR requests, run manually.
 - [ ] **Create Scarlet auditor account** — "auditor" role on QMS platform.
 - [ ] **Verify server backups** — Check Hetzner panel, enable if needed.
-- [ ] **Run software verification tests** — Execute all 23 test specifications from TST-001. Document results in a test execution report. Each test needs: executor, date, software version, pass/fail, any anomalies.
+- [ ] **Run software verification tests** — Open TST-001 (test procedures) and RPT-006 (execution report) side by side. Go through each of the 23 tests, follow the steps, mark pass/fail in RPT-006. That's it.
 - [ ] **Run software validation** — Execute validation activities from TRC-001 Matrix 4 (VAL-001 to VAL-041). Document in a validation report.
 - [ ] **Create medical device translations** — The `lang_backup` files need to be activated for `DEVICE_MODE=medical`.
 
