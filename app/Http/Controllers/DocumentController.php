@@ -847,7 +847,7 @@ class DocumentController extends Controller
                 'type_label' => isset($meta['type']) ? (DocumentMetadata::TYPES[$meta['type']] ?? $meta['type']) : null,
                 'type_color' => isset($meta['type']) ? DocumentMetadata::typeColor($meta['type']) : 'bg-gray-100 text-gray-600',
                 'category' => $meta['category'] ?? null,
-                'category_labels' => collect(DocumentMetadata::normalizeCategory($meta['category'] ?? []))->map(fn($c) => DocumentMetadata::categoryLabel($c))->values()->toArray(),
+                'category_labels' => collect(DocumentMetadata::normalizeCategory($meta['category'] ?? []))->map(fn($c) => DocumentMetadata::categoryShort($c))->values()->toArray(),
                 'category_colors' => collect(DocumentMetadata::normalizeCategory($meta['category'] ?? []))->map(fn($c) => DocumentMetadata::categoryColor($c))->values()->toArray(),
                 'status' => $meta['status'] ?? 'draft',
                 'status_label' => DocumentMetadata::STATUSES[$meta['status'] ?? 'draft'] ?? 'Draft',

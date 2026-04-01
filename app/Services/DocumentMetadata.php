@@ -63,6 +63,11 @@ class DocumentMetadata
         'technical' => 'Technical Documentation',
     ];
 
+    const CATEGORY_SHORT = [
+        'qms' => 'QMS',
+        'technical' => 'TD',
+    ];
+
     const CATEGORY_COLORS = [
         'qms' => 'bg-blue-50 text-blue-600',
         'technical' => 'bg-amber-50 text-amber-600',
@@ -89,6 +94,11 @@ class DocumentMetadata
     public static function categoryLabel(string $category): string
     {
         return self::CATEGORIES[$category] ?? ucfirst($category);
+    }
+
+    public static function categoryShort(string $category): string
+    {
+        return self::CATEGORY_SHORT[$category] ?? strtoupper($category);
     }
 
     /**

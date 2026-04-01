@@ -159,7 +159,7 @@
                         <span class="min-w-0 flex-1">
                             <span class="truncate block leading-tight">{{ $item['name'] }}</span>
                             @if($item['doc_id'] ?? null)
-                                <span class="text-[10px] font-mono block leading-tight"><span class="px-1 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor($itemDocType) }}">{{ $item['doc_id'] }}</span>@foreach(\App\Services\DocumentMetadata::normalizeCategory($item['doc_category'] ?? []) as $cat)<span class="px-1 py-0.5 rounded text-[9px] font-sans font-medium {{ \App\Services\DocumentMetadata::categoryColor($cat) }}">{{ \App\Services\DocumentMetadata::categoryLabel($cat) }}</span>@endforeach @if($item['doc_status'] ?? null) <span class="text-gray-400">· {{ ucfirst($item['doc_status'] === 'in_review' ? 'In Review' : $item['doc_status']) }}</span>@endif</span>
+                                <span class="text-[10px] font-mono block leading-tight"><span class="px-1 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor($itemDocType) }}">{{ $item['doc_id'] }}</span>@foreach(\App\Services\DocumentMetadata::normalizeCategory($item['doc_category'] ?? []) as $cat)<span class="px-1 py-0.5 rounded text-[9px] font-sans font-medium {{ \App\Services\DocumentMetadata::categoryColor($cat) }}">{{ \App\Services\DocumentMetadata::categoryShort($cat) }}</span>@endforeach @if($item['doc_status'] ?? null) <span class="text-gray-400">· {{ ucfirst($item['doc_status'] === 'in_review' ? 'In Review' : $item['doc_status']) }}</span>@endif</span>
                             @endif
                         </span>
                         @php

@@ -411,8 +411,8 @@
                                                 <span class="shrink-0 text-[10px] font-medium px-1 py-0.5 rounded ml-auto" :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                             </div>
                                             <div class="flex items-center gap-1.5 mt-0.5">
-                                                <template x-for="(cat, idx) in (doc.category || [])" :key="idx">
-                                                    <span class="shrink-0 text-[9px] font-medium px-1 py-0.5 rounded" :class="doc.category_colors[idx]" x-text="cat === 'qms' ? 'QMS' : 'Tech'"></span>
+                                                <template x-for="(lbl, idx) in (doc.category_labels || [])" :key="idx">
+                                                    <span class="shrink-0 text-[9px] font-medium px-1 py-0.5 rounded" :class="doc.category_colors[idx]" x-text="lbl"></span>
                                                 </template>
                                                 <span class="text-[11px] text-gray-400 font-mono truncate" x-text="'documents/' + doc.path"></span>
                                             </div>
@@ -469,8 +469,8 @@
                                                 <span class="shrink-0 text-[10px] font-medium px-1 py-0.5 rounded ml-auto" :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                             </div>
                                             <div class="flex items-center gap-1.5 mt-0.5">
-                                                <template x-for="(cat, idx) in (doc.category || [])" :key="idx">
-                                                    <span class="shrink-0 text-[9px] font-medium px-1 py-0.5 rounded" :class="doc.category_colors[idx]" x-text="cat === 'qms' ? 'QMS' : 'Tech'"></span>
+                                                <template x-for="(lbl, idx) in (doc.category_labels || [])" :key="idx">
+                                                    <span class="shrink-0 text-[9px] font-medium px-1 py-0.5 rounded" :class="doc.category_colors[idx]" x-text="lbl"></span>
                                                 </template>
                                                 <span class="text-[11px] text-gray-400 font-mono truncate" x-text="'documents/' + doc.path"></span>
                                             </div>
