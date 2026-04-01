@@ -19,7 +19,7 @@ mdr_refs:
 
 This procedure defines how Therapeak B.V. evaluates, approves, implements, and documents changes to the Therapeak medical device software, ensuring that changes do not adversely affect product safety, performance, or regulatory compliance. This procedure complies with ISO 13485:2016 Clause 7.3.9 and EU MDR Article 10(9), and follows MDCG 2020-3 guidance on significant changes.
 
-**Related documents:** [[FM-003]] Change Request Form, [[SOP-006]] Software Development Lifecycle, [[SOP-014]] Product Identification and Traceability, [[SOP-016]] Cybersecurity Management
+**Related documents:** [[FM-003]] Change Request Form, [[SOP-011]] Software Lifecycle Management, [[SOP-014]] Product Identification and Traceability, [[SOP-016]] Cybersecurity Management
 
 ## 2. Scope
 
@@ -238,7 +238,7 @@ During management review (at least annually), Sarp reviews:
 
 - [[FM-003]] Change Request Form
 - [[SOP-001]] Document Control Procedure
-- [[SOP-006]] Software Development Lifecycle Procedure
+- [[SOP-011]] Software Lifecycle Management Procedure
 - [[SOP-014]] Product Identification and Traceability Procedure
 - [[SOP-016]] Cybersecurity Management Procedure
 - [[RA-001]] Risk Management File

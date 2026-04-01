@@ -97,7 +97,7 @@ Annual supplier reviews are conducted as part of management review input per [[S
 
 - [[SOP-008]] Purchasing and Supplier Control Procedure
 - [[FM-005]] Supplier Evaluation Form
-- [[SOP-005]] Management Review Procedure
-- [[SOP-006]] Risk Management Procedure
+- [[SOP-006]] Management Review Procedure
+- [[SOP-002]] Risk Management Procedure
 - ISO 13485:2016 Clause 7.4.1
 - EU MDR 2017/745 Article 10(9)

@@ -86,8 +86,8 @@ Risks are identified through the following methods:
 1. **Intended use analysis** — Review of intended purpose, target users, use environment, and contraindications
 2. **Hazard identification** — Systematic review using ISO 14971 Annex C categories adapted for AI SaMD
 3. **AI-specific hazard analysis** — Identification of hazards specific to AI/ML systems (see 4.2.1)
-4. **Post-market data** — Complaints, incidents, literature, PMS data ([[SOP-010]])
-5. **Design review** — Hazards identified during design and development ([[SOP-006]])
+4. **Post-market data** — Complaints, incidents, literature, PMS data ([[SOP-009]])
+5. **Design review** — Hazards identified during design and development ([[SOP-007]])
 
 All identified hazards are documented in the [[RA-001]] Risk Management File.
 
@@ -167,8 +167,8 @@ After all individual risk controls are implemented and verified:
 Risk management is a continuous activity. Post-market information that may affect the risk analysis is collected through:
 
 - Complaint handling ([[SOP-004]])
-- Post-market surveillance ([[SOP-010]])
-- Post-market clinical follow-up ([[SOP-011]])
+- Post-market surveillance ([[SOP-009]])
+- Post-market clinical follow-up ([[PLN-003]])
 - Vigilance reporting ([[SOP-013]])
 - AI model monitoring (session quality checks, role confusion detection)
 
@@ -195,7 +195,7 @@ Sarp reviews the risk management file at least annually as part of management re
 - [[SOP-001]] Document Control Procedure
 - [[SOP-003]] CAPA Procedure
 - [[SOP-004]] Complaint Handling Procedure
-- [[SOP-010]] Post-Market Surveillance Procedure
+- [[SOP-009]] Post-Market Surveillance Procedure
 - [ISO 13485:2016 Clause 7.1](/references/iso-13485#clause-7-1) — Planning of Product Realization
 - [ISO 13485:2016 Clause 7.3.3](/references/iso-13485#clause-7-3-3) — Design and Development Inputs
 - [ISO 14971:2019](/references/iso-14971) — Application of Risk Management to Medical Devices

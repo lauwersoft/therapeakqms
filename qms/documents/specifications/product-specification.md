@@ -205,7 +205,7 @@ Therapeak is a monolithic Laravel web application that handles all functionality
 ### 12.1 Inputs
 
 - Patient-reported information: text messages during therapy sessions
-- Questionnaire responses: trial survey (PHQ-9-style screening, demographics, preferences)
+- Questionnaire responses: trial survey (custom onboarding questionnaire with depression/anxiety screening items, demographics, preferences)
 - Mood self-reports
 - User profile information
 

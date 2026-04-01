@@ -1,139 +1,424 @@
-# QMS Admin Guide
+# QMS Admin Guide — Operational Playbook
 
-*Last updated: March 26, 2026*
+*Last updated: April 1, 2026*
 
-Everything you need to know to keep the QMS running. Written for someone who has never worked with a QMS before.
+Everything you need to know to keep the QMS running. Structured as "when X → do Y → fill Z."
 
 ---
 
 ## What is this QMS?
 
-A Quality Management System (QMS) is a set of documents and processes that prove your company builds safe medical devices. The Notified Body (Scarlet) will review these documents to decide if Therapeak gets a CE mark.
+A Quality Management System (QMS) proves your company builds safe medical devices. Scarlet (Notified Body) reviews these documents to decide if Therapeak gets a CE mark.
 
-Think of it as a rulebook your company follows. The documents describe **what** you do, **how** you do it, and **proof** that you actually do it. The "what" and "how" are SOPs (procedures). The "proof" are records (filled forms, meeting notes, reports).
+The "what" and "how" = SOPs (procedures). The "proof" = records (filled forms, meeting notes, reports).
 
----
-
-## MUST Change Before CE Marking
-
-These are things that **cannot** stay as they are. Without these changes, you will not get a CE marking.
-
-- [ ] **Activate crisis protocol in all conversation jobs** — Uncomment the crisis protocol in all 6 conversation job files (OpenRouterSonnetFourFiveRunConversationJob, OpenRouterSonnetFourSixRunConversationJob, their COACH variants, OpusFourFive, GeminiThree). This is documented in the risk management file as a required control measure.
-- [ ] **Add FLAG_CRISIS to ChatDebugFlag** — Create a new flag type for crisis detection. When the AI provides a crisis response (suicide hotline referral, etc.), log it. This is needed for post-market surveillance — you need to know when crisis situations occur.
-- [ ] **Implement data deletion command** — Create `app:purge-deleted-users` artisan command that permanently deletes all data for users soft-deleted more than 180 days ago. Schedule it daily. For explicit GDPR requests, run it manually within 30 days. Your privacy policy promises deletion rights — you need to deliver.
-- [ ] **Create Scarlet auditor account** — Create a user with "auditor" role on the QMS platform for Scarlet before April 7.
-- [ ] **Verify server backups** — Check Hetzner panel: are backups enabled? If not, enable them. You need to be able to answer "yes" when the auditor asks about backups.
-
-## DONE (Completed)
-
-- [x] ~~**Turn off OpenRouter data sharing**~~ — Done March 25, 2026
-- [x] ~~**Sign Hetzner DPA**~~ — Done March 25, 2026 (via customer portal)
-- [x] ~~**Add device_mode config**~~ — Done (`settings.device_mode = 'wellness'`)
-
-## Should Do Before April 7 (But Won't Block CE Marking)
-
-- [ ] **Review QMS with Suzan** — Walk through all documents with your consultant before March 31 audit.
-- [ ] **Internal audit (March 31)** — Jurist will audit. Address any findings before April 7.
-- [ ] **Enable 2FA on OpenRouter** — Currently no 2FA. Low risk but easy to fix.
-- [ ] **Enable 2FA on admin panel** — The Therapeak admin panel has no 2FA. Not a CE blocker, but documented in cybersecurity SOP as a known gap.
-
-## Fine For Now (Documented in QMS, Change Later)
-
-These are things the QMS acknowledges honestly and has a plan for. The NB will see you've identified them and have mitigation. They will NOT block your CE marking.
-
-- **No automated testing / no CI/CD / no staging** — Documented in SOP-011 with compensating controls (local testing, Telescope monitoring, rapid rollback). Many small SaMD companies operate this way.
-- **Database not encrypted at rest** — Documented in SOP-016 (cybersecurity) with compensating controls (SSH-only access, localhost-only DB, physical security via Hetzner, DPA).
-- **Session summaries in emails** — Full therapy content sent via email. Documented as known risk in RA-001 (H-012). Users receive this as part of the service. Acceptable for now with plan to evaluate link-only emails later.
-- **No formal usability testing** — PLN-006 documents the plan for summative usability evaluation. Pre-market user feedback serves as formative evaluation. The plan shows intent.
-- **Single-person operation** — Fully documented in QM-001 with explanation that it's common for small manufacturers. Nisan as emergency backup for vigilance. Suzan as external regulatory support.
-- **API keys in .env only** — Documented in SOP-016. Acceptable with SSH-only access as compensating control.
-- **Medical device translations not yet done** — The `lang_backup` files exist but aren't active. QMS documents reference the intended medical device. Translations are a content task, not a QMS gap.
+**Golden rule:** Say what you do, do what you say. If a SOP says you do X, you must actually do X. If you can't, change the SOP.
 
 ---
 
-## What You Need to Do Regularly
+## Part 1: Before CE Marking (NOW)
 
-### Publish Changes
-**When:** After document edits are made
-**What:** Go to Unpublished Changes, review them, click Publish. This saves everything to git — creating a permanent record.
-**Why:** ISO 13485 requires controlled document changes with an audit trail. Publishing = approval.
+These tasks must be completed before or as part of the CE marking submission.
 
-### Review & Resolve Comments
-**When:** Weekly, or when you see the comment badge
-**What:** Comments are review notes on documents. "Required Change" comments block document approval — resolve them. Click "Resolve" when addressed, add a note explaining what you did.
-**Why:** Proves documents go through a proper review process before approval.
+### MUST Complete
 
-### Management Review
-**When:** Every 6 months (next: September 2026)
-**What:** Fill in the Management Review form (FM-009). Review: complaints, CAPAs, audit findings, PMS data, quality objectives. Document decisions and actions.
-**Why:** ISO 13485 clause 5.6 — top management must review the QMS periodically.
+- [ ] **Activate crisis protocol in all conversation jobs** — Uncomment crisis protocol in all 6 conversation job files. Documented in RA-001 as required control.
+- [ ] **Add FLAG_CRISIS to ChatDebugFlag** — New flag type for crisis detection. Needed for PMS.
+- [ ] **Implement `app:purge-deleted-users`** — Artisan command to permanently delete data for users soft-deleted >180 days ago. Schedule daily. For GDPR requests, run manually.
+- [ ] **Create Scarlet auditor account** — "auditor" role on QMS platform.
+- [ ] **Verify server backups** — Check Hetzner panel, enable if needed.
+- [ ] **Run software verification tests** — Execute all 23 test specifications from TST-001. Document results in a test execution report. Each test needs: executor, date, software version, pass/fail, any anomalies.
+- [ ] **Run software validation** — Execute validation activities from TRC-001 Matrix 4 (VAL-001 to VAL-041). Document in a validation report.
+- [ ] **Create medical device translations** — The `lang_backup` files need to be activated for `DEVICE_MODE=medical`.
 
-### Log Complaints
-**When:** When a user reports a product problem (not billing issues)
-**What:** Fill in the Complaint Form (FM-004). If serious (someone got hurt or could have), also fill in CAPA form (FM-001) and check the vigilance SOP (SOP-013) for reporting timelines.
-**Why:** EU MDR Article 87-92 requires tracking complaints and reporting serious incidents.
+### DONE
 
-### CRITICAL: Serious Incidents
-**When:** If a user is harmed or could have been harmed by the device
-**What:** Report to competent authority within **15 days** (2 days if imminent risk to public health). See SOP-013.
-**Who:** You. If you're unreachable, Nisan knows the basics.
-**Why:** This is the single most time-critical obligation in the entire QMS. Missing a vigilance deadline is a serious regulatory violation.
+- [x] ~~Turn off OpenRouter data sharing~~ — Done March 25, 2026
+- [x] ~~Sign Hetzner DPA~~ — Done March 25, 2026
+- [x] ~~Add device_mode config~~ — Done (`settings.device_mode = 'wellness'`)
+- [x] ~~Create Use Requirements (SPE-003)~~ — Done April 1, 2026
+- [x] ~~Rebuild Software Requirements (SPE-001)~~ — Done April 1, 2026
+- [x] ~~Create GSPR Checklist (CHK-001)~~ — Done April 1, 2026
+- [x] ~~Create Risk Management Report (RPT-002)~~ — Done April 1, 2026
+- [x] ~~Create Verification Test Specs (TST-001)~~ — Done April 1, 2026
+- [x] ~~Create Traceability Matrix (TRC-001)~~ — Done April 1, 2026
 
-### Post-Market Surveillance
-**When:** Quarterly review, annual report
-**What:** Review: complaints, Trustpilot feedback, session quality flags (FLAG_SWITCHED_ROLES, FLAG_DID_NOT_RESPOND), mood data, retention metrics. Write annual PMS report (RPT-001). Claude can help draft it.
-**Why:** EU MDR Articles 83-86 — you must actively monitor your device after it's on the market.
+### Fine For Now (Documented Honestly)
 
-### Training Records
-**When:** When you learn something new about the QMS
-**What:** Fill in the Training Record form (FM-006). Note what you learned, when, and who taught you.
-**Why:** ISO 13485 clause 6.2 — people working on the QMS must be competent and trained.
+These are acknowledged in the QMS with compensating controls. Will NOT block CE marking:
 
-### CAPA (Corrective & Preventive Actions)
-**When:** When something goes wrong and needs systematic fixing
-**What:** Fill in CAPA form (FM-001). Document: what went wrong, why (5 Why analysis), what you did to fix it, how you'll prevent recurrence.
-**Why:** ISO 13485 clause 8.5.2/8.5.3 — systematic problem-fixing process.
-
-### Supplier Review
-**When:** Annually for critical suppliers, every 2 years for non-critical
-**What:** Review supplier performance, check if DPAs are still valid, update the Approved Supplier List (LST-001). Fill in Supplier Evaluation form (FM-005).
-**Why:** ISO 13485 clause 7.4 — you must evaluate and monitor your suppliers.
-
-### Change Management
-**When:** Before making significant changes to the software
-**What:** Fill in Change Request form (FM-003). Assess if the change is significant (new AI model, new therapeutic claims) or non-significant (bug fix, UI change). Significant changes may require NB notification.
-**Why:** MDR requires you to assess the impact of changes on device safety and performance.
+- **No automated testing / no CI/CD / no staging** — Documented in SOP-011 with compensating controls (local testing, Telescope monitoring, rapid rollback)
+- **Database not encrypted at rest** — Documented in SOP-016 with compensating controls (SSH-only access, localhost-only DB, Hetzner physical security, DPA)
+- **Session summaries in emails** — Documented as known risk H-012 in RA-001. Acceptable with plan to evaluate link-only emails later
+- **No formal usability testing** — PLN-006 documents the plan. Pre-market feedback serves as formative evaluation
+- **Single-person operation** — Documented in QM-001. Nisan as vigilance backup. Suzan as regulatory support
+- **API keys in .env only** — Documented in SOP-016 with SSH-only access as compensating control
 
 ---
 
-## Quick Reference
+## Part 2: After CE Marking (Post-Market)
 
-| Task | Frequency | Done by |
-|------|-----------|---------|
-| Publish document changes | As needed | You |
-| Review comments | Weekly | You |
-| Log complaints | When they come in | You |
-| Serious incident reporting | Within 15 days (2 if imminent) | You / Nisan (backup) |
-| PMS data review | Quarterly | You + Claude |
-| Management review | Every 6 months | You |
-| Supplier review | Annually | You |
-| Internal audit | Annually | External auditor |
-| PMS report | Annually | You + Claude |
-| Update QMS documents | When processes change | Claude |
-| Create/update records | As needed | Claude |
-| CAPA | When problems arise | You |
-| Training records | When you learn something | You |
-| Change requests | Before significant changes | You |
+These tasks activate once the medical device is placed on the market (`DEVICE_MODE=medical`).
+
+### Ongoing Tasks
+
+#### Complaints
+
+**When:** A user reports a product problem (not billing/subscription issues)
+
+**Do:**
+1. Fill in **FM-004** (Complaint Form) on the QMS platform
+2. Classify: safety-related or non-safety-related
+3. If safety-related → also check if it meets serious incident criteria (see Serious Incidents below)
+4. If non-safety-related → investigate, fix if needed, respond to user
+5. If you see a pattern of similar complaints → open a CAPA (see CAPA below)
+
+**Fill:** FM-004 (Complaint Form)
+
+---
+
+#### Serious Incidents (MOST TIME-CRITICAL)
+
+**When:** A user was harmed or could have been harmed by the device. Examples: AI encouraged self-harm, user reports worsening condition directly caused by device, complete service outage during active crisis situation.
+
+**Do:**
+1. Report to competent authority (IGJ in the Netherlands) within **15 days** — or **2 days** if imminent public health threat
+2. Follow SOP-013 reporting process
+3. Fill in FM-004 (Complaint Form) if not already done
+4. Open a CAPA (FM-001) for the root cause
+5. Consider: does this need a Field Safety Corrective Action?
+6. Notify Scarlet if field safety corrective action is taken
+
+**Fill:** FM-004, CAPA (FM-001), vigilance report per SOP-013
+
+**Who:** You. If unreachable >24 hours, Nisan knows the basics (trained per FM-006-REC-007).
+
+---
+
+#### CAPA (Corrective & Preventive Actions)
+
+**When:** Something goes systematically wrong — a pattern of complaints, an audit finding, a safety issue, a process failure.
+
+**Do:**
+1. Open **FM-001** (CAPA Form) on the QMS platform
+2. Classify severity: Critical / High / Medium / Low
+3. Root cause analysis: use the "5 Why" method
+4. Define corrective action (fix the problem) and preventive action (prevent recurrence)
+5. Implement the actions
+6. After implementation, verify effectiveness (did it actually fix it?)
+7. If risk assessment needs updating → update RA-001
+8. Close the CAPA
+
+**Fill:** FM-001 (CAPA Form). Update RA-001 if new hazards identified.
+
+---
+
+#### Session Quality Monitoring
+
+**When:** Continuous — automated. You review periodically.
+
+**Do:**
+1. Check ChatDebugFlag records for FLAG_SWITCHED_ROLES and FLAG_DID_NOT_RESPOND
+2. Review 1-2 therapy sessions per week for harmful patterns
+3. If flag rates increase → investigate cause (model update? prompt issue?)
+4. If systematic issue found → open a CAPA
+
+**Where to look:** Database `chat_debug_flags` table, Telescope dashboard
+
+---
+
+#### Post-Market Surveillance
+
+**When:** Quarterly data review, annual report
+
+**Do (quarterly):**
+1. Review: complaint trends, Trustpilot feedback, session quality flag rates, mood tracking trends, retention metrics
+2. Check literature for new evidence on AI mental health tools
+3. Check EUDAMED for field safety notices on similar devices
+4. If signals found → escalate to CAPA or risk management
+
+**Do (annually):**
+1. Write PMS Report (update RPT-001)
+2. Include: complaint summary, flag trends, clinical performance data, literature review, risk management input
+3. Submit as part of management review input
+
+**Fill:** RPT-001 (PMS Report), updated annually
+
+---
+
+#### Management Review
+
+**When:** Every 6 months (first: September 2026 after CE marking)
+
+**Do:**
+1. Fill in **FM-009** (Management Review Form)
+2. Review inputs: complaints, CAPAs, audit findings, PMS data, supplier reviews, quality objectives, training status, process changes, regulatory changes
+3. Document decisions and actions taken
+4. Review resource adequacy (still sustainable as one person?)
+
+**Fill:** FM-009 (Management Review Form)
+
+---
+
+#### Change Management
+
+**When:** Before making changes to the medical device software, prompts, models, infrastructure, or documentation
+
+**Do for significant changes** (new AI model family, new therapeutic claims, architecture changes):
+1. Fill in **FM-003** (Change Request Form) BEFORE implementing
+2. Full risk assessment — update RA-001 if needed
+3. Notify Scarlet (Notified Body)
+4. Update technical documentation
+5. Re-verify/re-validate as needed
+6. Wait for Scarlet feedback before deploying (unless urgent safety fix)
+
+**Do for non-significant changes** (bug fixes, UI improvements, minor prompt tweaks):
+1. Fill in **FM-003** (simplified format)
+2. Quick risk review (confirm no safety impact)
+3. Test and deploy normally
+4. Minor version increment
+
+**Do for AI model updates within Claude family** (e.g., Sonnet 4.5 → 4.6):
+1. Fill in **FM-003** referencing the predetermined change control plan (SOP-017 Section 4.4)
+2. Test with representative conversation scenarios
+3. Deploy (can use limited rollout)
+4. Monitor for 7 days — check ChatDebugFlags and complaints
+5. If any issues → escalate to full significant change evaluation
+
+**Fill:** FM-003 (Change Request Form)
+
+---
+
+#### Supplier Review
+
+**When:** Annually for critical suppliers (Hetzner, Anthropic, OpenRouter, OpenAI, Stripe, AWS SES). Every 2 years for non-critical.
+
+**Do:**
+1. Fill in **FM-005** (Supplier Evaluation Form) for each supplier
+2. Check: DPA still valid? Service adequate? Any security incidents? Certifications current?
+3. Update LST-001 (Approved Supplier List) if changes
+4. Include findings in management review input
+
+**Fill:** FM-005 (Supplier Evaluation Form), update LST-001
+
+---
+
+#### Training Records
+
+**When:** When you or anyone else learns something relevant to the QMS (new regulation, new tool, audit training, etc.)
+
+**Do:**
+1. Fill in **FM-006** (Training Record Form)
+2. Record: what was learned, when, evidence of competency
+3. Update LOG-001 (Training Log) summary
+
+**Fill:** FM-006 (Training Record Form), update LOG-001
+
+---
+
+#### Internal Audit
+
+**When:** Annually
+
+**Do:**
+1. Schedule external auditor (independence required — cannot audit your own work)
+2. Provide auditor with QMS platform access
+3. Auditor fills in **FM-002** (Internal Audit Form)
+4. Nonconformities → open CAPAs (FM-001)
+5. Address findings before next Scarlet audit
+
+**Fill:** FM-002 (Internal Audit Form), FM-001 for any CAPAs
+
+---
+
+#### Design Reviews
+
+**When:** Before major software releases or significant design changes
+
+**Do:**
+1. Fill in **FM-007** (Design Review Form)
+2. Review against: requirements (SPE-001), risk controls (RA-001), usability (PLN-006)
+3. If risk assessment needs updating → update RA-001 and RPT-002
+
+**Fill:** FM-007 (Design Review Form)
+
+---
+
+#### Traceability Maintenance
+
+**When:** When adding/changing software requirements or risk controls
+
+**Do:**
+1. Update SPE-001 (add/modify requirements)
+2. If new use requirement → update SPE-003
+3. Update TRC-001 traceability matrix
+4. Add/update verification test specification in TST-001
+5. If risk controls changed → update RA-001 and the risk control matrix in TRC-001
+
+**Fill:** SPE-001, SPE-003, TRC-001, TST-001 as needed
+
+---
+
+## Part 3: Publish & Document Control
+
+**Publish changes:**
+Go to Unpublished Changes → review → click Publish. This creates a git commit = permanent audit trail. ISO 13485 requires controlled document changes.
+
+**Review comments:**
+Check weekly. "Required Change" comments block document approval. Click "Resolve" when addressed, add a note.
+
+---
+
+## Part 4: Audit Preparation
+
+### What Scarlet Audits
+
+**Stage 1:** Document review — checks completeness. Primarily a desk review.
+**Stage 2:** Implementation audit — verifies you're doing what documents say. Need to demonstrate processes and show records.
+
+### Questions the Auditor Will Ask (and Your Answers)
+
+**"Describe your quality management system."**
+
+"Our QMS is built on ISO 13485:2016 and EU MDR 2017/745. It covers all processes from design through post-market surveillance. All documents are managed in our QMS platform with git-based version control for full traceability. I'm the sole operator with support from a regulatory consultant. The QMS was formally established on March 1, 2026."
+
+Show: QM-001, the History page, the publish workflow.
+
+---
+
+**"How do you control documents?"**
+
+"All documents are created and edited in our QMS platform. Changes go through a review process — editors and auditors can leave comments, and 'required change' comments block approval. When approved, documents are published which creates a git commit — an immutable audit trail."
+
+Show: SOP-001, the History page, the publish workflow.
+
+---
+
+**"Walk me through your complaint handling process."**
+
+"Complaints come in via email or the in-app contact form. I evaluate each for safety impact. If there's a potential serious incident, I follow SOP-013 for vigilance reporting. Non-safety complaints are investigated and fixed. Everything is logged in FM-004."
+
+Show: SOP-004, FM-004.
+
+---
+
+**"How do you handle a serious incident?"**
+
+"I report to the competent authority (IGJ) within 15 days — 2 days if imminent risk. I use SOP-013. My wife Nisan is trained as emergency backup."
+
+Show: SOP-013, FM-006-REC-007 (Nisan's training record).
+
+---
+
+**"How do you manage design changes?"**
+
+"Every change is evaluated using FM-003. I classify as significant or non-significant per MDCG 2020-3. Significant changes require full risk assessment and NB notification. We have a predetermined change control plan for AI model updates within the Claude family."
+
+Show: SOP-017, FM-003.
+
+---
+
+**"How do you manage risk?"**
+
+"We follow ISO 14971. Our risk management file identifies 15 hazards for AI therapy software. Controls are applied in priority order: safe design, protective measures, information for safety. All residual risks are acceptable or ALARP with documented justification."
+
+Show: PLN-001, RA-001, RPT-002.
+
+---
+
+**"What clinical evidence do you have?"**
+
+"Our Clinical Evaluation Report follows MDCG 2020-1. We have seven key studies including three RCTs covering 39,000+ participants. Pre-market experience from our wellness version shows no safety concerns."
+
+Show: CE-001, PLN-002, PLN-003.
+
+---
+
+**"How do you monitor the device after it's on the market?"**
+
+"Our PMS system collects data from complaints, Trustpilot, session quality flags, mood tracking, and retention metrics. Quarterly reviews and annual PMS Report. PMCF plan for ongoing clinical data."
+
+Show: SOP-009, PLN-004, RPT-001.
+
+---
+
+**"How do you ensure traceability?"**
+
+"We maintain a traceability matrix (TRC-001) with four matrices: use requirements to software requirements, software requirements to verification tests, risk controls to requirements to verification, and use requirements to validation. All chains are complete with no gaps."
+
+Show: TRC-001, SPE-003, SPE-001, TST-001.
+
+---
+
+**"You're the only person — how do you maintain objectivity?"**
+
+"I use structured self-review with the Design Review Form against defined criteria. I consult with Nisan (psychology background) for therapeutic aspects and Suzan (regulatory consultant) for regulatory impact. This is proportionate for a small manufacturer."
+
+Show: QM-001, SOP-007, FM-007.
+
+---
+
+**"What about cybersecurity?"**
+
+"Our procedure (SOP-016) is based on MDCG 2019-16. Server is at Hetzner in Nuremberg, Germany. SSH-only access, 2FA on critical accounts. DPA signed, TUV audit report on file. Localhost-only database."
+
+Show: SOP-016, CER-001, CER-002.
+
+---
+
+### Tips
+
+1. Be honest. "I'll check that" is better than guessing.
+2. Don't volunteer extra information.
+3. Show the QMS platform — git history, comments, publish workflow.
+4. Know where everything is. Practice finding documents fast.
+5. Reference your SOPs: "As documented in SOP-004, section 4.2..."
+6. Records matter most. Training records, management review, supplier evaluations = proof.
+7. Nonconformities are normal. "We'll open a CAPA for that" = correct response.
+
+---
+
+## Quick Reference: All Forms and When to Use Them
+
+| Form | When to Use | Triggered By |
+|------|------------|-------------|
+| FM-001 (CAPA) | Systematic problem needs fixing | Complaints, audits, PMS signals, process failures |
+| FM-002 (Internal Audit) | Annual internal audit | Audit schedule |
+| FM-003 (Change Request) | Before changing the device | Software changes, model updates, infrastructure changes |
+| FM-004 (Complaint) | User reports a product problem | User contact, Trustpilot review |
+| FM-005 (Supplier Evaluation) | Annual/biennial supplier review | Review schedule |
+| FM-006 (Training Record) | Someone learns something QMS-relevant | Training events, self-study |
+| FM-007 (Design Review) | Before major releases or design changes | Development milestones |
+| FM-008 (Software Release) | Before releasing a new version | Release decision |
+| FM-009 (Management Review) | Every 6 months | Review schedule |
+
+---
+
+## Your QMS at a Glance
+
+| Category | Count | Key Documents |
+|----------|-------|-----------|
+| Quality Manual | 1 | QM-001 |
+| Policies | 1 | POL-001 |
+| SOPs | 17 | SOP-001 to SOP-017 |
+| Plans | 6 | PLN-001 to PLN-006 |
+| Forms | 9 | FM-001 to FM-009 |
+| Reports | 6 | RPT-001 to RPT-005, CE-001 |
+| Specifications | 9 | SPE-001 to SPE-003, LST-001, LOG-001, CHK-001, TRC-001, DOC-001, CTX-001 |
+| Test Specifications | 1 | TST-001 |
+| Risk Management | 1 | RA-001 |
+| Labels / IFU | 1 | LBL-001 |
+| Diagrams | 2 | DWG-001, DWG-002 |
+| **Total** | **54** | (45 markdown + 9 form JSON) |
 
 ---
 
 ## What Claude Code Does For You
 
-- Creates and updates all QMS documents
+- Creates and updates QMS documents
 - Reads and responds to comments
 - Creates records (filled forms, reports)
-- Updates CONTEXT.md and THERAPEAK.md
-- Maintains document cross-references
+- Maintains cross-references and traceability
 - Drafts PMS reports, clinical evaluations, risk assessments
 
 ## What Suzan Does
@@ -145,152 +430,22 @@ These are things the QMS acknowledges honestly and has a plan for. The NB will s
 
 ---
 
-## What to Expect at the NB Audit
-
-### How It Works
-
-Scarlet's audit has two stages:
-
-**Stage 1 (April 7, 2026):** Document review. The auditor reads your QMS documents and checks if everything is in place. They may ask clarifying questions. This is primarily a desk review — they check completeness, not depth.
-
-**Stage 2 (later):** Implementation audit. The auditor verifies you're actually doing what your documents say. They'll ask you to demonstrate processes, show records, and explain your thinking. This is where you need to know your stuff.
-
-### The Golden Rule
-
-**Say what you do, do what you say.** The auditor's job is to check that your documents match reality. If your SOP says "complaints are responded to within 24 hours" then you must actually do that. If you can't, change the SOP to match what you can do.
-
-### Questions the Auditor Will Ask (and Your Answers)
-
-Read these before the audit. The auditor won't ask exactly these words, but the topics will be the same.
-
----
-
-**"Describe your quality management system."**
-
-Your answer: "Our QMS is built on ISO 13485:2016 and EU MDR 2017/745. It covers all processes from design through post-market surveillance. All documents are managed in our QMS platform with git-based version control for full traceability. I'm the sole operator with support from a regulatory consultant (Suzan Slijpen). The QMS was formally established on March 1, 2026."
-
----
-
-**"How do you control documents?"**
-
-Your answer: "All documents are created and edited in our QMS platform. Changes go through a review process — editors and auditors can leave comments, and 'required change' comments block approval. When approved, documents are published which creates a git commit — an immutable audit trail. Every change is tracked with who changed what and when." Show them: SOP-001, the History page, the publish workflow.
-
----
-
-**"Walk me through your complaint handling process."**
-
-Your answer: "Complaints come in via email (info@therapeak.com) or the in-app contact form. I respond within 24 hours — typically within minutes. I evaluate each complaint for safety impact. If there's a potential serious incident, I follow SOP-013 for vigilance reporting. Non-safety complaints are investigated, fixed if needed, and the user is notified. Everything is logged in the Complaint Form (FM-004). If I see a pattern, I open a CAPA." Show them: SOP-004, FM-004.
-
----
-
-**"How do you handle a serious incident?"**
-
-Your answer: "If I become aware of a serious incident — meaning someone was harmed or could have been harmed — I report it to the competent authority (IGJ in the Netherlands) within 15 days. If there's an imminent public health threat, within 2 days. I use the reporting process in SOP-013. My wife Nisan is trained as an emergency backup if I'm unreachable for more than 24 hours." Show them: SOP-013, the training record for Nisan (FM-006-REC-007).
-
----
-
-**"How do you manage design changes?"**
-
-Your answer: "Every change is evaluated for safety and regulatory impact using the Change Request Form (FM-003). I classify changes as significant or non-significant. Significant changes — like switching AI models or changing the intended purpose — require a full risk assessment and may require NB notification. Non-significant changes — like bug fixes or UI improvements — are documented and risk-reviewed but follow a lighter process. All changes go through our software lifecycle process (SOP-011) with local testing before deployment." Show them: SOP-017, FM-003, SOP-011.
-
----
-
-**"How do you validate AI model changes?"**
-
-Your answer: "We have a predetermined change control plan for AI model updates (documented in SOP-017). When switching between Claude versions — for example from Sonnet 4.5 to 4.6 — I test locally using our prompt testing tool, deploy to production, then monitor session quality using our automated flags (FLAG_SWITCHED_ROLES, FLAG_DID_NOT_RESPOND) and manual session review for 7 days. If quality degrades, I can roll back immediately." Show them: SOP-017 (predetermined change control plan section), SOP-011 (AI model management section).
-
----
-
-**"How do you manage risk?"**
-
-Your answer: "We follow ISO 14971. Our Risk Management File (RA-001) identifies 15 specific hazards for our AI therapy software, from AI role confusion to data breaches. Each hazard is analyzed for severity and probability, controls are applied, and residual risk is evaluated. We use a 5x5 risk matrix with acceptable, ALARP, and unacceptable zones. All residual risks are either acceptable or ALARP with documented justification. We monitor risks through post-market surveillance." Show them: RA-001, PLN-001, SOP-002.
-
----
-
-**"What clinical evidence do you have?"**
-
-Your answer: "Our Clinical Evaluation Report (CE-001) follows the MDCG 2020-1 three-step pathway for medical device software. We have seven key studies including three RCTs and four meta-analyses covering over 39,000 participants. The evidence shows AI therapy chatbots produce clinically meaningful improvements in depression and anxiety — effect sizes comparable to or exceeding SSRIs. We also have pre-market experience from our wellness version showing no safety concerns. Our benefit-risk analysis concludes benefits outweigh residual risks." Show them: CE-001, PLN-002, PLN-003.
-
----
-
-**"How do you monitor the device after it's on the market?"**
-
-Your answer: "Our PMS system (SOP-009) collects data from multiple sources: user complaints, Trustpilot reviews, automated session quality monitoring, mood tracking data, and user retention metrics. We do quarterly reviews and produce an annual PMS Report. We also have a PMCF plan (PLN-003) for ongoing clinical data collection. Any safety signals are escalated to CAPA or vigilance." Show them: SOP-009, PLN-004, RPT-001, PLN-003.
-
----
-
-**"How do you evaluate suppliers?"**
-
-Your answer: "We maintain an Approved Supplier List (LST-001) with all critical and non-critical suppliers. Critical suppliers like Hetzner, OpenRouter, and Anthropic are evaluated annually based on performance, security, and data protection. We signed a DPA with Hetzner and have their TUV audit report. For large cloud providers, we rely on their published security certifications and standard terms of service — which is proportionate for a small company using enterprise services." Show them: LST-001, FM-005, the Hetzner DPA (CER-001) and TUV report (CER-002).
-
----
-
-**"How do you ensure personnel are competent?"**
-
-Your answer: "Training records are maintained in LOG-001 and individual Training Record Forms (FM-006). I've been trained on QMS fundamentals, ISO 13485, EU MDR, risk management, and complaint handling/vigilance. My wife Nisan has been trained as an emergency vigilance backup. New personnel would be trained before performing any QMS-related activities." Show them: LOG-001, the individual training records.
-
----
-
-**"You're the only person — how do you maintain objectivity in design reviews?"**
-
-Your answer: "I acknowledge the limitation of a one-person organization — it's documented in the Quality Manual. I maintain objectivity through: structured self-review using the Design Review Form (FM-007) against defined criteria, consultation with my wife Nisan who has a psychology background for therapeutic aspects, and consultation with our regulatory consultant Suzan for regulatory impact. This is proportionate and common for small medical device manufacturers." Show them: QM-001 (section on single-person organization), SOP-007, FM-007.
-
----
-
-**"What about cybersecurity?"**
-
-Your answer: "Our cybersecurity procedure (SOP-016) is based on MDCG 2019-16 guidance. Our server is hosted at Hetzner in Nuremberg, Germany — EU-based. Access is restricted to SSH only, with 2FA on critical accounts. We maintain a DPA with Hetzner and have their TUV audit report. Database access is localhost-only. We have a vulnerability management process and a security incident response procedure aligned with the 72-hour GDPR breach notification requirement." Show them: SOP-016, CER-001, CER-002.
-
----
-
-### Tips for the Audit
-
-1. **Be honest.** If you don't know something, say so. "I'll check that and get back to you" is better than guessing.
-2. **Don't volunteer extra information.** Answer the question, then stop. Extra detail opens new lines of questioning.
-3. **Show the platform.** The QMS platform with its git history, comments, and publish workflow is impressive. Let the auditor browse it.
-4. **Know where everything is.** Before the audit, practice navigating to each SOP, form, and record. You should be able to find any document in seconds.
-5. **Reference your SOPs.** When explaining a process, point to the SOP. "As documented in SOP-004, section 4.2..."
-6. **Records matter most.** The auditor wants evidence. Training records, management review records, supplier evaluations — these prove you're using the QMS, not just writing about it.
-7. **Nonconformities are normal.** If the auditor finds issues, that's expected. What matters is how you handle them. "We'll open a CAPA for that" shows you know the process.
-
----
-
-## Your QMS at a Glance
-
-| Category | Count | Documents |
-|----------|-------|-----------|
-| Quality Manual | 1 | QM-001 |
-| Policies | 1 | POL-001 |
-| SOPs | 17 | SOP-001 to SOP-017 |
-| Plans | 6 | PLN-001 to PLN-006 |
-| Forms | 9 | FM-001 to FM-009 |
-| Reports | 2 | RPT-001, CE-001 |
-| Specifications | 4 | SPE-001, SPE-002, LST-001, LOG-001 |
-| Risk Management | 1 | RA-001 |
-| Labels / IFU | 1 | LBL-001 |
-| Diagrams | 2 | DWG-001, DWG-002 |
-| **Total** | **44** | |
-
----
-
 ## Key Terms
 
 | Term | What it means |
 |------|--------------|
-| **QMS** | Quality Management System — the collection of all your processes and documents |
-| **SOP** | Standard Operating Procedure — describes how you do something step-by-step |
-| **CAPA** | Corrective and Preventive Action — formal process for fixing problems |
-| **PMS** | Post-Market Surveillance — monitoring your device after it's on the market |
-| **PMCF** | Post-Market Clinical Follow-up — collecting clinical evidence while device is in use |
-| **NB** | Notified Body — Scarlet, who audits your QMS and grants CE marking |
-| **CE Mark** | Certification to sell a medical device in the EU |
-| **MDR** | Medical Device Regulation (EU 2017/745) — the law governing medical devices |
-| **ISO 13485** | International standard for medical device quality management systems |
-| **Risk Management** | Identifying what could go wrong and documenting how you prevent/mitigate it |
-| **Clinical Evaluation** | Reviewing evidence that your device is safe and performs as intended |
-| **Vigilance** | Reporting serious incidents to authorities within specific timeframes |
-| **IFU** | Instructions for Use — what users need to know to use the device safely |
-| **SaMD** | Software as a Medical Device — software that IS the device (like Therapeak) |
-| **FSCA** | Field Safety Corrective Action — actions taken to reduce risk from a device already on the market |
-| **UDI** | Unique Device Identifier — a code that uniquely identifies your device |
-| **EUDAMED** | European Database on Medical Devices — EU-wide registration system |
+| **QMS** | Quality Management System |
+| **SOP** | Standard Operating Procedure |
+| **CAPA** | Corrective and Preventive Action |
+| **PMS** | Post-Market Surveillance |
+| **PMCF** | Post-Market Clinical Follow-up |
+| **NB** | Notified Body (Scarlet) |
+| **CE Mark** | EU medical device certification |
+| **MDR** | Medical Device Regulation (EU 2017/745) |
+| **ISO 13485** | Medical device QMS standard |
+| **IFU** | Instructions for Use |
+| **SaMD** | Software as a Medical Device |
+| **FSCA** | Field Safety Corrective Action |
+| **UDI** | Unique Device Identifier |
+| **EUDAMED** | European Database on Medical Devices |
+| **GSPR** | General Safety and Performance Requirements |

@@ -116,7 +116,7 @@ The absence of CI/CD, staging environment, and automated tests is mitigated by t
 
 | Missing Control | Compensating Measure | Rationale |
 |----------------|---------------------|-----------|
-| No automated tests | Thorough manual testing in local environment before each deployment | Single developer has complete knowledge of the codebase and can assess impact of changes |
+| No automated tests | Thorough manual testing in local environment before significant deployments; scope proportional to change | Single developer has complete knowledge of the codebase and can assess impact of changes |
 | No staging environment | Local environment replicates the production stack (same PHP version, MariaDB, Redis, Nginx) | Local environment is functionally equivalent to production |
 | No CI/CD pipeline | Manual deployment via git pull ensures deliberate control over what is deployed and when | Prevents accidental deployments; developer reviews changes at each step |
 | No automated regression tests | Manual regression checks focused on the area of change + post-deployment Telescope monitoring | Telescope provides real-time visibility into errors, allowing rapid rollback |
@@ -150,7 +150,7 @@ Model changes (switching primary model, adding fallback models, updating prompt 
 #### 4.5.3 AI Quality Monitoring
 
 - **Automated monitoring:** ChatDebugFlag system detects FLAG_SWITCHED_ROLES and FLAG_DID_NOT_RESPOND events
-- **Manual monitoring:** Sarp reviews 1-2 sessions per day/week for harmful patterns
+- **Manual monitoring:** Sarp reviews 1-2 sessions per week for harmful patterns
 - **Model performance:** Monitored through user feedback, complaint trends, and session quality flags
 - If model quality degrades (e.g., after a provider-side model update), Sarp can switch to a fallback model or adjust prompts
 

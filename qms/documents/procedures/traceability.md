@@ -23,7 +23,7 @@ mdr_refs:
 
 This procedure defines how Therapeak B.V. identifies and traces the Therapeak medical device software throughout its lifecycle, including Unique Device Identification (UDI), software versioning, EUDAMED registration, and requirements traceability. This ensures compliance with EU MDR Articles 25-28 and ISO 13485:2016 Clauses 7.5.8 and 7.5.9.
 
-**Related documents:** [[SOP-001]] Document Control, [[SOP-017]] Change Management, [[SOP-006]] Software Development Lifecycle
+**Related documents:** [[SOP-001]] Document Control, [[SOP-017]] Change Management, [[SOP-011]] Software Lifecycle Management
 
 ## 2. Scope
 
@@ -88,7 +88,7 @@ Therapeak uses semantic versioning (MAJOR.MINOR.PATCH):
 #### 4.2.2 Version 1.0 — First CE-Marked Release
 
 Version 1.0 is designated as the first CE-marked release of the Therapeak medical device. This version represents the software configuration that has been:
-- Verified and validated per [[SOP-006]]
+- Verified and validated per [[SOP-011]]
 - Risk-assessed per [[RA-001]]
 - Reviewed by the Notified Body (Scarlet)
 - CE marked as a Class IIa medical device
@@ -188,7 +188,7 @@ The complete configuration of a released version includes:
 ## 6. References
 
 - [[SOP-001]] Document Control Procedure
-- [[SOP-006]] Software Development Lifecycle Procedure
+- [[SOP-011]] Software Lifecycle Management Procedure
 - [[SOP-017]] Change Management Procedure
 - [[RA-001]] Risk Management File
 - ISO 13485:2016 Clause 7.5.8 — Identification

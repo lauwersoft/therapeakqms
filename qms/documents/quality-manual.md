@@ -139,19 +139,19 @@ All QMS documents are managed through the QMS platform with git-based version co
 | Process | ISO 13485 Clause | Key Documents |
 |---------|-----------------|---------------|
 | Document Control | [4.2.4](/references/iso-13485#clause-4-2-4), [4.2.5](/references/iso-13485#clause-4-2-5) | [[SOP-001]] |
-| Risk Management | [7.1](/references/iso-13485#clause-7-1) | [[SOP-002]], [[PLN-001]], [[RA-001]] |
+| Risk Management | [7.1](/references/iso-13485#clause-7-1) | [[SOP-002]], [[PLN-001]], [[RA-001]], [[RPT-002]] |
 | CAPA | [8.5.2](/references/iso-13485#clause-8-5-2), [8.5.3](/references/iso-13485#clause-8-5-3) | [[SOP-003]], [[FM-001]] |
 | Complaint Handling | [8.2.2](/references/iso-13485#clause-8-2-2) | [[SOP-004]], [[FM-004]] |
 | Internal Audit | [8.2.4](/references/iso-13485#clause-8-2-4) | [[SOP-005]], [[FM-008]] |
 | Management Review | [5.6](/references/iso-13485#clause-5-6) | [[SOP-006]], [[FM-009]] |
-| Design and Development | [7.3](/references/iso-13485#clause-7-3) | [[SOP-007]], [[FM-007]], [[SPE-001]] |
+| Design and Development | [7.3](/references/iso-13485#clause-7-3) | [[SOP-007]], [[FM-007]], [[SPE-001]], [[SPE-003]] |
 | Purchasing and Supplier Control | [7.4](/references/iso-13485#clause-7-4) | [[SOP-008]], [[FM-005]], [[LST-001]] |
 | Post-Market Surveillance | [8.2.1](/references/iso-13485#clause-8-2-1) | [[SOP-009]], [[PLN-004]], [[RPT-001]] |
 | Training and Competency | [6.2](/references/iso-13485#clause-6-2) | [[SOP-010]], [[FM-006]], [[LOG-001]] |
-| Software Lifecycle | [7.3](/references/iso-13485#clause-7-3), [7.5.6](/references/iso-13485#clause-7-5-6) | [[SOP-011]], [[PLN-005]] |
+| Software Lifecycle | [7.3](/references/iso-13485#clause-7-3), [7.5.6](/references/iso-13485#clause-7-5-6) | [[SOP-011]], [[PLN-005]], [[TST-001]], [[TRC-001]] |
 | Clinical Evaluation | [7.3.7](/references/iso-13485#clause-7-3-7) | [[SOP-012]], [[PLN-002]], [[CE-001]] |
 | Vigilance | [8.2.3](/references/iso-13485#clause-8-2-3) | [[SOP-013]] |
-| Traceability | [7.5.8](/references/iso-13485#clause-7-5-8) | [[SOP-014]] |
+| Traceability | [7.5.8](/references/iso-13485#clause-7-5-8) | [[SOP-014]], [[TRC-001]] |
 | Nonconforming Product | [8.3](/references/iso-13485#clause-8-3) | [[SOP-015]], [[FM-002]] |
 | Cybersecurity | [7.3](/references/iso-13485#clause-7-3) | [[SOP-016]] |
 | Change Management | [7.3.9](/references/iso-13485#clause-7-3-9) | [[SOP-017]], [[FM-003]] |

@@ -19,7 +19,7 @@ mdr_refs:
 
 This procedure defines how Therapeak B.V. manages cybersecurity throughout the lifecycle of the Therapeak medical device software, including threat assessment, security controls, vulnerability management, and incident response. This ensures compliance with EU MDR Annex I Section 17.2 and is based on MDCG 2019-16 guidance on cybersecurity for medical devices.
 
-**Related documents:** [[SOP-006]] Software Development Lifecycle, [[SOP-015]] Control of Nonconforming Product, [[SOP-013]] Vigilance and Field Safety Procedure
+**Related documents:** [[SOP-011]] Software Lifecycle Management, [[SOP-015]] Control of Nonconforming Product, [[SOP-013]] Vigilance and Field Safety Procedure
 
 ## 2. Scope
 
@@ -214,7 +214,7 @@ When switching AI models or versions (e.g., Claude Sonnet 4.5 to a newer version
 - **Laravel Telescope**: monitors all requests, exceptions, and failed jobs in real time
 - **Server logs**: SSH access logs, application error logs
 - **OpenRouter usage**: monitor for anomalous API usage patterns that could indicate key compromise
-- **Sarp monitors Telescope constantly**, including evenings and weekends
+- **Sarp monitors Telescope regularly during active working hours**
 
 ### 4.6 Security Incident Response
 
@@ -267,7 +267,7 @@ Sarp conducts a security review at least annually (or after any significant chan
 
 ## 6. References
 
-- [[SOP-006]] Software Development Lifecycle Procedure
+- [[SOP-011]] Software Lifecycle Management Procedure
 - [[SOP-013]] Vigilance and Field Safety Procedure
 - [[SOP-015]] Control of Nonconforming Product Procedure
 - [[SOP-003]] CAPA Procedure

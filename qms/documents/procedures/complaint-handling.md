@@ -47,7 +47,7 @@ User feedback that is purely a feature request or general positive feedback does
 
 ```mermaid
 flowchart TD
-    A[Complaint Received\nEmail / Contact Form] --> B[Log & Acknowledge\nWithin 24 hours]
+    A[Complaint Received\nEmail / Contact Form] --> B[Log & Acknowledge\nWithin 24 hours\nduring working hours]
     B --> C{Safety Related?}
     C -->|Yes| D[Vigilance Assessment]
     D --> E{Serious Incident?}
@@ -78,15 +78,15 @@ Complaints are received through two channels:
 
 | Channel | Address / Location | Monitoring |
 |---------|-------------------|------------|
-| Email | info@therapeak.com | Checked multiple times daily by Sarp |
+| Email | info@therapeak.com | Checked regularly during working hours by Sarp |
 | In-app contact form | Contact page within the Therapeak platform | Submissions arrive at info@therapeak.com |
 
 Both channels converge to the same email inbox. The in-app contact form includes a FAQ popup that answers common questions (e.g., subscription cancellation) before the user sends a message, reducing non-complaint contact volume.
 
 ### 4.2 Initial Acknowledgment
 
-1. All incoming messages are reviewed as they arrive
-2. Sarp responds to the user within **24 hours** (typical response time: 5-10 minutes during waking hours)
+1. All incoming messages are reviewed during normal working hours
+2. Sarp responds to the user within **24 hours during normal working hours**
 3. If the message is in a language other than English or Dutch, respond in the user's language using translation tools
 4. Acknowledge receipt and provide an initial response or resolution
 
@@ -203,7 +203,7 @@ Trends that indicate systematic product issues trigger preventive CAPA per [[SOP
 - [[SOP-003]] CAPA Procedure
 - [[SOP-002]] Risk Management Procedure
 - [[SOP-013]] Vigilance Procedure
-- [[SOP-010]] Post-Market Surveillance Procedure
+- [[SOP-009]] Post-Market Surveillance Procedure
 - [[RA-001]] Risk Management File
 - [ISO 13485:2016 Clause 8.2.2](/references/iso-13485#clause-8-2-2) — Complaint Handling
 - [EU MDR 2017/745 Article 10(9)](/references/eu-mdr#article-10-general-obligations-of-manufacturers)

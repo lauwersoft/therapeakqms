@@ -27,7 +27,7 @@ This procedure defines the process for identifying, investigating, and resolving
 This procedure applies to all nonconformities and potential nonconformities identified through:
 - Customer complaints ([[SOP-004]])
 - Internal and external audits ([[SOP-005]])
-- Post-market surveillance data ([[SOP-010]])
+- Post-market surveillance data ([[SOP-009]])
 - Management review
 - Risk management activities ([[SOP-002]])
 - Regulatory changes or NB findings
@@ -171,7 +171,7 @@ If trends indicate a systemic issue, initiate a new preventive CAPA to address t
 - [[SOP-002]] Risk Management Procedure
 - [[SOP-004]] Complaint Handling Procedure
 - [[SOP-005]] Internal Audit Procedure
-- [[SOP-010]] Post-Market Surveillance Procedure
+- [[SOP-009]] Post-Market Surveillance Procedure
 - [[FM-001]] CAPA Form
 - [[RA-001]] Risk Management File
 - [ISO 13485:2016 Clause 8.5.2](/references/iso-13485#clause-8-5-2) — Corrective Action

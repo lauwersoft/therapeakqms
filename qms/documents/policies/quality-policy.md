@@ -35,7 +35,7 @@ Therapeak B.V. is committed to providing safe and effective AI-based therapy sof
 
 | Objective | Measure | Target |
 |-----------|---------|--------|
-| Complaint response | Time to first response | Within 24 hours |
+| Complaint response | Time to first response | Within 24 hours during normal working hours |
 | Serious incidents | Reportable incidents per year | 0 |
 | CAPA effectiveness | CAPAs resolved within target timeline | > 80% |
 | User satisfaction | Complaint rate vs active users | < 2% |

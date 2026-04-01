@@ -142,7 +142,7 @@ PMS data feeds into the following processes:
 | Receiving Process | Input Provided | Frequency |
 |-------------------|---------------|-----------|
 | Clinical evaluation [[SOP-012]] | Clinical performance data, user outcome trends | At least annually |
-| Risk management [[SOP-006]] | New hazards, updated risk estimates | When signals detected |
+| Risk management [[SOP-002]] | New hazards, updated risk estimates | When signals detected |
 | CAPA [[SOP-003]] | Systematic issues requiring corrective/preventive action | As needed |
 | PMCF [[PLN-003]] | Gaps in clinical evidence identified through PMS | At least annually |
 | Vigilance [[SOP-013]] | Serious incidents, field safety corrective actions | Immediately upon detection |
@@ -178,9 +178,9 @@ This baseline data is documented in the initial PMS Report and serves as the com
 - [[PLN-003]] PMCF Plan
 - [[SOP-013]] Vigilance Procedure
 - [[SOP-003]] CAPA Procedure
-- [[SOP-006]] Risk Management Procedure
+- [[SOP-002]] Risk Management Procedure
 - [[SOP-012]] Clinical Evaluation Procedure
-- [[SOP-005]] Management Review Procedure
+- [[SOP-006]] Management Review Procedure
 - ISO 13485:2016 Clause 8.2.1
 - EU MDR 2017/745 Articles 83, 84, 85, 86
 - EU MDR 2017/745 Annex III — Technical Documentation on Post-Market Surveillance

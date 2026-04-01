@@ -122,7 +122,7 @@ Therapeak does not use a CI/CD pipeline or a staging environment. This is approp
 | Risk | Compensating Control |
 |---|---|
 | Untested code reaches production | All changes are tested locally in local development environment before deployment. Manual verification covers functional and visual correctness. |
-| Regression not detected | Post-deployment live verification via Telescope monitors for errors and unexpected behavior. Sarp actively monitors after every deployment. |
+| Regression not detected | Post-deployment live verification via Telescope monitors for errors and unexpected behavior. Sarp actively monitors after significant deployments. |
 | No automated test safety net | Prompt testing tool validates AI output quality for prompt changes. Session quality monitoring (ChatDebugFlags) provides ongoing automated detection of AI quality issues. |
 | No staged rollout | Deployment is a simple git pull; rollback is a git revert + git pull. Single-server architecture means instant rollback capability. |
 | No code review | Single developer context. All changes are made by the sole authorized developer. Design decisions and significant changes are documented in commit messages and discussed with regulatory consultant when relevant to QMS. |
@@ -133,11 +133,11 @@ Therapeak does not use a CI/CD pipeline or a staging environment. This is approp
 
 | Method | Description | When Applied |
 |---|---|---|
-| Manual local testing | Functional testing in local development environment, covering user flows, edge cases, and visual verification | Before every deployment |
+| Manual local testing | Functional testing in local development environment, covering user flows, edge cases, and visual verification | Before significant deployments; scope proportional to change |
 | Prompt testing tool | Dedicated tool for testing AI prompt changes, evaluating response quality, safety compliance, and therapeutic appropriateness | When prompts are modified |
-| Live verification (Telescope) | Post-deployment monitoring of requests, errors, and system behavior in production | After every deployment |
+| Live verification (Telescope) | Post-deployment monitoring of requests, errors, and system behavior in production | For significant changes; Telescope also provides passive continuous error alerting |
 | Session quality monitoring | Automated ChatDebugFlag checks (role confusion, non-response) on production sessions | Continuous (every session) |
-| Manual session review | Sarp reviews 1-2 live therapy sessions for harmful patterns or quality degradation | Daily to weekly |
+| Manual session review | Sarp reviews 1-2 live therapy sessions for harmful patterns or quality degradation | 1-2 sessions per week |
 
 ### 7.2 Test Categories per IEC 62304
 
@@ -209,7 +209,7 @@ Changes to the primary AI model (e.g., upgrading from Claude Sonnet 4.5 to a new
 
 ### 9.2 Deployment Verification Checklist
 
-After each deployment, the following shall be verified:
+For significant changes, the following shall be verified:
 
 - [ ] No new errors in Telescope request log
 - [ ] No new exceptions in Telescope exception log
@@ -247,7 +247,7 @@ The following SOUP components are used in the Therapeak medical device:
 | Soketi | -- | WebSocket server | Real-time message delivery |
 | MariaDB | 10.x | Database | Core data storage |
 | Redis | -- | Cache and queue backend | Performance and queue processing |
-| PHP | 8.2 | Server runtime | Core runtime environment |
+| PHP | 8.3 | Server runtime | Core runtime environment |
 | Vite | 4.x | Frontend build tool | Build-time only |
 
 ### 10.2 SOUP Management

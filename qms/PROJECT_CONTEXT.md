@@ -36,17 +36,32 @@ AI therapy chatbot using **Anthropic Claude** (Sonnet 4.5/4.6) accessed via **Op
 
 ## What's Been Built
 
-### QMS Documents (44 total)
-All in `qms/documents/`. Status: approved, effective March 1, 2026.
+### QMS Documents (54 total: 45 markdown + 9 forms)
+All in `qms/documents/`. Core documents effective March 1, 2026. Rebuild documents effective April 1, 2026.
 - QM-001 (Quality Manual), POL-001 (Quality Policy)
 - SOP-001 to SOP-017 (all SOPs)
 - PLN-001 to PLN-006 (all plans)
 - FM-001 to FM-009 (all forms as .form.json)
 - RA-001 (Risk Management File — 15 hazards)
 - CE-001 (Clinical Evaluation Report)
-- RPT-001 (PMS Report)
-- LST-001, LOG-001, SPE-001, SPE-002, LBL-001, DWG-001, DWG-002
+- RPT-001 (PMS Report), RPT-002 (Risk Management Report), RPT-003 (Validation Report), RPT-004 (Usability Evaluation), RPT-005 (Software Release Record)
+- SPE-001 (Software Requirements — rebuilt with traceability), SPE-002, SPE-003 (Use Requirements)
+- CHK-001 (GSPR Checklist — MANDATORY for Scarlet)
+- TST-001 (Software Verification Test Specs)
+- TRC-001 (Software Traceability Matrix — 4 matrices)
+- DOC-001 (Declaration of Conformity — draft)
+- CTX-001 (Submission Context Document)
+- LST-001, LOG-001, LBL-001, DWG-001, DWG-002
 - CER-001, CER-002 (Hetzner DPA + TUV audit PDFs)
+
+### April 2026 Rebuild
+A major rebuild was conducted after internal audit findings + Scarlet knowledge base review. See REBUILD_PLAN.md for full details. Key changes:
+- Cross-reference errors fixed across all documents
+- PHQ-9 language corrected (questionnaire is custom, not PHQ-9)
+- Overpromises fixed (response times, monitoring frequency, deploy verification)
+- 5 new documents created (SPE-003, RPT-002, TST-001, TRC-001, CHK-001)
+- SPE-001 fully rebuilt with acceptance criteria, source traceability, verification method columns
+- Admin Guide rewritten as operational playbook
 
 ### Backdated Records (11)
 All in `qms/records/`. Training records, supplier evaluations, management review, design review.
@@ -172,6 +187,17 @@ These haven't been done yet. Ask Sarp for current status — some may have been 
 
 **Sarp's action** (not code):
 - [ ] Verify server backups on Hetzner
+
+## ACTIVE: QMS Rebuild In Progress
+
+A major rebuild is underway based on internal audit findings + Scarlet knowledge base analysis. See `qms/REBUILD_PLAN.md` for the full plan. Key issues being fixed:
+- Documents written as if medical device is running (it's not)
+- Overpromises unrealistic for one-person company
+- Cross-reference errors across multiple documents
+- Missing documents Scarlet requires (GSPR checklist, traceability matrices, verification evidence, etc.)
+- No record mechanisms for verification claims
+
+**Read REBUILD_PLAN.md before making any document changes.**
 
 ## Known Issues / Incomplete Work
 

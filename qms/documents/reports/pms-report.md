@@ -49,7 +49,7 @@ The Therapeak medical device has not yet been placed on the market. This initial
 
 ### 4.1 Overview
 
-The wellness version of Therapeak has been operating commercially prior to CE marking. While it is not a medical device, it provides meaningful safety and performance data because the medical device will be built on the same codebase with the same core AI therapy functionality.
+The wellness version of Therapeak has been operating commercially prior to CE marking. While it is not a medical device, it provides meaningful pre-market experience data because the medical device will be built on the same codebase with the same core AI therapy functionality. This data is classified as pre-market experience from the wellness version and cannot be considered post-market clinical data for the medical device.
 
 | Metric | Value |
 |--------|-------|
@@ -105,7 +105,7 @@ These flags are recorded automatically in the database and provide quantitative 
 
 ### 5.2 Manual Session Review
 
-Sarp Derinsu personally reviews 1–2 therapy sessions per day/week for harmful patterns. This manual review supplements the automated quality flags and provides qualitative assessment of AI output quality.
+Sarp Derinsu personally reviews 1–2 therapy sessions per week for harmful patterns. This manual review supplements the automated quality flags and provides qualitative assessment of AI output quality.
 
 ### 5.3 Session Quality Findings
 
@@ -200,7 +200,7 @@ Based on the pre-market experience data from the wellness version of Therapeak:
 - [[PLN-003]] PMCF Plan
 - [[SOP-013]] Vigilance Procedure
 - [[SOP-003]] CAPA Procedure
-- [[SOP-006]] Risk Management Procedure
+- [[SOP-002]] Risk Management Procedure
 - [[SOP-012]] Clinical Evaluation Procedure
 - ISO 13485:2016 Clause 8.2.1
 - EU MDR 2017/745 Article 85

@@ -63,7 +63,7 @@ The following residual risks identified in [[RA-001]] require ongoing clinical f
 | AI session-based mood | GPT-4o rating after each session (1-10 scale) | After every therapy session |
 | Session engagement | Session duration, message count, session frequency | Continuous (automatic) |
 | User retention | Subscription status, active usage periods | Continuous (automatic) |
-| Trial survey data | PHQ-9-style screening at onboarding | At registration |
+| Trial survey data | Custom onboarding questionnaire (20 questions: demographics, concerns, depression/anxiety items, preferences) | At registration |
 
 **Analysis approach:** Aggregate mood trend analysis comparing early vs. later sessions for active users. Cohort analysis by condition type and usage duration. Minimum clinically important difference (MCID) benchmarked against published literature (d=0.3-0.5 for depression).
 

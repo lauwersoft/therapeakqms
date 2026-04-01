@@ -132,7 +132,7 @@ Ongoing supplier performance is monitored through:
 | Security advisory review | As published | All critical suppliers |
 | ToS/DPA change notifications | As received | All critical suppliers |
 
-Sarp monitors supplier performance as part of daily operations. Significant issues (outages affecting patients, security incidents, ToS changes affecting compliance) are documented and assessed for impact on device safety and performance.
+Sarp monitors supplier performance regularly during active working hours. Significant issues (outages affecting users, security incidents, ToS changes affecting compliance) are documented and assessed for impact on device safety and performance.
 
 ### 4.6 Annual Supplier Review
 

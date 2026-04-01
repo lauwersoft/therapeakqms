@@ -145,7 +145,7 @@ The following hazard analysis was conducted using Failure Mode and Effects Analy
 | C-001b | Inherent safety | Anthropic Claude's built-in safety layer refuses to validate or encourage self-harm at the model level, independent of Therapeak's prompts | Anthropic's published safety evaluations; observed behavior in pre-market sessions |
 | C-001c | Inherent safety | Role enforcement ("You are the THERAPIST") repeated 10+ times per conversation job with reinforcement language, preventing the model from abandoning its therapeutic stance | Review of conversation job source code |
 | C-001d | Protection | `FLAG_SWITCHED_ROLES` monitoring (GPT-4o) detects sessions where AI deviates from therapist role, enabling post-hoc review | ChatDebugFlag system operational verification |
-| C-001e | Protection | Sarp Derinsu manually reviews 1-2 sessions per day/week for harmful patterns | Session review logs |
+| C-001e | Protection | Sarp Derinsu manually reviews 1-2 sessions per week for harmful patterns | Session review logs |
 | C-001f | Information | Homepage states: "In emergencies, this site is not a substitute for immediate help. If you are in a crisis, call the national crisis line, dial emergency services, or visit the nearest emergency room." | UI review |
 | C-001g | Information | Severe depression screening results display: "If you are having thoughts of self-harm, please contact a crisis helpline immediately." | UI review |
 
@@ -179,7 +179,7 @@ The following hazard analysis was conducted using Failure Mode and Effects Analy
 | C-002c | Inherent safety | Previous session summaries and trial survey data included in context, giving the AI awareness of user's history and presenting concerns | Conversation job code review |
 | C-002d | Inherent safety | Reports explicitly instructed to never advise about medication and state "this is not a medical document" / "not a diagnosis" | Report generation prompt review |
 | C-002e | Inherent safety | Prompt design informed by clinical consultation (Nisan Derinsu, studied Psychological Counseling and Guidance) | Documented in THERAPEAK.md |
-| C-002f | Protection | Manual session review by Sarp Derinsu (1-2 sessions per day/week) catches patterns of poor therapeutic quality | Session review logs |
+| C-002f | Protection | Manual session review by Sarp Derinsu (1-2 sessions per week) catches patterns of poor therapeutic quality | Session review logs |
 | C-002g | Information | IFU states that all AI guidance is informational, not diagnostic, and users are never obligated to follow suggestions | IFU review |
 
 | Attribute | Detail |
@@ -340,7 +340,7 @@ The following hazard analysis was conducted using Failure Mode and Effects Analy
 | C-007b | Inherent safety | Contraindications explicitly state "Not for emergency/crisis use," setting user expectations before engagement | Labeling and IFU review |
 | C-007c | Information | Homepage displays: "In emergencies, this site is not a substitute for immediate help. If you are in a crisis, call the national crisis line, dial emergency services, or visit the nearest emergency room." | UI review |
 | C-007d | Information | Severe depression screening results trigger display of: "If you are having thoughts of self-harm, please contact a crisis helpline immediately." | Quiz result UI verification |
-| C-007e | Inherent safety | PHQ-9-style screening in onboarding (item 9 replaced with non-suicidal-ideation item in medical mode) -- the screening identifies users who may be at higher risk, informing AI context | Quiz configuration review |
+| C-007e | Inherent safety | Custom onboarding questionnaire includes depression/anxiety screening items (suicidal ideation item replaced with non-suicidal-ideation item in medical mode) -- the screening identifies users who may be at higher risk, informing AI context | Quiz configuration review |
 | C-007f | Protection | Post-market surveillance via [[SOP-009]] and vigilance reporting via [[SOP-013]] ensure any crisis-related incidents are detected, reported, and acted upon | PMS and vigilance records |
 | C-007g | Protection | Telescope live monitoring enables real-time visibility into platform activity | Telescope dashboard review |
 
@@ -727,7 +727,7 @@ The benefit-risk balance is favorable because:
 1. The target population (mild to moderate symptoms, home use) represents a lower-acuity user group where the consequences of AI limitations are generally less severe than in acute or clinical settings.
 2. The device is explicitly positioned as informational and complementary, not as a replacement for professional care.
 3. Multiple independent safety layers (Anthropic's model-level safety, Therapeak's prompt engineering, automated monitoring, manual review) provide defense in depth.
-4. Post-market surveillance via [[SOP-009]] ensures continuous monitoring and timely response to emerging risks.
+4. Post-market surveillance via [[SOP-009]] ensures regular monitoring and timely response to emerging risks.
 
 ## 8. Post-Market Risk Monitoring
 
@@ -736,7 +736,7 @@ Risk management is a continuous activity throughout the product lifecycle. The f
 | Mechanism | Frequency | Responsibility | Reference |
 |---|---|---|---|
 | Session quality monitoring (ChatDebugFlags) | Continuous (automated) | System (automated), reviewed by Sarp Derinsu | ChatDebugFlag system |
-| Manual session review | 1-2 sessions per day/week | Sarp Derinsu | Session review logs |
+| Manual session review | 1-2 sessions per week | Sarp Derinsu | Session review logs |
 | Telescope live monitoring | Continuous | Sarp Derinsu | Telescope dashboard |
 | Complaint analysis | Per complaint, summary quarterly | Sarp Derinsu | [[SOP-004]] |
 | Post-market surveillance reporting | Annually (PSUR) | Sarp Derinsu | [[SOP-009]] |

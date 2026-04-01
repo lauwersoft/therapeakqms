@@ -59,7 +59,7 @@ This plan does not cover the admin interface or backend systems that are not use
 
 Therapeak is a web-based single-page application (SPA) with the following key interfaces:
 
-1. **Onboarding flow:** Landing page, trial survey (20 questions including PHQ-9-style screening), registration, email verification, therapist matching.
+1. **Onboarding flow:** Landing page, trial survey (20 questions including depression/anxiety screening items, demographics, and preferences), registration, email verification, therapist matching.
 2. **Therapy chat:** Text-based conversational interface with timed sessions. User types messages; AI therapist responds in real-time via WebSocket.
 3. **Mood tracking:** UI for recording self-reported mood (Sad/Neutral/Fine/Good/Great), with graphs showing mood trends over time.
 4. **Session reports:** Automatically generated post-session summaries viewable in-app.
@@ -74,7 +74,7 @@ Therapeak is a web-based single-page application (SPA) with the following key in
 | Characteristic | Range |
 |---|---|
 | Age | 19 to 70+ (primary demographic: 25-55) |
-| Condition severity | Mild to moderate (PHQ-9 scores 5-19, GAD-7 scores 5-14) |
+| Condition severity | Mild to moderate (self-reported symptoms consistent with mild to moderate depression and anxiety) |
 | Previous therapy experience | Mixed -- some with prior therapy, some first-time seekers |
 | Digital literacy | Low to high -- must accommodate users who struggle with web navigation |
 | Motivation | Seeking accessible, affordable mental health support; may be supplement to or substitute for traditional therapy |
@@ -161,7 +161,7 @@ Formative evaluation for Therapeak is conducted through ongoing collection and a
 | User feedback analysis | Systematic review of user contact messages, complaints, and feature requests received via email and contact form | Continuous (as received) |
 | Trustpilot review analysis | Analysis of user reviews for usability-related feedback | Weekly monitoring |
 | Support interaction analysis | Identification of recurring user difficulties from support conversations | Continuous |
-| Session observation | Manual review of therapy sessions for signs of user confusion or difficulty | Daily to weekly (1-2 sessions) |
+| Session observation | Manual review of therapy sessions for signs of user confusion or difficulty | 1-2 sessions per week |
 | Accessibility testing | Verification of screen reader compatibility, voice control accessibility, keyboard navigation | After UI changes affecting interactive elements |
 
 ### 7.2 Formative Evaluation Records

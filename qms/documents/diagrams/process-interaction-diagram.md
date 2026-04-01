@@ -34,7 +34,7 @@ This document provides a visual representation of how all QMS processes at Thera
 ```mermaid
 flowchart TB
     subgraph Management["Management Processes"]
-        MR["Management Review\n[[SOP-005]]"]
+        MR["Management Review\n[[SOP-006]]"]
         QP["Quality Policy\n[[POL-001]]"]
     end
 
@@ -48,14 +48,14 @@ flowchart TB
         DC["Document\nControl\n[[SOP-001]]"]
         TR["Training\n[[SOP-010]]"]
         PU["Purchasing\n[[SOP-008]]"]
-        RM["Risk\nManagement\n[[SOP-006]]"]
+        RM["Risk\nManagement\n[[SOP-002]]"]
     end
 
     subgraph Monitoring["Monitoring Processes"]
         PMS["Post-Market\nSurveillance\n[[SOP-009]]"]
         CAPA["CAPA\n[[SOP-003]]"]
         CMP["Complaints\n[[SOP-004]]"]
-        IA["Internal\nAudit\n[[SOP-014]]"]
+        IA["Internal\nAudit\n[[SOP-005]]"]
         VIG["Vigilance\n[[SOP-013]]"]
     end
 
@@ -127,7 +127,7 @@ Management Review receives input from all monitoring processes and produces deci
 | Post-Market Surveillance [[SOP-009]] | PMS Report summary, trend analysis, signals identified |
 | CAPA [[SOP-003]] | Open/closed CAPAs, effectiveness of corrective actions |
 | Complaints [[SOP-004]] | Complaint volumes, categorization, trends |
-| Internal Audit [[SOP-014]] | Audit findings, nonconformities, observations |
+| Internal Audit [[SOP-005]] | Audit findings, nonconformities, observations |
 | Vigilance [[SOP-013]] | Reportable incidents, field safety corrective actions |
 | Quality Policy [[POL-001]] | Quality objectives, policy adequacy review |
 
@@ -138,7 +138,7 @@ Complaints follow a defined escalation path through monitoring processes:
 1. **Complaints** [[SOP-004]] — All user complaints are received and classified
 2. **Vigilance** [[SOP-013]] — Safety complaints that meet serious incident criteria are immediately escalated
 3. **CAPA** [[SOP-003]] — Systematic or recurring complaint patterns trigger corrective/preventive action
-4. **Risk Management** [[SOP-006]] — CAPAs may require updates to the risk assessment
+4. **Risk Management** [[SOP-002]] — CAPAs may require updates to the risk assessment
 5. **Design and Development** [[SOP-007]] — Root causes requiring design changes are implemented through design controls
 
 ### 4.3 PMS Feedback Loop
@@ -149,8 +149,8 @@ Post-Market Surveillance drives continuous improvement across the QMS:
 2. Signals feed into **CAPA** [[SOP-003]] for systematic issues
 3. Serious incidents feed into **Vigilance** [[SOP-013]] for regulatory reporting
 4. Clinical performance data feeds into **Clinical Evaluation** [[SOP-012]] for benefit-risk updates
-5. New hazards feed into **Risk Management** [[SOP-006]] for risk assessment updates
-6. Summary and trends feed into **Management Review** [[SOP-005]] for strategic decisions
+5. New hazards feed into **Risk Management** [[SOP-002]] for risk assessment updates
+6. Summary and trends feed into **Management Review** [[SOP-006]] for strategic decisions
 
 ### 4.4 Support Process Dependencies
 
@@ -161,13 +161,26 @@ All core and monitoring processes depend on support processes:
 | Document Control [[SOP-001]] | All processes | Controlled documents, version management, change records |
 | Training [[SOP-010]] | All processes | Competent personnel capable of executing procedures |
 | Purchasing [[SOP-008]] | Software Lifecycle, Design and Development | Qualified suppliers, approved AI models, evaluated services |
-| Risk Management [[SOP-006]] | Design and Development, Software Lifecycle, Clinical Evaluation | Risk controls, safety requirements, benefit-risk analysis |
+| Risk Management [[SOP-002]] | Design and Development, Software Lifecycle, Clinical Evaluation | Risk controls, safety requirements, benefit-risk analysis |
+
+### 4.5 Technical Documentation Outputs
+
+The core and support processes produce the following key technical documentation deliverables:
+
+| Process | Key Outputs |
+|---------|-------------|
+| Design and Development [[SOP-007]] | Use Requirements [[SPE-003]], Software Requirements [[SPE-001]], Product Specification [[SPE-002]], Design Review Records |
+| Software Lifecycle [[SOP-011]] | Software Development Plan [[PLN-005]], Verification Test Specs [[TST-001]], Software Release Record [[RPT-005]] |
+| Risk Management [[SOP-002]] | Risk Management Plan [[PLN-001]], Risk Management File [[RA-001]], Risk Management Report [[RPT-002]] |
+| Clinical Evaluation [[SOP-012]] | Clinical Evaluation Plan [[PLN-002]], Clinical Evaluation Report [[CE-001]], PMCF Plan [[PLN-003]] |
+| Document Control [[SOP-001]] | Traceability Matrix [[TRC-001]], GSPR Checklist [[CHK-001]] |
 
 ## 5. Change History
 
 | Version | Date | Description |
 |---------|------|-------------|
 | 1.0 | 2026-03-01 | Initial release |
+| 1.1 | 2026-04-01 | Added Section 4.5 (Technical Documentation Outputs) referencing new documents from April rebuild |
 
 ## 6. References
 
@@ -175,8 +188,8 @@ All core and monitoring processes depend on support processes:
 - [[SOP-001]] Document Control Procedure
 - [[SOP-003]] CAPA Procedure
 - [[SOP-004]] Complaint Handling Procedure
-- [[SOP-005]] Management Review Procedure
-- [[SOP-006]] Risk Management Procedure
+- [[SOP-006]] Management Review Procedure
+- [[SOP-002]] Risk Management Procedure
 - [[SOP-007]] Design and Development Procedure
 - [[SOP-008]] Purchasing and Supplier Control Procedure
 - [[SOP-009]] Post-Market Surveillance Procedure
@@ -184,6 +197,6 @@ All core and monitoring processes depend on support processes:
 - [[SOP-011]] Software Lifecycle Procedure
 - [[SOP-012]] Clinical Evaluation Procedure
 - [[SOP-013]] Vigilance Procedure
-- [[SOP-014]] Internal Audit Procedure
+- [[SOP-005]] Internal Audit Procedure
 - [[POL-001]] Quality Policy
 - ISO 13485:2016 Clause 4.2.2

@@ -88,7 +88,7 @@ Nonconformities may be detected through:
    - FLAG_DID_NOT_RESPOND — AI failing to respond to user messages
 4. **Manual session review** during routine post-market surveillance
 5. **Testing** during development and before release
-6. **Internal audits** per [[SOP-012]]
+6. **Internal audits** per [[SOP-005]]
 7. **External audit findings** from Notified Body (Scarlet)
 8. **Post-market surveillance** data analysis
 
@@ -194,6 +194,6 @@ For nonconformities that affect the basis of CE certification (e.g., fundamental
 - [[SOP-003]] CAPA Procedure
 - [[SOP-004]] Complaint Handling Procedure
 - [[SOP-013]] Vigilance and Field Safety Procedure
-- [[SOP-012]] Internal Audit Procedure
+- [[SOP-005]] Internal Audit Procedure
 - ISO 13485:2016 Clause 8.3 — Control of Nonconforming Product
 - EU MDR 2017/745 Article 10(9)

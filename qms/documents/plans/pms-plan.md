@@ -152,10 +152,10 @@ When a corrective action is necessary to reduce risk of death or serious deterio
 
 | Activity | Frequency |
 |---|---|
-| System monitoring (Telescope) | Continuous (daily) |
-| Complaint handling | As received (target response: same day) |
+| System monitoring (Telescope) | Continuous (automated); reviewed during active working hours |
+| Complaint handling | As received (target response: within 24 hours during normal working hours) |
 | Session quality flag review | Weekly |
-| AI output manual review | Daily to weekly |
+| AI output manual review | 1-2 sessions per week |
 | Trustpilot review monitoring | Weekly |
 | Trend analysis | Monthly metrics, quarterly analysis |
 | Literature monitoring | Quarterly alerts, annual comprehensive review |

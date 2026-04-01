@@ -261,7 +261,7 @@ Therapy conversations are governed by the AI model's built-in safety mechanisms 
 
 #### 5.4.4 Input Validation and Onboarding
 
-A structured onboarding questionnaire (20 questions including PHQ-9-style depression screening items) collects user demographics, concerns, therapy history, and symptom severity. Users under age 19 are blocked from accessing the platform. This data informs the initial AI therapist matching and provides baseline context for therapeutic conversations.
+A structured onboarding questionnaire (20 questions including depression/anxiety screening items, demographics, and preferences) collects user concerns, therapy history, and symptom severity. Users under age 19 are blocked from accessing the platform. This data informs the initial AI therapist matching and provides baseline context for therapeutic conversations.
 
 ### 5.5 Technical Performance Verification
 
@@ -468,7 +468,7 @@ Therapeak is currently on the EU market as a **wellness device** (not CE marked 
 - **Active subscribers:** Several hundred (wellness product)
 - **Platform:** Web-based, accessible on modern browsers across devices
 - **Session structure:** Timed therapy sessions (30 min/day default, up to 45 min/day)
-- **Onboarding:** 20-question survey including PHQ-9-style depression screening, followed by AI therapist matching
+- **Onboarding:** 20-question survey including depression/anxiety screening items, demographics, and preferences, followed by AI therapist matching
 
 ### 8.3 Outcomes Data
 

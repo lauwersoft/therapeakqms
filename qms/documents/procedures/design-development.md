@@ -147,7 +147,7 @@ Post-deployment validation confirms the change meets user needs in the real envi
 | Validation Activity | Method | Timeframe |
 |--------------------|--------|-----------|
 | System monitoring | Laravel Telescope: error tracking, query performance, queue health | First 24-48 hours |
-| AI output monitoring | Manual review of live therapy sessions for quality and safety | Ongoing (1-2 sessions per day/week) |
+| AI output monitoring | Manual review of live therapy sessions for quality and safety | Ongoing (1-2 sessions per week) |
 | User feedback monitoring | Contact messages, complaints related to the change | Ongoing |
 | Session quality checks | Automated monitoring jobs (role confusion, non-response detection) | Continuous |
 | Performance metrics | Response times, error rates, session completion rates | Ongoing |
