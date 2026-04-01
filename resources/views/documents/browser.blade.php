@@ -405,6 +405,7 @@
                                         <div class="lg:hidden">
                                             <div class="flex items-center gap-2">
                                                 <span class="font-mono text-[10px] shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded font-semibold" :class="doc.type_color" x-text="doc.doc_id"></span>
+                                                <span x-show="doc.category_label" class="shrink-0 text-[9px] font-medium px-1 py-0.5 rounded" :class="doc.category_color" x-text="doc.category_label"></span>
                                                 <span class="text-sm text-gray-800 font-medium truncate" x-text="doc.title"></span>
                                                 <span class="shrink-0 text-[10px] font-medium px-1 py-0.5 rounded ml-auto" :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                             </div>
@@ -456,6 +457,7 @@
                                         <div class="lg:hidden">
                                             <div class="flex items-center gap-2">
                                                 <span class="font-mono text-[10px] shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded font-semibold" :class="doc.type_color" x-text="doc.doc_id"></span>
+                                                <span x-show="doc.category_label" class="shrink-0 text-[9px] font-medium px-1 py-0.5 rounded" :class="doc.category_color" x-text="doc.category_label"></span>
                                                 <span class="text-sm text-gray-800 font-medium truncate" x-text="doc.title"></span>
                                                 <span class="shrink-0 text-[10px] font-medium px-1 py-0.5 rounded ml-auto" :class="statusClass(doc.status)" x-text="doc.status_label"></span>
                                             </div>
