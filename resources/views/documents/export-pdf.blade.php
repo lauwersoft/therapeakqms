@@ -14,7 +14,7 @@
                 color: #9ca3af;
                 font-family: 'Ubuntu', 'DejaVu Sans', Arial, sans-serif;
                 border-top: 1px solid #e5e7eb;
-                padding-top: 4px;
+                margin-top: auto;
             }
             @bottom-right {
                 content: "Therapeak B.V. — Confidential";
@@ -22,7 +22,7 @@
                 color: #9ca3af;
                 font-family: 'Ubuntu', 'DejaVu Sans', Arial, sans-serif;
                 border-top: 1px solid #e5e7eb;
-                padding-top: 4px;
+                margin-top: auto;
             }
         }
 
