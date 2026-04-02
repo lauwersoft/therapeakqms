@@ -6,7 +6,7 @@
     <style>
         @page {
             size: A4;
-            margin: 18mm 16mm 24mm 16mm;
+            margin: 18mm 16mm 14mm 16mm;
 
             @bottom-left {
                 content: "{{ $meta['id'] ?? '' }} — {{ str_replace('"', '', $meta['title'] ?? 'Document') }} — v{{ $meta['version'] ?? '1.0' }}";
