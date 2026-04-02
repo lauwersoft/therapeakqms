@@ -128,8 +128,14 @@ class ExportController extends Controller
 
         if (! file_exists($pdfFile)) {
             $error = $process->getErrorOutput();
+            $output = $process->getOutput();
+            $exitCode = $process->getExitCode();
             @unlink($htmlFile);
-            abort(500, 'PDF generation failed: ' . substr($error, 0, 500));
+            return response(
+                "Exit code: {$exitCode}\n\nSTDERR:\n{$error}\n\nSTDOUT:\n{$output}",
+                500,
+                ['Content-Type' => 'text/plain']
+            );
         }
 
         $pdfContent = file_get_contents($pdfFile);
