@@ -99,11 +99,10 @@ class ExportController extends Controller
 
         $filename = ($meta['id'] ?? 'document') . ' - ' . ($meta['title'] ?? basename($path, '.md')) . '.pdf';
 
-        // Write HTML to home directory (snap can't access /tmp)
-        $homeDir = posix_getpwuid(posix_getuid())['dir'] ?? '/home/sarp';
-        $tmpDir = $homeDir . '/.qms-export';
+        // /var/www/.qms-export — writable by www-data and accessible by snap chromium
+        $tmpDir = '/var/www/.qms-export';
         if (! is_dir($tmpDir)) {
-            mkdir($tmpDir, 0755, true);
+            @mkdir($tmpDir, 0777, true);
         }
         $uid = uniqid();
         $htmlFile = $tmpDir . '/doc-' . $uid . '.html';
