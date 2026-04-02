@@ -71,6 +71,7 @@ class ExportController extends Controller
         // Render mermaid blocks to images
         foreach ($mermaidBlocks as $i => $mermaidCode) {
             $cleanCode = str_replace('\n', '<br/>', $mermaidCode);
+            $cleanCode = str_replace(['[[', ']]'], '', $cleanCode);
             $wrappedCode = "%%{init: {'theme': 'neutral', 'themeVariables': {'fontSize': '12px'}}}%%\n" . $cleanCode;
             $encoded = rtrim(strtr(base64_encode($wrappedCode), '+/', '-_'), '=');
             $imgUrl = 'https://mermaid.ink/img/' . $encoded . '?type=png&bgColor=white&width=2000';
