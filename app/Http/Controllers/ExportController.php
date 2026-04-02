@@ -72,15 +72,20 @@ class ExportController extends Controller
         // Generate PDF with Browsershot
         $filename = ($meta['id'] ?? 'document') . ' - ' . ($meta['title'] ?? basename($path, '.md')) . '.pdf';
 
-        $pdfContent = Browsershot::html($exportHtml)
+        $browsershot = Browsershot::html($exportHtml)
             ->setNodeBinary(trim(shell_exec('which node') ?: '/usr/bin/node'))
             ->setNpmBinary(trim(shell_exec('which npm') ?: '/usr/bin/npm'))
-            ->setChromePath($this->findChrome())
             ->format('A4')
             ->margins(20, 15, 25, 15)
             ->showBackground()
-            ->waitUntilNetworkIdle()
-            ->pdf();
+            ->waitUntilNetworkIdle();
+
+        $chromePath = $this->findChrome();
+        if ($chromePath) {
+            $browsershot->setChromePath($chromePath);
+        }
+
+        $pdfContent = $browsershot->pdf();
 
         return response($pdfContent)
             ->header('Content-Type', 'application/pdf')
@@ -89,7 +94,25 @@ class ExportController extends Controller
 
     private function findChrome(): ?string
     {
-        // Check for Puppeteer's bundled Chrome first
+        // Check common home directories for Puppeteer cache
+        $homeDirs = array_filter([
+            $_SERVER['HOME'] ?? null,
+            posix_getpwuid(posix_getuid())['dir'] ?? null,
+            '/root',
+            '/home/sarp',
+        ]);
+
+        foreach (array_unique($homeDirs) as $home) {
+            $cacheDir = $home . '/.cache/puppeteer';
+            if (is_dir($cacheDir)) {
+                $chromes = glob($cacheDir . '/chrome/*/chrome-linux*/chrome');
+                if (! empty($chromes)) {
+                    return end($chromes);
+                }
+            }
+        }
+
+        // Check node_modules (older Puppeteer versions)
         $puppeteerChrome = base_path('node_modules/puppeteer/.local-chromium');
         if (is_dir($puppeteerChrome)) {
             $chromes = glob($puppeteerChrome . '/*/chrome-linux*/chrome');
@@ -98,17 +121,8 @@ class ExportController extends Controller
             }
         }
 
-        // Puppeteer v21+ stores Chrome differently
-        $cacheDir = $_SERVER['HOME'] . '/.cache/puppeteer';
-        if (is_dir($cacheDir)) {
-            $chromes = glob($cacheDir . '/chrome/*/chrome-linux*/chrome');
-            if (! empty($chromes)) {
-                return end($chromes);
-            }
-        }
-
         // System Chrome/Chromium
-        foreach (['/usr/bin/google-chrome', '/usr/bin/chromium-browser', '/usr/bin/chromium'] as $bin) {
+        foreach (['/usr/bin/google-chrome', '/usr/bin/chromium-browser', '/usr/bin/chromium', '/snap/bin/chromium'] as $bin) {
             if (file_exists($bin)) {
                 return $bin;
             }
