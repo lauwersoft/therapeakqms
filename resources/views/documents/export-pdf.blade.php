@@ -158,35 +158,24 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 10px 0;
-            font-size: 9px;
-            line-height: 1.45;
-            page-break-inside: auto;
-            word-wrap: break-word;
-        }
-        thead {
-            display: table-header-group;
-        }
-        tr {
-            page-break-inside: avoid;
+            margin: 8px 0;
+            font-size: 8.5px;
+            line-height: 1.4;
         }
         th {
             background: #f1f5f9;
             font-weight: 700;
             color: #334155;
             text-align: left;
-            padding: 4px 5px;
+            padding: 3px 4px;
             border: 1px solid #cbd5e1;
-            font-size: 8.5px;
+            font-size: 8px;
         }
         td {
-            padding: 3px 5px;
+            padding: 3px 4px;
             border: 1px solid #e2e8f0;
             vertical-align: top;
             color: #334155;
-        }
-        tr:nth-child(even) td {
-            background: #f8fafc;
         }
 
         /* ── Code ── */

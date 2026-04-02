@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Services\DocumentMetadata;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\Table\TableExtension;
 use League\CommonMark\MarkdownConverter;
+use Symfony\Component\Process\Process;
 
 class ExportController extends Controller
 {
@@ -41,7 +41,7 @@ class ExportController extends Controller
         $converter = new MarkdownConverter($environment);
         $html = $converter->convert($parsed['body'])->getContent();
 
-        // Extract mermaid blocks BEFORE resolving links (links corrupt mermaid syntax)
+        // Extract mermaid blocks BEFORE resolving links
         $mermaidBlocks = [];
         $html = preg_replace_callback(
             '/<pre><code class="language-mermaid">(.*?)<\/code><\/pre>/s',
@@ -68,9 +68,8 @@ class ExportController extends Controller
             return '<' . $tag . ' id="' . $id . '">' . $m[2] . '</' . $tag . '>';
         }, $html);
 
-        // Render mermaid blocks to images and put them back
+        // Render mermaid blocks to images
         foreach ($mermaidBlocks as $i => $mermaidCode) {
-            // Replace \n with <br/> for mermaid.ink line breaks
             $cleanCode = str_replace('\n', '<br/>', $mermaidCode);
             $wrappedCode = "%%{init: {'theme': 'neutral', 'themeVariables': {'fontSize': '12px'}}}%%\n" . $cleanCode;
             $encoded = rtrim(strtr(base64_encode($wrappedCode), '+/', '-_'), '=');
@@ -100,7 +99,52 @@ class ExportController extends Controller
 
         $filename = ($meta['id'] ?? 'document') . ' - ' . ($meta['title'] ?? basename($path, '.md')) . '.pdf';
 
-        $pdf = Pdf::loadHTML($exportHtml)
+        // Write HTML to temp file
+        $tmpDir = sys_get_temp_dir() . '/qms-export-' . uniqid();
+        mkdir($tmpDir, 0755, true);
+        $htmlFile = $tmpDir . '/document.html';
+        $pdfFile = $tmpDir . '/document.pdf';
+        file_put_contents($htmlFile, $exportHtml);
+
+        // Use snap run chromium to generate PDF
+        $process = new Process([
+            'snap', 'run', 'chromium',
+            '--headless',
+            '--no-sandbox',
+            '--disable-gpu',
+            '--disable-software-rasterizer',
+            '--run-all-compositor-stages-before-draw',
+            '--print-to-pdf=' . $pdfFile,
+            '--no-pdf-header-footer',
+            'file://' . $htmlFile,
+        ]);
+        $process->setTimeout(120);
+
+        try {
+            $process->run();
+
+            if (! file_exists($pdfFile)) {
+                // Fallback to dompdf if chromium fails
+                return $this->dompdfFallback($exportHtml, $filename);
+            }
+
+            $pdfContent = file_get_contents($pdfFile);
+
+            return response($pdfContent)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        } catch (\Throwable $e) {
+            return $this->dompdfFallback($exportHtml, $filename);
+        } finally {
+            @unlink($htmlFile);
+            @unlink($pdfFile);
+            @rmdir($tmpDir);
+        }
+    }
+
+    private function dompdfFallback(string $html, string $filename)
+    {
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($html)
             ->setPaper('a4')
             ->setOption('isRemoteEnabled', true)
             ->setOption('defaultFont', 'sans-serif');
