@@ -72,20 +72,21 @@ class ExportController extends Controller
         // Generate PDF with Browsershot
         $filename = ($meta['id'] ?? 'document') . ' - ' . ($meta['title'] ?? basename($path, '.md')) . '.pdf';
 
-        $browsershot = Browsershot::html($exportHtml)
+        // Tell Puppeteer where to find Chrome
+        $chromePath = $this->findChrome();
+        if ($chromePath) {
+            putenv('PUPPETEER_EXECUTABLE_PATH=' . $chromePath);
+        }
+
+        $pdfContent = Browsershot::html($exportHtml)
             ->setNodeBinary(trim(shell_exec('which node') ?: '/usr/bin/node'))
             ->setNpmBinary(trim(shell_exec('which npm') ?: '/usr/bin/npm'))
+            ->setChromePath($chromePath ?? '/usr/bin/chromium')
             ->format('A4')
             ->margins(20, 15, 25, 15)
             ->showBackground()
-            ->waitUntilNetworkIdle();
-
-        $chromePath = $this->findChrome();
-        if ($chromePath) {
-            $browsershot->setChromePath($chromePath);
-        }
-
-        $pdfContent = $browsershot->pdf();
+            ->waitUntilNetworkIdle()
+            ->pdf();
 
         return response($pdfContent)
             ->header('Content-Type', 'application/pdf')
