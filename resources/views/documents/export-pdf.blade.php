@@ -228,7 +228,7 @@
         /* ── Page footer (repeats on every page) ── */
         .page-footer {
             position: fixed;
-            bottom: 0;
+            bottom: -20mm;
             left: 0;
             right: 0;
             font-size: 7.5px;
