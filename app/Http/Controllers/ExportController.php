@@ -185,7 +185,8 @@ class ExportController extends Controller
 
             foreach ($table['rows'] as $rowIdx => $row) {
                 foreach ($row as $colIdx => $cell) {
-                    $cellRef = $sheet->getCellByColumnAndRow($colIdx + 1, $rowIdx + 1);
+                    $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIdx + 1);
+                    $cellRef = $sheet->getCell($colLetter . ($rowIdx + 1));
                     // Strip markdown links and formatting
                     $cleanCell = strip_tags(html_entity_decode($cell));
                     $cleanCell = preg_replace('/\[\[([A-Z]+-\d+)\]\]/', '$1', $cleanCell);
