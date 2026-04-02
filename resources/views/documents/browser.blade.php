@@ -12,9 +12,9 @@
             @if($canEdit)
                 {{-- Desktop buttons --}}
                 <div class="hidden sm:flex items-center gap-2">
-                    <button @click="startBulkExport()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 whitespace-nowrap">
+                    <button @click="$dispatch('start-bulk-export')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 whitespace-nowrap">
                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        <span x-text="categoryFilter ? 'Export ' + categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1) : 'Export All'"></span>
+                        Export All
                     </button>
                     <a href="{{ route('forms.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 rounded-md text-sm text-gray-600 hover:bg-gray-50 whitespace-nowrap">
                         <svg class="w-3.5 h-3.5 text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
@@ -54,7 +54,7 @@
         </div>
     </x-slot>
 
-    <div x-data="documentBrowser()" @click="ctx.show = false" @contextmenu="ctx.show = false"
+    <div x-data="documentBrowser()" @click="ctx.show = false" @contextmenu="ctx.show = false" @start-bulk-export.window="startBulkExport()"
          @dragover.prevent="dragOver = true"
          @dragleave.self.prevent="dragOver = false"
          @drop.prevent="handleDrop($event)"
