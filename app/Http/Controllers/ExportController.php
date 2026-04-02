@@ -70,16 +70,23 @@ class ExportController extends Controller
 
         // Render mermaid blocks to images and put them back
         foreach ($mermaidBlocks as $i => $mermaidCode) {
-            $encoded = rtrim(strtr(base64_encode($mermaidCode), '+/', '-_'), '=');
-            $imgUrl = 'https://mermaid.ink/img/' . $encoded . '?type=png&bgColor=white';
+            // Wrap in a Mermaid config to control width
+            $wrappedCode = "%%{init: {'theme': 'neutral', 'themeVariables': {'fontSize': '12px'}}}%%\n" . $mermaidCode;
+            $encoded = rtrim(strtr(base64_encode($wrappedCode), '+/', '-_'), '=');
+            $imgUrl = 'https://mermaid.ink/svg/' . $encoded . '?bgColor=white';
 
             $replacement = '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin: 12px 0; font-size: 9px; color: #64748b; text-align: center;">[Diagram could not be rendered]</div>';
 
             try {
                 $response = Http::timeout(60)->get($imgUrl);
                 if ($response->successful() && strlen($response->body()) > 100) {
-                    $imageData = base64_encode($response->body());
-                    $replacement = '<div style="text-align: center; margin: 16px 0;"><img src="data:image/png;base64,' . $imageData . '" style="max-width: 100%; height: auto;" /></div>';
+                    // Embed SVG directly — scales perfectly and dompdf supports inline SVG
+                    $svg = $response->body();
+                    // Make SVG responsive: set width to 100% and remove fixed dimensions
+                    $svg = preg_replace('/(<svg[^>]*?)width="[^"]*"/', '$1width="100%"', $svg);
+                    $svg = preg_replace('/(<svg[^>]*?)height="[^"]*"/', '$1', $svg);
+                    $svg = preg_replace('/(<svg[^>]*?)style="[^"]*"/', '$1style="max-width:100%;height:auto;"', $svg);
+                    $replacement = '<div style="text-align: center; margin: 16px 0; overflow: hidden;">' . $svg . '</div>';
                 }
             } catch (\Throwable $e) {
                 // Keep placeholder
