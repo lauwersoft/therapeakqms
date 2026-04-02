@@ -99,11 +99,15 @@ class ExportController extends Controller
 
         $filename = ($meta['id'] ?? 'document') . ' - ' . ($meta['title'] ?? basename($path, '.md')) . '.pdf';
 
-        // Write HTML to temp file
-        $tmpDir = sys_get_temp_dir() . '/qms-export-' . uniqid();
-        mkdir($tmpDir, 0755, true);
-        $htmlFile = $tmpDir . '/document.html';
-        $pdfFile = $tmpDir . '/document.pdf';
+        // Write HTML to home directory (snap can't access /tmp)
+        $homeDir = posix_getpwuid(posix_getuid())['dir'] ?? '/home/sarp';
+        $tmpDir = $homeDir . '/.qms-export';
+        if (! is_dir($tmpDir)) {
+            mkdir($tmpDir, 0755, true);
+        }
+        $uid = uniqid();
+        $htmlFile = $tmpDir . '/doc-' . $uid . '.html';
+        $pdfFile = $tmpDir . '/doc-' . $uid . '.pdf';
         file_put_contents($htmlFile, $exportHtml);
 
         // Use snap run chromium to generate PDF
