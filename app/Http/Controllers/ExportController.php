@@ -60,13 +60,18 @@ class ExportController extends Controller
             '/<pre><code class="language-mermaid">(.*?)<\/code><\/pre>/s',
             function ($matches) {
                 $mermaidCode = html_entity_decode(trim($matches[1]), ENT_QUOTES | ENT_HTML5);
-                $encoded = base64_encode($mermaidCode);
+                // Strip any resolved [[DOC-ID]] links back to plain text for mermaid
+                $mermaidCode = preg_replace('/<a [^>]*>([^<]*)<\/a>/', '$1', $mermaidCode);
+                $mermaidCode = strip_tags($mermaidCode);
+
+                // mermaid.ink uses base64url encoding
+                $encoded = rtrim(strtr(base64_encode($mermaidCode), '+/', '-_'), '=');
                 $imgUrl = 'https://mermaid.ink/img/' . $encoded . '?type=png&bgColor=white';
 
-                // Download the image and embed as base64 data URI so dompdf can render it
+                // Download the image and embed as base64 data URI
                 try {
-                    $response = Http::timeout(30)->get($imgUrl);
-                    if ($response->successful()) {
+                    $response = Http::timeout(60)->get($imgUrl);
+                    if ($response->successful() && strlen($response->body()) > 100) {
                         $imageData = base64_encode($response->body());
                         return '<div style="text-align: center; margin: 16px 0;"><img src="data:image/png;base64,' . $imageData . '" style="max-width: 100%; height: auto;" /></div>';
                     }
