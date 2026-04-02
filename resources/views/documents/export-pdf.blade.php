@@ -2,223 +2,311 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $meta['id'] ?? '' }} — {{ $meta['title'] ?? 'Document' }}</title>
     <style>
         @page {
             size: A4;
-            margin: 20mm 15mm 25mm 15mm;
-
-            @bottom-center {
-                content: "{{ $meta['id'] ?? '' }} — {{ $meta['title'] ?? 'Document' }} — v{{ $meta['version'] ?? '1.0' }}";
-                font-size: 8px;
-                color: #999;
-            }
-            @bottom-right {
-                content: "Page " counter(page) " of " counter(pages);
-                font-size: 8px;
-                color: #999;
-            }
+            margin: 22mm 20mm 28mm 20mm;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        @font-face {
+            font-family: 'Ubuntu';
+            src: url('https://fonts.gstatic.com/s/ubuntu/v20/4iCv6KVjbNBYlgo-sgEzQ.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Ubuntu';
+            src: url('https://fonts.gstatic.com/s/ubuntu/v20/4iCv6KVjbNBYlgoOsgEzQ.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        * { box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
-            font-size: 11px;
-            line-height: 1.6;
-            color: #1a1a1a;
+            font-family: 'Ubuntu', 'DejaVu Sans', Arial, Helvetica, sans-serif;
+            font-size: 10.5px;
+            line-height: 1.65;
+            color: #1f2937;
             background: white;
+            padding: 0;
+            margin: 0;
         }
 
-        /* Document header */
+        /* ── Document header ── */
         .doc-header {
             border-bottom: 2px solid #2563eb;
-            padding-bottom: 12px;
-            margin-bottom: 24px;
+            padding-bottom: 14px;
+            margin-bottom: 28px;
         }
-        .doc-header h1 {
+        .doc-header-title {
             font-size: 20px;
             font-weight: 700;
-            color: #111;
-            margin: 0 0 8px 0;
+            color: #111827;
+            margin: 0 0 10px 0;
+            line-height: 1.3;
         }
-        .doc-meta {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px 24px;
-            font-size: 10px;
-            color: #555;
-        }
-        .doc-meta .label {
-            font-weight: 600;
-            color: #333;
-        }
-        .doc-id {
+        .doc-id-badge {
             display: inline-block;
             background: #eff6ff;
-            color: #2563eb;
-            font-family: monospace;
+            color: #1d4ed8;
+            font-family: 'Courier New', monospace;
             font-weight: 700;
-            font-size: 12px;
+            font-size: 11px;
             padding: 2px 8px;
-            border-radius: 4px;
-            margin-right: 8px;
+            border-radius: 3px;
+            margin-right: 6px;
         }
-        .doc-status {
+        .doc-meta-table {
+            width: 100%;
+            border: none;
+            margin: 0;
+            font-size: 9.5px;
+        }
+        .doc-meta-table td {
+            border: none;
+            padding: 2px 0;
+            color: #6b7280;
+            background: none;
+            vertical-align: top;
+            width: 50%;
+        }
+        .doc-meta-table .label {
+            font-weight: 700;
+            color: #374151;
+        }
+        .doc-status-badge {
             display: inline-block;
-            font-size: 10px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 3px;
+            letter-spacing: 0.3px;
         }
         .status-approved { background: #dcfce7; color: #166534; }
         .status-draft { background: #f3f4f6; color: #6b7280; }
         .status-in_review { background: #fef3c7; color: #92400e; }
-
-        /* Manufacturer info */
-        .manufacturer {
-            font-size: 9px;
-            color: #888;
-            margin-top: 8px;
-            border-top: 1px solid #e5e7eb;
+        .doc-footer-line {
+            font-size: 8px;
+            color: #9ca3af;
+            margin-top: 10px;
             padding-top: 6px;
+            border-top: 1px solid #e5e7eb;
         }
 
-        /* Content styles */
-        h1 { font-size: 18px; font-weight: 700; margin: 28px 0 12px; color: #111; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; }
-        h2 { font-size: 15px; font-weight: 700; margin: 24px 0 10px; color: #222; }
-        h3 { font-size: 13px; font-weight: 600; margin: 20px 0 8px; color: #333; }
-        h4 { font-size: 12px; font-weight: 600; margin: 16px 0 6px; color: #444; }
+        /* ── Headings ── */
+        h1 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #111827;
+            margin: 30px 0 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #e5e7eb;
+            page-break-after: avoid;
+        }
+        h2 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 24px 0 8px;
+            page-break-after: avoid;
+        }
+        h3 {
+            font-size: 12px;
+            font-weight: 700;
+            color: #374151;
+            margin: 18px 0 6px;
+            page-break-after: avoid;
+        }
+        h4 {
+            font-size: 11px;
+            font-weight: 700;
+            color: #4b5563;
+            margin: 14px 0 4px;
+            page-break-after: avoid;
+        }
 
-        p { margin: 8px 0; }
-        ul, ol { margin: 8px 0 8px 24px; }
-        li { margin: 3px 0; }
-
-        strong { font-weight: 600; color: #111; }
+        /* ── Body text ── */
+        p {
+            margin: 6px 0;
+            orphans: 3;
+            widows: 3;
+        }
+        ul, ol {
+            margin: 6px 0 6px 20px;
+            padding: 0;
+        }
+        li {
+            margin: 2px 0;
+        }
+        strong { font-weight: 700; color: #111827; }
         em { font-style: italic; }
-
         a {
             color: #2563eb;
             text-decoration: none;
             font-weight: 500;
         }
 
-        /* Tables */
+        /* ── Tables ── */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 12px 0;
-            font-size: 10px;
+            margin: 10px 0;
+            font-size: 9.5px;
+            line-height: 1.5;
             page-break-inside: auto;
         }
-        thead { display: table-header-group; }
-        tr { page-break-inside: avoid; }
+        thead {
+            display: table-header-group;
+        }
+        tr {
+            page-break-inside: avoid;
+        }
         th {
-            background: #f8fafc;
-            font-weight: 600;
-            color: #374151;
+            background: #f1f5f9;
+            font-weight: 700;
+            color: #334155;
             text-align: left;
-            padding: 6px 8px;
-            border: 1px solid #d1d5db;
+            padding: 5px 7px;
+            border: 1px solid #cbd5e1;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
         }
         td {
-            padding: 5px 8px;
-            border: 1px solid #e5e7eb;
+            padding: 4px 7px;
+            border: 1px solid #e2e8f0;
             vertical-align: top;
+            color: #334155;
         }
-        tr:nth-child(even) td { background: #fafbfc; }
+        tr:nth-child(even) td {
+            background: #f8fafc;
+        }
 
-        /* Code blocks */
+        /* ── Code ── */
         code {
             font-family: 'Courier New', monospace;
-            font-size: 10px;
-            background: #f3f4f6;
-            padding: 1px 4px;
-            border-radius: 3px;
+            font-size: 9.5px;
+            background: #f1f5f9;
+            padding: 1px 3px;
+            border-radius: 2px;
+            color: #be185d;
         }
         pre {
             background: #f8fafc;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            padding: 12px;
-            margin: 12px 0;
-            overflow-x: auto;
-            font-size: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 10px 12px;
+            margin: 10px 0;
+            font-size: 9px;
+            line-height: 1.5;
             page-break-inside: avoid;
+            overflow: hidden;
         }
-        pre code { background: none; padding: 0; }
-
-        /* Mermaid diagrams */
-        .mermaid {
-            margin: 16px 0;
-            text-align: center;
-            page-break-inside: avoid;
-        }
-        .mermaid svg {
-            max-width: 100%;
-            height: auto;
+        pre code {
+            background: none;
+            padding: 0;
+            color: #334155;
         }
 
-        /* Blockquotes */
+        /* ── Blockquotes ── */
         blockquote {
-            border-left: 3px solid #2563eb;
-            padding: 8px 16px;
-            margin: 12px 0;
+            border-left: 3px solid #3b82f6;
+            padding: 6px 14px;
+            margin: 10px 0;
             background: #f8fafc;
-            color: #555;
+            color: #475569;
+            font-style: italic;
         }
 
-        /* Horizontal rules */
+        /* ── Horizontal rules ── */
         hr {
             border: none;
-            border-top: 1px solid #e5e7eb;
-            margin: 20px 0;
+            border-top: 1px solid #e2e8f0;
+            margin: 18px 0;
         }
 
-        /* Print helpers */
+        /* ── Page break helpers ── */
         .page-break { page-break-before: always; }
         .no-break { page-break-inside: avoid; }
+
+        /* ── Page footer ── */
+        .page-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 8px;
+            color: #9ca3af;
+            padding: 8px 20mm;
+            border-top: 1px solid #e5e7eb;
+        }
+        .page-footer .doc-ref {
+            float: left;
+        }
+        .page-footer .page-num {
+            float: right;
+        }
     </style>
 </head>
 <body>
-    {{-- Document header --}}
+    {{-- Fixed footer on every page --}}
+    <div class="page-footer">
+        <span class="doc-ref">{{ $meta['id'] ?? '' }} — {{ $meta['title'] ?? 'Document' }} — v{{ $meta['version'] ?? '1.0' }}</span>
+        <span class="page-num">Therapeak B.V. — Confidential</span>
+    </div>
+
+    {{-- Document header (first page) --}}
     <div class="doc-header">
-        <h1>
+        <div class="doc-header-title">
             @if($meta['id'])
-                <span class="doc-id">{{ $meta['id'] }}</span>
+                <span class="doc-id-badge">{{ $meta['id'] }}</span>
             @endif
             {{ $meta['title'] ?? 'Untitled Document' }}
-        </h1>
-
-        <div class="doc-meta">
-            <div>
-                <span class="label">Status:</span>
-                <span class="doc-status status-{{ $meta['status'] ?? 'draft' }}">{{ ucfirst(str_replace('_', ' ', $meta['status'] ?? 'draft')) }}</span>
-            </div>
-            <div>
-                <span class="label">Version:</span> {{ $meta['version'] ?? '—' }}
-            </div>
-            <div>
-                <span class="label">Author:</span> {{ $meta['author'] ?? '—' }}
-            </div>
-            <div>
-                <span class="label">Effective date:</span> {{ $meta['effective_date'] ?? '—' }}
-            </div>
-            @if(!empty($meta['iso_refs']))
-                <div>
-                    <span class="label">ISO 13485:</span> {{ implode(', ', array_map(fn($r) => 'Clause ' . $r, $meta['iso_refs'])) }}
-                </div>
-            @endif
-            @if(!empty($meta['mdr_refs']))
-                <div>
-                    <span class="label">EU MDR:</span> {{ implode(', ', $meta['mdr_refs']) }}
-                </div>
-            @endif
         </div>
 
-        <div class="manufacturer">
-            Therapeak B.V. — Confidential — Printed {{ date('Y-m-d') }}
+        <table class="doc-meta-table">
+            <tr>
+                <td>
+                    <span class="label">Status:</span>
+                    <span class="doc-status-badge status-{{ $meta['status'] ?? 'draft' }}">{{ strtoupper(str_replace('_', ' ', $meta['status'] ?? 'draft')) }}</span>
+                </td>
+                <td>
+                    <span class="label">Version:</span> {{ $meta['version'] ?? '—' }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="label">Author:</span> {{ $meta['author'] ?? '—' }}
+                </td>
+                <td>
+                    <span class="label">Effective date:</span> {{ $meta['effective_date'] ?? '—' }}
+                </td>
+            </tr>
+            @if(!empty($meta['iso_refs']) || !empty($meta['mdr_refs']))
+                <tr>
+                    @if(!empty($meta['iso_refs']))
+                        <td>
+                            <span class="label">ISO 13485:</span> {{ implode(', ', array_map(fn($r) => 'Clause ' . $r, $meta['iso_refs'])) }}
+                        </td>
+                    @else
+                        <td></td>
+                    @endif
+                    @if(!empty($meta['mdr_refs']))
+                        <td>
+                            <span class="label">EU MDR:</span> {{ implode(', ', $meta['mdr_refs']) }}
+                        </td>
+                    @else
+                        <td></td>
+                    @endif
+                </tr>
+            @endif
+        </table>
+
+        <div class="doc-footer-line">
+            Therapeak B.V. — {{ $meta['id'] ?? '' }} — Printed {{ date('Y-m-d') }}
         </div>
     </div>
 
