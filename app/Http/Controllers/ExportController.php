@@ -119,7 +119,6 @@ class ExportController extends Controller
             'cp ' . escapeshellarg($srcHtmlFile) . ' ' . escapeshellarg($htmlFile) .
             ' && snap run chromium --headless --no-sandbox --disable-gpu --disable-software-rasterizer' .
             ' --print-to-pdf=' . escapeshellarg($pdfFile) .
-            ' --no-pdf-header-footer' .
             ' file://' . escapeshellarg($htmlFile),
         ]);
         $process->setTimeout(120);
