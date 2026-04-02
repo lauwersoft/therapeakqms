@@ -99,25 +99,28 @@ class ExportController extends Controller
 
         $filename = ($meta['id'] ?? 'document') . ' - ' . ($meta['title'] ?? basename($path, '.md')) . '.pdf';
 
-        // Both files in snap's writable directory — www-data can access via group
-        $tmpDir = '/home/sarp/snap/chromium/common/qms-export';
+        // Write HTML to storage first (www-data can write here)
         $uid = uniqid();
-        $htmlFile = $tmpDir . '/doc-' . $uid . '.html';
-        $pdfFile = $tmpDir . '/doc-' . $uid . '.pdf';
-        file_put_contents($htmlFile, $exportHtml);
-        chmod($htmlFile, 0666);
+        $storageHtml = storage_path('app/qms-export');
+        if (! is_dir($storageHtml)) {
+            @mkdir($storageHtml, 0755, true);
+        }
+        $srcHtmlFile = $storageHtml . '/doc-' . $uid . '.html';
+        file_put_contents($srcHtmlFile, $exportHtml);
 
-        // Run chromium as sarp user (snap requires a real user, not www-data)
+        // Paths in sarp's snap directory (where snap chromium can read/write)
+        $snapDir = '/home/sarp/snap/chromium/common/qms-export';
+        $htmlFile = $snapDir . '/doc-' . $uid . '.html';
+        $pdfFile = $snapDir . '/doc-' . $uid . '.pdf';
+
+        // Copy HTML as sarp so snap chromium can read it, then run chromium
         $process = new Process([
-            'sudo', '-u', 'sarp',
-            'snap', 'run', 'chromium',
-            '--headless',
-            '--no-sandbox',
-            '--disable-gpu',
-            '--disable-software-rasterizer',
-            '--print-to-pdf=' . $pdfFile,
-            '--no-pdf-header-footer',
-            'file://' . $htmlFile,
+            'sudo', '-u', 'sarp', 'bash', '-c',
+            'cp ' . escapeshellarg($srcHtmlFile) . ' ' . escapeshellarg($htmlFile) .
+            ' && snap run chromium --headless --no-sandbox --disable-gpu --disable-software-rasterizer' .
+            ' --print-to-pdf=' . escapeshellarg($pdfFile) .
+            ' --no-pdf-header-footer' .
+            ' file://' . escapeshellarg($htmlFile),
         ]);
         $process->setTimeout(120);
 
@@ -127,6 +130,7 @@ class ExportController extends Controller
             $error = $process->getErrorOutput();
             $output = $process->getOutput();
             $exitCode = $process->getExitCode();
+            @unlink($srcHtmlFile);
             @unlink($htmlFile);
             return response(
                 "Exit code: {$exitCode}\n\nSTDERR:\n{$error}\n\nSTDOUT:\n{$output}",
@@ -137,6 +141,7 @@ class ExportController extends Controller
 
         $pdfContent = file_get_contents($pdfFile);
 
+        @unlink($srcHtmlFile);
         @unlink($htmlFile);
         @unlink($pdfFile);
 
