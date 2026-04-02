@@ -6,27 +6,35 @@
     <style>
         @page {
             size: A4;
-            margin: 18mm 16mm 16mm 16mm;
+            margin: 18mm 16mm 18mm 16mm;
 
+            @top-left { content: ""; }
+            @top-center { content: ""; }
+            @top-right { content: ""; }
+
+            @bottom-left {
+                content: "{{ $meta['id'] ?? '' }} \2014  {{ str_replace('"', '', $meta['title'] ?? 'Document') }} \2014  v{{ $meta['version'] ?? '1.0' }}";
+                font-size: 7.5px;
+                color: #9ca3af;
+                font-family: 'Ubuntu', 'DejaVu Sans', Arial, sans-serif;
+                vertical-align: top;
+                border-top: 0.5pt solid #d1d5db;
+                padding-top: 2px;
+            }
             @bottom-center {
-                content: "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
-                font-size: 4px;
-                color: #e5e7eb;
+                content: "";
+                border-top: 0.5pt solid #d1d5db;
                 vertical-align: top;
             }
-            @bottom-left {
-                content: "{{ $meta['id'] ?? '' }} — {{ str_replace('"', '', $meta['title'] ?? 'Document') }} — v{{ $meta['version'] ?? '1.0' }}";
-                font-size: 7.5px;
-                color: #9ca3af;
-                font-family: 'Ubuntu', 'DejaVu Sans', Arial, sans-serif;
-                vertical-align: bottom;
-            }
             @bottom-right {
-                content: "Therapeak B.V. — Confidential";
+                content: "Therapeak B.V. \2014  Confidential";
                 font-size: 7.5px;
                 color: #9ca3af;
                 font-family: 'Ubuntu', 'DejaVu Sans', Arial, sans-serif;
-                vertical-align: bottom;
+                vertical-align: top;
+                border-top: 0.5pt solid #d1d5db;
+                padding-top: 2px;
+                text-align: right;
             }
         }
 
