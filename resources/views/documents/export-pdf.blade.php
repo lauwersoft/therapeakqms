@@ -6,7 +6,7 @@
     <style>
         @page {
             size: A4;
-            margin: 22mm 20mm 28mm 20mm;
+            margin: 18mm 16mm 22mm 16mm;
         }
 
         @font-face {
@@ -132,13 +132,19 @@
             margin: 6px 0;
             orphans: 3;
             widows: 3;
+            text-align: left;
         }
         ul, ol {
             margin: 6px 0 6px 20px;
             padding: 0;
+            text-align: left;
         }
         li {
             margin: 2px 0;
+            text-align: left;
+        }
+        .content {
+            text-align: left;
         }
         strong { font-weight: 700; color: #111827; }
         em { font-style: italic; }
@@ -153,9 +159,10 @@
             width: 100%;
             border-collapse: collapse;
             margin: 10px 0;
-            font-size: 9.5px;
-            line-height: 1.5;
+            font-size: 9px;
+            line-height: 1.45;
             page-break-inside: auto;
+            word-wrap: break-word;
         }
         thead {
             display: table-header-group;
@@ -168,14 +175,12 @@
             font-weight: 700;
             color: #334155;
             text-align: left;
-            padding: 5px 7px;
+            padding: 4px 5px;
             border: 1px solid #cbd5e1;
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 0.2px;
+            font-size: 8.5px;
         }
         td {
-            padding: 4px 7px;
+            padding: 3px 5px;
             border: 1px solid #e2e8f0;
             vertical-align: top;
             color: #334155;
