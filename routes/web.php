@@ -40,6 +40,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/documents/download/{path}', [DocumentController::class, 'download'])->where('path', '.*')->name('documents.download');
     Route::get('/documents/export/{path}', [\App\Http\Controllers\ExportController::class, 'pdf'])->where('path', '.*')->name('documents.export');
     Route::get('/documents/export-xlsx/{path}', [\App\Http\Controllers\ExportController::class, 'xlsx'])->where('path', '.*')->name('documents.export-xlsx');
+    Route::post('/documents/export-bulk', [\App\Http\Controllers\ExportController::class, 'bulkExport'])->name('documents.export-bulk');
+    Route::get('/documents/export-bulk/{export}/status', [\App\Http\Controllers\ExportController::class, 'bulkExportStatus'])->name('documents.export-bulk-status');
+    Route::get('/documents/export-bulk/{export}/download', [\App\Http\Controllers\ExportController::class, 'bulkExportDownload'])->name('documents.export-bulk-download');
     Route::get('/documents/changes', [DocumentController::class, 'changes'])->name('documents.changes');
     Route::post('/documents/publish', [DocumentController::class, 'publish'])->name('documents.publish');
     Route::post('/documents/discard', [DocumentController::class, 'discard'])->name('documents.discard');

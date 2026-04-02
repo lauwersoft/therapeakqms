@@ -12,6 +12,10 @@
             @if($canEdit)
                 {{-- Desktop buttons --}}
                 <div class="hidden sm:flex items-center gap-2">
+                    <button @click="startBulkExport()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 whitespace-nowrap">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span x-text="categoryFilter ? 'Export ' + categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1) : 'Export All'"></span>
+                    </button>
                     <a href="{{ route('forms.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 rounded-md text-sm text-gray-600 hover:bg-gray-50 whitespace-nowrap">
                         <svg class="w-3.5 h-3.5 text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                         New Form
@@ -113,6 +117,62 @@
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                     Upload file
                 </button>
+            </div>
+
+            {{-- Bulk export modal --}}
+            <div x-show="exportModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50" @click.self="exportModal = false">
+                <div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6" @click.stop>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Export Documents</h3>
+                        <button @click="exportModal = false" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+
+                    {{-- Processing state --}}
+                    <template x-if="exportStatus === 'starting' || exportStatus === 'pending' || exportStatus === 'processing'">
+                        <div>
+                            <div class="flex items-center gap-3 mb-4">
+                                <svg class="w-5 h-5 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                <span class="text-sm text-gray-600">Generating PDFs and spreadsheets...</span>
+                            </div>
+                            <template x-if="exportTotal > 0">
+                                <div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                        <div class="bg-blue-500 h-2 rounded-full transition-all" :style="'width: ' + (exportProcessed / exportTotal * 100) + '%'"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500" x-text="exportProcessed + ' of ' + exportTotal + ' documents'"></p>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    {{-- Ready state --}}
+                    <template x-if="exportStatus === 'ready'">
+                        <div>
+                            <div class="flex items-center gap-3 mb-4">
+                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <span class="text-sm text-gray-600">Export ready!</span>
+                            </div>
+                            <a :href="exportDownloadUrl" @click="setTimeout(() => { exportModal = false }, 1000)"
+                               class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 w-full justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                Download ZIP
+                            </a>
+                        </div>
+                    </template>
+
+                    {{-- Failed state --}}
+                    <template x-if="exportStatus === 'failed'">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span class="text-sm text-red-600">Export failed</span>
+                            </div>
+                            <p class="text-xs text-gray-500" x-text="exportError"></p>
+                        </div>
+                    </template>
+                </div>
             </div>
 
             {{-- Quick create document modal --}}
@@ -524,8 +584,62 @@
                     quickCreateModal: false,
                     newDirModal: false,
                     renameName: '',
+                    exportModal: false,
+                    exportStatus: '',
+                    exportTotal: 0,
+                    exportProcessed: 0,
+                    exportError: '',
+                    exportDownloadUrl: '',
 
                     init() {},
+
+                    startBulkExport() {
+                        this.exportModal = true;
+                        this.exportStatus = 'starting';
+                        this.exportTotal = 0;
+                        this.exportProcessed = 0;
+                        this.exportError = '';
+                        this.exportDownloadUrl = '';
+
+                        fetch('{{ route("documents.export-bulk") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            },
+                            body: JSON.stringify({ category: this.categoryFilter || '' }),
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            this.pollExportStatus(data.id);
+                        })
+                        .catch(e => {
+                            this.exportStatus = 'failed';
+                            this.exportError = 'Failed to start export';
+                        });
+                    },
+
+                    pollExportStatus(exportId) {
+                        const poll = () => {
+                            fetch('/documents/export-bulk/' + exportId + '/status')
+                                .then(r => r.json())
+                                .then(data => {
+                                    this.exportStatus = data.status;
+                                    this.exportTotal = data.total;
+                                    this.exportProcessed = data.processed;
+                                    this.exportError = data.error;
+
+                                    if (data.status === 'ready') {
+                                        this.exportDownloadUrl = '/documents/export-bulk/' + exportId + '/download';
+                                    } else if (data.status === 'failed') {
+                                        // done
+                                    } else {
+                                        setTimeout(poll, 2000);
+                                    }
+                                });
+                        };
+                        setTimeout(poll, 2000);
+                    },
 
                     get filteredDocs() {
                         return this.docs.filter(d => {

@@ -1,54 +1,140 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Jobs;
 
-use App\Jobs\GenerateBulkExportJob;
 use App\Models\DocumentExport;
 use App\Services\DocumentMetadata;
-use Illuminate\Http\Request;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\Table\TableExtension;
 use League\CommonMark\MarkdownConverter;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\Process\Process;
+use ZipArchive;
 
-class ExportController extends Controller
+class GenerateBulkExportJob implements ShouldQueue
 {
-    public function pdf(Request $request, string $path)
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public int $timeout = 600;
+
+    public function __construct(
+        private int $exportId
+    ) {}
+
+    public function handle(): void
     {
+        $export = DocumentExport::findOrFail($this->exportId);
+        $export->update(['status' => 'processing']);
+
         $basePath = base_path('qms/documents');
-        $filePath = realpath($basePath . '/' . $path);
+        $docIndex = DocumentMetadata::index($basePath);
+        $idMap = DocumentMetadata::idMap($docIndex);
 
-        if (! $filePath || ! str_starts_with($filePath, realpath($basePath)) || ! file_exists($filePath)) {
-            abort(404);
+        // Filter documents by category if set
+        $docs = [];
+        foreach ($docIndex as $path => $meta) {
+            if (! DocumentMetadata::isMarkdown($path)) {
+                continue;
+            }
+            if ($export->category) {
+                $cats = DocumentMetadata::normalizeCategory($meta['category'] ?? []);
+                if (! in_array($export->category, $cats)) {
+                    continue;
+                }
+            }
+            $docs[$path] = $meta;
         }
 
-        if (! DocumentMetadata::isMarkdown($path)) {
-            abort(400, 'Only markdown documents can be exported as PDF.');
+        $export->update(['total_docs' => count($docs)]);
+
+        // Build a map of doc ID → relative PDF path for cross-linking
+        $pdfPathMap = [];
+        foreach ($docs as $path => $meta) {
+            $dir = dirname($path);
+            $id = $meta['id'] ?? pathinfo($path, PATHINFO_FILENAME);
+            $title = $meta['title'] ?? pathinfo($path, PATHINFO_FILENAME);
+            $safeName = preg_replace('/[\/\\\\:*?"<>|]/', '', $id . ' - ' . $title);
+            $pdfPathMap[$meta['id'] ?? ''] = $dir . '/' . $safeName . '.pdf';
         }
 
+        // Create temp directory
+        $tmpDir = storage_path('app/qms-export/bulk-' . $export->id);
+        @mkdir($tmpDir, 0755, true);
+
+        $processed = 0;
+
+        try {
+            foreach ($docs as $path => $meta) {
+                $this->generateDocumentFiles($basePath, $path, $meta, $docIndex, $idMap, $pdfPathMap, $tmpDir);
+                $processed++;
+                $export->update(['processed_docs' => $processed]);
+            }
+
+            // Create ZIP
+            $zipFilename = ($export->category ? ucfirst($export->category) . ' Documentation' : 'QMS Documentation') . ' - Therapeak B.V.zip';
+            $zipPath = storage_path('app/qms-export/' . $export->id . '.zip');
+
+            $zip = new ZipArchive();
+            if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+                throw new \RuntimeException('Could not create ZIP file');
+            }
+
+            $this->addDirectoryToZip($zip, $tmpDir, '');
+            $zip->close();
+
+            $export->update([
+                'status' => 'ready',
+                'filename' => $zipFilename,
+                'path' => $zipPath,
+            ]);
+        } catch (\Throwable $e) {
+            $export->update([
+                'status' => 'failed',
+                'error' => substr($e->getMessage(), 0, 500),
+            ]);
+        } finally {
+            // Clean up temp directory
+            File::deleteDirectory($tmpDir);
+        }
+    }
+
+    private function generateDocumentFiles(
+        string $basePath,
+        string $path,
+        array $meta,
+        array $docIndex,
+        array $idMap,
+        array $pdfPathMap,
+        string $tmpDir
+    ): void {
+        $filePath = $basePath . '/' . $path;
         $raw = File::get($filePath);
         $parsed = DocumentMetadata::parse($raw);
-        $meta = $parsed['meta'];
+        $body = $parsed['body'];
 
-        // Render markdown to HTML
+        // Set up markdown converter
         $environment = new Environment([
             'html_input' => 'strip',
             'allow_unsafe_links' => false,
         ]);
         $environment->addExtension(new \League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension());
         $environment->addExtension(new TableExtension());
-
         $converter = new MarkdownConverter($environment);
-        $html = $converter->convert($parsed['body'])->getContent();
+        $html = $converter->convert($body)->getContent();
 
-        // Extract mermaid blocks BEFORE resolving links
+        // Extract mermaid blocks before resolving links
         $mermaidBlocks = [];
         $html = preg_replace_callback(
             '/<pre><code class="language-mermaid">(.*?)<\/code><\/pre>/s',
@@ -61,10 +147,8 @@ class ExportController extends Controller
             $html
         );
 
-        // Resolve cross-references and regulatory links
-        $docIndex = DocumentMetadata::index($basePath);
-        $idMap = DocumentMetadata::idMap($docIndex);
-        $html = DocumentMetadata::resolveLinks($html, $idMap);
+        // Resolve links — but rewrite cross-references to point to relative PDF paths
+        $html = $this->resolveLinksForPdf($html, $idMap, $pdfPathMap, $path);
         $html = DocumentMetadata::resolveRegulatoryLinks($html);
 
         // Add IDs to headings
@@ -75,7 +159,7 @@ class ExportController extends Controller
             return '<' . $tag . ' id="' . $id . '">' . $m[2] . '</' . $tag . '>';
         }, $html);
 
-        // Render mermaid blocks to images
+        // Render mermaid blocks
         foreach ($mermaidBlocks as $i => $mermaidCode) {
             $cleanCode = str_replace('\n', '<br/>', $mermaidCode);
             $cleanCode = str_replace(['[[', ']]'], '', $cleanCode);
@@ -98,30 +182,83 @@ class ExportController extends Controller
             $html = str_replace('<!--MERMAID_' . $i . '-->', $replacement, $html);
         }
 
-        // Render the export template
+        // Build output paths
+        $dir = dirname($path);
+        $id = $meta['id'] ?? pathinfo($path, PATHINFO_FILENAME);
+        $title = $meta['title'] ?? pathinfo($path, PATHINFO_FILENAME);
+        $safeName = preg_replace('/[\/\\\\:*?"<>|]/', '', $id . ' - ' . $title);
+        $outDir = $tmpDir . '/' . $dir;
+        @mkdir($outDir, 0755, true);
+
+        // Generate PDF
         $exportHtml = view('documents.export-pdf', [
             'content' => $html,
             'meta' => $meta,
             'path' => $path,
         ])->render();
 
-        $filename = ($meta['id'] ?? 'document') . ' - ' . ($meta['title'] ?? basename($path, '.md')) . '.pdf';
+        $this->generatePdf($exportHtml, $outDir . '/' . $safeName . '.pdf');
 
-        // Write HTML to storage first (www-data can write here)
-        $uid = uniqid();
-        $storageHtml = storage_path('app/qms-export');
-        if (! is_dir($storageHtml)) {
-            @mkdir($storageHtml, 0755, true);
+        // Generate XLSX if document has tables
+        $tables = $this->extractTablesFromMarkdown($body);
+        if (! empty($tables)) {
+            $this->generateXlsx($tables, $outDir . '/' . $safeName . '.xlsx');
         }
-        $srcHtmlFile = $storageHtml . '/doc-' . $uid . '.html';
-        file_put_contents($srcHtmlFile, $exportHtml);
+    }
 
-        // Paths in sarp's snap directory (where snap chromium can read/write)
+    /**
+     * Resolve [[DOC-ID]] links to relative PDF paths instead of web URLs.
+     */
+    private function resolveLinksForPdf(string $html, array $idMap, array $pdfPathMap, string $currentPath): string
+    {
+        $currentDir = dirname($currentPath);
+
+        return preg_replace_callback('/\[\[([A-Z]+-\d{3,})\]\]/', function ($matches) use ($pdfPathMap, $currentDir) {
+            $docId = $matches[1];
+            if (isset($pdfPathMap[$docId])) {
+                // Calculate relative path from current document to target PDF
+                $targetPath = $pdfPathMap[$docId];
+                $relativePath = $this->relativePath($currentDir, $targetPath);
+                return '<a href="' . htmlspecialchars($relativePath) . '" style="color: #2563eb; font-weight: 500; text-decoration: none;">'
+                    . htmlspecialchars($docId) . '</a>';
+            }
+            return '<span style="color: #2563eb; font-weight: 500;">' . htmlspecialchars($docId) . '</span>';
+        }, $html);
+    }
+
+    /**
+     * Calculate relative path from one directory to a target file.
+     */
+    private function relativePath(string $fromDir, string $toPath): string
+    {
+        $fromParts = $fromDir ? explode('/', $fromDir) : [];
+        $toParts = explode('/', $toPath);
+
+        // Find common prefix
+        $common = 0;
+        while ($common < count($fromParts) && $common < count($toParts) - 1
+            && $fromParts[$common] === $toParts[$common]) {
+            $common++;
+        }
+
+        $ups = count($fromParts) - $common;
+        $remaining = array_slice($toParts, $common);
+
+        return str_repeat('../', $ups) . implode('/', $remaining);
+    }
+
+    private function generatePdf(string $html, string $outputPath): void
+    {
         $snapDir = '/home/sarp/snap/chromium/common/qms-export';
-        $htmlFile = $snapDir . '/doc-' . $uid . '.html';
-        $pdfFile = $snapDir . '/doc-' . $uid . '.pdf';
+        $uid = uniqid();
+        $storageDir = storage_path('app/qms-export');
 
-        // Copy HTML as sarp so snap chromium can read it, then run chromium
+        $srcHtmlFile = $storageDir . '/bulk-' . $uid . '.html';
+        $htmlFile = $snapDir . '/bulk-' . $uid . '.html';
+        $pdfFile = $snapDir . '/bulk-' . $uid . '.pdf';
+
+        file_put_contents($srcHtmlFile, $html);
+
         $process = new Process([
             'sudo', '-u', 'sarp', 'bash', '-c',
             'cp ' . escapeshellarg($srcHtmlFile) . ' ' . escapeshellarg($htmlFile) .
@@ -131,65 +268,31 @@ class ExportController extends Controller
             ' file://' . escapeshellarg($htmlFile),
         ]);
         $process->setTimeout(120);
-
         $process->run();
 
-        if (! file_exists($pdfFile)) {
-            @unlink($srcHtmlFile);
-            @unlink($htmlFile);
-            abort(500, 'PDF generation failed. Check server logs.');
+        if (file_exists($pdfFile)) {
+            copy($pdfFile, $outputPath);
         }
-
-        $pdfContent = file_get_contents($pdfFile);
 
         @unlink($srcHtmlFile);
         @unlink($htmlFile);
         @unlink($pdfFile);
-
-        return response($pdfContent)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
-    public function xlsx(Request $request, string $path)
+    private function generateXlsx(array $tables, string $outputPath): void
     {
-        $basePath = base_path('qms/documents');
-        $filePath = realpath($basePath . '/' . $path);
-
-        if (! $filePath || ! str_starts_with($filePath, realpath($basePath)) || ! file_exists($filePath)) {
-            abort(404);
-        }
-
-        if (! DocumentMetadata::isMarkdown($path)) {
-            abort(400, 'Only markdown documents can be exported as XLSX.');
-        }
-
-        $raw = File::get($filePath);
-        $parsed = DocumentMetadata::parse($raw);
-        $meta = $parsed['meta'];
-        $body = $parsed['body'];
-
-        // Extract tables with their preceding headings
-        $tables = $this->extractTablesFromMarkdown($body);
-
-        if (empty($tables)) {
-            abort(400, 'No tables found in this document.');
-        }
-
         $spreadsheet = new Spreadsheet();
         $spreadsheet->removeSheetByIndex(0);
 
         foreach ($tables as $i => $table) {
             $sheet = $spreadsheet->createSheet();
-            // Sheet names max 31 chars, no special chars
             $sheetName = substr(preg_replace('/[\\\\\/\?\*\[\]\:]/', '', $table['heading'] ?? 'Table ' . ($i + 1)), 0, 31);
             $sheet->setTitle($sheetName ?: 'Table ' . ($i + 1));
 
             foreach ($table['rows'] as $rowIdx => $row) {
                 foreach ($row as $colIdx => $cell) {
-                    $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIdx + 1);
+                    $colLetter = Coordinate::stringFromColumnIndex($colIdx + 1);
                     $cellRef = $sheet->getCell($colLetter . ($rowIdx + 1));
-                    // Strip markdown formatting
                     $cleanCell = $cell;
                     $cleanCell = preg_replace('/\[\[([A-Z]+-\d+)\]\]/', '$1', $cleanCell);
                     $cleanCell = preg_replace('/\*\*(.+?)\*\*/', '$1', $cleanCell);
@@ -201,59 +304,37 @@ class ExportController extends Controller
                 }
             }
 
-            // Style header row
             if (count($table['rows']) > 0) {
                 $lastCol = count($table['rows'][0]);
-                $lastColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastCol);
+                $lastColLetter = Coordinate::stringFromColumnIndex($lastCol);
 
-                // Header row styling
-                $headerRange = 'A1:' . $lastColLetter . '1';
-                $sheet->getStyle($headerRange)->applyFromArray([
+                $sheet->getStyle('A1:' . $lastColLetter . '1')->applyFromArray([
                     'font' => ['bold' => true, 'size' => 10, 'color' => ['rgb' => '334155']],
                     'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'F1F5F9']],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'CBD5E1']]],
                     'alignment' => ['vertical' => Alignment::VERTICAL_TOP, 'wrapText' => true],
                 ]);
 
-                // Data rows styling
                 $lastRow = count($table['rows']);
                 if ($lastRow > 1) {
-                    $dataRange = 'A2:' . $lastColLetter . $lastRow;
-                    $sheet->getStyle($dataRange)->applyFromArray([
+                    $sheet->getStyle('A2:' . $lastColLetter . $lastRow)->applyFromArray([
                         'font' => ['size' => 10],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'E2E8F0']]],
                         'alignment' => ['vertical' => Alignment::VERTICAL_TOP, 'wrapText' => true],
                     ]);
                 }
 
-                // Auto-size columns (with max width)
                 for ($col = 1; $col <= $lastCol; $col++) {
-                    $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-                    $sheet->getColumnDimension($colLetter)->setAutoSize(true);
+                    $sheet->getColumnDimension(Coordinate::stringFromColumnIndex($col))->setAutoSize(true);
                 }
             }
         }
 
         $spreadsheet->setActiveSheetIndex(0);
-
-        $filename = ($meta['id'] ?? 'document') . ' - ' . ($meta['title'] ?? basename($path, '.md')) . '.xlsx';
-
-        $tmpFile = storage_path('app/qms-export/xlsx-' . uniqid() . '.xlsx');
-        if (! is_dir(dirname($tmpFile))) {
-            @mkdir(dirname($tmpFile), 0755, true);
-        }
-
         $writer = new Xlsx($spreadsheet);
-        $writer->save($tmpFile);
-
-        return response()->download($tmpFile, $filename, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        ])->deleteFileAfterSend(true);
+        $writer->save($outputPath);
     }
 
-    /**
-     * Parse markdown body and extract all tables with their nearest preceding heading.
-     */
     private function extractTablesFromMarkdown(string $markdown): array
     {
         $lines = explode("\n", $markdown);
@@ -262,15 +343,12 @@ class ExportController extends Controller
         $currentTable = null;
 
         foreach ($lines as $line) {
-            // Track headings
             if (preg_match('/^#{1,4}\s+(.+)$/', $line, $m)) {
                 $currentHeading = trim($m[1]);
                 continue;
             }
 
-            // Detect table rows (lines starting with |)
             if (preg_match('/^\|(.+)\|$/', trim($line))) {
-                // Skip separator rows (|---|---|)
                 if (preg_match('/^\|[\s\-\|:]+\|$/', trim($line))) {
                     continue;
                 }
@@ -286,7 +364,6 @@ class ExportController extends Controller
 
                 $currentTable['rows'][] = $cells;
             } else {
-                // Non-table line — save current table if we have one
                 if ($currentTable !== null && count($currentTable['rows']) > 1) {
                     $tables[] = $currentTable;
                 }
@@ -294,7 +371,6 @@ class ExportController extends Controller
             }
         }
 
-        // Don't forget the last table
         if ($currentTable !== null && count($currentTable['rows']) > 1) {
             $tables[] = $currentTable;
         }
@@ -302,95 +378,11 @@ class ExportController extends Controller
         return $tables;
     }
 
-    /**
-     * Count tables in a markdown document (used by the view to show/hide XLSX button).
-     */
-    public static function countTables(string $path): int
+    private function addDirectoryToZip(ZipArchive $zip, string $dir, string $prefix): void
     {
-        $filePath = base_path('qms/documents/' . $path);
-        if (! file_exists($filePath) || ! DocumentMetadata::isMarkdown($path)) {
-            return 0;
+        foreach (File::allFiles($dir) as $file) {
+            $relativePath = $prefix ? $prefix . '/' . $file->getRelativePathname() : $file->getRelativePathname();
+            $zip->addFile($file->getPathname(), $relativePath);
         }
-
-        $raw = File::get($filePath);
-        $parsed = DocumentMetadata::parse($raw);
-        $lines = explode("\n", $parsed['body']);
-
-        $tableCount = 0;
-        $inTable = false;
-        $rowCount = 0;
-
-        foreach ($lines as $line) {
-            if (preg_match('/^\|(.+)\|$/', trim($line))) {
-                if (! preg_match('/^\|[\s\-\|:]+\|$/', trim($line))) {
-                    if (! $inTable) {
-                        $inTable = true;
-                        $rowCount = 0;
-                    }
-                    $rowCount++;
-                }
-            } else {
-                if ($inTable && $rowCount > 1) {
-                    $tableCount++;
-                }
-                $inTable = false;
-                $rowCount = 0;
-            }
-        }
-
-        if ($inTable && $rowCount > 1) {
-            $tableCount++;
-        }
-
-        return $tableCount;
-    }
-
-    public function bulkExport(Request $request)
-    {
-        $category = $request->input('category');
-
-        // Delete any previous exports for this user
-        $old = DocumentExport::where('user_id', $request->user()->id)->get();
-        foreach ($old as $o) {
-            if ($o->path && file_exists($o->path)) {
-                @unlink($o->path);
-            }
-            $o->delete();
-        }
-
-        $export = DocumentExport::create([
-            'user_id' => $request->user()->id,
-            'category' => $category ?: null,
-            'status' => 'pending',
-        ]);
-
-        GenerateBulkExportJob::dispatch($export->id);
-
-        return response()->json(['id' => $export->id]);
-    }
-
-    public function bulkExportStatus(DocumentExport $export)
-    {
-        return response()->json([
-            'status' => $export->status,
-            'total' => $export->total_docs,
-            'processed' => $export->processed_docs,
-            'error' => $export->error,
-        ]);
-    }
-
-    public function bulkExportDownload(DocumentExport $export)
-    {
-        if ($export->status !== 'ready' || ! $export->path || ! file_exists($export->path)) {
-            abort(404);
-        }
-
-        $path = $export->path;
-        $filename = $export->filename;
-
-        // Delete export record and file after download
-        $export->delete();
-
-        return response()->download($path, $filename)->deleteFileAfterSend(true);
     }
 }
