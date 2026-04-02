@@ -6,7 +6,20 @@
     <style>
         @page {
             size: A4;
-            margin: 18mm 16mm 28mm 16mm;
+            margin: 18mm 16mm 24mm 16mm;
+
+            @bottom-left {
+                content: "{{ $meta['id'] ?? '' }} — {{ str_replace('"', '', $meta['title'] ?? 'Document') }} — v{{ $meta['version'] ?? '1.0' }}";
+                font-size: 7.5px;
+                color: #9ca3af;
+                font-family: 'Ubuntu', 'DejaVu Sans', Arial, sans-serif;
+            }
+            @bottom-right {
+                content: "Therapeak B.V. — Confidential";
+                font-size: 7.5px;
+                color: #9ca3af;
+                font-family: 'Ubuntu', 'DejaVu Sans', Arial, sans-serif;
+            }
         }
 
         @font-face {
@@ -225,34 +238,11 @@
         .page-break { page-break-before: always; }
         .no-break { page-break-inside: avoid; }
 
-        /* ── Page footer (repeats on every page) ── */
-        .page-footer {
-            position: fixed;
-            top: 265mm;
-            left: 0;
-            right: 0;
-            font-size: 7.5px;
-            color: #9ca3af;
-            padding: 6px 0;
-            border-top: 1px solid #e5e7eb;
-        }
-        .page-footer .doc-ref {
-            float: left;
-        }
-        .page-footer .confidential {
-            float: right;
-        }
 
 
     </style>
 </head>
 <body>
-    {{-- Footer (repeats on every page via position:fixed) --}}
-    <div class="page-footer">
-        <span class="doc-ref">{{ $meta['id'] ?? '' }} — {{ $meta['title'] ?? 'Document' }} — v{{ $meta['version'] ?? '1.0' }}</span>
-        <span class="confidential">Therapeak B.V. — Confidential</span>
-    </div>
-
     {{-- Document header (first page) --}}
     <div class="doc-header">
         <div class="doc-header-title">
