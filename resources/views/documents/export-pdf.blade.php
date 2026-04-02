@@ -6,23 +6,27 @@
     <style>
         @page {
             size: A4;
-            margin: 18mm 16mm 11mm 16mm;
+            margin: 18mm 16mm 16mm 16mm;
 
+            @bottom-center {
+                content: "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
+                font-size: 4px;
+                color: #e5e7eb;
+                vertical-align: top;
+            }
             @bottom-left {
                 content: "{{ $meta['id'] ?? '' }} — {{ str_replace('"', '', $meta['title'] ?? 'Document') }} — v{{ $meta['version'] ?? '1.0' }}";
                 font-size: 7.5px;
                 color: #9ca3af;
                 font-family: 'Ubuntu', 'DejaVu Sans', Arial, sans-serif;
-                border-top: 1px solid #e5e7eb;
-                margin-top: auto;
+                vertical-align: bottom;
             }
             @bottom-right {
                 content: "Therapeak B.V. — Confidential";
                 font-size: 7.5px;
                 color: #9ca3af;
                 font-family: 'Ubuntu', 'DejaVu Sans', Arial, sans-serif;
-                border-top: 1px solid #e5e7eb;
-                margin-top: auto;
+                vertical-align: bottom;
             }
         }
 
