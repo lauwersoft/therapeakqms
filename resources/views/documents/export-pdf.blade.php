@@ -22,9 +22,13 @@
                 padding-top: 7px;
             }
             @bottom-center {
-                content: "";
+                content: "Page " counter(page);
+                font-size: 7.5px;
+                color: #9ca3af;
+                font-family: 'Ubuntu', 'DejaVu Sans', Arial, sans-serif;
                 border-top: 0.5pt solid #d1d5db;
                 vertical-align: top;
+                padding-top: 7px;
             }
             @bottom-right {
                 content: "Therapeak B.V. \2014  Confidential";
