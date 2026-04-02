@@ -127,16 +127,9 @@ class ExportController extends Controller
         $process->run();
 
         if (! file_exists($pdfFile)) {
-            $error = $process->getErrorOutput();
-            $output = $process->getOutput();
-            $exitCode = $process->getExitCode();
             @unlink($srcHtmlFile);
             @unlink($htmlFile);
-            return response(
-                "Exit code: {$exitCode}\n\nSTDERR:\n{$error}\n\nSTDOUT:\n{$output}",
-                500,
-                ['Content-Type' => 'text/plain']
-            );
+            abort(500, 'PDF generation failed. Check server logs.');
         }
 
         $pdfContent = file_get_contents($pdfFile);
