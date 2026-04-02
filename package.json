@@ -21,7 +21,6 @@
     },
     "dependencies": {
         "easymde": "^2.20.0",
-        "puppeteer": "^24.40.0",
         "sortablejs": "^1.15.7"
     }
 }
