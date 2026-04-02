@@ -72,16 +72,16 @@ class ExportController extends Controller
         // Generate PDF with Browsershot
         $filename = ($meta['id'] ?? 'document') . ' - ' . ($meta['title'] ?? basename($path, '.md')) . '.pdf';
 
-        // Tell Puppeteer where to find Chrome
         $chromePath = $this->findChrome();
-        if ($chromePath) {
-            putenv('PUPPETEER_EXECUTABLE_PATH=' . $chromePath);
+
+        if (! $chromePath) {
+            abort(500, 'Chrome/Chromium not found. Run: npx puppeteer browsers install chrome');
         }
 
         $pdfContent = Browsershot::html($exportHtml)
             ->setNodeBinary(trim(shell_exec('which node') ?: '/usr/bin/node'))
             ->setNpmBinary(trim(shell_exec('which npm') ?: '/usr/bin/npm'))
-            ->setChromePath($chromePath ?? '/usr/bin/chromium')
+            ->setChromePath($chromePath)
             ->format('A4')
             ->margins(20, 15, 25, 15)
             ->showBackground()
@@ -106,7 +106,13 @@ class ExportController extends Controller
         foreach (array_unique($homeDirs) as $home) {
             $cacheDir = $home . '/.cache/puppeteer';
             if (is_dir($cacheDir)) {
+                // Match any chrome binary in the cache (linux, linux_arm, etc.)
                 $chromes = glob($cacheDir . '/chrome/*/chrome-linux*/chrome');
+                if (! empty($chromes)) {
+                    return end($chromes);
+                }
+                // Also try chrome-headless-shell
+                $chromes = glob($cacheDir . '/chrome-headless-shell/*/chrome-headless-shell-linux*/chrome-headless-shell');
                 if (! empty($chromes)) {
                     return end($chromes);
                 }
