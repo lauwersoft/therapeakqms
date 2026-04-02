@@ -41,6 +41,19 @@ class ExportController extends Controller
         $converter = new MarkdownConverter($environment);
         $html = $converter->convert($parsed['body'])->getContent();
 
+        // Extract mermaid blocks BEFORE resolving links (links corrupt mermaid syntax)
+        $mermaidBlocks = [];
+        $html = preg_replace_callback(
+            '/<pre><code class="language-mermaid">(.*?)<\/code><\/pre>/s',
+            function ($matches) use (&$mermaidBlocks) {
+                $placeholder = '<!--MERMAID_' . count($mermaidBlocks) . '-->';
+                $mermaidCode = html_entity_decode(trim($matches[1]), ENT_QUOTES | ENT_HTML5);
+                $mermaidBlocks[] = $mermaidCode;
+                return $placeholder;
+            },
+            $html
+        );
+
         // Resolve cross-references and regulatory links
         $docIndex = DocumentMetadata::index($basePath);
         $idMap = DocumentMetadata::idMap($docIndex);
@@ -55,34 +68,25 @@ class ExportController extends Controller
             return '<' . $tag . ' id="' . $id . '">' . $m[2] . '</' . $tag . '>';
         }, $html);
 
-        // Convert mermaid blocks to rendered images via mermaid.ink
-        $html = preg_replace_callback(
-            '/<pre><code class="language-mermaid">(.*?)<\/code><\/pre>/s',
-            function ($matches) {
-                $mermaidCode = html_entity_decode(trim($matches[1]), ENT_QUOTES | ENT_HTML5);
-                // Strip any resolved [[DOC-ID]] links back to plain text for mermaid
-                $mermaidCode = preg_replace('/<a [^>]*>([^<]*)<\/a>/', '$1', $mermaidCode);
-                $mermaidCode = strip_tags($mermaidCode);
+        // Render mermaid blocks to images and put them back
+        foreach ($mermaidBlocks as $i => $mermaidCode) {
+            $encoded = rtrim(strtr(base64_encode($mermaidCode), '+/', '-_'), '=');
+            $imgUrl = 'https://mermaid.ink/img/' . $encoded . '?type=png&bgColor=white';
 
-                // mermaid.ink uses base64url encoding
-                $encoded = rtrim(strtr(base64_encode($mermaidCode), '+/', '-_'), '=');
-                $imgUrl = 'https://mermaid.ink/img/' . $encoded . '?type=png&bgColor=white';
+            $replacement = '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin: 12px 0; font-size: 9px; color: #64748b; text-align: center;">[Diagram could not be rendered]</div>';
 
-                // Download the image and embed as base64 data URI
-                try {
-                    $response = Http::timeout(60)->get($imgUrl);
-                    if ($response->successful() && strlen($response->body()) > 100) {
-                        $imageData = base64_encode($response->body());
-                        return '<div style="text-align: center; margin: 16px 0;"><img src="data:image/png;base64,' . $imageData . '" style="max-width: 100%; height: auto;" /></div>';
-                    }
-                } catch (\Throwable $e) {
-                    // Fall through to placeholder
+            try {
+                $response = Http::timeout(60)->get($imgUrl);
+                if ($response->successful() && strlen($response->body()) > 100) {
+                    $imageData = base64_encode($response->body());
+                    $replacement = '<div style="text-align: center; margin: 16px 0;"><img src="data:image/png;base64,' . $imageData . '" style="max-width: 100%; height: auto;" /></div>';
                 }
+            } catch (\Throwable $e) {
+                // Keep placeholder
+            }
 
-                return '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin: 12px 0; font-size: 9px; color: #64748b; text-align: center;">[Diagram could not be rendered]</div>';
-            },
-            $html
-        );
+            $html = str_replace('<!--MERMAID_' . $i . '-->', $replacement, $html);
+        }
 
         // Render the export template
         $exportHtml = view('documents.export-pdf', [
