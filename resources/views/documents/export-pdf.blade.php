@@ -6,7 +6,7 @@
     <style>
         @page {
             size: A4;
-            margin: 18mm 16mm 14mm 16mm;
+            margin: 18mm 16mm 12mm 16mm;
 
             @top-left { content: ""; }
             @top-center { content: ""; }
@@ -19,7 +19,7 @@
                 font-family: 'Ubuntu', 'DejaVu Sans', Arial, sans-serif;
                 vertical-align: top;
                 border-top: 0.5pt solid #d1d5db;
-                padding-top: 5px;
+                padding-top: 7px;
             }
             @bottom-center {
                 content: "";
@@ -33,7 +33,7 @@
                 font-family: 'Ubuntu', 'DejaVu Sans', Arial, sans-serif;
                 vertical-align: top;
                 border-top: 0.5pt solid #d1d5db;
-                padding-top: 5px;
+                padding-top: 7px;
                 text-align: right;
             }
         }
