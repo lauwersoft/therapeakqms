@@ -98,7 +98,7 @@ A change is significant if it could affect the safety or performance of the devi
 
 | Change | Why Significant |
 |--------|----------------|
-| New AI model (e.g., switching from Claude Sonnet to a different model family) | Core therapeutic engine changes; may affect output quality, safety behavior, and clinical performance |
+| AI model change where safety verification tests fail | New model does not demonstrate equivalent safety and performance |
 | Changes to intended purpose | Alters the fundamental basis of the CE marking and conformity assessment |
 | New therapeutic claims | Requires updated clinical evidence and risk assessment |
 | Major architecture changes | May affect data flow, security, reliability, and validated state |
@@ -153,43 +153,45 @@ Non-significant changes follow a streamlined process:
 
 ### 4.4 Predetermined Change Control Plan for AI Model Updates
 
-Switching between Claude model versions (e.g., Claude Sonnet 4.5 to Claude Sonnet 4.6, or minor model updates within the same family) is a recurring change that is managed under a predetermined change control plan. This plan pre-authorizes certain AI model changes under defined conditions, avoiding the need for full significant change evaluation each time.
+AI model changes are a recurring change managed under a predetermined change control plan. This plan pre-authorizes AI model changes — including switching providers — under defined conditions, avoiding the need for full significant change evaluation each time.
 
 #### 4.4.1 Scope of Predetermined Changes
 
 The following AI model changes are covered by this plan:
 
-- Updating to a newer version within the same Claude model family (e.g., Sonnet 4.5 to Sonnet 4.6)
-- Switching between pre-approved Anthropic Claude fallback models (as documented in the fallback configuration)
+- Updating to a newer version within the same model family (e.g., Sonnet 4.5 to Sonnet 4.6)
+- Switching between fallback models (as documented in the fallback configuration)
+- Switching to a different AI model provider (e.g., Anthropic to OpenAI), provided all conditions in Section 4.4.2 are met
 - Minor parameter adjustments (max tokens, temperature) within pre-defined ranges
 
 #### 4.4.2 Conditions for Predetermined Changes
 
 A predetermined AI model change may proceed without full significant change evaluation IF all of the following conditions are met:
 
-1. The new model is from the same provider (Anthropic Claude)
-2. The same system prompts and therapeutic instructions are used
-3. Initial testing with representative conversation scenarios shows equivalent or better therapeutic quality
-4. No degradation in safety behavior (crisis handling, role enforcement, content restrictions)
-5. Post-deployment monitoring for the first 7 days shows no increase in ChatDebugFlags or user complaints
+1. The same therapeutic instructions and safety configuration are used
+2. Initial testing with representative conversation scenarios shows equivalent or better therapeutic quality
+3. Safety verification tests (crisis handling, role enforcement, content restrictions) all pass with the new model
+4. No degradation in safety behavior during testing
+5. Post-deployment monitoring for the first 7 days shows no increase in session quality flags or user complaints
 
 #### 4.4.3 Predetermined Change Process
 
 1. Document the planned model change in [[FM-003]] referencing this predetermined change control plan
-2. Run the standard test conversation set (defined in verification documentation)
-3. Verify all conditions in Section 4.4.2 are met
-4. Deploy to production (may use A/B testing with limited user exposure first)
-5. Monitor for 7 days post-deployment
-6. If any condition is not met, escalate to full significant change evaluation (Section 4.3.2)
-7. Close the change request with monitoring results
+2. Run safety verification tests (TS-012, TS-013, TS-015 from [[TST-001]])
+3. Run representative conversation scenarios
+4. Verify all conditions in Section 4.4.2 are met
+5. Deploy to production (may use A/B testing with limited user exposure first)
+6. Monitor for 7 days post-deployment
+7. If any condition is not met, escalate to full significant change evaluation (Section 4.3.2)
+8. Close the change request with monitoring results
 
 #### 4.4.4 Changes NOT Covered
 
 The following are NOT covered by the predetermined plan and require full significant change evaluation:
 
-- Switching to a non-Anthropic model (e.g., GPT, Gemini, Llama)
-- Fundamental changes to the system prompt or therapeutic approach
+- Fundamental changes to the therapeutic approach or intended purpose
 - Changes to the AI pipeline architecture (e.g., new intermediary service)
+- Changes where the safety verification tests do not pass
 
 ### 4.5 Implementation and Verification
 
