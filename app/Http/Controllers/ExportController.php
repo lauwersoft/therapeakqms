@@ -108,15 +108,16 @@ class ExportController extends Controller
         $htmlFile = $tmpDir . '/doc-' . $uid . '.html';
         $pdfFile = $tmpDir . '/doc-' . $uid . '.pdf';
         file_put_contents($htmlFile, $exportHtml);
+        chmod($htmlFile, 0666);
 
-        // Use snap run chromium to generate PDF
+        // Run chromium as sarp user (snap requires a real user, not www-data)
         $process = new Process([
+            'sudo', '-u', 'sarp',
             'snap', 'run', 'chromium',
             '--headless',
             '--no-sandbox',
             '--disable-gpu',
             '--disable-software-rasterizer',
-            '--run-all-compositor-stages-before-draw',
             '--print-to-pdf=' . $pdfFile,
             '--no-pdf-header-footer',
             'file://' . $htmlFile,
