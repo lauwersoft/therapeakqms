@@ -99,8 +99,8 @@ class ExportController extends Controller
 
         $filename = ($meta['id'] ?? 'document') . ' - ' . ($meta['title'] ?? basename($path, '.md')) . '.pdf';
 
-        // /var/www/.qms-export — writable by www-data and accessible by snap chromium
-        $tmpDir = '/var/www/.qms-export';
+        // Use /home/sarp/.qms-export — snap chromium (running as sarp) can write here
+        $tmpDir = '/home/sarp/.qms-export';
         if (! is_dir($tmpDir)) {
             @mkdir($tmpDir, 0777, true);
         }
