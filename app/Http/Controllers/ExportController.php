@@ -70,9 +70,11 @@ class ExportController extends Controller
 
         // Render mermaid blocks to images and put them back
         foreach ($mermaidBlocks as $i => $mermaidCode) {
-            $wrappedCode = "%%{init: {'theme': 'neutral', 'themeVariables': {'fontSize': '12px'}}}%%\n" . $mermaidCode;
+            // Replace \n with <br/> for mermaid.ink line breaks
+            $cleanCode = str_replace('\n', '<br/>', $mermaidCode);
+            $wrappedCode = "%%{init: {'theme': 'neutral', 'themeVariables': {'fontSize': '12px'}}}%%\n" . $cleanCode;
             $encoded = rtrim(strtr(base64_encode($wrappedCode), '+/', '-_'), '=');
-            $imgUrl = 'https://mermaid.ink/img/' . $encoded . '?type=png&bgColor=white&width=800';
+            $imgUrl = 'https://mermaid.ink/img/' . $encoded . '?type=png&bgColor=white&width=700';
 
             $replacement = '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin: 12px 0; font-size: 9px; color: #64748b; text-align: center;">[Diagram could not be rendered]</div>';
 
@@ -80,7 +82,7 @@ class ExportController extends Controller
                 $response = Http::timeout(60)->get($imgUrl);
                 if ($response->successful() && strlen($response->body()) > 100) {
                     $imageData = base64_encode($response->body());
-                    $replacement = '<div style="text-align: center; margin: 16px 0;"><img src="data:image/png;base64,' . $imageData . '" style="max-width: 100%; height: auto;" /></div>';
+                    $replacement = '<div style="text-align: center; margin: 16px 0; page-break-inside: avoid;"><img src="data:image/png;base64,' . $imageData . '" style="max-width: 100%; max-height: 700px; height: auto;" /></div>';
                 }
             } catch (\Throwable $e) {
                 // Keep placeholder
