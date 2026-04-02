@@ -225,33 +225,9 @@
         .page-break { page-break-before: always; }
         .no-break { page-break-inside: avoid; }
 
-        /* ── Page footer ── */
-        .page-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            text-align: center;
-            font-size: 8px;
-            color: #9ca3af;
-            padding: 8px 20mm;
-            border-top: 1px solid #e5e7eb;
-        }
-        .page-footer .doc-ref {
-            float: left;
-        }
-        .page-footer .page-num {
-            float: right;
-        }
     </style>
 </head>
 <body>
-    {{-- Fixed footer on every page --}}
-    <div class="page-footer">
-        <span class="doc-ref">{{ $meta['id'] ?? '' }} — {{ $meta['title'] ?? 'Document' }} — v{{ $meta['version'] ?? '1.0' }}</span>
-        <span class="page-num">Therapeak B.V. — Confidential</span>
-    </div>
-
     {{-- Document header (first page) --}}
     <div class="doc-header">
         <div class="doc-header-title">
