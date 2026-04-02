@@ -99,10 +99,10 @@ class ExportController extends Controller
 
         $filename = ($meta['id'] ?? 'document') . ' - ' . ($meta['title'] ?? basename($path, '.md')) . '.pdf';
 
-        // Use /home/sarp/.qms-export — snap chromium (running as sarp) can write here
+        // /home/sarp/.qms-export — www-data (in sarp group) can write, snap chromium can read/write
         $tmpDir = '/home/sarp/.qms-export';
         if (! is_dir($tmpDir)) {
-            @mkdir($tmpDir, 0777, true);
+            @mkdir($tmpDir, 0770, true);
         }
         $uid = uniqid();
         $htmlFile = $tmpDir . '/doc-' . $uid . '.html';
