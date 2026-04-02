@@ -123,35 +123,21 @@ class ExportController extends Controller
         ]);
         $process->setTimeout(120);
 
-        try {
-            $process->run();
+        $process->run();
 
-            if (! file_exists($pdfFile)) {
-                // Fallback to dompdf if chromium fails
-                return $this->dompdfFallback($exportHtml, $filename);
-            }
-
-            $pdfContent = file_get_contents($pdfFile);
-
-            return response($pdfContent)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
-        } catch (\Throwable $e) {
-            return $this->dompdfFallback($exportHtml, $filename);
-        } finally {
+        if (! file_exists($pdfFile)) {
+            $error = $process->getErrorOutput();
             @unlink($htmlFile);
-            @unlink($pdfFile);
-            @rmdir($tmpDir);
+            abort(500, 'PDF generation failed: ' . substr($error, 0, 500));
         }
-    }
 
-    private function dompdfFallback(string $html, string $filename)
-    {
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($html)
-            ->setPaper('a4')
-            ->setOption('isRemoteEnabled', true)
-            ->setOption('defaultFont', 'sans-serif');
+        $pdfContent = file_get_contents($pdfFile);
 
-        return $pdf->download($filename);
+        @unlink($htmlFile);
+        @unlink($pdfFile);
+
+        return response($pdfContent)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 }
