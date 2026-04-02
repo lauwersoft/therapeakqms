@@ -4,15 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $meta['id'] ?? '' }} — {{ $meta['title'] ?? 'Document' }}</title>
-    <script type="module">
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({
-            startOnLoad: true,
-            theme: 'neutral',
-            flowchart: { curve: 'basis', nodeSpacing: 30, rankSpacing: 40 },
-            themeVariables: { fontFamily: 'Arial, Helvetica, sans-serif' }
-        });
-    </script>
     <style>
         @page {
             size: A4;

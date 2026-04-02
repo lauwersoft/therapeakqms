@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Services\DocumentMetadata;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\Table\TableExtension;
 use League\CommonMark\MarkdownConverter;
-use Spatie\Browsershot\Browsershot;
 
 class ExportController extends Controller
 {
@@ -55,10 +55,27 @@ class ExportController extends Controller
             return '<' . $tag . ' id="' . $id . '">' . $m[2] . '</' . $tag . '>';
         }, $html);
 
-        // Convert mermaid code blocks to renderable divs
-        $html = preg_replace(
+        // Convert mermaid blocks to rendered images via mermaid.ink
+        $html = preg_replace_callback(
             '/<pre><code class="language-mermaid">(.*?)<\/code><\/pre>/s',
-            '<div class="mermaid">$1</div>',
+            function ($matches) {
+                $mermaidCode = html_entity_decode(trim($matches[1]), ENT_QUOTES | ENT_HTML5);
+                $encoded = base64_encode($mermaidCode);
+                $imgUrl = 'https://mermaid.ink/img/' . $encoded . '?type=png&bgColor=white';
+
+                // Download the image and embed as base64 data URI so dompdf can render it
+                try {
+                    $response = Http::timeout(30)->get($imgUrl);
+                    if ($response->successful()) {
+                        $imageData = base64_encode($response->body());
+                        return '<div style="text-align: center; margin: 16px 0;"><img src="data:image/png;base64,' . $imageData . '" style="max-width: 100%; height: auto;" /></div>';
+                    }
+                } catch (\Throwable $e) {
+                    // Fall through to placeholder
+                }
+
+                return '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin: 12px 0; font-size: 9px; color: #64748b; text-align: center;">[Diagram could not be rendered]</div>';
+            },
             $html
         );
 
@@ -69,73 +86,13 @@ class ExportController extends Controller
             'path' => $path,
         ])->render();
 
-        // Generate PDF with Browsershot
         $filename = ($meta['id'] ?? 'document') . ' - ' . ($meta['title'] ?? basename($path, '.md')) . '.pdf';
 
-        $chromePath = $this->findChrome();
+        $pdf = Pdf::loadHTML($exportHtml)
+            ->setPaper('a4')
+            ->setOption('isRemoteEnabled', true)
+            ->setOption('defaultFont', 'sans-serif');
 
-        if (! $chromePath) {
-            abort(500, 'Chrome/Chromium not found. Install chromium or create /usr/local/bin/chromium-headless wrapper.');
-        }
-
-        $pdfContent = Browsershot::html($exportHtml)
-            ->setNodeBinary(trim(shell_exec('which node') ?: '/usr/bin/node'))
-            ->setNpmBinary(trim(shell_exec('which npm') ?: '/usr/bin/npm'))
-            ->setChromePath($chromePath)
-            ->noSandbox()
-            ->format('A4')
-            ->margins(20, 15, 25, 15)
-            ->showBackground()
-            ->waitUntilNetworkIdle()
-            ->pdf();
-
-        return response($pdfContent)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
-    }
-
-    private function findChrome(): ?string
-    {
-        // Check common home directories for Puppeteer cache
-        $homeDirs = array_filter([
-            $_SERVER['HOME'] ?? null,
-            posix_getpwuid(posix_getuid())['dir'] ?? null,
-            '/root',
-            '/home/sarp',
-        ]);
-
-        foreach (array_unique($homeDirs) as $home) {
-            $cacheDir = $home . '/.cache/puppeteer';
-            if (is_dir($cacheDir)) {
-                // Match any chrome binary in the cache (linux, linux_arm, etc.)
-                $chromes = glob($cacheDir . '/chrome/*/chrome-linux*/chrome');
-                if (! empty($chromes)) {
-                    return end($chromes);
-                }
-                // Also try chrome-headless-shell
-                $chromes = glob($cacheDir . '/chrome-headless-shell/*/chrome-headless-shell-linux*/chrome-headless-shell');
-                if (! empty($chromes)) {
-                    return end($chromes);
-                }
-            }
-        }
-
-        // Check node_modules (older Puppeteer versions)
-        $puppeteerChrome = base_path('node_modules/puppeteer/.local-chromium');
-        if (is_dir($puppeteerChrome)) {
-            $chromes = glob($puppeteerChrome . '/*/chrome-linux*/chrome');
-            if (! empty($chromes)) {
-                return $chromes[0];
-            }
-        }
-
-        // System Chrome/Chromium (check wrapper first)
-        foreach (['/usr/local/bin/chromium-headless', '/usr/bin/google-chrome', '/usr/bin/chromium-browser', '/usr/bin/chromium', '/snap/bin/chromium'] as $bin) {
-            if (file_exists($bin)) {
-                return $bin;
-            }
-        }
-
-        return null;
+        return $pdf->download($filename);
     }
 }
