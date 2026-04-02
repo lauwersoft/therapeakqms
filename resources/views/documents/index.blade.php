@@ -41,6 +41,16 @@
                                 </svg>
                                 PDF
                             </a>
+                            @if(\App\Http\Controllers\ExportController::countTables($currentPath) > 0)
+                                <a href="{{ route('documents.export-xlsx', ['path' => $currentPath]) }}"
+                                   class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white text-xs rounded-md hover:bg-green-700"
+                                   title="Export tables as XLSX">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                    </svg>
+                                    XLSX
+                                </a>
+                            @endif
                             <a href="{{ route('documents.edit', ['path' => $currentPath]) }}"
                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

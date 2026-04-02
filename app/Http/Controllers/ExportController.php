@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Http;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\Table\TableExtension;
 use League\CommonMark\MarkdownConverter;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Symfony\Component\Process\Process;
 
 class ExportController extends Controller
@@ -142,5 +147,193 @@ class ExportController extends Controller
         return response($pdfContent)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+
+    public function xlsx(Request $request, string $path)
+    {
+        $basePath = base_path('qms/documents');
+        $filePath = realpath($basePath . '/' . $path);
+
+        if (! $filePath || ! str_starts_with($filePath, realpath($basePath)) || ! file_exists($filePath)) {
+            abort(404);
+        }
+
+        if (! DocumentMetadata::isMarkdown($path)) {
+            abort(400, 'Only markdown documents can be exported as XLSX.');
+        }
+
+        $raw = File::get($filePath);
+        $parsed = DocumentMetadata::parse($raw);
+        $meta = $parsed['meta'];
+        $body = $parsed['body'];
+
+        // Extract tables with their preceding headings
+        $tables = $this->extractTablesFromMarkdown($body);
+
+        if (empty($tables)) {
+            abort(400, 'No tables found in this document.');
+        }
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->removeSheetByIndex(0);
+
+        foreach ($tables as $i => $table) {
+            $sheet = $spreadsheet->createSheet();
+            // Sheet names max 31 chars, no special chars
+            $sheetName = substr(preg_replace('/[\\\\\/\?\*\[\]\:]/', '', $table['heading'] ?? 'Table ' . ($i + 1)), 0, 31);
+            $sheet->setTitle($sheetName ?: 'Table ' . ($i + 1));
+
+            foreach ($table['rows'] as $rowIdx => $row) {
+                foreach ($row as $colIdx => $cell) {
+                    $cellRef = $sheet->getCellByColumnAndRow($colIdx + 1, $rowIdx + 1);
+                    // Strip markdown links and formatting
+                    $cleanCell = strip_tags(html_entity_decode($cell));
+                    $cleanCell = preg_replace('/\[\[([A-Z]+-\d+)\]\]/', '$1', $cleanCell);
+                    $cellRef->setValue(trim($cleanCell));
+                }
+            }
+
+            // Style header row
+            if (count($table['rows']) > 0) {
+                $lastCol = count($table['rows'][0]);
+                $lastColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastCol);
+
+                // Header row styling
+                $headerRange = 'A1:' . $lastColLetter . '1';
+                $sheet->getStyle($headerRange)->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 10, 'color' => ['rgb' => '334155']],
+                    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'F1F5F9']],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'CBD5E1']]],
+                    'alignment' => ['vertical' => Alignment::VERTICAL_TOP, 'wrapText' => true],
+                ]);
+
+                // Data rows styling
+                $lastRow = count($table['rows']);
+                if ($lastRow > 1) {
+                    $dataRange = 'A2:' . $lastColLetter . $lastRow;
+                    $sheet->getStyle($dataRange)->applyFromArray([
+                        'font' => ['size' => 10],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'E2E8F0']]],
+                        'alignment' => ['vertical' => Alignment::VERTICAL_TOP, 'wrapText' => true],
+                    ]);
+                }
+
+                // Auto-size columns (with max width)
+                for ($col = 1; $col <= $lastCol; $col++) {
+                    $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+                    $sheet->getColumnDimension($colLetter)->setAutoSize(true);
+                }
+            }
+        }
+
+        $spreadsheet->setActiveSheetIndex(0);
+
+        $filename = ($meta['id'] ?? 'document') . ' - ' . ($meta['title'] ?? basename($path, '.md')) . '.xlsx';
+
+        $tmpFile = storage_path('app/qms-export/xlsx-' . uniqid() . '.xlsx');
+        if (! is_dir(dirname($tmpFile))) {
+            @mkdir(dirname($tmpFile), 0755, true);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($tmpFile);
+
+        return response()->download($tmpFile, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ])->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Parse markdown body and extract all tables with their nearest preceding heading.
+     */
+    private function extractTablesFromMarkdown(string $markdown): array
+    {
+        $lines = explode("\n", $markdown);
+        $tables = [];
+        $currentHeading = null;
+        $currentTable = null;
+
+        foreach ($lines as $line) {
+            // Track headings
+            if (preg_match('/^#{1,4}\s+(.+)$/', $line, $m)) {
+                $currentHeading = trim($m[1]);
+                continue;
+            }
+
+            // Detect table rows (lines starting with |)
+            if (preg_match('/^\|(.+)\|$/', trim($line))) {
+                // Skip separator rows (|---|---|)
+                if (preg_match('/^\|[\s\-\|:]+\|$/', trim($line))) {
+                    continue;
+                }
+
+                $cells = array_map('trim', explode('|', trim($line, '|')));
+
+                if ($currentTable === null) {
+                    $currentTable = [
+                        'heading' => $currentHeading,
+                        'rows' => [],
+                    ];
+                }
+
+                $currentTable['rows'][] = $cells;
+            } else {
+                // Non-table line — save current table if we have one
+                if ($currentTable !== null && count($currentTable['rows']) > 1) {
+                    $tables[] = $currentTable;
+                }
+                $currentTable = null;
+            }
+        }
+
+        // Don't forget the last table
+        if ($currentTable !== null && count($currentTable['rows']) > 1) {
+            $tables[] = $currentTable;
+        }
+
+        return $tables;
+    }
+
+    /**
+     * Count tables in a markdown document (used by the view to show/hide XLSX button).
+     */
+    public static function countTables(string $path): int
+    {
+        $filePath = base_path('qms/documents/' . $path);
+        if (! file_exists($filePath) || ! DocumentMetadata::isMarkdown($path)) {
+            return 0;
+        }
+
+        $raw = File::get($filePath);
+        $parsed = DocumentMetadata::parse($raw);
+        $lines = explode("\n", $parsed['body']);
+
+        $tableCount = 0;
+        $inTable = false;
+        $rowCount = 0;
+
+        foreach ($lines as $line) {
+            if (preg_match('/^\|(.+)\|$/', trim($line))) {
+                if (! preg_match('/^\|[\s\-\|:]+\|$/', trim($line))) {
+                    if (! $inTable) {
+                        $inTable = true;
+                        $rowCount = 0;
+                    }
+                    $rowCount++;
+                }
+            } else {
+                if ($inTable && $rowCount > 1) {
+                    $tableCount++;
+                }
+                $inTable = false;
+                $rowCount = 0;
+            }
+        }
+
+        if ($inTable && $rowCount > 1) {
+            $tableCount++;
+        }
+
+        return $tableCount;
     }
 }
