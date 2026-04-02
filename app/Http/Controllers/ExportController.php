@@ -75,13 +75,14 @@ class ExportController extends Controller
         $chromePath = $this->findChrome();
 
         if (! $chromePath) {
-            abort(500, 'Chrome/Chromium not found. Run: npx puppeteer browsers install chrome');
+            abort(500, 'Chrome/Chromium not found. Install chromium or create /usr/local/bin/chromium-headless wrapper.');
         }
 
         $pdfContent = Browsershot::html($exportHtml)
             ->setNodeBinary(trim(shell_exec('which node') ?: '/usr/bin/node'))
             ->setNpmBinary(trim(shell_exec('which npm') ?: '/usr/bin/npm'))
             ->setChromePath($chromePath)
+            ->noSandbox()
             ->format('A4')
             ->margins(20, 15, 25, 15)
             ->showBackground()
@@ -128,8 +129,8 @@ class ExportController extends Controller
             }
         }
 
-        // System Chrome/Chromium
-        foreach (['/usr/bin/google-chrome', '/usr/bin/chromium-browser', '/usr/bin/chromium', '/snap/bin/chromium'] as $bin) {
+        // System Chrome/Chromium (check wrapper first)
+        foreach (['/usr/local/bin/chromium-headless', '/usr/bin/google-chrome', '/usr/bin/chromium-browser', '/usr/bin/chromium', '/snap/bin/chromium'] as $bin) {
             if (file_exists($bin)) {
                 return $bin;
             }
