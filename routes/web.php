@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/documents/quick-create', [DocumentController::class, 'quickCreate'])->name('documents.quick-create');
     Route::post('/documents/upload', [DocumentController::class, 'upload'])->name('documents.upload');
     Route::get('/documents/download/{path}', [DocumentController::class, 'download'])->where('path', '.*')->name('documents.download');
+    Route::get('/documents/export/{path}', [\App\Http\Controllers\ExportController::class, 'pdf'])->where('path', '.*')->name('documents.export');
     Route::get('/documents/changes', [DocumentController::class, 'changes'])->name('documents.changes');
     Route::post('/documents/publish', [DocumentController::class, 'publish'])->name('documents.publish');
     Route::post('/documents/discard', [DocumentController::class, 'discard'])->name('documents.discard');
