@@ -73,7 +73,7 @@ class ExportController extends Controller
             $cleanCode = str_replace('\n', '<br/>', $mermaidCode);
             $wrappedCode = "%%{init: {'theme': 'neutral', 'themeVariables': {'fontSize': '12px'}}}%%\n" . $cleanCode;
             $encoded = rtrim(strtr(base64_encode($wrappedCode), '+/', '-_'), '=');
-            $imgUrl = 'https://mermaid.ink/img/' . $encoded . '?type=png&bgColor=white&width=700';
+            $imgUrl = 'https://mermaid.ink/img/' . $encoded . '?type=png&bgColor=white&width=2000';
 
             $replacement = '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin: 12px 0; font-size: 9px; color: #64748b; text-align: center;">[Diagram could not be rendered]</div>';
 
