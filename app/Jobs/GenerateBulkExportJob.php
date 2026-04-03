@@ -201,6 +201,8 @@ class GenerateBulkExportJob implements ShouldQueue
         // Resolve links — but rewrite cross-references to point to relative PDF paths
         $html = $this->resolveLinksForPdf($html, $idMap, $pdfPathMap, $path);
         $html = DocumentMetadata::resolveRegulatoryLinks($html);
+        // Rewrite regulatory links for PDF export
+        $html = \App\Http\Controllers\ExportController::rewriteRegulatoryLinksForPdf($html);
 
         // Add IDs to headings
         $html = preg_replace_callback('/<(h[123])>(.*?)<\/\1>/s', function ($m) {
@@ -299,11 +301,13 @@ class GenerateBulkExportJob implements ShouldQueue
         return preg_replace_callback('/\[\[([A-Z]+-\d{3,})\]\]/', function ($matches) use ($pdfPathMap, $dummyBase) {
             $docId = $matches[1];
             if (isset($pdfPathMap[$docId])) {
+                // Target is in the export — make it a clickable link
                 $targetPath = $pdfPathMap[$docId];
                 $fullUrl = $dummyBase . $targetPath;
                 return '<a href="' . htmlspecialchars($fullUrl) . '" style="color: #2563eb; font-weight: 500; text-decoration: none;">'
                     . htmlspecialchars($docId) . '</a>';
             }
+            // Target not in export — just styled text, not clickable
             return '<span style="color: #2563eb; font-weight: 500;">' . htmlspecialchars($docId) . '</span>';
         }, $html);
     }

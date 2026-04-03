@@ -185,6 +185,8 @@ class ExportController extends Controller
         $idMap = DocumentMetadata::idMap($docIndex);
         $html = DocumentMetadata::resolveLinks($html, $idMap);
         $html = DocumentMetadata::resolveRegulatoryLinks($html);
+        // Rewrite regulatory links for PDF export
+        $html = self::rewriteRegulatoryLinksForPdf($html);
 
         // Add IDs to headings
         $html = preg_replace_callback('/<(h[123])>(.*?)<\/\1>/s', function ($m) {
@@ -545,6 +547,49 @@ class ExportController extends Controller
         $export->delete();
 
         return response()->download($path, $filename)->deleteFileAfterSend(true);
+    }
+
+    public static function rewriteRegulatoryLinksForPdf(string $html): string
+    {
+        // EU MDR → EUR-Lex
+        $html = preg_replace(
+            '/href="\/references\/eu-mdr(#[^"]*)?"/i',
+            'href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32017R0745"',
+            $html
+        );
+
+        // MDCG docs → official EU Commission PDFs
+        $mdcgUrls = [
+            'mdcg-2019-11' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2019_11_guidance_qualification_classification_software_en_0.pdf',
+            'mdcg-2019-16' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2019_16_guidance_cybersecurity_en_0.pdf',
+            'mdcg-2020-1' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2020_1_guidance_clinic_eva_md_software_en_0.pdf',
+            'mdcg-2020-3' => 'https://health.ec.europa.eu/system/files/2021-10/mdcg_2020-3_en_0.pdf',
+            'mdcg-2020-5' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2020_5_guidance_clinical_evaluation_equivalence_en_0.pdf',
+        ];
+
+        foreach ($mdcgUrls as $slug => $url) {
+            $html = preg_replace(
+                '/href="\/references\/' . preg_quote($slug, '/') . '(#[^"]*)?"/i',
+                'href="' . $url . '"',
+                $html
+            );
+        }
+
+        // Any remaining MDCG links we don't have URLs for → strip the link, keep text
+        $html = preg_replace(
+            '/<a\s+href="\/references\/mdcg-[^"]*"[^>]*>(.*?)<\/a>/i',
+            '<span style="color: #2563eb; font-weight: 500;">$1</span>',
+            $html
+        );
+
+        // ISO/IEC standards → strip link, keep styled text (paid standards, no public URL)
+        $html = preg_replace(
+            '/<a\s+href="\/references\/iso-[^"]*"[^>]*>(.*?)<\/a>/i',
+            '<span style="color: #2563eb; font-weight: 500;">$1</span>',
+            $html
+        );
+
+        return $html;
     }
 
     public function activeBulkExport(Request $request)
