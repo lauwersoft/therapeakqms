@@ -190,9 +190,7 @@
                 }
             }
             if(hasFilters){
-                // Hide sidebar until scroll is restored to prevent jumping
-                n.style.overflow='hidden';
-                setTimeout(function(){restoreScroll();n.style.overflow='';},150);
+                setTimeout(restoreScroll,150);
             }else{
                 restoreScroll();
             }

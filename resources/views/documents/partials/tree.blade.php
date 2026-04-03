@@ -35,8 +35,8 @@
                     }
                  }"
                  x-show="visibleCount > 0">
-                <div x-data="{ open: sessionStorage.getItem('dir_{{ Str::slug($item['path']) }}') !== 'closed', dirDragOver: false, hadFilter: !!(sessionStorage.getItem('sidebarCategoryFilter')||sessionStorage.getItem('sidebarTypeFilter')||sessionStorage.getItem('sidebarStatusFilter')||sessionStorage.getItem('sidebarCommentFilter')) }"
-                     x-effect="var hasFilter = !!(sidebarSearch || sidebarCategoryFilter || sidebarTypeFilter || sidebarStatusFilter || sidebarCommentFilter); if (hasFilter && !hadFilter) { open = true } else if (!hasFilter && !sidebarSearch) { sessionStorage.setItem('dir_{{ Str::slug($item['path']) }}', open ? 'open' : 'closed') } hadFilter = hasFilter"
+                <div x-data="{ open: sessionStorage.getItem('dir_{{ Str::slug($item['path']) }}') !== 'closed', dirDragOver: false }"
+                     x-effect="sessionStorage.setItem('dir_{{ Str::slug($item['path']) }}', open ? 'open' : 'closed')"
                      @dirs-collapse.window="open = false; sessionStorage.setItem('dir_{{ Str::slug($item['path']) }}', 'closed')"
                      @dirs-expand.window="open = true; sessionStorage.setItem('dir_{{ Str::slug($item['path']) }}', 'open')">
                     <div class="group flex items-center gap-0.5">
