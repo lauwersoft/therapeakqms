@@ -464,83 +464,46 @@ class ExportController extends Controller
         return $tableCount;
     }
 
-    public function formRecordsZip(Request $request, string $formId)
+    public function formRecordsExport(Request $request, string $formId)
     {
-        $basePath = base_path('qms/records');
-        $records = [];
+        $dateFilter = $request->input('date_filter');
 
-        if (is_dir($basePath)) {
-            foreach (File::allFiles($basePath) as $file) {
-                if (! str_ends_with($file->getFilename(), '.rec.json')) continue;
-                $data = @json_decode(File::get($file->getPathname()), true);
-                if (! is_array($data) || ($data['form_id'] ?? '') !== $formId) continue;
-                $records[] = ['filename' => $file->getFilename(), 'data' => $data];
-            }
+        $old = DocumentExport::where('user_id', $request->user()->id)->get();
+        foreach ($old as $o) {
+            if ($o->path && file_exists($o->path)) @unlink($o->path);
+            $o->delete();
         }
 
-        if (empty($records)) abort(404, 'No records found for this form.');
+        $export = DocumentExport::create([
+            'user_id' => $request->user()->id,
+            'category' => 'records:' . $formId . ($dateFilter ? ':' . $dateFilter : ''),
+            'status' => 'pending',
+        ]);
 
-        $tmpDir = storage_path('app/qms-export/records-' . uniqid());
-        @mkdir($tmpDir, 0755, true);
+        \App\Jobs\GenerateRecordExportJob::dispatch($export->id, $formId, (int) $dateFilter);
 
-        $snapDir = '/home/sarp/snap/chromium/common/qms-export';
-        $storageDir = storage_path('app/qms-export');
+        return response()->json(['id' => $export->id]);
+    }
 
-        foreach ($records as $rec) {
-            $data = $rec['data'];
-            $id = $data['id'] ?? pathinfo($rec['filename'], PATHINFO_FILENAME);
-            $title = $data['title'] ?? $id;
-            $safeName = preg_replace('/[\/\\\\:*?"<>|]/', '', $id . ' - ' . $title) . '.pdf';
+    public function recordExportStatus(DocumentExport $export)
+    {
+        return response()->json([
+            'status' => $export->status,
+            'total' => $export->total_docs,
+            'processed' => $export->processed_docs,
+            'error' => $export->error,
+        ]);
+    }
 
-            $exportHtml = view('records.export-pdf', [
-                'record' => $data,
-                'filename' => $rec['filename'],
-            ])->render();
+    public function recordExportDownload(DocumentExport $export)
+    {
+        if ($export->status !== 'ready' || ! $export->path || ! file_exists($export->path)) abort(404);
 
-            $uid = uniqid();
-            $srcHtmlFile = $storageDir . '/rec-' . $uid . '.html';
-            $htmlFile = $snapDir . '/rec-' . $uid . '.html';
-            $pdfFile = $snapDir . '/rec-' . $uid . '.pdf';
+        $path = $export->path;
+        $filename = $export->filename;
+        $export->delete();
 
-            file_put_contents($srcHtmlFile, $exportHtml);
-
-            $process = new Process([
-                'sudo', '-u', 'sarp', 'bash', '-c',
-                'cp ' . escapeshellarg($srcHtmlFile) . ' ' . escapeshellarg($htmlFile) .
-                ' && snap run chromium --headless --no-sandbox --disable-gpu --disable-software-rasterizer' .
-                ' --print-to-pdf=' . escapeshellarg($pdfFile) .
-                ' --no-pdf-header-footer' .
-                ' file://' . escapeshellarg($htmlFile),
-            ]);
-            $process->setTimeout(120);
-            $process->run();
-
-            if (file_exists($pdfFile)) {
-                copy($pdfFile, $tmpDir . '/' . $safeName);
-            }
-
-            @unlink($srcHtmlFile);
-            @unlink($htmlFile);
-            @unlink($pdfFile);
-        }
-
-        // Zip
-        $formTitle = $records[0]['data']['form_title'] ?? $formId;
-        $zipFilename = $formId . ' - ' . $formTitle . ' Records.zip';
-        $zipPath = storage_path('app/qms-export/records-' . $formId . '.zip');
-
-        $zip = new \ZipArchive();
-        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
-            abort(500, 'Could not create ZIP.');
-        }
-        foreach (File::allFiles($tmpDir) as $file) {
-            $zip->addFile($file->getPathname(), $file->getFilename());
-        }
-        $zip->close();
-
-        File::deleteDirectory($tmpDir);
-
-        return response()->download($zipPath, $zipFilename)->deleteFileAfterSend(true);
+        return response()->download($path, $filename)->deleteFileAfterSend(true);
     }
 
     public function activeBulkExport(Request $request)

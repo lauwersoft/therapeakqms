@@ -41,7 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/documents/export/{path}', [\App\Http\Controllers\ExportController::class, 'pdf'])->where('path', '.*')->name('documents.export');
     Route::get('/documents/export-form/{path}', [\App\Http\Controllers\ExportController::class, 'formPdf'])->where('path', '.*')->name('documents.export-form');
     Route::get('/records/export/{filename}', [\App\Http\Controllers\ExportController::class, 'recordPdf'])->name('records.export');
-    Route::get('/records/export-form/{formId}', [\App\Http\Controllers\ExportController::class, 'formRecordsZip'])->name('records.export-form');
+    Route::post('/records/export-form/{formId}', [\App\Http\Controllers\ExportController::class, 'formRecordsExport'])->name('records.export-form');
+    Route::get('/records/export-form-status/{export}', [\App\Http\Controllers\ExportController::class, 'recordExportStatus'])->name('records.export-form-status');
+    Route::get('/records/export-form-download/{export}', [\App\Http\Controllers\ExportController::class, 'recordExportDownload'])->name('records.export-form-download');
     Route::get('/documents/export-xlsx/{path}', [\App\Http\Controllers\ExportController::class, 'xlsx'])->where('path', '.*')->name('documents.export-xlsx');
     Route::get('/documents/export-bulk/active', [\App\Http\Controllers\ExportController::class, 'activeBulkExport'])->name('documents.export-bulk-active');
     Route::post('/documents/export-bulk', [\App\Http\Controllers\ExportController::class, 'bulkExport'])->name('documents.export-bulk');

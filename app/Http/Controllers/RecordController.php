@@ -72,8 +72,12 @@ class RecordController extends Controller
 
     public function formRecords(Request $request, string $formId)
     {
+        $dateFilter = $request->input('date_filter');
+        $cutoff = $dateFilter ? now()->subDays((int) $dateFilter)->toIso8601String() : null;
+
         $records = collect($this->allRecords())
             ->where('form_id', $formId)
+            ->when($cutoff, fn($c) => $c->filter(fn($r) => ($r['submitted_at'] ?? '') >= $cutoff))
             ->sortByDesc('submitted_at')
             ->values();
 
