@@ -121,7 +121,7 @@
     </div>
     <style id="sidebar-hide">#sidebar-nav>div{visibility:hidden}</style>
     <nav id="sidebar-nav" class="p-3 flex-1 flex flex-col overflow-y-auto overscroll-contain touch-pan-y"
-         onclick="if(event.target.closest('a')){sessionStorage.setItem('sidebarClickNav','1');var nav=document.getElementById('sidebar-nav');if(nav)sessionStorage.setItem('sidebarScroll',nav.scrollTop)}">
+         onclick="if(event.target.closest('a'))sessionStorage.setItem('sidebarClickNav','1')">
         <div>
             @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $sidebarCanEdit, 'changedFiles' => $changedFiles, 'commentSummary' => $commentSummary ?? []])
         </div>
@@ -174,19 +174,28 @@
                 }
             }
 
-            // 3. Restore scroll position
+            // 3. Restore scroll position — defer to after Alpine applies filters
             var s=sessionStorage.getItem('sidebarScroll');
-            if(!isMobile){
-                if(keepScroll){
-                    if(s!==null)n.scrollTop=parseInt(s);
+            var hasFilters=sessionStorage.getItem('sidebarCategoryFilter')||sessionStorage.getItem('sidebarTypeFilter')||sessionStorage.getItem('sidebarStatusFilter')||sessionStorage.getItem('sidebarCommentFilter');
+            function restoreScroll(){
+                if(!isMobile){
+                    if(keepScroll){
+                        if(s!==null)n.scrollTop=parseInt(s);
+                    }else{
+                        if(active&&active.offsetParent!==null)n.scrollTop=active.offsetTop-n.offsetTop-n.clientHeight/2;
+                    }
                 }else{
-                    if(active)n.scrollTop=active.offsetTop-n.offsetTop-n.clientHeight/2;
+                    if(active&&active.offsetParent!==null)active.scrollIntoView({block:'center',behavior:'instant'});
                 }
-                // 3. Save scroll on unload for refresh
-                window.addEventListener('beforeunload',function(){sessionStorage.setItem('sidebarScroll',n.scrollTop)});
+            }
+            if(hasFilters){
+                // Wait for Alpine to apply filters before restoring scroll
+                requestAnimationFrame(function(){requestAnimationFrame(restoreScroll)});
             }else{
-                // On mobile, just scroll active item into view
-                if(active)active.scrollIntoView({block:'center',behavior:'instant'});
+                restoreScroll();
+            }
+            if(!isMobile){
+                window.addEventListener('beforeunload',function(){sessionStorage.setItem('sidebarScroll',n.scrollTop)});
             }
             // 4. Show content
             var h=document.getElementById('sidebar-hide');if(h)h.remove();
