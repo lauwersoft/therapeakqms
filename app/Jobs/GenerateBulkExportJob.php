@@ -190,14 +190,19 @@ class GenerateBulkExportJob implements ShouldQueue
         $outDir = $tmpDir . '/' . $dir;
         @mkdir($outDir, 0755, true);
 
-        // Generate PDF
+        // Generate PDF with dummy base URL for cross-linking
         $exportHtml = view('documents.export-pdf', [
             'content' => $html,
             'meta' => $meta,
             'path' => $path,
+            'baseUrl' => 'http://QMSLINK/',
         ])->render();
 
-        $this->generatePdf($exportHtml, $outDir . '/' . $safeName . '.pdf');
+        $pdfPath = $outDir . '/' . $safeName . '.pdf';
+        $this->generatePdf($exportHtml, $pdfPath);
+
+        // Rewrite dummy URLs to relative paths
+        $this->rewritePdfLinks($pdfPath, $dir);
 
         // Generate XLSX if document has tables
         $tables = $this->extractTablesFromMarkdown($body);
@@ -211,19 +216,63 @@ class GenerateBulkExportJob implements ShouldQueue
      */
     private function resolveLinksForPdf(string $html, array $idMap, array $pdfPathMap, string $currentPath): string
     {
-        $currentDir = dirname($currentPath);
-
-        return preg_replace_callback('/\[\[([A-Z]+-\d{3,})\]\]/', function ($matches) use ($pdfPathMap, $currentDir) {
+        return preg_replace_callback('/\[\[([A-Z]+-\d{3,})\]\]/', function ($matches) use ($pdfPathMap) {
             $docId = $matches[1];
             if (isset($pdfPathMap[$docId])) {
-                // Calculate relative path from current document to target PDF
                 $targetPath = $pdfPathMap[$docId];
-                $relativePath = $this->relativePath($currentDir, $targetPath);
-                return '<a href="' . htmlspecialchars($relativePath) . '" style="color: #2563eb; font-weight: 500; text-decoration: none;">'
+                return '<a href="' . htmlspecialchars($targetPath) . '" style="color: #2563eb; font-weight: 500; text-decoration: none;">'
                     . htmlspecialchars($docId) . '</a>';
             }
             return '<span style="color: #2563eb; font-weight: 500;">' . htmlspecialchars($docId) . '</span>';
         }, $html);
+    }
+
+    /**
+     * Rewrite dummy QMSLINK URLs in the PDF to relative paths.
+     */
+    private function rewritePdfLinks(string $pdfPath, string $pdfFolder): void
+    {
+        $content = file_get_contents($pdfPath);
+        if ($content === false) {
+            return;
+        }
+
+        $dummyBase = 'http://QMSLINK/';
+
+        if (strpos($content, 'QMSLINK') === false) {
+            return;
+        }
+
+        $pattern = '/\/URI\s*\((' . preg_quote($dummyBase, '/') . '[^)]*)\)/';
+
+        $content = preg_replace_callback($pattern, function (array $matches) use ($dummyBase, $pdfFolder) {
+            $fullUrl = $matches[1];
+            $relativePath = urldecode(substr($fullUrl, strlen($dummyBase)));
+
+            if ($pdfFolder !== '') {
+                $depth = substr_count(trim($pdfFolder, '/'), '/') + 1;
+                $prefix = str_repeat('../', $depth);
+                $relativePath = $prefix . $relativePath;
+            }
+
+            $escaped = str_replace(
+                ['\\', '(', ')'],
+                ['\\\\', '\\(', '\\)'],
+                $relativePath
+            );
+
+            return '/URI (' . $escaped . ')';
+        }, $content);
+
+        file_put_contents($pdfPath, $content);
+
+        // Fix PDF xref table
+        $tmpFile = $pdfPath . '.tmp';
+        $process = new Process(['qpdf', '--linearize', $pdfPath, $tmpFile]);
+        $process->run();
+        if (file_exists($tmpFile)) {
+            rename($tmpFile, $pdfPath);
+        }
     }
 
     /**

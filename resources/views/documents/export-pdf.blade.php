@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ $meta['id'] ?? '' }} — {{ $meta['title'] ?? 'Document' }}</title>
+    @if(!empty($baseUrl))
+        <base href="{{ $baseUrl }}">
+    @endif
     <style>
         @page {
             size: A4;
