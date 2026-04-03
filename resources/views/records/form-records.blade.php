@@ -58,7 +58,15 @@
             </div>
 
             {{-- Records list --}}
-            <h3 class="text-sm font-semibold text-gray-700 mb-3">Submissions ({{ $records->count() }})</h3>
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-semibold text-gray-700">Submissions ({{ $records->count() }})</h3>
+                @if($records->isNotEmpty())
+                    <a href="{{ route('records.export-form', $formId) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white text-xs rounded-md hover:bg-red-700">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Download All PDFs
+                    </a>
+                @endif
+            </div>
             @if($records->isEmpty())
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
                     <p class="text-gray-400">No submissions for this form yet.</p>

@@ -464,6 +464,85 @@ class ExportController extends Controller
         return $tableCount;
     }
 
+    public function formRecordsZip(Request $request, string $formId)
+    {
+        $basePath = base_path('qms/records');
+        $records = [];
+
+        if (is_dir($basePath)) {
+            foreach (File::allFiles($basePath) as $file) {
+                if (! str_ends_with($file->getFilename(), '.rec.json')) continue;
+                $data = @json_decode(File::get($file->getPathname()), true);
+                if (! is_array($data) || ($data['form_id'] ?? '') !== $formId) continue;
+                $records[] = ['filename' => $file->getFilename(), 'data' => $data];
+            }
+        }
+
+        if (empty($records)) abort(404, 'No records found for this form.');
+
+        $tmpDir = storage_path('app/qms-export/records-' . uniqid());
+        @mkdir($tmpDir, 0755, true);
+
+        $snapDir = '/home/sarp/snap/chromium/common/qms-export';
+        $storageDir = storage_path('app/qms-export');
+
+        foreach ($records as $rec) {
+            $data = $rec['data'];
+            $id = $data['id'] ?? pathinfo($rec['filename'], PATHINFO_FILENAME);
+            $title = $data['title'] ?? $id;
+            $safeName = preg_replace('/[\/\\\\:*?"<>|]/', '', $id . ' - ' . $title) . '.pdf';
+
+            $exportHtml = view('records.export-pdf', [
+                'record' => $data,
+                'filename' => $rec['filename'],
+            ])->render();
+
+            $uid = uniqid();
+            $srcHtmlFile = $storageDir . '/rec-' . $uid . '.html';
+            $htmlFile = $snapDir . '/rec-' . $uid . '.html';
+            $pdfFile = $snapDir . '/rec-' . $uid . '.pdf';
+
+            file_put_contents($srcHtmlFile, $exportHtml);
+
+            $process = new Process([
+                'sudo', '-u', 'sarp', 'bash', '-c',
+                'cp ' . escapeshellarg($srcHtmlFile) . ' ' . escapeshellarg($htmlFile) .
+                ' && snap run chromium --headless --no-sandbox --disable-gpu --disable-software-rasterizer' .
+                ' --print-to-pdf=' . escapeshellarg($pdfFile) .
+                ' --no-pdf-header-footer' .
+                ' file://' . escapeshellarg($htmlFile),
+            ]);
+            $process->setTimeout(120);
+            $process->run();
+
+            if (file_exists($pdfFile)) {
+                copy($pdfFile, $tmpDir . '/' . $safeName);
+            }
+
+            @unlink($srcHtmlFile);
+            @unlink($htmlFile);
+            @unlink($pdfFile);
+        }
+
+        // Zip
+        $formTitle = $records[0]['data']['form_title'] ?? $formId;
+        $zipFilename = $formId . ' - ' . $formTitle . ' Records.zip';
+        $zipPath = storage_path('app/qms-export/records-' . $formId . '.zip');
+
+        $zip = new \ZipArchive();
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+            abort(500, 'Could not create ZIP.');
+        }
+        foreach (File::allFiles($tmpDir) as $file) {
+            $zip->addFile($file->getPathname(), $file->getFilename());
+        }
+        $zip->close();
+
+        File::deleteDirectory($tmpDir);
+
+        return response()->download($zipPath, $zipFilename)->deleteFileAfterSend(true);
+    }
+
     public function activeBulkExport(Request $request)
     {
         $export = DocumentExport::where('user_id', $request->user()->id)
