@@ -207,8 +207,13 @@ class ExportController extends Controller
             $replacement = '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin: 12px 0; font-size: 9px; color: #64748b; text-align: center;">[Diagram could not be rendered]</div>';
 
             try {
-                $response = Http::timeout(60)->get($imgUrl);
-                if ($response->successful() && strlen($response->body()) > 100) {
+                $response = null;
+                for ($attempt = 0; $attempt < 3; $attempt++) {
+                    $response = Http::timeout(60)->get($imgUrl);
+                    if ($response->successful() && strlen($response->body()) > 100) break;
+                    sleep(2);
+                }
+                if ($response && $response->successful() && strlen($response->body()) > 100) {
                     $imageData = base64_encode($response->body());
                     $replacement = '<div style="text-align: center; margin: 16px 0; page-break-inside: avoid;"><img src="data:image/png;base64,' . $imageData . '" style="max-width: 100%; max-height: 700px; height: auto;" /></div>';
                 }
@@ -578,14 +583,14 @@ class ExportController extends Controller
         // Any remaining MDCG links we don't have URLs for → plain text
         $html = preg_replace(
             '/<a\s+href="\/references\/mdcg-[^"]*"[^>]*>(.*?)<\/a>/i',
-            '<span style="font-weight: 500;">$1</span>',
+            '<strong>$1</strong>',
             $html
         );
 
         // ISO/IEC standards → plain text (paid standards, no public URL)
         $html = preg_replace(
             '/<a\s+href="\/references\/iso-[^"]*"[^>]*>(.*?)<\/a>/i',
-            '<span style="font-weight: 500;">$1</span>',
+            '<strong>$1</strong>',
             $html
         );
 

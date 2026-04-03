@@ -223,8 +223,13 @@ class GenerateBulkExportJob implements ShouldQueue
             $replacement = '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin: 12px 0; font-size: 9px; color: #64748b; text-align: center;">[Diagram could not be rendered]</div>';
 
             try {
-                $response = Http::timeout(60)->get($imgUrl);
-                if ($response->successful() && strlen($response->body()) > 100) {
+                $response = null;
+                for ($attempt = 0; $attempt < 3; $attempt++) {
+                    $response = Http::timeout(60)->get($imgUrl);
+                    if ($response->successful() && strlen($response->body()) > 100) break;
+                    sleep(2);
+                }
+                if ($response && $response->successful() && strlen($response->body()) > 100) {
                     $imageData = base64_encode($response->body());
                     $replacement = '<div style="text-align: center; margin: 16px 0; page-break-inside: avoid;"><img src="data:image/png;base64,' . $imageData . '" style="max-width: 100%; max-height: 700px; height: auto;" /></div>';
                 }
@@ -308,7 +313,7 @@ class GenerateBulkExportJob implements ShouldQueue
                     . htmlspecialchars($docId) . '</a>';
             }
             // Target not in export — plain text, not clickable
-            return '<span style="font-weight: 500;">' . htmlspecialchars($docId) . '</span>';
+            return '<strong>' . htmlspecialchars($docId) . '</strong>';
         }, $html);
     }
 
