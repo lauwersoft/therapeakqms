@@ -567,9 +567,15 @@ class ExportController extends Controller
         $mdcgUrls = [
             'mdcg-2019-11' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2019_11_guidance_qualification_classification_software_en_0.pdf',
             'mdcg-2019-16' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2019_16_guidance_cybersecurity_en_0.pdf',
+            'mdcg-2019-9' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2019_9_summary_safety_clinical_performance_en_0.pdf',
             'mdcg-2020-1' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2020_1_guidance_clinic_eva_md_software_en_0.pdf',
             'mdcg-2020-3' => 'https://health.ec.europa.eu/system/files/2021-10/mdcg_2020-3_en_0.pdf',
             'mdcg-2020-5' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2020_5_guidance_clinical_evaluation_equivalence_en_0.pdf',
+            'mdcg-2020-7' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2020_7_guidance_pmcf_plan_template_en_0.pdf',
+            'mdcg-2020-6' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2020_6_guidance_sufficient_clinical_evidence_en_0.pdf',
+            'mdcg-2020-7' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2020_7_guidance_pmcf_plan_template_en_0.pdf',
+            'mdcg-2020-8' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2020_8_guidance_pmcf_evaluation_report_en_0.pdf',
+            'mdcg-2021-24' => 'https://health.ec.europa.eu/system/files/2021-10/mdcg_2021-24_en_0.pdf',
         ];
 
         foreach ($mdcgUrls as $slug => $url) {
