@@ -241,11 +241,21 @@ class GenerateBulkExportJob implements ShouldQueue
 
         $dummyBase = 'http://QMSLINK/';
 
-        if (strpos($content, 'QMSLINK') === false) {
-            \Illuminate\Support\Facades\Log::info('rewritePdfLinks: QMSLINK not found in ' . $pdfPath);
+        // First decompress the PDF so we can find the URL strings
+        $decompressed = $pdfPath . '.qdf';
+        $process = new Process(['qpdf', '--qdf', '--object-streams=disable', $pdfPath, $decompressed]);
+        $process->run();
+
+        if (! file_exists($decompressed)) {
             return;
         }
-        \Illuminate\Support\Facades\Log::info('rewritePdfLinks: Found QMSLINK in ' . $pdfPath);
+
+        $content = file_get_contents($decompressed);
+        @unlink($decompressed);
+
+        if (strpos($content, 'QMSLINK') === false) {
+            return;
+        }
 
         $pattern = '/\/URI\s*\((' . preg_quote($dummyBase, '/') . '[^)]*)\)/';
 
@@ -268,15 +278,22 @@ class GenerateBulkExportJob implements ShouldQueue
             return '/URI (' . $escaped . ')';
         }, $content);
 
-        file_put_contents($pdfPath, $content);
+        // Write modified content and re-linearize
+        $modifiedFile = $pdfPath . '.mod';
+        file_put_contents($modifiedFile, $content);
 
-        // Fix PDF xref table
-        $tmpFile = $pdfPath . '.tmp';
-        $process = new Process(['qpdf', '--linearize', $pdfPath, $tmpFile]);
+        $process = new Process(['qpdf', '--linearize', $modifiedFile, $pdfPath . '.final']);
         $process->run();
-        if (file_exists($tmpFile)) {
-            rename($tmpFile, $pdfPath);
+
+        if (file_exists($pdfPath . '.final')) {
+            rename($pdfPath . '.final', $pdfPath);
+        } else {
+            // Fallback: use the modified file directly
+            rename($modifiedFile, $pdfPath);
         }
+
+        @unlink($modifiedFile);
+        @unlink($pdfPath . '.final');
     }
 
     /**
