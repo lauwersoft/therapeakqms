@@ -263,12 +263,19 @@
                     sidebarSearch: '',
                     dragOver: false,
                     droppedFile: null,
-                    sidebarCategoryFilter: '',
-                    sidebarTypeFilter: '',
-                    sidebarStatusFilter: '',
-                    sidebarCommentFilter: '',
+                    sidebarCategoryFilter: sessionStorage.getItem('sidebarCategoryFilter') || '',
+                    sidebarTypeFilter: sessionStorage.getItem('sidebarTypeFilter') || '',
+                    sidebarStatusFilter: sessionStorage.getItem('sidebarStatusFilter') || '',
+                    sidebarCommentFilter: sessionStorage.getItem('sidebarCommentFilter') || '',
                     sidebarDocs: @json($sidebarDocs),
                     commentSummary: @json($commentSummary ?? []),
+
+                    init() {
+                        this.$watch('sidebarCategoryFilter', v => sessionStorage.setItem('sidebarCategoryFilter', v));
+                        this.$watch('sidebarTypeFilter', v => sessionStorage.setItem('sidebarTypeFilter', v));
+                        this.$watch('sidebarStatusFilter', v => sessionStorage.setItem('sidebarStatusFilter', v));
+                        this.$watch('sidebarCommentFilter', v => sessionStorage.setItem('sidebarCommentFilter', v));
+                    },
 
                     get sidebarFilteredDocs() {
                         var cs = this.commentSummary;

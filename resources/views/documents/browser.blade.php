@@ -563,11 +563,11 @@
 
                 return {
                     ready: true,
-                    search: '',
-                    categoryFilter: '',
-                    typeFilter: '',
-                    statusFilter: '',
-                    commentFilter: '',
+                    search: new URLSearchParams(window.location.search).get('search') || '',
+                    categoryFilter: new URLSearchParams(window.location.search).get('category') || '',
+                    typeFilter: new URLSearchParams(window.location.search).get('type') || '',
+                    statusFilter: new URLSearchParams(window.location.search).get('status') || '',
+                    commentFilter: new URLSearchParams(window.location.search).get('comments') || '',
                     docs: docs,
                     uniqueDirs: dirs,
                     ctx: { show: false, type: '', x: 0, y: 0, path: '', urlPath: '', isMarkdown: true, title: '', dir: '' },
@@ -592,6 +592,13 @@
                     exportDownloadUrl: '',
 
                     init() {
+                        // Sync filters to URL
+                        this.$watch('categoryFilter', () => this.syncFiltersToUrl());
+                        this.$watch('typeFilter', () => this.syncFiltersToUrl());
+                        this.$watch('statusFilter', () => this.syncFiltersToUrl());
+                        this.$watch('commentFilter', () => this.syncFiltersToUrl());
+                        this.$watch('search', () => this.syncFiltersToUrl());
+
                         // Check for active/ready export on page load
                         fetch('/documents/export-bulk/active', {
                             headers: { 'Accept': 'application/json' },
@@ -638,6 +645,18 @@
                             this.exportStatus = 'failed';
                             this.exportError = 'Failed to start export';
                         });
+                    },
+
+                    syncFiltersToUrl() {
+                        const params = new URLSearchParams();
+                        if (this.categoryFilter) params.set('category', this.categoryFilter);
+                        if (this.typeFilter) params.set('type', this.typeFilter);
+                        if (this.statusFilter) params.set('status', this.statusFilter);
+                        if (this.commentFilter) params.set('comments', this.commentFilter);
+                        if (this.search) params.set('search', this.search);
+                        const qs = params.toString();
+                        const url = window.location.pathname + (qs ? '?' + qs : '');
+                        window.history.replaceState({}, '', url);
                     },
 
                     pollExportStatus(exportId) {

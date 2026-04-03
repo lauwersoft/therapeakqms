@@ -106,7 +106,7 @@
             </select>
         </div>
         <button x-show="sidebarSearch || sidebarCategoryFilter || sidebarTypeFilter || sidebarStatusFilter || sidebarCommentFilter" x-cloak
-                @click="sidebarSearch = ''; sidebarCategoryFilter = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''; sidebarCommentFilter = ''"
+                @click="sidebarSearch = ''; sidebarCategoryFilter = ''; sidebarTypeFilter = ''; sidebarStatusFilter = ''; sidebarCommentFilter = ''; sessionStorage.removeItem('sidebarCategoryFilter'); sessionStorage.removeItem('sidebarTypeFilter'); sessionStorage.removeItem('sidebarStatusFilter'); sessionStorage.removeItem('sidebarCommentFilter');"
                 class="text-[11px] text-blue-500 hover:text-blue-700">Clear filters</button>
         <div class="flex gap-1.5">
             <button @click="$dispatch('dirs-collapse')" class="flex-1 flex items-center justify-center gap-1 text-[11px] border border-gray-200 rounded-md py-1 bg-gray-50 text-gray-500 hover:text-gray-700 hover:bg-gray-100">

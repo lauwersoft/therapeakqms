@@ -185,10 +185,10 @@
                     }),
 
                     sidebarSearch: '',
-                    sidebarCategoryFilter: '',
-                    sidebarTypeFilter: '',
-                    sidebarStatusFilter: '',
-                    sidebarCommentFilter: '',
+                    sidebarCategoryFilter: sessionStorage.getItem('sidebarCategoryFilter') || '',
+                    sidebarTypeFilter: sessionStorage.getItem('sidebarTypeFilter') || '',
+                    sidebarStatusFilter: sessionStorage.getItem('sidebarStatusFilter') || '',
+                    sidebarCommentFilter: sessionStorage.getItem('sidebarCommentFilter') || '',
                     sidebarDocs: @json($sidebarDocs),
                     commentSummary: @json($commentSummary ?? []),
 
