@@ -242,8 +242,10 @@ class GenerateBulkExportJob implements ShouldQueue
         $dummyBase = 'http://QMSLINK/';
 
         if (strpos($content, 'QMSLINK') === false) {
+            \Illuminate\Support\Facades\Log::info('rewritePdfLinks: QMSLINK not found in ' . $pdfPath);
             return;
         }
+        \Illuminate\Support\Facades\Log::info('rewritePdfLinks: Found QMSLINK in ' . $pdfPath);
 
         $pattern = '/\/URI\s*\((' . preg_quote($dummyBase, '/') . '[^)]*)\)/';
 
