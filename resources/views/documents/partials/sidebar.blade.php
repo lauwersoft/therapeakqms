@@ -174,7 +174,7 @@
                 }
             }
 
-            // 3. Restore scroll position — defer to after Alpine applies filters
+            // 3. Restore scroll position
             var s=sessionStorage.getItem('sidebarScroll');
             var hasFilters=sessionStorage.getItem('sidebarCategoryFilter')||sessionStorage.getItem('sidebarTypeFilter')||sessionStorage.getItem('sidebarStatusFilter')||sessionStorage.getItem('sidebarCommentFilter');
             function restoreScroll(){
@@ -182,14 +182,17 @@
                     if(keepScroll){
                         if(s!==null)n.scrollTop=parseInt(s);
                     }else{
-                        if(active&&active.offsetParent!==null)n.scrollTop=active.offsetTop-n.offsetTop-n.clientHeight/2;
+                        var a=active&&active.offsetParent!==null?active:n.querySelector('[data-active-sidebar-item]');
+                        if(a&&a.offsetParent!==null)n.scrollTop=a.offsetTop-n.offsetTop-n.clientHeight/2;
                     }
                 }else{
                     if(active&&active.offsetParent!==null)active.scrollIntoView({block:'center',behavior:'instant'});
                 }
             }
             if(hasFilters){
-                setTimeout(restoreScroll,100);
+                // Hide sidebar until scroll is restored to prevent jumping
+                n.style.overflow='hidden';
+                setTimeout(function(){restoreScroll();n.style.overflow='';},150);
             }else{
                 restoreScroll();
             }
