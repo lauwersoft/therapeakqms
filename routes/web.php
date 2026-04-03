@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/documents/upload', [DocumentController::class, 'upload'])->name('documents.upload');
     Route::get('/documents/download/{path}', [DocumentController::class, 'download'])->where('path', '.*')->name('documents.download');
     Route::get('/documents/export/{path}', [\App\Http\Controllers\ExportController::class, 'pdf'])->where('path', '.*')->name('documents.export');
+    Route::get('/documents/export-form/{path}', [\App\Http\Controllers\ExportController::class, 'formPdf'])->where('path', '.*')->name('documents.export-form');
     Route::get('/documents/export-xlsx/{path}', [\App\Http\Controllers\ExportController::class, 'xlsx'])->where('path', '.*')->name('documents.export-xlsx');
     Route::get('/documents/export-bulk/active', [\App\Http\Controllers\ExportController::class, 'activeBulkExport'])->name('documents.export-bulk-active');
     Route::post('/documents/export-bulk', [\App\Http\Controllers\ExportController::class, 'bulkExport'])->name('documents.export-bulk');

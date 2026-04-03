@@ -42,10 +42,12 @@ class GenerateBulkExportJob implements ShouldQueue
         $docIndex = DocumentMetadata::index($basePath);
         $idMap = DocumentMetadata::idMap($docIndex);
 
-        // Filter documents by category if set
+        // Filter documents by category if set (include markdown and forms)
         $docs = [];
         foreach ($docIndex as $path => $meta) {
-            if (! DocumentMetadata::isMarkdown($path)) {
+            $isMarkdown = DocumentMetadata::isMarkdown($path);
+            $isForm = str_ends_with($path, '.form.json');
+            if (! $isMarkdown && ! $isForm) {
                 continue;
             }
             if ($export->category) {
@@ -54,6 +56,7 @@ class GenerateBulkExportJob implements ShouldQueue
                     continue;
                 }
             }
+            $meta['_is_form'] = $isForm;
             $docs[$path] = $meta;
         }
 
@@ -77,7 +80,11 @@ class GenerateBulkExportJob implements ShouldQueue
 
         try {
             foreach ($docs as $path => $meta) {
-                $this->generateDocumentFiles($basePath, $path, $meta, $docIndex, $idMap, $pdfPathMap, $tmpDir);
+                if ($meta['_is_form'] ?? false) {
+                    $this->generateFormFiles($basePath, $path, $meta, $tmpDir);
+                } else {
+                    $this->generateDocumentFiles($basePath, $path, $meta, $docIndex, $idMap, $pdfPathMap, $tmpDir);
+                }
                 $processed++;
                 $export->update(['processed_docs' => $processed]);
             }
@@ -213,6 +220,28 @@ class GenerateBulkExportJob implements ShouldQueue
     /**
      * Resolve [[DOC-ID]] links to relative PDF paths instead of web URLs.
      */
+    private function generateFormFiles(string $basePath, string $path, array $meta, string $tmpDir): void
+    {
+        $filePath = $basePath . '/' . $path;
+        $json = json_decode(File::get($filePath), true);
+        if (! $json) return;
+
+        $dir = dirname($path);
+        $id = $meta['id'] ?? pathinfo($path, PATHINFO_FILENAME);
+        $title = $meta['title'] ?? pathinfo($path, PATHINFO_FILENAME);
+        $safeName = preg_replace('/[\/\\\\:*?"<>|]/', '', $id . ' - ' . $title);
+        $outDir = $tmpDir . '/' . $dir;
+        @mkdir($outDir, 0755, true);
+
+        $exportHtml = view('documents.export-form-pdf', [
+            'schema' => $json,
+            'meta' => $meta,
+            'path' => $path,
+        ])->render();
+
+        $this->generatePdf($exportHtml, $outDir . '/' . $safeName . '.pdf');
+    }
+
     private function resolveLinksForPdf(string $html, array $idMap, array $pdfPathMap, string $currentPath): string
     {
         $dummyBase = 'http://qmslink/';
