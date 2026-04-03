@@ -80,17 +80,24 @@
             margin: 0 0 10px 0;
             line-height: 1.3;
         }
-        .doc-id-badge {
+        .doc-badges {
+            margin-bottom: 6px;
+        }
+        .doc-badge {
             display: inline-block;
-            background: #eff6ff;
-            color: #1d4ed8;
-            font-family: 'Courier New', monospace;
+            font-size: 9px;
             font-weight: 700;
-            font-size: 11px;
             padding: 2px 8px;
             border-radius: 3px;
-            margin-right: 6px;
+            margin-right: 4px;
         }
+        .badge-id { background: #eff6ff; color: #1d4ed8; font-family: 'Courier New', monospace; }
+        .badge-approved { background: #dcfce7; color: #166534; }
+        .badge-draft { background: #f3f4f6; color: #6b7280; }
+        .badge-in_review { background: #fef3c7; color: #92400e; }
+        .badge-qms { background: #dbeafe; color: #1e40af; }
+        .badge-technical { background: #fce7f3; color: #9d174d; }
+        .badge-version { background: #f3f4f6; color: #6b7280; }
         .doc-meta-table {
             width: 100%;
             border: none;
@@ -109,27 +116,6 @@
             font-weight: 700;
             color: #374151;
         }
-        .doc-status-badge {
-            display: inline-block;
-            font-size: 9px;
-            font-weight: 700;
-            padding: 1px 7px;
-            border-radius: 3px;
-            letter-spacing: 0.3px;
-        }
-        .status-approved { background: #dcfce7; color: #166534; }
-        .status-draft { background: #f3f4f6; color: #6b7280; }
-        .status-in_review { background: #fef3c7; color: #92400e; }
-        .cat-badge {
-            display: inline-block;
-            font-size: 8px;
-            font-weight: 700;
-            padding: 1px 6px;
-            border-radius: 3px;
-            margin-left: 4px;
-        }
-        .cat-qms { background: #dbeafe; color: #1e40af; }
-        .cat-technical { background: #fce7f3; color: #9d174d; }
         .doc-footer-line {
             font-size: 8px;
             color: #9ca3af;
@@ -275,26 +261,22 @@
 <body>
     {{-- Document header (first page) --}}
     <div class="doc-header">
-        <div class="doc-header-title">
+        <div class="doc-header-title">{{ $meta['title'] ?? 'Untitled Document' }}</div>
+
+        <div class="doc-badges">
             @if($meta['id'])
-                <span class="doc-id-badge">{{ $meta['id'] }}</span>
+                <span class="doc-badge badge-id">{{ $meta['id'] }}</span>
             @endif
-            {{ $meta['title'] ?? 'Untitled Document' }}
+            <span class="doc-badge badge-{{ $meta['status'] ?? 'draft' }}">{{ strtoupper(str_replace('_', ' ', $meta['status'] ?? 'draft')) }}</span>
+            @if($meta['version'])
+                <span class="doc-badge badge-version">v{{ $meta['version'] }}</span>
+            @endif
             @foreach(\App\Services\DocumentMetadata::normalizeCategory($meta['category'] ?? []) as $cat)
-                <span class="cat-badge cat-{{ $cat }}">{{ \App\Services\DocumentMetadata::categoryLabel($cat) }}</span>
+                <span class="doc-badge badge-{{ $cat }}">{{ \App\Services\DocumentMetadata::categoryLabel($cat) }}</span>
             @endforeach
         </div>
 
         <table class="doc-meta-table">
-            <tr>
-                <td>
-                    <span class="label">Status:</span>
-                    <span class="doc-status-badge status-{{ $meta['status'] ?? 'draft' }}">{{ strtoupper(str_replace('_', ' ', $meta['status'] ?? 'draft')) }}</span>
-                </td>
-                <td>
-                    <span class="label">Version:</span> {{ $meta['version'] ?? '—' }}
-                </td>
-            </tr>
             <tr>
                 <td>
                     <span class="label">Author:</span> {{ $meta['author'] ?? '—' }}
