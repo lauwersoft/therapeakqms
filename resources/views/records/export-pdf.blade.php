@@ -150,7 +150,7 @@
                     <span class="label">Author:</span> {{ $record['author'] ?? '—' }}
                 </td>
                 <td>
-                    <span class="label">Submitted:</span> {{ $record['submitted_at'] ?? '—' }}
+                    <span class="label">Submitted:</span> {{ $record['submitted_at'] ? \Carbon\Carbon::parse($record['submitted_at'])->format('M j, Y H:i') : '—' }}
                 </td>
             </tr>
             @if($record['form_title'] ?? null)
@@ -171,6 +171,10 @@
             <div class="field-value {{ empty($value) ? 'field-value-empty' : '' }} {{ $value === 'Yes' ? 'field-value-yes' : '' }} {{ $value === 'No' ? 'field-value-no' : '' }}">
                 @if(empty($value))
                     —
+                @elseif(is_string($value) && preg_match('/^\d{4}-\d{2}-\d{2}(T|\s)\d{2}:\d{2}/', $value))
+                    {{ \Carbon\Carbon::parse($value)->format('M j, Y H:i') }}
+                @elseif(is_string($value) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $value))
+                    {{ \Carbon\Carbon::parse($value)->format('M j, Y') }}
                 @else
                     {{ $value }}
                 @endif
