@@ -66,14 +66,13 @@
             @else
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     @foreach($records as $record)
-                        <a href="{{ route('records.show', $record['filename']) }}"
-                           class="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
-                            <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                        <div class="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
+                            <a href="{{ route('records.show', $record['filename']) }}" class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
                                 <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                            </div>
-                            <div class="flex-1 min-w-0">
+                            </a>
+                            <a href="{{ route('records.show', $record['filename']) }}" class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2">
                                     <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor('REC') }}">{{ $record['id'] }}</span>
                                     <span class="text-sm font-medium text-gray-800 truncate">{{ $record['title'] }}</span>
@@ -88,14 +87,16 @@
                                         <span>{{ usertime($record['submitted_at'])->diffForHumans() }}</span>
                                     @endif
                                 </div>
-                            </div>
-                            <a href="{{ route('records.export', $record['filename']) }}" onclick="event.stopPropagation(); event.preventDefault(); window.location.href=this.href;" class="p-1 rounded bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 shrink-0 transition-colors" title="Download PDF">
+                            </a>
+                            <a href="{{ route('records.export', $record['filename']) }}" class="p-1.5 rounded bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 shrink-0 transition-colors" title="Download PDF">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             </a>
-                            <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
-                        </a>
+                            <a href="{{ route('records.show', $record['filename']) }}">
+                                <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </div>
                     @endforeach
                 </div>
             @endif
