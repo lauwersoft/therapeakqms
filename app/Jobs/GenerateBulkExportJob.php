@@ -190,12 +190,11 @@ class GenerateBulkExportJob implements ShouldQueue
         $outDir = $tmpDir . '/' . $dir;
         @mkdir($outDir, 0755, true);
 
-        // Generate PDF with dummy base URL for cross-linking
+        // Generate PDF
         $exportHtml = view('documents.export-pdf', [
             'content' => $html,
             'meta' => $meta,
             'path' => $path,
-            'baseUrl' => 'http://QMSLINK/',
         ])->render();
 
         $pdfPath = $outDir . '/' . $safeName . '.pdf';
@@ -216,11 +215,14 @@ class GenerateBulkExportJob implements ShouldQueue
      */
     private function resolveLinksForPdf(string $html, array $idMap, array $pdfPathMap, string $currentPath): string
     {
-        return preg_replace_callback('/\[\[([A-Z]+-\d{3,})\]\]/', function ($matches) use ($pdfPathMap) {
+        $dummyBase = 'http://QMSLINK/';
+
+        return preg_replace_callback('/\[\[([A-Z]+-\d{3,})\]\]/', function ($matches) use ($pdfPathMap, $dummyBase) {
             $docId = $matches[1];
             if (isset($pdfPathMap[$docId])) {
                 $targetPath = $pdfPathMap[$docId];
-                return '<a href="' . htmlspecialchars($targetPath) . '" style="color: #2563eb; font-weight: 500; text-decoration: none;">'
+                $fullUrl = $dummyBase . $targetPath;
+                return '<a href="' . htmlspecialchars($fullUrl) . '" style="color: #2563eb; font-weight: 500; text-decoration: none;">'
                     . htmlspecialchars($docId) . '</a>';
             }
             return '<span style="color: #2563eb; font-weight: 500;">' . htmlspecialchars($docId) . '</span>';
