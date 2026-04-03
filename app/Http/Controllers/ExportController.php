@@ -20,6 +20,61 @@ use Symfony\Component\Process\Process;
 
 class ExportController extends Controller
 {
+    public function recordPdf(Request $request, string $filename)
+    {
+        if (str_contains($filename, '..')) abort(403);
+
+        $filePath = base_path('qms/records/' . $filename);
+        if (! file_exists($filePath)) abort(404);
+
+        $data = json_decode(File::get($filePath), true);
+        if (! is_array($data)) abort(400);
+
+        $exportHtml = view('records.export-pdf', [
+            'record' => $data,
+            'filename' => $filename,
+        ])->render();
+
+        $name = ($data['id'] ?? 'record') . ' - ' . ($data['title'] ?? $filename) . '.pdf';
+
+        $uid = uniqid();
+        $storageHtml = storage_path('app/qms-export');
+        if (! is_dir($storageHtml)) @mkdir($storageHtml, 0755, true);
+
+        $srcHtmlFile = $storageHtml . '/doc-' . $uid . '.html';
+        $snapDir = '/home/sarp/snap/chromium/common/qms-export';
+        $htmlFile = $snapDir . '/doc-' . $uid . '.html';
+        $pdfFile = $snapDir . '/doc-' . $uid . '.pdf';
+
+        file_put_contents($srcHtmlFile, $exportHtml);
+
+        $process = new Process([
+            'sudo', '-u', 'sarp', 'bash', '-c',
+            'cp ' . escapeshellarg($srcHtmlFile) . ' ' . escapeshellarg($htmlFile) .
+            ' && snap run chromium --headless --no-sandbox --disable-gpu --disable-software-rasterizer' .
+            ' --print-to-pdf=' . escapeshellarg($pdfFile) .
+            ' --no-pdf-header-footer' .
+            ' file://' . escapeshellarg($htmlFile),
+        ]);
+        $process->setTimeout(120);
+        $process->run();
+
+        if (! file_exists($pdfFile)) {
+            @unlink($srcHtmlFile);
+            @unlink($htmlFile);
+            abort(500, 'PDF generation failed.');
+        }
+
+        $pdfContent = file_get_contents($pdfFile);
+        @unlink($srcHtmlFile);
+        @unlink($htmlFile);
+        @unlink($pdfFile);
+
+        return response($pdfContent)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="' . $name . '"');
+    }
+
     public function formPdf(Request $request, string $path)
     {
         $basePath = base_path('qms/documents');
