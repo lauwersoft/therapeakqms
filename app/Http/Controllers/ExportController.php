@@ -345,6 +345,26 @@ class ExportController extends Controller
         return $tableCount;
     }
 
+    public function activeBulkExport(Request $request)
+    {
+        $export = DocumentExport::where('user_id', $request->user()->id)
+            ->whereIn('status', ['pending', 'processing', 'ready'])
+            ->latest()
+            ->first();
+
+        if (! $export) {
+            return response()->json(['id' => null]);
+        }
+
+        return response()->json([
+            'id' => $export->id,
+            'status' => $export->status,
+            'total' => $export->total_docs,
+            'processed' => $export->processed_docs,
+            'error' => $export->error,
+        ]);
+    }
+
     public function bulkExport(Request $request)
     {
         $category = $request->input('category');

@@ -591,7 +591,28 @@
                     exportError: '',
                     exportDownloadUrl: '',
 
-                    init() {},
+                    init() {
+                        // Check for active/ready export on page load
+                        fetch('/documents/export-bulk/active', {
+                            headers: { 'Accept': 'application/json' },
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.id) {
+                                this.exportModal = true;
+                                this.exportStatus = data.status;
+                                this.exportTotal = data.total;
+                                this.exportProcessed = data.processed;
+                                this.exportError = data.error;
+                                if (data.status === 'ready') {
+                                    this.exportDownloadUrl = '/documents/export-bulk/' + data.id + '/download';
+                                } else if (data.status === 'pending' || data.status === 'processing') {
+                                    this.pollExportStatus(data.id);
+                                }
+                            }
+                        })
+                        .catch(() => {});
+                    },
 
                     startBulkExport() {
                         this.exportModal = true;
