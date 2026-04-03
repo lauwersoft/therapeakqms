@@ -854,6 +854,7 @@ class DocumentController extends Controller
                 'version' => $meta['version'] ?? null,
                 'author' => $meta['author'] ?? null,
                 'changed' => $changeStatus,
+                'is_markdown' => DocumentMetadata::isMarkdown($path),
             ];
         }
 
