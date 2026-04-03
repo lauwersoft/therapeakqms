@@ -121,7 +121,7 @@
     </div>
     <style id="sidebar-hide">#sidebar-nav>div{visibility:hidden}</style>
     <nav id="sidebar-nav" class="p-3 flex-1 flex flex-col overflow-y-auto overscroll-contain touch-pan-y"
-         onclick="if(event.target.closest('a'))sessionStorage.setItem('sidebarClickNav','1')">
+         onclick="if(event.target.closest('a')){sessionStorage.setItem('sidebarClickNav','1');var nav=document.getElementById('sidebar-nav');if(nav)sessionStorage.setItem('sidebarScroll',nav.scrollTop)}">
         <div>
             @include('documents.partials.tree', ['items' => $tree, 'currentPath' => $currentPath, 'canEdit' => $sidebarCanEdit, 'changedFiles' => $changedFiles, 'commentSummary' => $commentSummary ?? []])
         </div>
