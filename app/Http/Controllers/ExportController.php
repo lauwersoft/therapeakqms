@@ -565,16 +565,14 @@ class ExportController extends Controller
 
         // MDCG docs → official EU Commission PDFs
         $mdcgUrls = [
-            'mdcg-2019-11' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2019_11_guidance_qualification_classification_software_en_0.pdf',
-            'mdcg-2019-16' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2019_16_guidance_cybersecurity_en_0.pdf',
-            'mdcg-2019-9' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2019_9_summary_safety_clinical_performance_en_0.pdf',
+            'mdcg-2019-11' => 'https://health.ec.europa.eu/document/download/b45335c5-1679-4c71-a91c-fc7a4d37f12b_en?filename=mdcg_2019_11_en.pdf',
+            'mdcg-2019-16' => 'https://health.ec.europa.eu/document/download/b23b362f-8a56-434c-922a-5b3ca4d0a7a1_en?filename=md_cybersecurity_en.pdf',
             'mdcg-2020-1' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2020_1_guidance_clinic_eva_md_software_en_0.pdf',
-            'mdcg-2020-3' => 'https://health.ec.europa.eu/system/files/2021-10/mdcg_2020-3_en_0.pdf',
-            'mdcg-2020-5' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2020_5_guidance_clinical_evaluation_equivalence_en_0.pdf',
-            'mdcg-2020-7' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2020_7_guidance_pmcf_plan_template_en_0.pdf',
+            'mdcg-2020-3' => 'https://health.ec.europa.eu/document/download/800e8e87-d4eb-4cc5-b5ad-07a9146d7c90_en?filename=mdcg_2020-3_en.pdf',
+            'mdcg-2020-5' => 'https://health.ec.europa.eu/document/download/575a0f79-e3a0-4a96-9ce0-930576c12aa2_en?filename=md_mdcg_2020_5_guidance_clinical_evaluation_equivalence_en.pdf',
             'mdcg-2020-6' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2020_6_guidance_sufficient_clinical_evidence_en_0.pdf',
-            'mdcg-2020-7' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2020_7_guidance_pmcf_plan_template_en_0.pdf',
-            'mdcg-2020-8' => 'https://health.ec.europa.eu/system/files/2020-09/md_mdcg_2020_8_guidance_pmcf_evaluation_report_en_0.pdf',
+            'mdcg-2020-7' => 'https://health.ec.europa.eu/document/download/a5cdb303-c782-4010-8723-7d389af678f7_en?filename=md_mdcg_2020_7_guidance_pmcf_plan_template_en.pdf',
+            'mdcg-2020-8' => 'https://health.ec.europa.eu/document/download/11121036-696a-4589-a311-c5525bd84df3_en?filename=md_mdcg_2020_8_guidance_pmcf_evaluation_report_en.pdf',
             'mdcg-2021-24' => 'https://health.ec.europa.eu/system/files/2021-10/mdcg_2021-24_en_0.pdf',
         ];
 
