@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\ExportController;
 use App\Models\DocumentChange;
 use App\Models\User;
 use App\Services\CommentService;
@@ -855,6 +856,7 @@ class DocumentController extends Controller
                 'author' => $meta['author'] ?? null,
                 'changed' => $changeStatus,
                 'is_markdown' => DocumentMetadata::isMarkdown($path),
+                'has_tables' => DocumentMetadata::isMarkdown($path) ? ExportController::countTables($path) > 0 : false,
             ];
         }
 
