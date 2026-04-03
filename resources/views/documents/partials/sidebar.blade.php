@@ -189,16 +189,16 @@
                     if(active&&active.offsetParent!==null)active.scrollIntoView({block:'center',behavior:'instant'});
                 }
             }
+            var showSidebar=function(){var h=document.getElementById('sidebar-hide');if(h)h.remove();};
             if(hasFilters){
-                setTimeout(restoreScroll,150);
+                setTimeout(function(){restoreScroll();showSidebar();},150);
             }else{
                 restoreScroll();
+                showSidebar();
             }
             if(!isMobile){
                 window.addEventListener('beforeunload',function(){sessionStorage.setItem('sidebarScroll',n.scrollTop)});
             }
-            // 4. Show content
-            var h=document.getElementById('sidebar-hide');if(h)h.remove();
         })();
     </script>
     @if($pendingCount > 0)
