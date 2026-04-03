@@ -9,67 +9,72 @@
         </div>
     </x-slot>
 
-    <div class="py-8" x-data="{
-        dateFilter: '',
-        selectedForms: @json($forms->pluck('form_id')->toArray()),
-        allForms: @json($forms->map(fn($f) => ['id' => $f['form_id'], 'title' => $f['form_title'], 'count' => $f['count']])->toArray()),
-        exportModal: false,
-        exportStatus: '',
-        exportTotal: 0,
-        exportProcessed: 0,
-        exportError: '',
-        exportDownloadUrl: '',
-        showOptions: false,
+    <script>
+        function recordsPage() {
+            return {
+                dateFilter: '',
+                selectedForms: @json($forms->pluck('form_id')->toArray()),
+                allForms: @json($forms->map(fn($f) => ['id' => $f['form_id'], 'title' => $f['form_title'], 'count' => $f['count']])->toArray()),
+                exportModal: false,
+                exportStatus: '',
+                exportTotal: 0,
+                exportProcessed: 0,
+                exportError: '',
+                exportDownloadUrl: '',
+                showOptions: false,
 
-        get allSelected() { return this.selectedForms.length === this.allForms.length },
-        toggleAll() {
-            if (this.allSelected) this.selectedForms = [];
-            else this.selectedForms = this.allForms.map(f => f.id);
-        },
-        toggleForm(id) {
-            const idx = this.selectedForms.indexOf(id);
-            if (idx > -1) this.selectedForms.splice(idx, 1);
-            else this.selectedForms.push(id);
-        },
+                get allSelected() { return this.selectedForms.length === this.allForms.length },
+                toggleAll() {
+                    if (this.allSelected) this.selectedForms = [];
+                    else this.selectedForms = this.allForms.map(f => f.id);
+                },
+                toggleForm(id) {
+                    const idx = this.selectedForms.indexOf(id);
+                    if (idx > -1) this.selectedForms.splice(idx, 1);
+                    else this.selectedForms.push(id);
+                },
 
-        startExport() {
-            this.showOptions = false;
-            this.exportModal = true;
-            this.exportStatus = 'starting';
-            this.exportTotal = 0;
-            this.exportProcessed = 0;
-            this.exportError = '';
-            this.exportDownloadUrl = '';
+                startExport() {
+                    this.showOptions = false;
+                    this.exportModal = true;
+                    this.exportStatus = 'starting';
+                    this.exportTotal = 0;
+                    this.exportProcessed = 0;
+                    this.exportError = '';
+                    this.exportDownloadUrl = '';
 
-            fetch('{{ route('records.export-all') }}', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                body: JSON.stringify({ date_filter: this.dateFilter, form_ids: this.selectedForms }),
-            })
-            .then(r => r.json())
-            .then(data => this.pollStatus(data.id))
-            .catch(() => { this.exportStatus = 'failed'; this.exportError = 'Failed to start export'; });
-        },
-
-        pollStatus(id) {
-            const poll = () => {
-                fetch('/records/export-all-status/' + id)
+                    fetch('{{ route("records.export-all") }}', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                        body: JSON.stringify({ date_filter: this.dateFilter, form_ids: this.selectedForms }),
+                    })
                     .then(r => r.json())
-                    .then(data => {
-                        this.exportStatus = data.status;
-                        this.exportTotal = data.total;
-                        this.exportProcessed = data.processed;
-                        this.exportError = data.error;
-                        if (data.status === 'ready') {
-                            this.exportDownloadUrl = '/records/export-all-download/' + id;
-                        } else if (data.status !== 'failed') {
-                            setTimeout(poll, 2000);
-                        }
-                    });
+                    .then(data => this.pollStatus(data.id))
+                    .catch(() => { this.exportStatus = 'failed'; this.exportError = 'Failed to start export'; });
+                },
+
+                pollStatus(id) {
+                    const poll = () => {
+                        fetch('/records/export-all-status/' + id)
+                            .then(r => r.json())
+                            .then(data => {
+                                this.exportStatus = data.status;
+                                this.exportTotal = data.total;
+                                this.exportProcessed = data.processed;
+                                this.exportError = data.error;
+                                if (data.status === 'ready') {
+                                    this.exportDownloadUrl = '/records/export-all-download/' + id;
+                                } else if (data.status !== 'failed') {
+                                    setTimeout(poll, 2000);
+                                }
+                            });
+                    };
+                    setTimeout(poll, 2000);
+                },
             };
-            setTimeout(poll, 2000);
-        },
-    }">
+        }
+    </script>
+    <div class="py-8" x-data="recordsPage()">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- Export modal --}}
