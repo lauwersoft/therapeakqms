@@ -189,8 +189,7 @@
                 }
             }
             if(hasFilters){
-                // Wait for Alpine to apply filters before restoring scroll
-                requestAnimationFrame(function(){requestAnimationFrame(restoreScroll)});
+                setTimeout(restoreScroll,100);
             }else{
                 restoreScroll();
             }
