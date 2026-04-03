@@ -215,7 +215,7 @@ class GenerateBulkExportJob implements ShouldQueue
      */
     private function resolveLinksForPdf(string $html, array $idMap, array $pdfPathMap, string $currentPath): string
     {
-        $dummyBase = 'http://QMSLINK/';
+        $dummyBase = 'http://qmslink/';
 
         // Count how many [[DOC-ID]] patterns exist in the HTML
         $matchCount = preg_match_all('/\[\[([A-Z]+-\d{3,})\]\]/', $html);
@@ -243,7 +243,7 @@ class GenerateBulkExportJob implements ShouldQueue
             return;
         }
 
-        $dummyBase = 'http://QMSLINK/';
+        $dummyBase = 'http://qmslink/';
 
         // First decompress the PDF so we can find the URL strings
         $decompressed = $pdfPath . '.qdf';
@@ -258,13 +258,7 @@ class GenerateBulkExportJob implements ShouldQueue
         $content = file_get_contents($decompressed);
         @unlink($decompressed);
 
-        $found = strpos($content, 'QMSLINK') !== false;
-        // Also check for hex-encoded version
-        $hexFound = strpos($content, '514d534c494e4b') !== false; // QMSLINK in hex
-        // Find any URI annotations to see what format they use
-        preg_match_all('/\/URI\s*.{0,100}/s', $content, $uriMatches);
-        $uriSample = array_slice($uriMatches[0] ?? [], 0, 3);
-        \Illuminate\Support\Facades\Log::info('rewritePdfLinks: decompressed ' . basename($pdfPath) . ' | QMSLINK found: ' . ($found ? 'YES' : 'NO') . ' | hex: ' . ($hexFound ? 'YES' : 'NO') . ' | URI samples: ' . json_encode($uriSample));
+        $found = strpos($content, 'qmslink') !== false;
 
         if (! $found) {
             return;
