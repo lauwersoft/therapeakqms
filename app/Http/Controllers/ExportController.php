@@ -351,7 +351,7 @@ class ExportController extends Controller
                 $currentTable['rows'][] = $cells;
             } else {
                 // Non-table line — save current table if we have one
-                if ($currentTable !== null && count($currentTable['rows']) > 1 && ! $this->isMetadataTable($currentTable)) {
+                if ($currentTable !== null && count($currentTable['rows']) > 1) {
                     $tables[] = $currentTable;
                 }
                 $currentTable = null;
@@ -359,7 +359,7 @@ class ExportController extends Controller
         }
 
         // Don't forget the last table
-        if ($currentTable !== null && count($currentTable['rows']) > 1 && ! $this->isMetadataTable($currentTable)) {
+        if ($currentTable !== null && count($currentTable['rows']) > 1) {
             $tables[] = $currentTable;
         }
 
@@ -383,65 +383,30 @@ class ExportController extends Controller
         $tableCount = 0;
         $inTable = false;
         $rowCount = 0;
-        $currentHeading = null;
-        $headerCells = [];
 
         foreach ($lines as $line) {
-            if (preg_match('/^#{1,4}\s+(.+)$/', $line, $m)) {
-                $currentHeading = trim($m[1]);
-            }
-
             if (preg_match('/^\|(.+)\|$/', trim($line))) {
                 if (! preg_match('/^\|[\s\-\|:]+\|$/', trim($line))) {
                     if (! $inTable) {
                         $inTable = true;
                         $rowCount = 0;
-                        $headerCells = array_map('trim', explode('|', trim($line, '|')));
                     }
                     $rowCount++;
                 }
             } else {
-                if ($inTable && $rowCount > 1 && ! self::isMetadataTableStatic($currentHeading, $headerCells)) {
+                if ($inTable && $rowCount > 1) {
                     $tableCount++;
                 }
                 $inTable = false;
                 $rowCount = 0;
-                $headerCells = [];
             }
         }
 
-        if ($inTable && $rowCount > 1 && ! self::isMetadataTableStatic($currentHeading, $headerCells)) {
+        if ($inTable && $rowCount > 1) {
             $tableCount++;
         }
 
         return $tableCount;
-    }
-
-    private function isMetadataTable(array $table): bool
-    {
-        $heading = strtolower($table['heading'] ?? '');
-        $headerRow = array_map('strtolower', $table['rows'][0] ?? []);
-        $headerStr = implode(' ', $headerRow);
-
-        return self::isMetadataTableStatic($table['heading'] ?? '', $table['rows'][0] ?? []);
-    }
-
-    private static function isMetadataTableStatic(?string $heading, array $headerCells): bool
-    {
-        $h = strtolower($heading ?? '');
-        $headerStr = strtolower(implode(' ', $headerCells));
-
-        // Skip tables under metadata-like headings
-        if (preg_match('/change history|revision history|approval|references$|change log/', $h)) {
-            return true;
-        }
-
-        // Skip tables with metadata-like headers
-        if (preg_match('/^(version.*date.*description|role.*name.*date|document.*reference|document.*id)/', $headerStr)) {
-            return true;
-        }
-
-        return false;
     }
 
     public function activeBulkExport(Request $request)
