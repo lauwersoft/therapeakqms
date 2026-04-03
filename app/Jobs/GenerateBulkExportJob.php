@@ -30,7 +30,9 @@ class GenerateBulkExportJob implements ShouldQueue
     public int $timeout = 600;
 
     public function __construct(
-        private int $exportId
+        private int $exportId,
+        private bool $includePdf = true,
+        private bool $includeXlsx = true
     ) {}
 
     public function handle(): void
@@ -66,10 +68,11 @@ class GenerateBulkExportJob implements ShouldQueue
         $pdfPathMap = [];
         foreach ($docs as $path => $meta) {
             $dir = dirname($path);
+            $prettyDir = implode('/', array_map('ucfirst', explode('/', $dir)));
             $id = $meta['id'] ?? pathinfo($path, PATHINFO_FILENAME);
             $title = $meta['title'] ?? pathinfo($path, PATHINFO_FILENAME);
             $safeName = preg_replace('/[\/\\\\:*?"<>|]/', '', $id . ' - ' . $title);
-            $pdfPathMap[$meta['id'] ?? ''] = $dir . '/' . $safeName . '.pdf';
+            $pdfPathMap[$meta['id'] ?? ''] = $prettyDir . '/' . $safeName . '.pdf';
         }
 
         // Create temp directory
@@ -191,29 +194,32 @@ class GenerateBulkExportJob implements ShouldQueue
 
         // Build output paths
         $dir = dirname($path);
+        $prettyDir = implode('/', array_map('ucfirst', explode('/', $dir)));
         $id = $meta['id'] ?? pathinfo($path, PATHINFO_FILENAME);
         $title = $meta['title'] ?? pathinfo($path, PATHINFO_FILENAME);
         $safeName = preg_replace('/[\/\\\\:*?"<>|]/', '', $id . ' - ' . $title);
-        $outDir = $tmpDir . '/' . $dir;
+        $outDir = $tmpDir . '/' . $prettyDir;
         @mkdir($outDir, 0755, true);
 
         // Generate PDF
-        $exportHtml = view('documents.export-pdf', [
-            'content' => $html,
-            'meta' => $meta,
-            'path' => $path,
-        ])->render();
+        if ($this->includePdf) {
+            $exportHtml = view('documents.export-pdf', [
+                'content' => $html,
+                'meta' => $meta,
+                'path' => $path,
+            ])->render();
 
-        $pdfPath = $outDir . '/' . $safeName . '.pdf';
-        $this->generatePdf($exportHtml, $pdfPath);
+            $pdfPath = $outDir . '/' . $safeName . '.pdf';
+            $this->generatePdf($exportHtml, $pdfPath);
+            $this->rewritePdfLinks($pdfPath, $prettyDir);
+        }
 
-        // Rewrite dummy URLs to relative paths
-        $this->rewritePdfLinks($pdfPath, $dir);
-
-        // Generate XLSX if document has tables
-        $tables = $this->extractTablesFromMarkdown($body);
-        if (! empty($tables)) {
-            $this->generateXlsx($tables, $outDir . '/' . $safeName . '.xlsx');
+        // Generate XLSX if enabled and document has tables
+        if ($this->includeXlsx) {
+            $tables = $this->extractTablesFromMarkdown($body);
+            if (! empty($tables)) {
+                $this->generateXlsx($tables, $outDir . '/' . $safeName . '.xlsx');
+            }
         }
     }
 
@@ -227,19 +233,22 @@ class GenerateBulkExportJob implements ShouldQueue
         if (! $json) return;
 
         $dir = dirname($path);
+        $prettyDir = implode('/', array_map('ucfirst', explode('/', $dir)));
         $id = $meta['id'] ?? pathinfo($path, PATHINFO_FILENAME);
         $title = $meta['title'] ?? pathinfo($path, PATHINFO_FILENAME);
         $safeName = preg_replace('/[\/\\\\:*?"<>|]/', '', $id . ' - ' . $title);
-        $outDir = $tmpDir . '/' . $dir;
+        $outDir = $tmpDir . '/' . $prettyDir;
         @mkdir($outDir, 0755, true);
 
-        $exportHtml = view('documents.export-form-pdf', [
-            'schema' => $json,
-            'meta' => $meta,
-            'path' => $path,
-        ])->render();
+        if ($this->includePdf) {
+            $exportHtml = view('documents.export-form-pdf', [
+                'schema' => $json,
+                'meta' => $meta,
+                'path' => $path,
+            ])->render();
 
-        $this->generatePdf($exportHtml, $outDir . '/' . $safeName . '.pdf');
+            $this->generatePdf($exportHtml, $outDir . '/' . $safeName . '.pdf');
+        }
     }
 
     private function resolveLinksForPdf(string $html, array $idMap, array $pdfPathMap, string $currentPath): string

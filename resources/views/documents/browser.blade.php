@@ -129,6 +129,33 @@
                         </button>
                     </div>
 
+                    {{-- Options state --}}
+                    <template x-if="exportStatus === 'options'">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-4">Choose what to include in the export:</p>
+                            <div class="space-y-3 mb-6">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors" :class="exportIncludePdf ? 'bg-red-50 border-red-100' : 'bg-gray-50 border-gray-100'">
+                                    <input type="checkbox" x-model="exportIncludePdf" class="rounded text-red-600">
+                                    <div>
+                                        <span class="text-sm font-medium text-gray-800">PDF files</span>
+                                        <span class="text-xs text-gray-500 block">Every document as a PDF with cross-links</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors" :class="exportIncludeXlsx ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'">
+                                    <input type="checkbox" x-model="exportIncludeXlsx" class="rounded text-green-600">
+                                    <div>
+                                        <span class="text-sm font-medium text-gray-800">Excel files</span>
+                                        <span class="text-xs text-gray-500 block">Tables exported as XLSX spreadsheets</span>
+                                    </div>
+                                </label>
+                            </div>
+                            <button @click="confirmBulkExport()" :disabled="!exportIncludePdf && !exportIncludeXlsx" :class="(!exportIncludePdf && !exportIncludeXlsx) ? 'opacity-50 cursor-not-allowed' : ''" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 w-full justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                Start Export
+                            </button>
+                        </div>
+                    </template>
+
                     {{-- Processing state --}}
                     <template x-if="exportStatus === 'starting' || exportStatus === 'pending' || exportStatus === 'processing'">
                         <div>
@@ -620,6 +647,8 @@
                     exportProcessed: 0,
                     exportError: '',
                     exportDownloadUrl: '',
+                    exportIncludePdf: true,
+                    exportIncludeXlsx: true,
 
                     init() {
                         // Sync filters to URL
@@ -653,11 +682,15 @@
 
                     startBulkExport() {
                         this.exportModal = true;
-                        this.exportStatus = 'starting';
+                        this.exportStatus = 'options';
                         this.exportTotal = 0;
                         this.exportProcessed = 0;
                         this.exportError = '';
                         this.exportDownloadUrl = '';
+                    },
+
+                    confirmBulkExport() {
+                        this.exportStatus = 'starting';
 
                         fetch('{{ route("documents.export-bulk") }}', {
                             method: 'POST',
@@ -665,7 +698,11 @@
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             },
-                            body: JSON.stringify({ category: this.categoryFilter || '' }),
+                            body: JSON.stringify({
+                                category: this.categoryFilter || '',
+                                include_pdf: this.exportIncludePdf,
+                                include_xlsx: this.exportIncludeXlsx,
+                            }),
                         })
                         .then(r => r.json())
                         .then(data => {
