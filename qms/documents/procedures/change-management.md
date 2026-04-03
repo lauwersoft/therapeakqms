@@ -231,10 +231,10 @@ During management review (at least annually), Sarp reviews:
 | Record | Retention | Reference |
 |--------|-----------|-----------|
 | Change Request Forms | Lifetime of device + 10 years | [[FM-003]] |
-| Risk assessments for changes | Lifetime of device + 10 years | -- |
-| Verification/validation records for changes | Lifetime of device + 10 years | -- |
-| NB notification correspondence (significant changes) | Lifetime of device + 10 years | -- |
-| Predetermined change monitoring results | Lifetime of device + 10 years | -- |
+| Risk assessments for changes | Lifetime of device + 10 years | [[FM-003]] (risk assessment section) |
+| Verification/validation records for changes | Lifetime of device + 10 years | [[FM-003]] (verification section) |
+| NB notification correspondence (significant changes) | Lifetime of device + 10 years | [[FM-003]] (attached/referenced) |
+| Predetermined change monitoring results | Lifetime of device + 10 years | [[FM-003]] (closing notes) |
 
 ## 6. References
 

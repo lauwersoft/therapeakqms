@@ -259,11 +259,11 @@ Sarp conducts a security review at least annually (or after any significant chan
 
 | Record | Retention | Reference |
 |--------|-----------|-----------|
-| Security incident records | Lifetime of device + 10 years | -- |
-| Vulnerability assessments | Lifetime of device + 10 years | -- |
-| Periodic security review reports | Lifetime of device + 10 years | -- |
-| Data breach notifications | Lifetime of device + 10 years | -- |
-| DPA documentation | Lifetime of device + 10 years | -- |
+| Security incident records | Lifetime of device + 10 years | [[FM-001]] (CAPA) |
+| Vulnerability assessments | Lifetime of device + 10 years | Management review ([[FM-009]]) |
+| Periodic security review reports | Lifetime of device + 10 years | Management review ([[FM-009]]) |
+| Data breach notifications | Lifetime of device + 10 years | Saved correspondence (authority/users) |
+| DPA documentation | Lifetime of device + 10 years | [[LST-001]] (referenced), signed DPAs on file |
 
 ## 6. References
 

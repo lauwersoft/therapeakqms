@@ -184,8 +184,8 @@ For nonconformities that affect the basis of CE certification (e.g., fundamental
 | Record | Retention | Reference |
 |--------|-----------|-----------|
 | Deviation/Nonconformance Form | Lifetime of device + 10 years | [[FM-002]] |
-| Investigation and root cause analysis | With nonconformance record | -- |
-| Disposition and verification evidence | With nonconformance record | -- |
+| Investigation and root cause analysis | With nonconformance record | [[FM-002]] (investigation section) |
+| Disposition and verification evidence | With nonconformance record | [[FM-002]] (disposition section) |
 | Corrective action records (if escalated) | Lifetime of device + 10 years | [[FM-001]] |
 
 ## 7. References

@@ -180,10 +180,10 @@ The complete configuration of a released version includes:
 
 | Record | Retention | Reference |
 |--------|-----------|-----------|
-| UDI assignments and EUDAMED submissions | Lifetime of device + 10 years | -- |
-| Version release records (git tags) | Lifetime of device + 10 years | -- |
-| Traceability matrix | Lifetime of device + 10 years | -- |
-| Configuration baselines per release | Lifetime of device + 10 years | -- |
+| UDI assignments and EUDAMED submissions | Lifetime of device + 10 years | EUDAMED portal |
+| Version release records (git tags) | Lifetime of device + 10 years | Git repository |
+| Traceability matrix | Lifetime of device + 10 years | [[TRC-001]] |
+| Configuration baselines per release | Lifetime of device + 10 years | Git repository (tags) |
 
 ## 6. References
 

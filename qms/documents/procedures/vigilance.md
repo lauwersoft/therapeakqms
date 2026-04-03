@@ -214,12 +214,12 @@ Nisan has access to:
 
 | Record | Retention | Reference |
 |--------|-----------|-----------|
-| Incident evaluation records | Lifetime of device + 10 years | -- |
-| Vigilance reports (initial, follow-up, final) | Lifetime of device + 10 years | -- |
-| FSCA documentation | Lifetime of device + 10 years | -- |
-| Field Safety Notices | Lifetime of device + 10 years | -- |
-| Trend analysis reports | Lifetime of device + 10 years | -- |
-| Competent authority correspondence | Lifetime of device + 10 years | -- |
+| Incident evaluation records | Lifetime of device + 10 years | [[FM-004]] (complaint) + incident log |
+| Vigilance reports (initial, follow-up, final) | Lifetime of device + 10 years | Competent authority portal |
+| FSCA documentation | Lifetime of device + 10 years | [[FM-001]] (CAPA) |
+| Field Safety Notices | Lifetime of device + 10 years | [[FM-001]] (CAPA) |
+| Trend analysis reports | Lifetime of device + 10 years | [[RPT-001]] (PMS Report) |
+| Competent authority correspondence | Lifetime of device + 10 years | Saved correspondence (email/portal) |
 
 ## 7. References
 
