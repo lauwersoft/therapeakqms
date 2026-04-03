@@ -307,8 +307,8 @@ class GenerateBulkExportJob implements ShouldQueue
                 return '<a href="' . htmlspecialchars($fullUrl) . '" style="color: #2563eb; font-weight: 500; text-decoration: none;">'
                     . htmlspecialchars($docId) . '</a>';
             }
-            // Target not in export — just styled text, not clickable
-            return '<span style="color: #2563eb; font-weight: 500;">' . htmlspecialchars($docId) . '</span>';
+            // Target not in export — plain text, not clickable
+            return '<span style="font-weight: 500;">' . htmlspecialchars($docId) . '</span>';
         }, $html);
     }
 

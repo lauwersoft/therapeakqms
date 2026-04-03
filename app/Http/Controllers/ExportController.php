@@ -575,17 +575,17 @@ class ExportController extends Controller
             );
         }
 
-        // Any remaining MDCG links we don't have URLs for → strip the link, keep text
+        // Any remaining MDCG links we don't have URLs for → plain text
         $html = preg_replace(
             '/<a\s+href="\/references\/mdcg-[^"]*"[^>]*>(.*?)<\/a>/i',
-            '<span style="color: #2563eb; font-weight: 500;">$1</span>',
+            '<span style="font-weight: 500;">$1</span>',
             $html
         );
 
-        // ISO/IEC standards → strip link, keep styled text (paid standards, no public URL)
+        // ISO/IEC standards → plain text (paid standards, no public URL)
         $html = preg_replace(
             '/<a\s+href="\/references\/iso-[^"]*"[^>]*>(.*?)<\/a>/i',
-            '<span style="color: #2563eb; font-weight: 500;">$1</span>',
+            '<span style="font-weight: 500;">$1</span>',
             $html
         );
 
