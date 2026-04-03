@@ -495,6 +495,47 @@ class ExportController extends Controller
         ]);
     }
 
+    public function allRecordsExport(Request $request)
+    {
+        $formIds = $request->input('form_ids', []);
+        $dateFilter = (int) $request->input('date_filter', 0);
+
+        $old = DocumentExport::where('user_id', $request->user()->id)->get();
+        foreach ($old as $o) {
+            if ($o->path && file_exists($o->path)) @unlink($o->path);
+            $o->delete();
+        }
+
+        $export = DocumentExport::create([
+            'user_id' => $request->user()->id,
+            'category' => 'all-records',
+            'status' => 'pending',
+        ]);
+
+        \App\Jobs\GenerateAllRecordsExportJob::dispatch($export->id, $formIds, $dateFilter);
+
+        return response()->json(['id' => $export->id]);
+    }
+
+    public function allRecordsExportStatus(DocumentExport $export)
+    {
+        return response()->json([
+            'status' => $export->status,
+            'total' => $export->total_docs,
+            'processed' => $export->processed_docs,
+            'error' => $export->error,
+        ]);
+    }
+
+    public function allRecordsExportDownload(DocumentExport $export)
+    {
+        if ($export->status !== 'ready' || ! $export->path || ! file_exists($export->path)) abort(404);
+        $path = $export->path;
+        $filename = $export->filename;
+        $export->delete();
+        return response()->download($path, $filename)->deleteFileAfterSend(true);
+    }
+
     public function recordExportDownload(DocumentExport $export)
     {
         if ($export->status !== 'ready' || ! $export->path || ! file_exists($export->path)) abort(404);
