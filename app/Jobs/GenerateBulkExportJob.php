@@ -247,13 +247,17 @@ class GenerateBulkExportJob implements ShouldQueue
         $process->run();
 
         if (! file_exists($decompressed)) {
+            \Illuminate\Support\Facades\Log::info('rewritePdfLinks: qpdf decompress failed for ' . $pdfPath . ' | ' . $process->getErrorOutput());
             return;
         }
 
         $content = file_get_contents($decompressed);
         @unlink($decompressed);
 
-        if (strpos($content, 'QMSLINK') === false) {
+        $found = strpos($content, 'QMSLINK') !== false;
+        \Illuminate\Support\Facades\Log::info('rewritePdfLinks: decompressed ' . basename($pdfPath) . ' | QMSLINK found: ' . ($found ? 'YES' : 'NO'));
+
+        if (! $found) {
             return;
         }
 
