@@ -11,18 +11,18 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-xs flex-1 min-w-0">
                 {{-- Left column --}}
                 <div class="space-y-1.5">
-                    <div class="flex items-center gap-2">
-                        <span class="font-mono font-semibold text-sm px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold font-mono shrink-0 {{ \App\Services\DocumentMetadata::typeColor($meta['type'] ?? '') }}">{{ $meta['id'] }}</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium
                             {{ $meta['status'] === 'draft' ? 'bg-gray-100 text-gray-500' : '' }}
                             {{ $meta['status'] === 'in_review' ? 'bg-yellow-100 text-yellow-700' : '' }}
                             {{ $meta['status'] === 'approved' ? 'bg-green-100 text-green-700' : '' }}
                             {{ $meta['status'] === 'obsolete' ? 'bg-red-100 text-red-600' : '' }}">{{ \App\Services\DocumentMetadata::STATUSES[$meta['status']] ?? ucfirst($meta['status']) }}</span>
                         @if($meta['version'])
-                            <span class="text-gray-400">v{{ $meta['version'] }}</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-500">v{{ $meta['version'] }}</span>
                         @endif
                         @foreach(\App\Services\DocumentMetadata::normalizeCategory($meta['category'] ?? []) as $cat)
-                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium {{ \App\Services\DocumentMetadata::categoryColor($cat) }}">{{ \App\Services\DocumentMetadata::categoryLabel($cat) }}</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium {{ \App\Services\DocumentMetadata::categoryColor($cat) }}">{{ \App\Services\DocumentMetadata::categoryLabel($cat) }}</span>
                         @endforeach
                     </div>
                     @if($meta['author'])
