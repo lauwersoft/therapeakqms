@@ -572,6 +572,8 @@ class ExportController extends Controller
         $category = $request->input('category');
         $includePdf = (bool) $request->input('include_pdf', true);
         $includeXlsx = (bool) $request->input('include_xlsx', true);
+        $selectedDocs = $request->input('selected_docs', []);
+        $selectedRecords = $request->input('selected_records', []);
 
         // Delete any previous exports for this user
         $old = DocumentExport::where('user_id', $request->user()->id)->get();
@@ -588,7 +590,7 @@ class ExportController extends Controller
             'status' => 'pending',
         ]);
 
-        GenerateBulkExportJob::dispatch($export->id, $includePdf, $includeXlsx);
+        GenerateBulkExportJob::dispatch($export->id, $includePdf, $includeXlsx, $selectedDocs, $selectedRecords);
 
         return response()->json(['id' => $export->id]);
     }

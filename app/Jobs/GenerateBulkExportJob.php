@@ -32,7 +32,9 @@ class GenerateBulkExportJob implements ShouldQueue
     public function __construct(
         private int $exportId,
         private bool $includePdf = true,
-        private bool $includeXlsx = true
+        private bool $includeXlsx = true,
+        private array $selectedDocs = [],
+        private array $selectedRecords = []
     ) {}
 
     public function handle(): void
@@ -44,7 +46,7 @@ class GenerateBulkExportJob implements ShouldQueue
         $docIndex = DocumentMetadata::index($basePath);
         $idMap = DocumentMetadata::idMap($docIndex);
 
-        // Filter documents by category if set (include markdown and forms)
+        // Filter documents — use selectedDocs if provided, otherwise category filter
         $docs = [];
         foreach ($docIndex as $path => $meta) {
             $isMarkdown = DocumentMetadata::isMarkdown($path);
@@ -52,17 +54,22 @@ class GenerateBulkExportJob implements ShouldQueue
             if (! $isMarkdown && ! $isForm) {
                 continue;
             }
-            if ($export->category) {
+            if (! empty($this->selectedDocs)) {
+                if (! in_array($path, $this->selectedDocs)) continue;
+            } elseif ($export->category) {
                 $cats = DocumentMetadata::normalizeCategory($meta['category'] ?? []);
-                if (! in_array($export->category, $cats)) {
-                    continue;
-                }
+                if (! in_array($export->category, $cats)) continue;
             }
             $meta['_is_form'] = $isForm;
             $docs[$path] = $meta;
         }
 
-        $export->update(['total_docs' => count($docs)]);
+        // Count total items including selected records
+        $totalRecordCount = 0;
+        foreach ($this->selectedRecords as $formId => $filenames) {
+            $totalRecordCount += count($filenames);
+        }
+        $export->update(['total_docs' => count($docs) + $totalRecordCount]);
 
         // Build a map of doc ID → relative PDF path for cross-linking
         $pdfPathMap = [];
@@ -85,11 +92,45 @@ class GenerateBulkExportJob implements ShouldQueue
             foreach ($docs as $path => $meta) {
                 if ($meta['_is_form'] ?? false) {
                     $this->generateFormFiles($basePath, $path, $meta, $tmpDir);
+                    $processed++;
+                    $export->update(['processed_docs' => $processed]);
+
+                    // Generate records for this form if selected
+                    $formId = $meta['id'] ?? '';
+                    $selectedRecFilenames = $this->selectedRecords[$formId] ?? [];
+                    if (! empty($selectedRecFilenames)) {
+                        $dir = dirname($path);
+                        $prettyDir = implode('/', array_map('ucfirst', explode('/', $dir)));
+                        $formTitle = $meta['title'] ?? $formId;
+                        $recordsDir = $tmpDir . '/' . $prettyDir . '/' . preg_replace('/[\/\\\\:*?"<>|]/', '', $formId . ' - ' . $formTitle) . ' Records';
+                        @mkdir($recordsDir, 0755, true);
+
+                        $recordsBasePath = base_path('qms/records');
+                        foreach ($selectedRecFilenames as $recFilename) {
+                            $recPath = $recordsBasePath . '/' . $recFilename;
+                            if (! file_exists($recPath)) continue;
+                            $recData = @json_decode(File::get($recPath), true);
+                            if (! is_array($recData)) continue;
+
+                            $recId = $recData['id'] ?? pathinfo($recFilename, PATHINFO_FILENAME);
+                            $recTitle = $recData['title'] ?? $recId;
+                            $recSafeName = preg_replace('/[\/\\\\:*?"<>|]/', '', $recId . ' - ' . $recTitle) . '.pdf';
+
+                            $recHtml = view('records.export-pdf', [
+                                'record' => $recData,
+                                'filename' => $recFilename,
+                            ])->render();
+
+                            $this->generatePdf($recHtml, $recordsDir . '/' . $recSafeName);
+                            $processed++;
+                            $export->update(['processed_docs' => $processed]);
+                        }
+                    }
                 } else {
                     $this->generateDocumentFiles($basePath, $path, $meta, $docIndex, $idMap, $pdfPathMap, $tmpDir);
+                    $processed++;
+                    $export->update(['processed_docs' => $processed]);
                 }
-                $processed++;
-                $export->update(['processed_docs' => $processed]);
             }
 
             // Create ZIP

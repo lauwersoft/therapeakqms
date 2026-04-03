@@ -881,6 +881,29 @@ class DocumentController extends Controller
             $doc['comment_count'] = $commentSummary[$doc['doc_id'] ?? '']['unresolved'] ?? 0;
         }
 
+        // Gather records grouped by form_id for export options
+        $recordsPath = base_path('qms/records');
+        $formRecords = [];
+        if (is_dir($recordsPath)) {
+            foreach (\Illuminate\Support\Facades\File::allFiles($recordsPath) as $file) {
+                if (! str_ends_with($file->getFilename(), '.rec.json')) continue;
+                $recData = @json_decode(\Illuminate\Support\Facades\File::get($file->getPathname()), true);
+                if (! is_array($recData)) continue;
+                $fid = $recData['form_id'] ?? '';
+                if (! $fid) continue;
+                $formRecords[$fid][] = [
+                    'filename' => $file->getFilename(),
+                    'id' => $recData['id'] ?? '',
+                    'title' => $recData['title'] ?? '',
+                    'submitted_at' => $recData['submitted_at'] ?? null,
+                ];
+            }
+        }
+        // Sort each group newest first
+        foreach ($formRecords as &$recs) {
+            usort($recs, fn($a, $b) => ($b['submitted_at'] ?? '') <=> ($a['submitted_at'] ?? ''));
+        }
+
         return view('documents.browser', [
             'documents' => $documents,
             'grouped' => $grouped,
@@ -889,6 +912,7 @@ class DocumentController extends Controller
             'directories' => $canEdit ? $this->getDirectories() : [],
             'changedFiles' => $changedFiles,
             'pendingCount' => $pendingCount,
+            'formRecords' => $formRecords,
         ]);
     }
 

@@ -132,26 +132,58 @@
                     {{-- Options state --}}
                     <template x-if="exportStatus === 'options'">
                         <div>
-                            <p class="text-sm text-gray-600 mb-4">Choose what to include in the export:</p>
-                            <div class="space-y-3 mb-6">
-                                <label class="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors" :class="exportIncludePdf ? 'bg-red-50 border-red-100' : 'bg-gray-50 border-gray-100'">
+                            {{-- Format options --}}
+                            <p class="text-xs font-medium text-gray-600 mb-2">File formats</p>
+                            <div class="flex gap-3 mb-4">
+                                <label class="flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors flex-1" :class="exportIncludePdf ? 'bg-red-50 border-red-100' : 'bg-gray-50 border-gray-100'">
                                     <input type="checkbox" x-model="exportIncludePdf" class="rounded text-red-600">
-                                    <div>
-                                        <span class="text-sm font-medium text-gray-800">PDF files</span>
-                                        <span class="text-xs text-gray-500 block">Every document as a PDF with cross-links</span>
-                                    </div>
+                                    <span class="text-xs font-medium text-gray-700">PDF</span>
                                 </label>
-                                <label class="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors" :class="exportIncludeXlsx ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'">
+                                <label class="flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors flex-1" :class="exportIncludeXlsx ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'">
                                     <input type="checkbox" x-model="exportIncludeXlsx" class="rounded text-green-600">
-                                    <div>
-                                        <span class="text-sm font-medium text-gray-800">Excel files</span>
-                                        <span class="text-xs text-gray-500 block">Tables exported as XLSX spreadsheets</span>
-                                    </div>
+                                    <span class="text-xs font-medium text-gray-700">Excel</span>
                                 </label>
                             </div>
-                            <button @click="confirmBulkExport()" :disabled="!exportIncludePdf && !exportIncludeXlsx" :class="(!exportIncludePdf && !exportIncludeXlsx) ? 'opacity-50 cursor-not-allowed' : ''" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 w-full justify-center">
+
+                            {{-- Document selection --}}
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-xs font-medium text-gray-600">Documents <span class="text-gray-400" x-text="'(' + exportSelectedDocs.length + '/' + filteredDocs.length + ')'"></span></p>
+                                <button @click="toggleAllDocs()" class="text-xs text-blue-600 hover:text-blue-800" x-text="exportAllDocsSelected ? 'Deselect all' : 'Select all'"></button>
+                            </div>
+                            <div class="border border-gray-100 rounded-lg max-h-52 overflow-y-auto mb-4">
+                                <template x-for="doc in filteredDocs" :key="doc.path">
+                                    <div>
+                                        <label class="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-50 cursor-pointer text-xs">
+                                            <input type="checkbox" :checked="exportSelectedDocs.includes(doc.path)" @change="toggleDoc(doc.path)" class="rounded text-blue-600 border-gray-300">
+                                            <span class="font-mono font-semibold text-[10px] px-1 py-0.5 rounded shrink-0" :class="doc.type_color" x-text="doc.doc_id"></span>
+                                            <span class="text-gray-700 truncate" x-text="doc.title"></span>
+                                        </label>
+                                        {{-- If form, show records toggle --}}
+                                        <template x-if="isFormDoc(doc) && exportFormRecords[formIdFromDoc(doc)] && exportFormRecords[formIdFromDoc(doc)].length > 0 && exportSelectedDocs.includes(doc.path)">
+                                            <div class="ml-8 mb-1">
+                                                <button @click="toggleFormRecords(formIdFromDoc(doc))" class="text-[10px] text-purple-600 hover:text-purple-800 flex items-center gap-1 py-0.5">
+                                                    <svg class="w-3 h-3 transition-transform" :class="exportExpandedForms[formIdFromDoc(doc)] ? 'rotate-90' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                                    <span x-text="(exportSelectedRecords[formIdFromDoc(doc)] || []).length + '/' + exportFormRecords[formIdFromDoc(doc)].length + ' records'"></span>
+                                                </button>
+                                                <div x-show="exportExpandedForms[formIdFromDoc(doc)]" x-cloak class="border-l-2 border-purple-100 pl-2 ml-1 mt-1">
+                                                    <button @click="toggleAllFormRecords(formIdFromDoc(doc))" class="text-[10px] text-blue-600 hover:text-blue-800 mb-1" x-text="allFormRecordsSelected(formIdFromDoc(doc)) ? 'Deselect all' : 'Select all'"></button>
+                                                    <template x-for="rec in exportFormRecords[formIdFromDoc(doc)]" :key="rec.filename">
+                                                        <label class="flex items-center gap-2 py-0.5 cursor-pointer text-[10px]">
+                                                            <input type="checkbox" :checked="(exportSelectedRecords[formIdFromDoc(doc)] || []).includes(rec.filename)" @change="toggleRecord(formIdFromDoc(doc), rec.filename)" class="rounded text-purple-600 border-gray-300 w-3 h-3">
+                                                            <span class="font-mono text-purple-700" x-text="rec.id"></span>
+                                                            <span class="text-gray-500 truncate" x-text="rec.title"></span>
+                                                        </label>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <button @click="confirmBulkExport()" :disabled="exportSelectedDocs.length === 0 || (!exportIncludePdf && !exportIncludeXlsx)" :class="(exportSelectedDocs.length === 0 || (!exportIncludePdf && !exportIncludeXlsx)) ? 'opacity-50 cursor-not-allowed' : ''" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 w-full justify-center">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                                Start Export
+                                <span x-text="'Export ' + exportSelectedDocs.length + ' documents'"></span>
                             </button>
                         </div>
                     </template>
@@ -649,6 +681,10 @@
                     exportDownloadUrl: '',
                     exportIncludePdf: true,
                     exportIncludeXlsx: true,
+                    exportSelectedDocs: [],
+                    exportFormRecords: @json($formRecords ?? []),
+                    exportSelectedRecords: {},
+                    exportExpandedForms: {},
 
                     init() {
                         // Sync filters to URL
@@ -687,6 +723,54 @@
                         this.exportProcessed = 0;
                         this.exportError = '';
                         this.exportDownloadUrl = '';
+                        // Pre-select all filtered docs
+                        this.exportSelectedDocs = this.filteredDocs.map(d => d.path);
+                        // Pre-select all records for forms
+                        this.exportSelectedRecords = {};
+                        for (const [formId, recs] of Object.entries(this.exportFormRecords)) {
+                            this.exportSelectedRecords[formId] = recs.map(r => r.filename);
+                        }
+                    },
+
+                    get exportAllDocsSelected() {
+                        return this.exportSelectedDocs.length === this.filteredDocs.length;
+                    },
+                    toggleAllDocs() {
+                        if (this.exportAllDocsSelected) this.exportSelectedDocs = [];
+                        else this.exportSelectedDocs = this.filteredDocs.map(d => d.path);
+                    },
+                    toggleDoc(path) {
+                        const idx = this.exportSelectedDocs.indexOf(path);
+                        if (idx > -1) this.exportSelectedDocs.splice(idx, 1);
+                        else this.exportSelectedDocs.push(path);
+                    },
+                    isFormDoc(doc) {
+                        return doc.path.endsWith('.form.json');
+                    },
+                    formIdFromDoc(doc) {
+                        return doc.doc_id || '';
+                    },
+                    toggleFormRecords(formId) {
+                        this.exportExpandedForms[formId] = !this.exportExpandedForms[formId];
+                    },
+                    allFormRecordsSelected(formId) {
+                        const recs = this.exportFormRecords[formId] || [];
+                        const sel = this.exportSelectedRecords[formId] || [];
+                        return recs.length > 0 && sel.length === recs.length;
+                    },
+                    toggleAllFormRecords(formId) {
+                        const recs = this.exportFormRecords[formId] || [];
+                        if (this.allFormRecordsSelected(formId)) {
+                            this.exportSelectedRecords[formId] = [];
+                        } else {
+                            this.exportSelectedRecords[formId] = recs.map(r => r.filename);
+                        }
+                    },
+                    toggleRecord(formId, filename) {
+                        if (!this.exportSelectedRecords[formId]) this.exportSelectedRecords[formId] = [];
+                        const idx = this.exportSelectedRecords[formId].indexOf(filename);
+                        if (idx > -1) this.exportSelectedRecords[formId].splice(idx, 1);
+                        else this.exportSelectedRecords[formId].push(filename);
                     },
 
                     confirmBulkExport() {
@@ -702,6 +786,8 @@
                                 category: this.categoryFilter || '',
                                 include_pdf: this.exportIncludePdf,
                                 include_xlsx: this.exportIncludeXlsx,
+                                selected_docs: this.exportSelectedDocs,
+                                selected_records: this.exportSelectedRecords,
                             }),
                         })
                         .then(r => r.json())
