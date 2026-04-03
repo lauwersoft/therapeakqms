@@ -259,7 +259,12 @@ class GenerateBulkExportJob implements ShouldQueue
         @unlink($decompressed);
 
         $found = strpos($content, 'QMSLINK') !== false;
-        \Illuminate\Support\Facades\Log::info('rewritePdfLinks: decompressed ' . basename($pdfPath) . ' | QMSLINK found: ' . ($found ? 'YES' : 'NO'));
+        // Also check for hex-encoded version
+        $hexFound = strpos($content, '514d534c494e4b') !== false; // QMSLINK in hex
+        // Find any URI annotations to see what format they use
+        preg_match_all('/\/URI\s*.{0,100}/s', $content, $uriMatches);
+        $uriSample = array_slice($uriMatches[0] ?? [], 0, 3);
+        \Illuminate\Support\Facades\Log::info('rewritePdfLinks: decompressed ' . basename($pdfPath) . ' | QMSLINK found: ' . ($found ? 'YES' : 'NO') . ' | hex: ' . ($hexFound ? 'YES' : 'NO') . ' | URI samples: ' . json_encode($uriSample));
 
         if (! $found) {
             return;
