@@ -80,6 +80,16 @@
             margin: 2px 0;
         }
         .meta-line .label { font-weight: 700; color: #374151; }
+        .cat-badge {
+            display: inline-block;
+            font-size: 8px;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 3px;
+            margin-left: 4px;
+        }
+        .cat-qms { background: #dbeafe; color: #1e40af; }
+        .cat-technical { background: #fce7f3; color: #9d174d; }
         .footer-line {
             font-size: 8px;
             color: #9ca3af;
@@ -158,6 +168,9 @@
                 <span class="doc-id-badge">{{ $meta['id'] }}</span>
             @endif
             {{ $meta['title'] ?? 'Untitled Form' }}
+            @foreach(\App\Services\DocumentMetadata::normalizeCategory($meta['category'] ?? []) as $cat)
+                <span class="cat-badge cat-{{ $cat }}">{{ \App\Services\DocumentMetadata::categoryLabel($cat) }}</span>
+            @endforeach
         </div>
         <div class="meta-line"><span class="label">Type:</span> Form Template</div>
         <div class="meta-line"><span class="label">Version:</span> {{ $meta['version'] ?? '1.0' }}</div>

@@ -120,6 +120,16 @@
         .status-approved { background: #dcfce7; color: #166534; }
         .status-draft { background: #f3f4f6; color: #6b7280; }
         .status-in_review { background: #fef3c7; color: #92400e; }
+        .cat-badge {
+            display: inline-block;
+            font-size: 8px;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 3px;
+            margin-left: 4px;
+        }
+        .cat-qms { background: #dbeafe; color: #1e40af; }
+        .cat-technical { background: #fce7f3; color: #9d174d; }
         .doc-footer-line {
             font-size: 8px;
             color: #9ca3af;
@@ -270,6 +280,9 @@
                 <span class="doc-id-badge">{{ $meta['id'] }}</span>
             @endif
             {{ $meta['title'] ?? 'Untitled Document' }}
+            @foreach(\App\Services\DocumentMetadata::normalizeCategory($meta['category'] ?? []) as $cat)
+                <span class="cat-badge cat-{{ $cat }}">{{ \App\Services\DocumentMetadata::categoryLabel($cat) }}</span>
+            @endforeach
         </div>
 
         <table class="doc-meta-table">
