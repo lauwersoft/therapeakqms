@@ -217,6 +217,10 @@ class GenerateBulkExportJob implements ShouldQueue
     {
         $dummyBase = 'http://QMSLINK/';
 
+        // Count how many [[DOC-ID]] patterns exist in the HTML
+        $matchCount = preg_match_all('/\[\[([A-Z]+-\d{3,})\]\]/', $html);
+        \Illuminate\Support\Facades\Log::info('resolveLinksForPdf: ' . basename($currentPath) . ' | found ' . $matchCount . ' [[DOC-ID]] patterns | pdfPathMap has ' . count($pdfPathMap) . ' entries');
+
         return preg_replace_callback('/\[\[([A-Z]+-\d{3,})\]\]/', function ($matches) use ($pdfPathMap, $dummyBase) {
             $docId = $matches[1];
             if (isset($pdfPathMap[$docId])) {
